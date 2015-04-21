@@ -1,8 +1,8 @@
 /*************************************************************************
-  > File Name: binary-tree-postorder-traversal.cpp
+  > File Name: binary-tree-preorder-traversal.cpp
   > Author: tiankonguse(skyyuan)
   > Mail: i@tiankonguse.com 
-  > Created Time: 2015年04月21日 20:31:36
+  > Created Time: 2015年04月21日 20:43:46
 ***********************************************************************/
 
 #include<iostream>
@@ -23,6 +23,7 @@ typedef __int64 LL;
 #else
 typedef long long LL;
 #endif
+
 
 
 
@@ -49,9 +50,9 @@ class Solution {
             return ;
         }
 
+        ans.push_back(root->val);
         dfs(root->left);
         dfs(root->right);
-        ans.push_back(root->val);
     }
 
 
@@ -78,6 +79,7 @@ class Solution {
 
             if(now.lev == 0){
                 //node in left
+                ans.push_back(now.root->val);
                 now.lev = 1;
                 sta.push(now);
                 sta.push(Node(now.root->left, 0));
@@ -88,14 +90,13 @@ class Solution {
                 sta.push(Node(now.root->right, 0));
             }else if(now.lev == 2){
                 //node out root
-                ans.push_back(now.root->val);
             }
         }
     }
     
 
 public:
-    vector<int> postorderTraversal(TreeNode *root) {
+    vector<int> preorderTraversal(TreeNode *root) {
         ans.clear();
         dfs(root);
         //loop(root);
@@ -137,11 +138,10 @@ void test(){
     list[1].left = list + 2;
 
     output(list);
-    ans = work.postorderTraversal(list);
+    ans = work.preorderTraversal(list);
     output(ans);
 
 }
-
 
 int main() {
     test();

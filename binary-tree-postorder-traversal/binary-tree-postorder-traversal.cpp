@@ -137,7 +137,7 @@ void test(){
     list[1].left = list + 2;
 
     output(list);
-    ans = work.inorderTraversal(list);
+    ans = work.postorderTraversal(list);
     output(ans);
 
 }
