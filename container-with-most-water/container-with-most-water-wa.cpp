@@ -26,16 +26,11 @@ typedef long long LL;
 
 class Solution {
     typedef int Type;
-    int min(int a, int b){
-        if(a<b){
-            return a;
-        }else{
-            return b;
-        }
-    }
     int Calc(Type a, Type pos, vector<int>&height) {
-        //printff("ha=%d a=%d hpos=%d pos=%d\n", height[sta[a]], sta[a], height[pos], pos);
-        return min(height[sta[a]], height[pos]) * (pos - sta[a]) ;
+        if(height[sta[a]] == 0 || height[pos] == 0){
+            return 0;
+        }
+        return (height[sta[a]] + height[pos]) * (pos - sta[a]) / 2;
     }
     vector<int>sta;
     int ans;
@@ -47,14 +42,13 @@ class Solution {
         int mid_left_value, mid_right_value;
         int Golden_Section ,len, tmp;
 
-        //printff("left=%d right=%d\n", left, right);
-        //printff("p=%d size=%d\n",pos, (int)sta.size());
+        //printf("left=%d right=%d\n", left, right);
+        //printf("p=%d size=%d\n",pos, (int)sta.size());
         while (left < right) {
-            //printff("l=%d r=%d\n",left,right);
+            //printf("l=%d r=%d\n",left,right);
             if(left + 5 >= right ){
                 mid_right_value = Calc(right, pos, height);
                 mid_left_value = Calc(left, pos, height);
-                //printff("line=%d right=%d  rightVal=%d left=%d leftVal=%d\n", __LINE__,sta[right]  ,mid_right_value, sta[left], mid_left_value);
                 if(mid_left_value >= mid_right_value){
                     right = right - 1;
                 }else{
@@ -78,7 +72,7 @@ class Solution {
         }
 
         mid_left_value = Calc(left, pos, height);
-        //printff("left=%d pos=%d val=%d\n", left, pos, mid_left_value);
+        //printf("left=%d pos=%d val=%d\n", left, pos, mid_left_value);
         return mid_left_value;
     }
 void updateAns(int pos, int& ans, vector<int>&height){
@@ -91,7 +85,7 @@ void updateAns(int pos, int& ans, vector<int>&height){
 }
 
     void updateSta(int pos, vector<int>&height){
-        //printff("lastPos=%d lastVal=%d pos=%d posVal=%d\n", sta.back(), height[sta.back()], pos, height[pos]);
+        //printf("lastPos=%d lastVal=%d pos=%d posVal=%d\n", sta.back(), height[sta.back()], pos, height[pos]);
         if(height[sta.back()] < height[pos]){
             sta.push_back(pos);
         }
@@ -159,12 +153,10 @@ int main() {
     //    height = {3,2,1,3};
     //    test(height);
 
-    height = {0,2};
+        height = {0,2};
+        test(height);
+    height = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27};
     test(height);
-    height = {1,2,4,3};
-    test(height);
-    //    height = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27};
-    //  test(height);
 
     return 0;
 }

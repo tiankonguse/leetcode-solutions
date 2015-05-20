@@ -108,3 +108,4 @@ $RECYCLE.BIN/
 .coverage
 .tox
 *.mo
+*.stackdump
