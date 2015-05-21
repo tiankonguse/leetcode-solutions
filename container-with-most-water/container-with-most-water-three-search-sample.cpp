@@ -51,6 +51,17 @@ class Solution {
         //printff("p=%d size=%d\n",pos, (int)sta.size());
         while (left < right) {
             //printff("l=%d r=%d\n",left,right);
+            if(left + 5 >= right ){
+                mid_right_value = Calc(right, pos, height);
+                mid_left_value = Calc(left, pos, height);
+                //printff("line=%d right=%d  rightVal=%d left=%d leftVal=%d\n", __LINE__,sta[right]  ,mid_right_value, sta[left], mid_left_value);
+                if(mid_left_value >= mid_right_value){
+                    right = right - 1;
+                }else{
+                    left = left + 1;
+                }
+                continue;
+            }
             Golden_Section = (right - left) / 3;
 
             mid_right = right - Golden_Section;
@@ -59,10 +70,10 @@ class Solution {
             mid_left = left + Golden_Section;
             mid_left_value = Calc(mid_left, pos, height);
 
-            if (mid_left_value < mid_right_value) {
-                left = mid_left + 1;
+            if (mid_left_value <= mid_right_value) {
+                left = mid_left;
             } else {
-                right = mid_right - 1;
+                right = mid_right;
             }
         }
 
@@ -152,8 +163,8 @@ int main() {
     test(height);
     height = {1,2,4,3};
     test(height);
-        height = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27};
-      test(height);
+    //    height = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27};
+    //  test(height);
 
     return 0;
 }
