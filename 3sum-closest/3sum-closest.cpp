@@ -1,8 +1,8 @@
 /*************************************************************************
-  > File Name: 3sum-closest.cpp
-  > Author: tiankonguse(skyyuan)
-  > Mail: i@tiankonguse.com 
-  > Created Time: 2015年03月31日 14:23:03
+> File Name: 3sum-closest.cpp
+> Author: tiankonguse(skyyuan)
+> Mail: i@tiankonguse.com 
+> Created Time: 2015年03月31日 14:23:03
 ***********************************************************************/
 
 #include<iostream>
@@ -25,72 +25,101 @@ typedef long long LL;
 #endif
 
 class Solution {
-    struct twoNum{
-        int sum;
-        int firstPos;
-        int secondPos;
-        twoNum(int sum=0, int firstPos=0, int secondPos=0){
-            this->sum = sum;
-            this->firstPos = firstPos;
-            this->secondPos = secondPos;
-        }
-        bool operator<(const twoNum &t2)const {
-            return this->sum < t2.sum;
-        }
-    };
-public:
-    int threeSumClosest(vector<int> &array, int target) {
-        vector<twoNum> twoNumArray;
-        vector<twoNum> targetArray;
+    map<int,int>m;//<val, times>
+    vector<int>targetList;
+    int ans;
+    int expAns;
+    int target;
+    int targetSize;
 
-        int size = array.size();
-        for(int i=0;i<size;i++){
-            targetArray.push_back(twoNum(target - array[i], i+1, 0));
+    int abs(int a){
+        if(a < 0){
+            return -a;
+        }else{
+            return a;
         }
-        sort(targetArray.begin(), targetArray.end());
+    }
 
-        for(int i=0;i<size;i++){
-            for(int j=i+1;j<size;j++){
-                twoNumArray.push_back(twoNum(array[i]+array[j], i+1, j+1));
+    void updateAns(int a, int b){
+        int sum = a + b;
+        int left = 0;
+        int right = targetSize - 1;
+        int mid;
+
+        while(left + 3 < right){
+            mid = (left + right)/2;
+            if(targetList[mid] > sum){
+                right = mid;
+            }else{
+                left = mid ;
             }
         }
-        sort(twoNumArray.begin(), twoNumArray.end());
 
-        int ans = array[0] + array[1] + array[2];
-        int minSum = abs(ans - target);
-
-        int sum;
-
-        vector<twoNum>::iterator low;
-        for(int i=0;i<size;i++){
-            low = lower_bound(twoNumArray.begin(), twoNumArray.end(), targetArray[i]);
-
-            //lower
-
-            if(lower == twoNumArray.end()){
-
+        int c;
+        int tmpExpAns;
+        for(left -=3, right +=3;left <= right;left++){
+            if(left <0 || left >= targetSize){
+                continue;            
             }
-
-                    sum = array[i] + array[j] + array[k];
-                    if(abs(sum - target) < minSum){
-                        minSum = abs(sum - target);
-                        ans = sum;
-                    }
+            c = target - targetList[left];
+            sum = a + b + c;
+            tmpExpAns = abs(sum - target);
+            if(tmpExpAns < expAns){
+                if(a == c && b == c && m[c] < 3){
+                    continue;
                 }
+                if((b == c || a == c) && m[c] < 2){
+                    continue;
+                }
+                expAns = tmpExpAns;
+                ans = sum;
             }
         }
+
+    }
+
+    public:
+    int threeSumClosest(vector<int> &nums, int target) {
+        m.clear();
+        targetList.clear();
+        
+        this->target = target;
+
+        ans = nums[0] + nums[1] + nums[2];
+        expAns = abs(ans - target);
+
+        for(int i=0;i<nums.size();i++){
+            if(m.find(nums[i]) == m.end()){
+                m[nums[i]] = 1;
+                targetList.push_back(target - nums[i]);
+            }else{
+                m[nums[i]] = m[nums[i]] + 1;
+            }
+        }
+
+        sort(targetList.begin(), targetList.end()); 
+        targetSize = targetList.size();
+
+
+        for(map<int,int>::iterator i=m.begin(); i != m.end();i++){
+            for(map<int,int>::iterator j = i; j != m.end(); j++){
+                if(i == j && i->second == 1){
+                    continue;
+                }
+                updateAns(i->first, j->first);
+            }
+        }
+
         return ans;
     }
 };
 
 int main() {
-        
+
     Solution solution;
     vector<int> array;
-    array.push_back(-1);
-    array.push_back(-4);
-    array.push_back(2);
-    array.push_back(1);
+    
+    array = {-1, -4, 2, 1};
     printf("%d\n", solution.threeSumClosest(array, 1));
     return 0;
 }
