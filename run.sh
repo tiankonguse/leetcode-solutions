@@ -9,11 +9,8 @@
 
 echo  "" > link.md;
 
-for i in * ; do
-    if [[ $i == "readme.md" ]]||[[ $i == "run.sh" ]] || [[ $i == "link.md" ]]; then 
-        continue; 
-    fi  
-    
+for i in ./problemset/* ; do
+    i=`echo $i | sed 's/^.*\/\([^/]\+\)$/\1/'`;
     echo "* [$i](https://leetcode.com/problems/$i/)" >> link.md;  
 done
 
