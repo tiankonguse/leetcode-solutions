@@ -6,11 +6,12 @@
 #########################################################################
 #!/bin/bash
 
-
+echo "begin" 
 echo  "" > link.md;
 
 for i in ./problemset/* ; do
     i=`echo $i | sed 's/^.*\/\([^/]\+\)$/\1/'`;
-    echo "* [$i](https://leetcode.com/problems/$i/)" >> link.md;  
+    echo "run $i"
+    echo "* $i [problem](./problemset/$i/readme.md) [test](https://leetcode.com/problems/$i/) " >> link.md;  
 done
-
+echo "end"
