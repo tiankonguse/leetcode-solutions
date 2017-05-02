@@ -20,6 +20,20 @@ class Solution {
 		return true;
 	}
 	
+	void dfs(char* ansBuffer, int begin, int end, int baseChar, int sign, char* inputBuffer){
+		if(begin > end)return;
+		char c = baseChar;
+		for(int i=0; i < 10; i++,c += sign){
+			ansBuffer[begin] = ansBuffer[end] = c;
+			//第一个解是当前位置的最优解
+			//比如对于小答案，是求最大值，所以ABCD8为前缀的答案肯定比ABCD6为前缀的答案更优
+			if(strncmp(ansBuffer, inputBuffer, inputLength) * sign >= 0){
+				break;
+			}
+		}
+		dfs(ansBuffer, begin++, end--, int baseChar, int sign, char* inputBuffer);
+	}
+	
 	//由于求最大值和最小值合并了通用逻辑，所以理解难度大点，大家可以使用其中一个模拟一下
 	long long getNearestAns(const long long inputNum, const int sign, const char baseChar){
 		char inputBuffer[20];
@@ -42,18 +56,7 @@ class Solution {
 		memset(ansBuffer, baseChar, sizeof(ansBuffer));
 		ansBuffer[inputLength] = '\0';
 		
-		for(int begin = 0, end = inputLength - 1; begin <= end; begin++, end--){
-			//小答案是求最大值，所以需要从9迭代，大答案求最小值，所以从0迭代
-			char c = baseChar -  9 * sign;
-			for(int i=0; i < 10; i++,c += sign){
-				ansBuffer[begin] = ansBuffer[end] = c;
-				//第一个解是当前位置的最优解
-				//比如对于小答案，是求最大值，所以ABCD8为前缀的答案肯定比ABCD6为前缀的答案更优
-				if(strncmp(ansBuffer, inputBuffer, inputLength) * sign >= 0){
-					break;
-				}
-			}
-		}
+		dfs(ansBuffer, 0, inputLength - 1, baseChar -  9 * sign, sign, inputLength);
 		return atoll(ansBuffer);
 	}
 	
