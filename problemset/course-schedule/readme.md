@@ -24,3 +24,10 @@ Hints:
 2. [Topological Sort via DFS](https://class.coursera.org/algo-003/lecture/52) - A great video tutorial (21 minutes) on Coursera explaining the basic concepts of Topological Sort.
 3. Topological sort could also be done via [BFS](http://en.wikipedia.org/wiki/Topological_sorting#Algorithms).
 
+
+## hello
+
+建了一个小密圈，讨论各种算法群。  
+
+![小密圈](../../suanfa_xiaomiquan.jpg)
+

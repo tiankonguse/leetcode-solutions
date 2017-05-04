@@ -42,3 +42,8 @@ Here's an example:
 
 The above binary tree is serialized as `"{1,2,3,#,#,4,#,#,5}"`.  
 
+## hello
+
+建了一个小密圈，讨论各种算法群。  
+
+![小密圈](../../suanfa_xiaomiquan.jpg)

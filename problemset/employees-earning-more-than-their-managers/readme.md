@@ -25,3 +25,10 @@ Given the Employee table, write a SQL query that finds out employees who earn mo
 
 
 
+
+## hello
+
+建了一个小密圈，讨论各种算法群。  
+
+![小密圈](../../suanfa_xiaomiquan.jpg)
+

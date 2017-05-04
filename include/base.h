@@ -88,3 +88,17 @@ void output(TreeNode* root, int lev=0, int pre = -1) {
 		output(root->right, lev+1, root->val);
 	}
 }
+
+void output(vector<int>& vec){
+	for(int i = 0; i < vec.size(); i++){
+		printf("%d ", vec[i]);
+	}
+	printf("\n");
+}
+
+void output(vector<vector<int>>& matrix){
+	for(int i = 0; i < matrix.size(); i++){
+		output(matrix[i]);
+	}
+	printf("\n");
+}

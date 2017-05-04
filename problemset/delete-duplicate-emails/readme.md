@@ -23,3 +23,10 @@ For example, after running your query, the above Person table should have the fo
 | 2  | bob@example.com  |
 +----+------------------+
 ```
+
+## hello
+
+建了一个小密圈，讨论各种算法群。  
+
+![小密圈](../../suanfa_xiaomiquan.jpg)
+

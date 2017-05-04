@@ -24,3 +24,10 @@ Output: False
 
 1. The input strings only contain lower case letters.  
 2. The length of both given strings is in range [1, 10,000].   
+
+
+## hello
+
+建了一个小密圈，讨论各种算法群。  
+
+![小密圈](../../suanfa_xiaomiquan.jpg)

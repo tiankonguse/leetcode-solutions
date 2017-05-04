@@ -6,3 +6,10 @@ For example, the 32-bit integer `11` has binary representation `0000000000000000
 
 
 [Hamming-weight]: http://en.wikipedia.org/wiki/Hamming_weight
+
+## hello
+
+建了一个小密圈，讨论各种算法群。  
+
+![小密圈](../../suanfa_xiaomiquan.jpg)
+

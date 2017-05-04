@@ -10,4 +10,8 @@ Note:
 You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).  
 
 
+## hello
 
+建了一个小密圈，讨论各种算法群。  
+
+![小密圈](../../suanfa_xiaomiquan.jpg)
