@@ -31,19 +31,19 @@ public:
     // Encodes a URL to a shortened URL.ss
     std::string encode(const std::string& longUrl) {
         if(longUrl.size()%2){
-			return encodeInc(longUrl);
-		}else{
-			return encodeHash(longUrl);
-		}
+            return encodeInc(longUrl);
+        }else{
+            return encodeHash(longUrl);
+        }
     }
-	
+    
     std::string encodeInc(const std::string& longUrl) {
-		char buf[128];
-		snprintf(buf, sizeof(buf), "%d", (int)m_list.size());
-		m_list.push_back(longUrl);
-		return buf;
+        char buf[128];
+        snprintf(buf, sizeof(buf), "%d", (int)m_list.size());
+        m_list.push_back(longUrl);
+        return buf;
     }
-	
+    
     std::string encodeHash(const std::string& longUrl) {
         if(m_hash.find(longUrl) != m_hash.end()){
             return m_hash[longUrl];
