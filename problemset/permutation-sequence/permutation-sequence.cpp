@@ -106,8 +106,7 @@ void test(int n, int k){
 int main() {
     vector<int> nums;
 
-    nums = {1,2,3};
-    test(nums);
+    test(3, 4);
 
 
     return 0;
