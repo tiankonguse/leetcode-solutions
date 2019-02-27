@@ -102,3 +102,38 @@ void output(vector<vector<int>>& matrix){
 	}
 	printf("\n");
 }
+
+
+void output(char const* name,int data) {
+    printf("%s:", name);
+    printf("%d ", data);
+    printf("\n");
+}
+
+void output(char const* name, vector<int>&data) {
+    printf("%s[%d]:", name, data.size());
+    for(int i=0; i<data.size(); i++) {
+        printf("%d ", data[i]);
+    }
+    printf("\n");
+}
+void output(char const* name, vector<char>&data) {
+    printf("%s[%d]:", name, data.size());
+    for(int i=0; i<data.size(); i++) {
+        printf("%c ", data[i]);
+    }
+    printf("\n");
+}
+
+void output(char const* name, vector<vector<int> >&data) {
+    printf("%s[%d]:\n", name, data.size());
+    for(int i=0; i<data.size(); i++) {
+        output("    ", data[i]);
+    }
+}
+void output(char const* name, vector<vector<char> >&data) {
+    printf("%s[%d]:\n", name, data.size());
+    for(int i=0; i<data.size(); i++) {
+        output("    ", data[i]);
+    }
+}
