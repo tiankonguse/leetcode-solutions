@@ -109,14 +109,27 @@ void output(char const* name,int data) {
     printf("%d ", data);
     printf("\n");
 }
+void output(char const* name,const string& data) {
+    printf("%s:", name);
+    printf("%s ", data.c_str());
+    printf("\n");
+}
 
 void output(char const* name, vector<int>&data) {
-    printf("%s[%d]:", name, data.size());
+    printf("%s[%d]:\n    ", name, data.size());
     for(int i=0; i<data.size(); i++) {
         printf("%d ", data[i]);
     }
     printf("\n");
 }
+void output(char const* name, vector<long long>&data) {
+    printf("%s[%d]:\n    ", name, data.size());
+    for(int i=0; i<data.size(); i++) {
+        printf("%lld ", data[i]);
+    }
+    printf("\n");
+}
+
 void output(char const* name, vector<char>&data) {
     printf("%s[%d]:", name, data.size());
     for(int i=0; i<data.size(); i++) {
@@ -126,6 +139,12 @@ void output(char const* name, vector<char>&data) {
 }
 
 void output(char const* name, vector<vector<int> >&data) {
+    printf("%s[%d]:\n", name, data.size());
+    for(int i=0; i<data.size(); i++) {
+        output("    ", data[i]);
+    }
+}
+void output(char const* name, vector<vector<long long> >&data) {
     printf("%s[%d]:\n", name, data.size());
     for(int i=0; i<data.size(); i++) {
         output("    ", data[i]);
