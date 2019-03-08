@@ -89,70 +89,89 @@ void output(TreeNode* root, int lev=0, int pre = -1) {
 	}
 }
 
-void output(vector<int>& vec){
+void output(char data){
+    printf("%c ", data);
+}
+
+void output(int data){
+    printf("%d ", data);
+}
+
+void output(long long data){
+    printf("%lld ", data);
+}
+
+void output(string& data){
+    printf("%s ", data.c_str());
+}
+
+template <class baseType>
+void output(vector<baseType>& vec){
 	for(int i = 0; i < vec.size(); i++){
-		printf("%d ", vec[i]);
+		output(vec[i]);
 	}
 	printf("\n");
 }
 
-void output(vector<vector<int>>& matrix){
+template <class baseType>
+void output(vector<vector<baseType>>& matrix){
 	for(int i = 0; i < matrix.size(); i++){
 		output(matrix[i]);
 	}
 	printf("\n");
 }
 
-
-void output(char const* name,int data) {
+template <class baseType>
+void output(char const* name,baseType data) {
     printf("%s:", name);
-    printf("%d ", data);
+    output(data);
     printf("\n");
 }
-void output(char const* name,const string& data) {
-    printf("%s:", name);
-    printf("%s ", data.c_str());
+template <class baseType>
+void output(char const* name,vector<baseType> data) {
+    printf("%s size[%d]:\n    ", name, data.size());
+    output(data);
     printf("\n");
 }
 
-void output(char const* name, vector<int>&data) {
-    printf("%s[%d]:\n    ", name, data.size());
+template <class vecType>
+void output(char const* name,vector<vector<vecType> > data) {
+    printf("%s size[%d]:\n", name, data.size());
     for(int i=0; i<data.size(); i++) {
-        printf("%d ", data[i]);
-    }
-    printf("\n");
-}
-void output(char const* name, vector<long long>&data) {
-    printf("%s[%d]:\n    ", name, data.size());
-    for(int i=0; i<data.size(); i++) {
-        printf("%lld ", data[i]);
+        output("    ", data[i]);
     }
     printf("\n");
 }
 
-void output(char const* name, vector<char>&data) {
-    printf("%s[%d]:", name, data.size());
-    for(int i=0; i<data.size(); i++) {
-        printf("%c ", data[i]);
-    }
-    printf("\n");
+template <class baseType>
+bool eq(baseType first, baseType second){
+    return first == second;
 }
 
-void output(char const* name, vector<vector<int> >&data) {
-    printf("%s[%d]:\n", name, data.size());
-    for(int i=0; i<data.size(); i++) {
-        output("    ", data[i]);
+template <class baseType>
+bool eq(vector<baseType> first, vector<baseType> second){
+    if(first.size() != second.size()){
+        return false;
     }
-}
-void output(char const* name, vector<vector<long long> >&data) {
-    printf("%s[%d]:\n", name, data.size());
-    for(int i=0; i<data.size(); i++) {
-        output("    ", data[i]);
+    for(int i=0; i<first.size(); i++) {
+        if(!eq(first[i], second[i])){
+            return false;
+        }
     }
+    return true;
 }
-void output(char const* name, vector<vector<char> >&data) {
-    printf("%s[%d]:\n", name, data.size());
-    for(int i=0; i<data.size(); i++) {
-        output("    ", data[i]);
+
+
+template <class baseType>
+bool eq(vector<vector<baseType>> first, vector<vector<baseType>> second){
+    if(first.size() != second.size()){
+        return false;
     }
+    for(int i=0; i<first.size(); i++) {
+        if(!eq(first[i], second[i])){
+            return false;
+        }
+    }
+    return true;
 }
+
