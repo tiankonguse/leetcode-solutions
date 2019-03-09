@@ -37,44 +37,73 @@ typedef unsigned char uchar;
 
 class Solution {
 public:
-   class Solution {
-public:
     bool isValid(string& data) {
-
+        stack<char> sta;
+        for(int i=0; i<data.size(); i++) {
+            sta.push(data[i]);
+            while(sta.size() > 0 && sta.top() == 'c') {
+                if(sta.size() < 3) {
+                    return false;
+                }
+                char c = sta.top();
+                sta.pop();
+                char b = sta.top();
+                sta.pop();
+                char a = sta.top();
+                sta.pop();
+                if(c != 'c' || b != 'b' || a != 'a') {
+                    return false;
+                }
+            }
+        }
+        if(sta.size() != 0) {
+            return false;
+        }
+        return true;
     }
-};
 };
 
 template <class ansType, class dataType>
 void test(dataType& data, ansType& expectAns) {
     Solution work;
     ansType ans;
-    ans = work.commonChars(data);
+    ans = work.isValid(data);
 
     static int index = 0;
     index++;
     bool check = eq(ans, expectAns);
-    if(!check){
+    if(!check) {
         printf("index %d: NO\n", index);
         output("data", data);
         output("ans", ans);
         output("expectAns", expectAns);
-    }else{
+    } else {
         printf("index %d: YES\n", index);
     }
 
 }
 
 int main() {
-    vector<string> data;
-    vector<string> expectAns;
+    string data;
+    bool expectAns;
 
-    data = {"bella","label","roller"};
-    expectAns = {"e","l","l"};
+    data = "aabcbc";
+    expectAns = true;
     test(data, expectAns);
 
-    data = {"cool","lock","cook"};
-    expectAns = {"c","o"};
+    data = "abcabcababcc";
+    expectAns = true;
     test(data, expectAns);
+
+
+    data = "abccba";
+    expectAns = false;
+    test(data, expectAns);
+
+    data = "cababc";
+    expectAns = false;
+    test(data, expectAns);
+
+
     return 0;
 }

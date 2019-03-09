@@ -89,12 +89,16 @@ void output(TreeNode* root, int lev=0, int pre = -1) {
 	}
 }
 
+void output(bool data){
+    printf("%s ", data?"true":"false");
+}
+
 void output(char data){
     printf("%c ", data);
 }
 
 void output(int data){
-    printf("%d ", data);
+    printf("%5d ", data);
 }
 
 void output(long long data){
@@ -110,7 +114,7 @@ void output(vector<baseType>& vec){
 	for(int i = 0; i < vec.size(); i++){
 		output(vec[i]);
 	}
-	printf("\n");
+	//printf("\n");
 }
 
 template <class baseType>
@@ -118,7 +122,7 @@ void output(vector<vector<baseType>>& matrix){
 	for(int i = 0; i < matrix.size(); i++){
 		output(matrix[i]);
 	}
-	printf("\n");
+	//printf("\n");
 }
 
 template <class baseType>
@@ -129,18 +133,20 @@ void output(char const* name,baseType data) {
 }
 template <class baseType>
 void output(char const* name,vector<baseType> data) {
-    printf("%s size[%d]:\n    ", name, data.size());
+    printf("%s size[%3d]:    ", name, data.size());
     output(data);
     printf("\n");
 }
 
 template <class vecType>
 void output(char const* name,vector<vector<vecType> > data) {
-    printf("%s size[%d]:\n", name, data.size());
+    printf("%s size[%4d]:\n", name, data.size());
     for(int i=0; i<data.size(); i++) {
-        output("    ", data[i]);
+        printf("index[%3d] size[%d]", i, data[i].size());
+        output(data[i]);
+        printf("\n");
     }
-    printf("\n");
+    //printf("\n");
 }
 
 template <class baseType>
