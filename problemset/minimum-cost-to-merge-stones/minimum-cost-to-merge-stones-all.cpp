@@ -50,28 +50,46 @@ class Solution {
         if(dp[left][right] != -1) {
             return dp[left][right];
         }
+
         int num = right - left + 1;
-        int after  = 1 + (num - 1) % (K - 1);
-        int sumK =  prefixSum[right+1] - prefixSum[left];
         if(num < K) {
-            return dp[left][right] = 0;
-        }else if(num == K) {
-            return dp[left][right] = sumK;
+            dp[left][right] = 0;
+            return dp[left][right];
+        }
+
+        if(num == K) {
+            dp[left][right] = prefixSum[right+1] - prefixSum[left];
+            return dp[left][right];
         }
 
         int sum =0;
-        for(int i=left; i<right; i+=K-1) {
+        int after  = 1 + (num - 1) % (K - 1);
+        for(int i=left; i<right; i++) {
+            int leftNum = i - left + 1;
+            int leftAfter = 1 + (leftNum - 1) % (K - 1);
+            int rightNum = right - (i+1) + 1;
+            int rightAfter = 1 + (rightNum - 1) % (K - 1);
+
+            if(leftNum < K && rightNum < K) {
+                continue;
+            }
+            if(leftAfter + rightAfter > K){
+                continue;
+            }
+
             if(after == 1) {
-                sum = dfs(left, i) + dfs(i+1, right) + sumK;
+                sum = dfs(left, i) + dfs(i+1, right) + prefixSum[right+1] - prefixSum[left];
             } else {
                 sum = dfs(left, i) + dfs(i+1, right);
             }
+
 
             if(dp[left][right] == -1) {
                 dp[left][right] = sum;
             } else {
                 dp[left][right] = min(dp[left][right], sum);
             }
+
         }
         return dp[left][right];
     }
@@ -82,6 +100,7 @@ public:
             return -1;
         }
         int n = stones.size();
+
         //init
         prefixSum.resize(n+1, 0);
         dp.resize(n, vector<int>(n, -1));
@@ -125,6 +144,10 @@ int main() {
     int K;
     int expectAns;
 
+    data = {3,2,4,1};
+    K = 2;
+    expectAns = 20;
+    test(data, K, expectAns);
 
     data = {3,2,4,1};
     K = 3;
@@ -144,26 +167,17 @@ int main() {
     test(data, K, expectAns);
 
 
-    data = {3,2,4,1};
-    K = 2;
-    expectAns = 21;
+
+    data = {7,7,8,6,5,6,6};
+    K = 3;
+    expectAns = 83;
     test(data, K, expectAns);
 
 
-//
-//    data = {7,7,8,6,5,6,6};
-//    K = 3;
-//    expectAns = 83;
-//    test(data, K, expectAns);
-//
-//
-//    data = {69,39,79,78,16,6,36,97,79,27,14,31,4};
-//    K = 2;
-//    expectAns = 1957;
-//    test(data, K, expectAns);
-
-
-
+    data = {69,39,79,78,16,6,36,97,79,27,14,31,4};
+    K = 2;
+    expectAns = 1957;
+    test(data, K, expectAns);
     return 0;
 }
 

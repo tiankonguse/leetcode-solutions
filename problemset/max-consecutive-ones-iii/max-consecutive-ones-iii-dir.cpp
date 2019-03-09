@@ -48,12 +48,11 @@ public:
                 zeroNum++;
             }
             if(zeroNum > k) { //zero too more
-                while(!que.empty() && zeroNum > k) {
-                    if(que.front() == 0) {
-                        zeroNum--;
-                    }
+                while(!que.empty() && que.front() == 1) {
                     que.pop();
                 }
+                que.pop();
+                zeroNum--;
             }
             if(ans < que.size()) {
                 ans = que.size();

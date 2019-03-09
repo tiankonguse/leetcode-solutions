@@ -40,17 +40,22 @@ public:
     bool isValid(string& data) {
         stack<char> sta;
         for(int i=0; i<data.size(); i++) {
-            sta.push(data[i]);
-            if(sta.top() == 'c') {
-                if(sta.size() < 3) {
+            if(data[i] == 'c') {
+                if(sta.size() < 2) {
                     return false;
                 }
-                char c = sta.top(); sta.pop();
-                char b = sta.top(); sta.pop();
-                char a = sta.top(); sta.pop();
-                if(c != 'c' || b != 'b' || a != 'a') {
+
+                if(sta.top() != 'b'){
                     return false;
                 }
+                sta.pop();
+
+                if(sta.top() != 'a'){
+                    return false;
+                }
+                sta.pop();
+            }else{
+                sta.push(data[i]);
             }
         }
         if(sta.size() != 0) {
