@@ -3,7 +3,6 @@
     > Author: tiankonguse
     > Mail: i@tiankonguse.com
     > Created Time: Sun Mar 10 09:57:23 2019
-    > desc: 1005. Maximize Sum Of Array After K Negations
  ************************************************************************/
 
 
