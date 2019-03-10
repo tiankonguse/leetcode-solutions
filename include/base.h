@@ -23,10 +23,10 @@ typedef long long LL;
  */
 
 struct TreeNode {
-	int val;
-	TreeNode *left;
-	TreeNode *right;
-	TreeNode(int x = 0) : val(x), left(NULL), right(NULL) {}
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x = 0) : val(x), left(NULL), right(NULL) {}
 };
 
 enum {
@@ -36,13 +36,13 @@ enum {
 };
 
 struct Node {
-	int index;
-	int val;
-	int pre;
-	int type; // 0 left, 1 right , -1 root
-	Node(int index=-1, int val = -1, int pre = -1, int type = -1):index(index), val(val), pre(pre), type(type) {
+    int index;
+    int val;
+    int pre;
+    int type; // 0 left, 1 right , -1 root
+    Node(int index=-1, int val = -1, int pre = -1, int type = -1):index(index), val(val), pre(pre), type(type) {
 
-	}
+    }
 };
 
 /*
@@ -62,67 +62,216 @@ struct Node {
  *
  */
 void born(vector<Node>&data, TreeNode* root) {
-	for(vector<Node>::iterator it = data.begin(); it != data.end(); it++) {
-		int index = it->index;
-		int val = it->val;
-		int pre = it->pre;
-		int type = it->type;
+    for(vector<Node>::iterator it = data.begin(); it != data.end(); it++) {
+        int index = it->index;
+        int val = it->val;
+        int pre = it->pre;
+        int type = it->type;
 
-		root[index].val = val;
-		if(pre != -1) {
-			if(type == 0) {
-				root[pre].left = root + index;
-			} else if(type == 1) {
-				root[pre].right = root + index;
-			} else {
-				printf("WARNING: data error. type = %d\n", type);
-			}
-		}
-	}
+        root[index].val = val;
+        if(pre != -1) {
+            if(type == 0) {
+                root[pre].left = root + index;
+            } else if(type == 1) {
+                root[pre].right = root + index;
+            } else {
+                printf("WARNING: data error. type = %d\n", type);
+            }
+        }
+    }
 }
 
-void output(TreeNode* root, int lev=0, int pre = -1) {
-	printf("lev = %d pre = %d addr = %p\n", lev, pre, root);
-	if(root != NULL) {
-		output(root->left, lev+1, root->val);
-		output(root->right, lev+1, root->val);
-	}
+TreeNode* vecToTree(vector<int> data) {
+    if(data.size() == 0){
+        return nullptr;
+    }
+
+
+    TreeNode* root = new TreeNode(data[0]);;
+    queue<TreeNode*> que;
+    que.push(root);
+
+    for(int i=1;i<data.size();){
+        TreeNode* preNode = que.front();
+        que.pop();
+
+
+        if(i<data.size()){
+            if(data[i] > 0 && preNode != nullptr){
+                preNode->left = new TreeNode(data[i]);
+                que.push(preNode->left);
+            }else{
+                que.push(nullptr);
+            }
+            i++;
+        }
+
+        if(i<data.size()){
+          if(data[i] > 0 && preNode != nullptr){
+                preNode->right = new TreeNode(data[i]);
+                que.push(preNode->right);
+            }else{
+                que.push(nullptr);
+            }
+            i++;
+        }
+    }
+
+    return root;
 }
 
-void output(bool data){
+
+int countTreeNode(TreeNode* root) {
+    if(root == nullptr) {
+        return 0;
+    }
+    return 1 + countTreeNode(root->left) + countTreeNode(root->right);
+}
+
+int deepTreeNode(TreeNode* root) {
+    if(root == nullptr) {
+        return 0;
+    }
+    return 1 + max(countTreeNode(root->left),countTreeNode(root->right));
+}
+
+void printbase(int val, int base) {
+    switch(base) {
+    case 1:
+        printf("%1d", val);
+        break;
+    case 2:
+        printf("%2d", val);
+        break;
+    case 3:
+        printf("%3d", val);
+        break;
+    case 4:
+        printf("%4d", val);
+        break;
+    case 5:
+        printf("%5d", val);
+        break;
+    default:
+        printf("%d", val);
+        break;
+    }
+}
+void printbase(string val, int base) {
+    switch(base) {
+    case 1:
+        printf("%1s", val.c_str());
+        break;
+    case 2:
+        printf("%2s", val.c_str());
+        break;
+    case 3:
+        printf("%3s", val.c_str());
+        break;
+    case 4:
+        printf("%4s", val.c_str());
+        break;
+    case 5:
+        printf("%5s", val.c_str());
+        break;
+    default:
+        printf("%s", val.c_str());
+        break;
+    }
+}
+
+void printfblank(int befotnum, int base){
+    while(befotnum-->0){
+        printbase("", base);
+    }
+}
+
+
+
+void output(TreeNode* root) {
+    int treeCount = countTreeNode(root);
+    int deepCount = deepTreeNode(root);
+    queue<TreeNode*> que;
+    int lev=0;
+    int treenum = 0;
+    int levnum = 0;
+    int befotnum = 0;
+    int betweenNum = 1;
+    int base = 2;
+
+    for(int i=2;i<deepCount;i++){
+        befotnum = betweenNum;
+        betweenNum = betweenNum *2 + 1;
+    }
+
+    printf("\n[%2d] :", lev++);
+    printfblank(befotnum, base);
+
+    que.push(root);
+    while(!que.empty()) {
+        TreeNode* pre = que.front();
+        que.pop();
+        if(pre != nullptr) {
+            que.push(pre->left);
+            que.push(pre->right);
+            printbase(pre->val, base);
+            treenum++;
+        } else {
+            que.push(nullptr);
+            que.push(nullptr);
+            printbase("", base);
+        }
+        levnum++;
+
+        if(treenum >= treeCount) {
+            break;
+        }
+
+        printfblank(betweenNum, base);
+        if((levnum & (levnum + 1)) == 0) {
+            printf("\n[%2d]: ", lev++);
+            betweenNum = befotnum;
+            befotnum = befotnum / 2;
+            printfblank(befotnum, base);
+        }
+    }
+    printf("\n");
+}
+
+void output(bool data) {
     printf("%s ", data?"true":"false");
 }
 
-void output(char data){
+void output(char data) {
     printf("%c ", data);
 }
 
-void output(int data){
+void output(int data) {
     printf("%5d ", data);
 }
 
-void output(long long data){
+void output(long long data) {
     printf("%lld ", data);
 }
 
-void output(string& data){
+void output(string& data) {
     printf("%s ", data.c_str());
 }
 
 template <class baseType>
-void output(vector<baseType>& vec){
-	for(int i = 0; i < vec.size(); i++){
-		output(vec[i]);
-	}
-	//printf("\n");
+void output(vector<baseType>& vec) {
+    for(int i = 0; i < vec.size(); i++) {
+        output(vec[i]);
+    }
+    //printf("\n");
 }
 
 template <class baseType>
-void output(vector<vector<baseType>>& matrix){
-	for(int i = 0; i < matrix.size(); i++){
-		output(matrix[i]);
-	}
-	//printf("\n");
+void output(vector<vector<baseType>>& matrix) {
+    for(int i = 0; i < matrix.size(); i++) {
+        output(matrix[i]);
+    }
+    //printf("\n");
 }
 
 template <class baseType>
@@ -150,17 +299,33 @@ void output(char const* name,vector<vector<vecType> > data) {
 }
 
 template <class baseType>
-bool eq(baseType first, baseType second){
+bool eq(baseType first, baseType second) {
     return first == second;
 }
 
+template <>
+bool eq(TreeNode* first, TreeNode* second) {
+    if(first == NULL && second == NULL) {
+        return true;
+    }
+    if(first == NULL || second == NULL) {
+        return false;
+    }
+    if(first->val != second->val) {
+        return false;
+    }
+    return eq(first->left, second->left) || eq(first->right, second->right);
+}
+
+
+
 template <class baseType>
-bool eq(vector<baseType> first, vector<baseType> second){
-    if(first.size() != second.size()){
+bool eq(vector<baseType> first, vector<baseType> second) {
+    if(first.size() != second.size()) {
         return false;
     }
     for(int i=0; i<first.size(); i++) {
-        if(!eq(first[i], second[i])){
+        if(!eq(first[i], second[i])) {
             return false;
         }
     }
@@ -169,12 +334,12 @@ bool eq(vector<baseType> first, vector<baseType> second){
 
 
 template <class baseType>
-bool eq(vector<vector<baseType>> first, vector<vector<baseType>> second){
-    if(first.size() != second.size()){
+bool eq(vector<vector<baseType>> first, vector<vector<baseType>> second) {
+    if(first.size() != second.size()) {
         return false;
     }
     for(int i=0; i<first.size(); i++) {
-        if(!eq(first[i], second[i])){
+        if(!eq(first[i], second[i])) {
             return false;
         }
     }

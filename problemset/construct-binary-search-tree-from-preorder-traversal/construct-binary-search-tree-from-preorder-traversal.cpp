@@ -53,14 +53,14 @@ auto __ =[]() {
 
 class Solution {
     TreeNode* dfs(vector<int>& preorder, int left, int right) {
-        if(left > right){
+        if(left > right) {
             return nullptr;
         }
 
         TreeNode *root = new TreeNode(preorder[left]);
         int mid;
-        for(mid=left;mid<=right;mid++){
-            if(preorder[mid] > preorder[left]){
+        for(mid=left; mid<=right; mid++) {
+            if(preorder[mid] > preorder[left]) {
                 break;
             }
         }
@@ -79,9 +79,8 @@ void test(ansType& expectAns, dataType1& A = dataType1(), dataType2 K = dataType
     Solution work;
     ansType ans;
     ans = work.bstFromPreorder(A);
-
     output("ans", ans);
-    return ;
+
     static int index = 0;
     index++;
     bool check = eq(ans, expectAns);
@@ -99,13 +98,13 @@ void test(ansType& expectAns, dataType1& A = dataType1(), dataType2 K = dataType
 
 }
 
+
+
 int main() {
     vector<int> data;
-    TreeNode* expectAns;
-
+    TreeNode* expectAns = vecToTree({8,5,10,1,7,NULL,12});
 
     data = {8,5,1,7,10,12};
-    //expectAns = 5;
     test(expectAns, data);
 
     return 0;
