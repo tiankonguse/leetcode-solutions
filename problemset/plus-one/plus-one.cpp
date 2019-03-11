@@ -1,8 +1,8 @@
 /*************************************************************************
-    > File Name: find-pivot-index.cpp
+    > File Name: plus-one.cpp
     > Author: tiankonguse
     > Mail: i@tiankonguse.com
-    > Created Time: Tue Mar 12 00:03:35 2019
+    > Created Time: Tue Mar 12 00:26:06 2019
  ************************************************************************/
 
 #include<cstdio>
@@ -41,28 +41,17 @@ auto __ =[]() {
 
 class Solution {
 public:
-    int pivotIndex(vector<int>& nums) {
-        const int n = nums.size();
-        if(n == 0){
-            return -1;
+    vector<int> plusOne(vector<int> digits) {
+        int sum = 1;
+        for(int i=digits.size()-1;i>=0;i--){
+            digits[i] += sum;
+            sum = digits[i]/10;
+            digits[i] %= 10;
         }
-
-        vector<int> frontSum(nums.size(), 0);
-        vector<int> backSum(nums.size(), 0);
-        frontSum[0] = nums[0];
-        for(int i = 1;i<n;i++){
-            frontSum[i] = frontSum[i-1] + nums[i];
+        if(sum){
+            digits.insert(digits.begin(), sum);
         }
-        backSum[n - 1] = nums[n - 1];
-        for(int i = n - 2;i>=0;i--){
-            backSum[i] = backSum[i+1] +  nums[i];
-        }
-        for(int i=0;i<n;i++){
-            if(frontSum[i] == backSum[i]){
-                return i;
-            }
-        }
-        return -1;
+        return digits;
     }
 };
 
@@ -70,7 +59,7 @@ template <class ansType, class dataType1, class dataType2 = int>
 void test(ansType& expectAns, dataType1& data, dataType2 K = dataType2()) {
     Solution work;
     ansType ans;
-    ans = work.pivotIndex(data);
+    ans = work.plusOne(data);
 
     static int index = 0;
     index++;
@@ -90,16 +79,27 @@ void test(ansType& expectAns, dataType1& data, dataType2 K = dataType2()) {
 
 int main() {
     vector<int> data;
-    int expectAns;
+    vector<int> expectAns;
 
 
-    data = {1, 7, 3, 6, 5, 6};
-    expectAns = 3;
+    data = {1,2,3};
+    expectAns = {1,2,4};
     test(expectAns, data);
 
+    data = {4,3,2,1};
+    expectAns = {4,3,2,2};
+    test(expectAns, data);
 
-    data = {1, 2, 3};
-    expectAns = -1;
+    data = {0};
+    expectAns = {1};
+    test(expectAns, data);
+
+    data = {9,0,9};
+    expectAns = {9,1,0};
+    test(expectAns, data);
+
+    data = {9,9,9};
+    expectAns = {1, 0, 0, 0};
     test(expectAns, data);
 
     return 0;

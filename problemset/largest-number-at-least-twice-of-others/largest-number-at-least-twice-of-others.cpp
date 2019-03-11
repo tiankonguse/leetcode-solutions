@@ -1,8 +1,8 @@
 /*************************************************************************
-    > File Name: find-pivot-index.cpp
+    > File Name: largest-number-at-least-twice-of-others.cpp
     > Author: tiankonguse
     > Mail: i@tiankonguse.com
-    > Created Time: Tue Mar 12 00:03:35 2019
+    > Created Time: Tue Mar 12 00:19:10 2019
  ************************************************************************/
 
 #include<cstdio>
@@ -41,28 +41,24 @@ auto __ =[]() {
 
 class Solution {
 public:
-    int pivotIndex(vector<int>& nums) {
-        const int n = nums.size();
-        if(n == 0){
-            return -1;
-        }
-
-        vector<int> frontSum(nums.size(), 0);
-        vector<int> backSum(nums.size(), 0);
-        frontSum[0] = nums[0];
-        for(int i = 1;i<n;i++){
-            frontSum[i] = frontSum[i-1] + nums[i];
-        }
-        backSum[n - 1] = nums[n - 1];
-        for(int i = n - 2;i>=0;i--){
-            backSum[i] = backSum[i+1] +  nums[i];
-        }
-        for(int i=0;i<n;i++){
-            if(frontSum[i] == backSum[i]){
-                return i;
+    int dominantIndex(vector<int>& nums) {
+        int maxNum = nums[0];
+        int maxIndex = 0;
+        for(int i=0;i<nums.size();i++){
+            if(nums[i] > maxNum){
+                maxNum = nums[i];
+                maxIndex = i;
             }
         }
-        return -1;
+        for(int i=0;i<nums.size();i++){
+            if(i == maxIndex){
+                continue;
+            }
+            if(nums[i] * 2 > maxNum){
+                return -1;
+            }
+        }
+        return maxIndex;
     }
 };
 
@@ -70,7 +66,7 @@ template <class ansType, class dataType1, class dataType2 = int>
 void test(ansType& expectAns, dataType1& data, dataType2 K = dataType2()) {
     Solution work;
     ansType ans;
-    ans = work.pivotIndex(data);
+    ans = work.dominantIndex(data);
 
     static int index = 0;
     index++;
@@ -93,13 +89,17 @@ int main() {
     int expectAns;
 
 
-    data = {1, 7, 3, 6, 5, 6};
-    expectAns = 3;
+    data = {3, 6, 1, 0};
+    expectAns = 1;
     test(expectAns, data);
 
 
-    data = {1, 2, 3};
+    data = {1, 2, 3, 4};
     expectAns = -1;
+    test(expectAns, data);
+
+    data = {0,0,0,1};
+    expectAns = 3;
     test(expectAns, data);
 
     return 0;
