@@ -1,8 +1,8 @@
 /*************************************************************************
-  > File Name: longest-common-prefix.cpp
+  > File Name: implement-strstr.cpp
   > Author: tiankonguse(skyyuan)
   > Mail: i@tiankonguse.com
-  > Created Time: 2015年04月16日 12:51:15
+  > Created Time: 2015年06月11日 星期四 00时30分24秒
 ***********************************************************************/
 
 #include<iostream>
@@ -24,29 +24,22 @@ typedef __int64 LL;
 #else
 typedef long long LL;
 #endif
-
 class Solution {
 public:
-    string longestCommonPrefix(vector<string>& strs) {
-        if(strs.size() == 0){
-            return "";
-        }
-        const string& first = strs[0];
-        int ansLen = first.length();
-        for(int i=1; i< strs.size(); i++){
-            const string& str = strs[i];
-            ansLen = min(ansLen, (int)str.length());
-            for(int j=0;j<ansLen;j++){
-                if(str[j] != first[j]){
-                    ansLen = j;
+    int strStr(string haystack, string needle) {
+        int haystackLen = haystack.size();
+        int needleLen = needle.size();
+        for(int i=0,j=0;i<=haystackLen-needleLen;i++){
+            for(j=0;j<needleLen;j++){
+                if (haystack[i + j] != needle[j]) {
                     break;
                 }
             }
-            if(ansLen == 0){
-                return "";
+            if(j == needleLen){
+                return i;
             }
         }
-        return first.substr(0,ansLen);
+        return -1;
     }
 };
 
@@ -54,7 +47,7 @@ template <class ansType, class dataType1, class dataType2 = int>
 void test(ansType& expectAns, dataType1& firstData, dataType2 secondData = dataType2()) {
     Solution work;
     ansType ans;
-    ans = work.longestCommonPrefix(firstData);
+    ans = work.strStr(firstData, secondData);
 
     static int index = 0;
     index++;
@@ -74,27 +67,35 @@ void test(ansType& expectAns, dataType1& firstData, dataType2 secondData = dataT
 }
 
 int main() {
-    vector<string> first;
-    string expectAns;
-
-    first = {"flower","flower","flower"};
-    expectAns = "flower";
-    test(expectAns, first);
-
-    first = {"flower","flow","flight"};
-    expectAns = "fl";
-    test(expectAns, first);
+    string first;
+    string second;
+    int expectAns;
 
 
-    first = {"dog","racecar","car"};
-    expectAns = "";
-    test(expectAns, first);
+    first = "hello";
+    second = "ll";
+    expectAns = 2;
+    test(expectAns, first, second);
 
-    first = {};
-    expectAns = "";
-    test(expectAns, first);
+
+    first = "aaaaa";
+    second = "bba";
+    expectAns = -1;
+    test(expectAns, first, second);
+
+
+
+    first = "aaa";
+    second = "a";
+    expectAns = 0;
+    test(expectAns, first, second);
+
+
+
+    first = "aaa";
+    second = "";
+    expectAns = 0;
+    test(expectAns, first, second);
 
     return 0;
 }
-
-
