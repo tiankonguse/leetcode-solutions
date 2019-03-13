@@ -1,7 +1,7 @@
 /*************************************************************************
   > File Name: longest-common-prefix.cpp
   > Author: tiankonguse(skyyuan)
-  > Mail: i@tiankonguse.com 
+  > Mail: i@tiankonguse.com
   > Created Time: 2015年04月16日 12:51:15
 ***********************************************************************/
 
@@ -17,6 +17,7 @@
 #include<algorithm>
 #include<functional>
 #include<stdarg.h>
+#include "../../include/base.h"
 using namespace std;
 #ifdef __int64
 typedef __int64 LL;
@@ -27,74 +28,74 @@ typedef long long LL;
 class Solution {
 public:
     string longestCommonPrefix(vector<string>& strs) {
-        int vecSize = strs.size();
-        if(vecSize == 0){
+        if(strs.size() == 0){
             return "";
         }
 
-        string& first = strs[0];
-        int ans = first.length();
-        int strSize = 0;
-
-        for(int i=1; i< vecSize; i++){
-            string& str = strs[i];
-            strSize = str.length();
-            if(strSize < ans){
-                ans = strSize;
-            }
-            for(int j=0;j<ans;j++){
+        const string& first = strs[0];
+        int ansLen = first.length();
+        for(int i=1; i< strs.size(); i++){
+            const string& str = strs[i];
+            ansLen = min(ansLen, (int)str.length());
+            for(int j=0;j<ansLen;j++){
                 if(str[j] != first[j]){
-                    ans = j;
+                    ansLen = j;
                     break;
                 }
             }
-            if(ans == 0){
+            if(ansLen == 0){
                 return "";
             }
         }
-        return first.substr(0,ans);
+        return first.substr(0,ansLen);
     }
 };
 
-void output(vector<string>&vec){
-    printf("vec.size = %d\n", vec.size());
-    for(int i=0;i<vec.size();i++){
-        printf("\t%s\n",vec[i].c_str());
-    }
-}
-
-void test(){
+template <class ansType, class dataType1, class dataType2 = int>
+void test(ansType& expectAns, dataType1& firstData, dataType2 secondData = dataType2()) {
     Solution work;
+    ansType ans;
+    ans = work.longestCommonPrefix(firstData);
 
-    vector<string> vec;
-    string ans;
-
-    ans = work.longestCommonPrefix(vec);
-    output(vec);
-    printf("ans = %s\n", ans.c_str());
-
-    vec.push_back("1234");
-    ans = work.longestCommonPrefix(vec);
-    output(vec);
-    printf("ans = %s\n", ans.c_str());
-    
-    vec.push_back("1254");
-    vec.push_back("1274");
-    ans = work.longestCommonPrefix(vec);
-    output(vec);
-    printf("ans = %s\n", ans.c_str());
-    
-    vec.push_back("1234");
-    vec.push_back("4234");
-
-    ans = work.longestCommonPrefix(vec);
-    output(vec);
-    printf("ans = %s\n", ans.c_str());
+    static int index = 0;
+    index++;
+    bool check = eq(ans, expectAns);
+    printf("\n");
+    if(!check) {
+        printf("index %d: NO\n", index);
+        output("firstData", firstData);
+        output("secondData", secondData);
+        output("ans", ans);
+        output("expectAns", expectAns);
+    } else {
+        printf("index %d: YES\n", index);
+    }
+    printf("\n");
 
 }
-
 
 int main() {
-    test();
+    vector<string> first;
+    string expectAns;
+
+    first = {"flower","flower","flower"};
+    expectAns = "flower";
+    test(expectAns, first);
+
+    first = {"flower","flow","flight"};
+    expectAns = "fl";
+    test(expectAns, first);
+
+
+    first = {"dog","racecar","car"};
+    expectAns = "";
+    test(expectAns, first);
+
+    first = {};
+    expectAns = "";
+    test(expectAns, first);
+
     return 0;
 }
+
+
