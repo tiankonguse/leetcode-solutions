@@ -28,15 +28,14 @@ typedef long long LL;
 class Solution {
 public:
     int removeElement(vector<int>& nums, int val) {
-        int n = nums.size();
-        for(int i=0;i<n;i++){
+        for(int i=0;i<nums.size();i++){
             if(nums[i] == val){
-                nums[i] = nums[n - 1];
-                n--;
+                nums[i] = nums[nums.size() - 1];
+                nums.pop_back();
                 i--;
             }
         }
-        return n;
+        return nums.size();
     }
 };
 
