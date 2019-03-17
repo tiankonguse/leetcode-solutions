@@ -47,7 +47,6 @@ class Solution {
             sum *= 10;
         }
         return sum;
-
     }
     //A(10, k)
     int fun_A_n_k(int n, int k){
