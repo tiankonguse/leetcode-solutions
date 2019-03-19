@@ -1,8 +1,8 @@
 /*************************************************************************
-    > File Name: D.cpp
+    > File Name: C.cpp
     > Author: tiankonguse
     > Mail: i@tiankonguse.com
-    > Created Time: 2019年03月15日 16:43:01
+    > Created Time: 2019年03月15日 16:42:56
  ************************************************************************/
 
 #include<cstdio>
@@ -40,33 +40,51 @@ auto __ =[]() {
 ();
 
 class Solution {
-public:
-    int numPermsDISequence(string S) {
-        const int n = S.size() + 1;
-        const int mod = 1000000007;
-        //dp[i][j]: 0~i这些数字以j为后缀的排列个数
-        int dp[n+1][n+1];
-        memset(dp, 0, sizeof(dp));
+    vector<int> have;
+    int setSize;
+    vector<int> bit;
+    int n;
 
-        dp[0][0] = 1;
-        for(int i=1;i<n;i++){
-            for(int j=0;j<=i;j++){
-                if(S[i-1] == 'D'){
-                    for(int k=j;k<n;k++){
-                        dp[i][j] = (dp[i][j] + dp[i-1][k]) % mod;
-                    }
-                }else{
-                    for(int k=j-1;k>=0;k--){
-                        dp[i][j] = (dp[i][j] + dp[i-1][k]) % mod;
-                    }
-                }
+    int dfs(int pos, int preSum, int fullFlah) {
+        if(pos < 0) {
+            return preSum;
+        }
+        if(fullFlah) {
+            return dfs(pos-1, preSum*setSize, fullFlah);
+        }
+
+        int val = bit[pos];
+
+        int ans = 0;
+        for(int i=1; i<val; i++) {
+            if(have[i]) {
+                ans += dfs(pos-1, preSum, 1);
             }
         }
-        int ans = 0;
-        for(int i=0;i<n;i++){
-            ans = (ans + dp[n-1][i]) % mod;
+        if(have[val]) {
+            ans += dfs(pos-1, preSum, 0);
+        }
+        return ans;
+    }
+public:
+    int atMostNGivenDigitSet(vector<string>& D, int N) {
+        setSize = D.size();
+        have.resize(10,0);
+        for(int i=0; i<setSize;i++) {
+            have[D[i][0]-'0'] = 1;
         }
 
+        while(N>0) {
+            bit.push_back(N%10);
+            N /= 10;
+        }
+        int ans = 0;
+        int tmpSUm = 1;
+        for(int i=1; i<bit.size(); i++) {
+            tmpSUm = tmpSUm * setSize;
+            ans += tmpSUm;
+        }
+        ans += dfs(bit.size()-1, 1, 0);
         return ans;
     }
 };
@@ -75,7 +93,7 @@ template <class ansType, class dataType1, class dataType2 = int>
 void test(ansType& expectAns, dataType1& firstData, dataType2 secondData = dataType2()) {
     Solution work;
     ansType ans;
-    ans = work.numPermsDISequence(firstData);
+    ans = work.atMostNGivenDigitSet(firstData, secondData);
 
     static int index = 0;
     index++;
@@ -95,14 +113,27 @@ void test(ansType& expectAns, dataType1& firstData, dataType2 secondData = dataT
 }
 
 int main() {
-    string first;
+    vector<string> first;
+    int second;
     int expectAns;
 
 
-    first = "DID";
-    expectAns = 5;
-    test(expectAns, first);
+    first = {"1","3","5","7"};
+    second = 100;
+    expectAns = 20;
+    test(expectAns, first, second);
 
+
+
+    first = {"1"};
+    second = 11;
+    expectAns = 2;
+    test(expectAns, first, second);
+
+    first = {"1","4","9"};
+    second = 1000000000;
+    expectAns = 29523;
+    test(expectAns, first, second);
 
 
     return 0;

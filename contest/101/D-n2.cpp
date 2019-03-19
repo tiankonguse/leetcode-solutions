@@ -49,21 +49,23 @@ public:
         memset(dp, 0, sizeof(dp));
 
         dp[0][0] = 1;
-        for(int i=1;i<n;i++){
-            for(int j=0;j<=i;j++){
-                if(S[i-1] == 'D'){
-                    for(int k=j;k<n;k++){
-                        dp[i][j] = (dp[i][j] + dp[i-1][k]) % mod;
-                    }
-                }else{
-                    for(int k=j-1;k>=0;k--){
-                        dp[i][j] = (dp[i][j] + dp[i-1][k]) % mod;
-                    }
+        for(int i=1; i<n; i++) {
+            if(S[i-1] == 'D') {
+                int sum = 0;
+                for(int j=i; j>=0; j--){
+                    sum = (sum + dp[i-1][j]) % mod;
+                    dp[i][j] = (dp[i][j] + sum) % mod;
+                }
+            } else {
+                int sum = 0;
+                for(int j=0;j<=i;j++){
+                    dp[i][j] = (dp[i][j] + sum) % mod;
+                    sum = (sum + dp[i-1][j]) % mod;
                 }
             }
         }
         int ans = 0;
-        for(int i=0;i<n;i++){
+        for(int i=0; i<n; i++) {
             ans = (ans + dp[n-1][i]) % mod;
         }
 
