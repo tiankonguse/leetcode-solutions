@@ -19,7 +19,9 @@
 #include<algorithm>
 #include<functional>
 #include<time.h>
-#include "../../include/base.h"
+#include <sys/time.h>
+
+#include<windows.h>
 using namespace std;
 
 
@@ -31,12 +33,7 @@ typedef long long LL;
 
 typedef unsigned uint;
 typedef unsigned char uchar;
-auto __ =[]() {
-    std::ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    return nullptr;
-}
-();
+
 
 class Solution {
 public:
@@ -57,15 +54,34 @@ public:
     }
 };
 
+double getTime() {
+    return (double)time(NULL);
+}
 
+double getTickClock() {
+    return GetTickCount();
+}
+
+double getClock() {
+    return clock();
+}
+
+double getCurrentTime() {
+    struct timeval tv;
+    gettimeofday(&tv,NULL);
+    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+}
 int main() {
     int ans = -1;
+
+    double startTime = getCurrentTime();
     for(int i=1; i<=100000; i++) {
         Solution work;
         ans = max(ans, work.smallestRepunitDivByK(i));
         if(i % 2500 == 0) {
-            printf("i=%d ans=%d\n",i, ans);
-
+            double endTime = getCurrentTime();
+            printf("i=%d ans=%d use %.3lfms\n",i, ans, (endTime - startTime)/1000);
+            startTime = endTime;
         }
     }
     printf("ans=%d\n", ans);
