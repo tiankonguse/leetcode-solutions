@@ -7,20 +7,7 @@
  ************************************************************************/
 
 
-#include<cstdio>
-#include<iostream>
-#include<cstdlib>
-#include<cstring>
-#include<string>
-#include<stack>
-#include<map>
-#include<set>
-#include<queue>
-#include<vector>
-#include<cmath>
-#include<algorithm>
-#include<functional>
-#include<time.h>
+
 #include "../../include/base.h"
 using namespace std;
 
