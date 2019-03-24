@@ -53,8 +53,6 @@ public:
         return -1;
     }
 };
-
-
 double getCurrentTime() {
     struct timeval tv;
     gettimeofday(&tv,NULL);
@@ -63,7 +61,6 @@ double getCurrentTime() {
 int main() {
     int maxAns = -1;
     int maxPos = -1;
-
     double startTime = getCurrentTime();
     Solution work;
     for(int i=1; i<=100000; i++) {
@@ -74,10 +71,10 @@ int main() {
         }
         if(i % 2500 == 1) {
             double useTime = (getCurrentTime() - startTime)/1000;
-            printf("maxPos=%5d maxAns=%5d pos=%5d ans=%5d  use %.3lfs\n",maxPos, maxAns,i, ans,  useTime);
+            printf("maxPos=%5d maxAns=%5d pos=%5d ans=%5d  use %.3lfs\n",
+                   maxPos, maxAns,i, ans,  useTime);
             startTime = getCurrentTime();
         }
     }
-
     return 0;
 }
