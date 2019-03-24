@@ -61,19 +61,23 @@ double getCurrentTime() {
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 int main() {
-    int ans = -1;
+    int maxAns = -1;
+    int maxPos = -1;
 
     double startTime = getCurrentTime();
     Solution work;
     for(int i=1; i<=100000; i++) {
-        ans = max(ans, work.smallestRepunitDivByK(i));
-        if(i % 2500 == 0) {
+        int ans = work.smallestRepunitDivByK(i);
+        if(ans >= maxAns) {
+            maxAns = ans;
+            maxPos = i;
+        }
+        if(i % 2500 == 1) {
             double useTime = (getCurrentTime() - startTime)/1000;
-            printf("i=%d ans=%d use %.3lfs\n",i, ans, useTime);
+            printf("maxPos=%5d maxAns=%5d pos=%5d ans=%5d  use %.3lfs\n",maxPos, maxAns,i, ans,  useTime);
             startTime = getCurrentTime();
         }
     }
-    printf("ans=%d\n", ans);
 
     return 0;
 }
