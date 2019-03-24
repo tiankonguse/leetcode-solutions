@@ -33,6 +33,8 @@ const int INF = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 4100, max4 = 11100, max5 = 200100, max6 = 2000100;
 const int debug = 0;
 const int inf = 0x3f3f3f3f;
+typedef unsigned uint;
+typedef unsigned char uchar;
 #define  myprintf(fmt,args...) do{if(debug)printf(fmt, ##args);}while(0)
 
 
@@ -363,4 +365,43 @@ bool eq(vector<vector<baseType>> first, vector<vector<baseType>> second) {
     }
     return true;
 }
+int getIndex(){
+    static int index = 0;
+    return index++;
+}
 
+#define TEST_SMP1(ClassName, FunNAme, expectAns, firstData)\
+do{\
+    ClassName work;\
+    auto ans = work.FunNAme(firstData);\
+    int index = getIndex();\
+    bool check = eq(ans, expectAns);\
+    if(!check) {\
+        printf("index %d: NO\n", index);\
+        output("firstData", firstData);\
+        output("ans", ans);\
+        output("expectAns", expectAns);\
+    } else {\
+        printf("index %d: YES\n", index);\
+    }\
+    printf("\n");\
+}while(0)
+
+
+#define TEST_SMP2(ClassName, FunNAme, expectAns, firstData, secondData)\
+do{\
+    ClassName work;\
+    auto ans = work.FunNAme(firstData, secondData);\
+    int index = getIndex();\
+    bool check = eq(ans, expectAns);\
+    if(!check) {\
+        printf("index %d: NO\n", index);\
+        output("firstData", firstData);\
+        output("secondData", secondData);\
+        output("ans", ans);\
+        output("expectAns", expectAns);\
+    } else {\
+        printf("index %d: YES\n", index);\
+    }\
+    printf("\n");\
+}while(0)
