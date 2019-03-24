@@ -1,9 +1,8 @@
 /*************************************************************************
-    > File Name: add-binary.cpp
+    > File Name: smallest-integer-divisible-by-k.cpp
     > Author: tiankonguse
     > Mail: i@tiankonguse.com
-    > Created Time: Wed Mar 13 22:45:30 2019
-    > link: https://leetcode.com/problems/add-binary/
+    > Created Time: Sun Mar 24 09:24:48 2019
  ************************************************************************/
 
 #include "../../include/base.h"
@@ -27,10 +26,8 @@ public:
     }
 };
 
-/*
-    TEST_SMP1(ClassName, FunNAme, expectAns, firstData)
-    TEST_SMP2(ClassName, FunNAme, expectAns, firstData, secondData)
 
+int main() {
     int first;
     int expectAns;
 
@@ -38,18 +35,24 @@ public:
     first = 1;
     expectAns = 1;
     TEST_SMP1(Solution, smallestRepunitDivByK, expectAns, first);
-*/
-int main() {
-    int first;
-    int expectAns;
+
+    first = 2;
+    expectAns = -1;
+    TEST_SMP1(Solution, smallestRepunitDivByK, expectAns, first);
+
+    first = 3;
+    expectAns = 3;
+    TEST_SMP1(Solution, smallestRepunitDivByK, expectAns, first);
 
     first = 113;
     expectAns = 112;
     TEST_SMP1(Solution, smallestRepunitDivByK, expectAns, first);
 
-    first = 2;
-    expectAns = -1;
+    first = 7;
+    expectAns = 6;
     TEST_SMP1(Solution, smallestRepunitDivByK, expectAns, first);
+
+
 
     return 0;
 }
