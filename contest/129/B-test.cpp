@@ -64,8 +64,8 @@ int main() {
     int ans = -1;
 
     double startTime = getCurrentTime();
+    Solution work;
     for(int i=1; i<=100000; i++) {
-        Solution work;
         ans = max(ans, work.smallestRepunitDivByK(i));
         if(i % 2500 == 0) {
             double useTime = (getCurrentTime() - startTime)/1000;
