@@ -39,95 +39,21 @@ auto __ =[]() {
 ();
 
 class Solution {
-    vector<vector<vector<int>>> numMap;
-    vector<int> numBit;
 public:
-    Solution() {
-        numMap.resize(10);
-        for(int i=0; i<numMap.size(); i++) {
-            numMap[i].resize(10);
-        }
-
-        for(int i=0; i<9; i++) {
-            for(int j=0; j<9; j++) {
-                int ij = i*j% 10;
-                numMap[i][ij].push_back(j);
-            }
-        }
-    }
-
-
-    void fixSum(vector<int>& tmpSum, int pos) {
-        while(tmpSum[pos] >= 10) {
-            if(pos + 1 == tmpSum.size()) {
-                tmpSum.push_back(0);
-            }
-            tmpSum[pos+1] += tmpSum[pos]/10;
-            tmpSum[pos] = tmpSum[pos] % 10;
-            pos++;
-        }
-    }
-
-    bool check(vector<int>& sum){
-        for(int i=0;i<sum.size();i++){
-            if(sum[i] != 1){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    int dfs(int pos, vector<int>& sum, vector<int> vecAns) {
-        printf("pos=%d\n", pos);
-        //output("sum", sum);
-        //output("vecAns", vecAns);
-        int expNum = (11 - sum[pos]) % 10;
-        vector<int>& numSet = numMap[numBit[0]][expNum];
-        if(numSet.size() == 0) {
-            return -1;
-        }
-        int ans = -1;
-        for(int i=0; i<numSet.size(); i++) {
-            int val = numSet[i];
-            vecAns.push_back(val);
-
-            vector<int> tmpSum = sum;
-            for(int j=0; j<numBit.size(); j++) {
-                int nowPos = j + pos;
-                tmpSum[nowPos] += val * numBit[j];
-                fixSum(tmpSum, nowPos);
-            }
-
-            int tmpAns = -1;
-            if(check(tmpSum)) {
-                //output("numBit ans", numBit);
-                //output("vecAns ans", vecAns);
-                //output("tmpSum ans", tmpSum);
-
-                tmpAns =  tmpSum.size();
-            }else{
-                tmpAns = dfs(pos+1, tmpSum, vecAns);
-            }
-            if(ans == -1) {
-                ans = tmpAns;
-            } else if(tmpAns == -1){
-            }else{
-                ans = min(ans, tmpAns);
-            }
-            vecAns.pop_back();
-        }
-        return ans;
-    }
-
     int smallestRepunitDivByK(int K) {
-        while(K>0) {
-            numBit.push_back(K%10);
-            K/=10;
+        int sum = 0;
+        set<int> have;
+        for(int i=1;;i++){
+            sum = (sum * 10 + 1)%K;
+            if(sum == 0){
+                return i;
+            }
+            if(have.find(sum) != have.end()){
+                return -1;
+            }
+            have.insert(sum);
         }
-        vector<int> sum;
-        sum.push_back(0);
-        vector<int> vecAns;
-        return dfs(0,  sum, vecAns);
+        return -1;
     }
 };
 
@@ -174,11 +100,7 @@ int main() {
     test(expectAns, first);
 
 
-    for(int i=113;i<=100000;i++){
-        first = i;
-        expectAns = 3;
-        test(expectAns, first);
-    }
+
 
     return 0;
 }
