@@ -54,17 +54,6 @@ public:
     }
 };
 
-double getTime() {
-    return (double)time(NULL);
-}
-
-double getTickClock() {
-    return GetTickCount();
-}
-
-double getClock() {
-    return clock();
-}
 
 double getCurrentTime() {
     struct timeval tv;
@@ -79,9 +68,9 @@ int main() {
         Solution work;
         ans = max(ans, work.smallestRepunitDivByK(i));
         if(i % 2500 == 0) {
-            double endTime = getCurrentTime();
-            printf("i=%d ans=%d use %.3lfms\n",i, ans, (endTime - startTime)/1000);
-            startTime = endTime;
+            double useTime = (getCurrentTime() - startTime)/1000;
+            printf("i=%d ans=%d use %.3lfs\n",i, ans, useTime);
+            startTime = getCurrentTime();
         }
     }
     printf("ans=%d\n", ans);
