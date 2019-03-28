@@ -9,8 +9,60 @@
 
 class Solution {
     vector<set<int> > vecGraph;
+    vector<int> nodeNum;
+    vector<int> have;
+    vector<int> ansPath;
+
     map<int, int> stateSet; // 空图 到 (start, state) 到最小步骤
     int n;
+
+    void add(int start) {
+        ansPath.push_back(start);
+        nodeNum[start]--;
+        have[start]++;
+    }
+
+    void del(int start) {
+        have[start]--;
+        nodeNum[start]++;
+        ansPath.pop_back();
+    }
+
+
+    int dfs(int start, int dep = 0, int ansNum = 0, int state = 0) {
+        state |= (1<<start);
+        add(start);
+        if(have[start] == 1) {
+            ansNum++;
+        }
+
+
+        if(ansNum >= n) {
+            del(start);
+            return 0;
+        }
+
+        int startState =  start << 14 | state;
+        if(stateSet.find(startState) != stateSet.end()) {
+            del(start);
+            return stateSet[startState];
+        }
+
+        auto& nodePath = vecGraph[start];
+        int minAns = 2*n;
+        int tmpAns = 0;
+        for(auto it = nodePath.begin(); it != nodePath.end(); it++) {
+            tmpAns = 1 + dfs(*it, dep + 1, ansNum, state);
+            minAns = min(minAns, tmpAns);
+        }
+        //printf("start=%d state=%02X ans=%d\n", start, state, minAns);
+        del(start);
+        if(minAns < 2*n){
+            stateSet[startState] = minAns;
+        }
+        return minAns;;
+
+    }
 
 public:
     int shortestPathLength(vector<vector<int>>& graph) {
@@ -18,8 +70,9 @@ public:
         if(n <= 1) {
             return 0;
         }
+        nodeNum.resize(n);
         vecGraph.resize(n);
-        const int MAX_BIT = 12;
+        have.resize(n, 0);
 
         for(int i=0; i<n; i++) {
             auto& path = graph[i];
@@ -28,45 +81,16 @@ public:
                 vecGraph[path[j]].insert(i);
             }
         }
-        queue<int> que;
 
-        int startState = 0;
         for(int i=0; i<n; i++) {
-            startState =  (i << MAX_BIT) | (1<<i);
-            stateSet[startState] = 1;
-            que.push(startState);
+            nodeNum[i] = vecGraph[i].size();
         }
 
-        int start = 0, state = 0;
-        int newStart, newState = 0;
-        int step = 0;
-        while(!que.empty()) {
-            startState = que.front();
-            que.pop();
-
-            start = startState >> MAX_BIT;
-            state = startState ^ (start << MAX_BIT) ;
-            step = stateSet[startState];
-
-            auto& nodePath = vecGraph[start];
-            for(auto it = nodePath.begin(); it != nodePath.end(); it++) {
-                newStart = *it;
-                newState = state | (1<<newStart);
-                startState = (newStart << MAX_BIT) | newState;
-                if(stateSet.find(startState) != stateSet.end()) {
-                    continue;
-                }
-                stateSet[startState] = step + 1;
-                que.push(startState);
-
-                if(newState +1 == (1<<n)) {
-                    return step;
-                }
-            }
-
+        int ans = n * 2;
+        for(int i=0; i<n; i++) {
+            ans = min(dfs(i), ans);
         }
-
-        return -1;
+        return ans;
     }
 };
 
