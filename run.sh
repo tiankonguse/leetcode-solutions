@@ -12,6 +12,6 @@ echo  "" > link.md;
 for i in ./problemset/* ; do
     i=`echo $i | sed 's/^.*\/\([^/]\+\)$/\1/'`;
     echo "run $i"
-    echo "* $i [problem](./problemset/$i/readme.md) [test](https://leetcode.com/problems/$i/) " >> link.md;  
+    echo "* $i [problem](./problemset/$i) [test](https://leetcode.com/problems/$i/) " >> link.md;  
 done
 echo "end"
