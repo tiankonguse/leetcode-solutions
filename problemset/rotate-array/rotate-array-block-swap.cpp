@@ -8,23 +8,40 @@
 #include "../../include/base.h"
 
 class Solution {
-    void rotate(vector<int>&nums){
-        int n = nums.size();
-        int lastVal = nums[n-1];
-        for(int i=n-1;i>0;i--){
-            nums[i] = nums[i-1];
+    void swap(vector<int>&nums, int firstStart, int firstEnd, int secondStart, int secondEnd){
+        while(firstStart<=firstEnd){
+            std::swap(nums[firstStart], nums[secondStart]);
+            firstStart++,secondStart++;
         }
-        nums[0] = lastVal;
     }
 
+    void rotate(vector<int>&nums, int start, int n, int k) {
+        if(n <= 1 || k%n == 0) {
+            return ;
+        }
+        k = k % n;
+
+        int right = k;
+        int left = n - k;
+        if(left >= right) {
+            int secondEnd = start + n-1;
+            int secondStart = secondEnd - k + 1;
+            int firstEnd = secondStart - 1;
+            int firstStart =firstEnd - k + 1;
+            swap(nums, firstStart, firstEnd, secondStart, secondEnd);
+            rotate(nums, start, left, k);
+        } else {
+            int firstStart = start;
+            int firstEnd = firstStart + left - 1;
+            int secondStart = firstEnd + 1;
+            int secondEnd = secondStart + left - 1;
+            swap(nums, firstStart, firstEnd, secondStart, secondEnd);
+            rotate(nums, start+left, right, right-left);
+        }
+    }
 public:
     vector<int> rotate(vector<int>& nums, int k) {
-        int n = nums.size();
-        k = k % n;
-        while(k>0){
-            rotate(nums);
-            k--;
-        }
+        rotate(nums, 0, nums.size(), k);
         return nums;
     }
 };

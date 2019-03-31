@@ -414,7 +414,8 @@ int getIndex(){
 #define TEST_SMP1(ClassName, FunNAme, expectAns, firstData)\
 do{\
     ClassName work;\
-    auto ans = work.FunNAme(firstData);\
+    auto tmpFirstData = firstData;\
+    auto ans = work.FunNAme(tmpFirstData);\
     int index = getIndex();\
     bool check = eq(ans, expectAns);\
     if(!check) {\
@@ -432,7 +433,9 @@ do{\
 #define TEST_SMP2(ClassName, FunNAme, expectAns, firstData, secondData)\
 do{\
     ClassName work;\
-    auto ans = work.FunNAme(firstData, secondData);\
+    auto tmpFirstData = firstData;\
+    auto tmpSecondData = secondData;\
+    auto ans = work.FunNAme(tmpFirstData, tmpSecondData);\
     int index = getIndex();\
     bool check = eq(ans, expectAns);\
     if(!check) {\

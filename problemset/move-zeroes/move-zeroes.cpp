@@ -1,24 +1,27 @@
 /*************************************************************************
-    > File Name: rotate-array-new.cpp
+    > File Name: move-zeroes.cpp
     > Author: tiankonguse
     > Mail: i@tiankonguse.com
-    > Created Time: 2019年03月31日 19:41:55
+    > Created Time: Mon Apr  1 02:41:23 2019
  ************************************************************************/
 
 #include "../../include/base.h"
 
 class Solution {
-     void swap(vector<int>&list, int n, int k){
-
-     }
 public:
-    void rotate(vector<int>& nums, int k) {
-        int n = nums.size();
-        if(n <= 1 || k%n == 0){
-            return ;
+    vector<int> moveZeroes(vector<int>& nums) {
+        int left = 0, right = 0;
+        for(;right < nums.size();right++){
+            if(nums[right] == 0){
+                continue;
+            }
+            nums[left] = nums[right];
+            if(left != right){
+                nums[right] = 0;
+            }
+            left++;
         }
-        k = k % n;
-        swap(nums, n,n - k);
+        return nums;
     }
 };
 
@@ -35,16 +38,13 @@ public:
     TEST_SMP1(Solution, smallestRepunitDivByK, expectAns, first);
 */
 int main() {
-    int first;
-    int expectAns;
+    vector<int> first;
+    vector<int> expectAns;
 
-    first = 113;
-    expectAns = 112;
-    TEST_SMP1(Solution, smallestRepunitDivByK, expectAns, first);
+    first = {0,1,0,3,12};
+    expectAns = {1,3,12,0,0};
+    TEST_SMP1(Solution, moveZeroes, expectAns, first);
 
-    first = 2;
-    expectAns = -1;
-    TEST_SMP1(Solution, smallestRepunitDivByK, expectAns, first);
 
     return 0;
 }

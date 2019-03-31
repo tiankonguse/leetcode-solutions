@@ -8,23 +8,22 @@
 #include "../../include/base.h"
 
 class Solution {
-    void rotate(vector<int>&nums){
-        int n = nums.size();
-        int lastVal = nums[n-1];
-        for(int i=n-1;i>0;i--){
-            nums[i] = nums[i-1];
+    void flap(vector<int>&nums, int firstStart, int firstEnd){
+        while(firstStart<firstEnd){
+            std::swap(nums[firstStart], nums[firstEnd]);
+            firstStart++,firstEnd--;
         }
-        nums[0] = lastVal;
     }
-
 public:
     vector<int> rotate(vector<int>& nums, int k) {
         int n = nums.size();
-        k = k % n;
-        while(k>0){
-            rotate(nums);
-            k--;
+        if(n <= 1 || k%n == 0) {
+            return nums;
         }
+        k = k % n;
+        flap(nums, 0, n - k - 1);
+        flap(nums, n-k, n-1);
+        flap(nums, 0, n-1);
         return nums;
     }
 };
