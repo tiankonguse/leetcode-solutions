@@ -36,7 +36,48 @@ const int inf = 0x3f3f3f3f;
 typedef unsigned uint;
 typedef unsigned char uchar;
 #define  myprintf(fmt,args...) do{if(debug)printf(fmt, ##args);}while(0)
+//int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
 
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x=0) : val(x), next(NULL) {}
+};
+
+ListNode* born(vector<int>&data, ListNode* root) {
+    int index = 0;
+    ListNode* pre = NULL;
+    for(auto it = data.begin(); it != data.end(); it++) {
+        int val = *it;
+        ListNode* now = root+index++;
+
+        now->val = val;
+        now->next = NULL;
+        if(pre == NULL) {
+            pre = now;
+        } else {
+            pre->next = now;
+            pre = now;
+        }
+    }
+    return root;
+}
+
+void output(ListNode* root) {
+    while(root != nullptr){
+        printf("%d ", root->val);
+        root = root->next;
+    }
+}
 
 /**
  * Definition for a binary tree node.
