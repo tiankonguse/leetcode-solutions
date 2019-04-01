@@ -25,18 +25,31 @@ typedef long long LL;
 #endif
 
 class Solution {
-    int x,y;
+    int n,m;
     int dir[4][2] = {{-1,0},{0,1},{1,0},{0,-1}};
     void dfs(int i, int j, vector<vector<char> >&grid){
-        if(i<0 || j<0 || i >= x || j >= y){
-            return;
-        }
-        if(grid[i][j] != '1'){
-            return;
-        }
+        queue<pair<int, int> > que;
+
+        que.push(make_pair(i, j));
         grid[i][j] = '0';
-        for(int k=0;k<4;k++){
-            dfs(i+dir[k][0], j+dir[k][1], grid);
+
+        int x,y;
+        while(!que.empty()){
+            i = que.front().first;
+            j = que.front().second;
+            que.pop();
+
+            for(int k=0;k<4;k++){
+                x = i+dir[k][0];
+                y = j+dir[k][1];
+                if(x<0 || x>=n || y<0 || y>=m){
+                    continue;
+                }
+                if(grid[x][y] == '1'){
+                    que.push(make_pair(x, y));
+                    grid[x][y] = '0';
+                }
+            }
         }
     }
 public:
@@ -44,11 +57,11 @@ public:
         if(grid.size() == 0 || grid[0].size() == 0){
             return 0;
         }
-        x = grid.size();
-        y = grid[0].size();
+        n = grid.size();
+        m = grid[0].size();
         int ans = 0;
-        for(int i=0;i<x;i++){
-            for(int j=0;j<y;j++){
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
                 if(grid[i][j] == '1'){
                     dfs(i,j, grid);
                     ans = ans + 1;
