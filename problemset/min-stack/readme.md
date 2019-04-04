@@ -20,10 +20,14 @@
 所以只能选择非线性容器，即树形容器。  
 
 
+练习地址：https://leetcode.com/problems/  
+输入题目编号或者标题即可定位到题目。  
+
 
 详细解题报告地址：https://mp.weixin.qq.com/s/natRB_8e8sSPnkOgxDR8jg  
-练习地址：https://leetcode.com/problems/  
-输入题目编号或者标题即可定位到题目，这里选择`map`。  
+公众号：天空的代码世界
+微信号：tiankonguse 
+![](../../tiankonguse-code.webp)
 
 
 ## helle
