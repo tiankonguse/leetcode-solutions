@@ -449,3 +449,50 @@ do{\
     }\
     printf("\n");\
 }while(0)
+
+
+#define TEST_SMP3(ClassName, FunNAme, expectAns, firstData, secondData, thirdData)\
+do{\
+    ClassName work;\
+    auto tmpFirstData = firstData;\
+    auto tmpSecondData = secondData;\
+    auto tmpThirdData = thirdData;\
+    auto ans = work.FunNAme(tmpFirstData, tmpSecondData, tmpThirdData);\
+    int index = getIndex();\
+    bool check = eq(ans, expectAns);\
+    if(!check) {\
+        printf("index %d: NO\n", index);\
+        output("firstData", firstData);\
+        output("secondData", secondData);\
+        output("thirdData", thirdData);\
+        output("ans", ans);\
+        output("expectAns", expectAns);\
+    } else {\
+        printf("index %d: YES\n", index);\
+    }\
+    printf("\n");\
+}while(0)
+
+#define TEST_SMP4(ClassName, FunNAme, expectAns, firstData, secondData, thirdData, fouthData)\
+do{\
+    ClassName work;\
+    auto tmpFirstData = firstData;\
+    auto tmpSecondData = secondData;\
+    auto tmpThirdData = thirdData;\
+    auto tmpFouthData = fouthData;\
+    auto ans = work.FunNAme(tmpFirstData, tmpSecondData, tmpThirdData,tmpFouthData);\
+    int index = getIndex();\
+    bool check = eq(ans, expectAns);\
+    if(!check) {\
+        printf("index %d: NO\n", index);\
+        output("firstData", firstData);\
+        output("secondData", secondData);\
+        output("thirdData", thirdData);\
+        output("fouthData", fouthData);\
+        output("ans", ans);\
+        output("expectAns", expectAns);\
+    } else {\
+        printf("index %d: YES\n", index);\
+    }\
+    printf("\n");\
+}while(0)
