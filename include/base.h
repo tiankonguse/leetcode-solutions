@@ -35,6 +35,7 @@ const int debug = 0;
 const int inf = 0x3f3f3f3f;
 typedef unsigned uint;
 typedef unsigned char uchar;
+const int null = 0;
 #define  myprintf(fmt,args...) do{if(debug)printf(fmt, ##args);}while(0)
 //int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
 
