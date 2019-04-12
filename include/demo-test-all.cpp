@@ -23,15 +23,7 @@ public:
     bool operator<(const BigNumber &second)const {
         return this->val < second.val;
     }
-    BigNumber operator++(int) {
-        BigNumber tmp = *this;
-        this->val++;
-        return tmp;
-    }
-    BigNumber& operator++() {
-        this->val++;
-        return *this;
-    }
+
 
 };
 
@@ -45,7 +37,15 @@ bool operator!(const BigNumber &first) {
 }
 
 
-
+BigNumber operator++(BigNumber &first, int) {
+    BigNumber tmp = first;
+    first.val++;
+    return tmp;
+}
+BigNumber& operator++(BigNumber &first) {
+    first.val++;
+    return first;
+}
 
 
 
