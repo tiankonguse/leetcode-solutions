@@ -157,9 +157,13 @@ TreeNode* vecToTree(vector<int> data) {
         TreeNode* preNode = que.front();
         que.pop();
 
+        if(preNode == nullptr){
+            continue;
+        }
 
+        //left child
         if(i<data.size()){
-            if(data[i] > 0 && preNode != nullptr){
+            if(data[i] > 0){
                 preNode->left = new TreeNode(data[i]);
                 que.push(preNode->left);
             }else{
@@ -168,8 +172,9 @@ TreeNode* vecToTree(vector<int> data) {
             i++;
         }
 
+        //right child
         if(i<data.size()){
-          if(data[i] > 0 && preNode != nullptr){
+          if(data[i] > 0){
                 preNode->right = new TreeNode(data[i]);
                 que.push(preNode->right);
             }else{
@@ -194,7 +199,7 @@ int deepTreeNode(TreeNode* root) {
     if(root == nullptr) {
         return 0;
     }
-    return 1 + max(countTreeNode(root->left),countTreeNode(root->right));
+    return 1 + max(deepTreeNode(root->left),deepTreeNode(root->right));
 }
 
 void printbase(int val, int base) {
@@ -243,7 +248,7 @@ void printbase(string val, int base) {
 }
 
 void printfblank(int befotnum, int base){
-    while(befotnum-->0){
+    while(befotnum-- >0){
         printbase("", base);
     }
 }
@@ -259,9 +264,9 @@ void output(TreeNode* root) {
     int levnum = 0;
     int befotnum = 0;
     int betweenNum = 1;
-    int base = 2;
+    int base = 1;
 
-    for(int i=2;i<deepCount;i++){
+    for(int i=1;i<deepCount;i++){
         befotnum = betweenNum;
         betweenNum = betweenNum *2 + 1;
     }
@@ -281,7 +286,7 @@ void output(TreeNode* root) {
         } else {
             que.push(nullptr);
             que.push(nullptr);
-            printbase("", base);
+            printbase("-", base);
         }
         levnum++;
 
@@ -291,7 +296,7 @@ void output(TreeNode* root) {
 
         printfblank(betweenNum, base);
         if((levnum & (levnum + 1)) == 0) {
-            printf("\n[%2d]: ", lev++);
+            printf("\n[%2d] :", lev++);
             betweenNum = befotnum;
             befotnum = befotnum / 2;
             printfblank(befotnum, base);
@@ -376,7 +381,7 @@ bool eq(TreeNode* first, TreeNode* second) {
     if(first->val != second->val) {
         return false;
     }
-    return eq(first->left, second->left) || eq(first->right, second->right);
+    return eq(first->left, second->left) && eq(first->right, second->right);
 }
 
 

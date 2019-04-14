@@ -67,6 +67,7 @@ public:
                 break;
             }
         }
+
         return root;
 
     }
@@ -89,7 +90,12 @@ int main() {
     TreeNode* expectAns;
 
     first = "1-2--3--4-5--6--7";
-    expectAns = vecToTree({1,2,5,3,null,6,null,4,null,7});
+    expectAns = vecToTree({1,2,5,3,4,6,8});
+    TEST_SMP1(Solution, recoverFromPreorder, expectAns, first);
+
+
+    first = "1-2--3---4-5--6---7";
+    expectAns = vecToTree({1,2,5,3,null,6,null,4,null,8});
     TEST_SMP1(Solution, recoverFromPreorder, expectAns, first);
 
     first = "1-401--349---90--88";
