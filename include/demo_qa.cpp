@@ -8,66 +8,89 @@
 
 #include "../../include/base.h"
 
+class MyStack {
+    queue<int> que;
+    int last;
 
-class RLEIterator {
-    struct Node {
-        Node(int num = 0, int val = 0) {
-            this->num = num;
-            this->val = val;
-        }
-        int num;
-        int val;
-    };
-    deque<Node> que;
-public:
-    RLEIterator(vector<int> A) {
-        for(int i=0; i<A.size(); i+=2) {
-            que.push_back(Node(A[i], A[i+1]));
+    void popo(queue<int>& from, queue<int>&to) {
+        while(!from.empty()) {
+            to.push(from.front());
+            from.pop();
         }
     }
-    int next(int n) {
-        int ans = -1;
-        while(!que.empty()) {
-            Node node = que.front();
-            que.pop_front();
-            if(node.num >= n) {
-                node.num -= n;
-                ans = node.val;
-                if(node.num > 0) {
-                    que.push_front(node);
-                }
-                break;
-            } else {
-                n -= node.num;
-            }
+public:
+    /** Initialize your data structure here. */
+    MyStack() {
+
+    }
+
+    /** Push element x onto stack. */
+    void push(int x) {
+        que.push(x);
+        last = x;
+    }
+
+    /** Removes the element on top of the stack and returns that element. */
+    int pop() {
+        queue<int> tmpQue;
+        while(que.size() > 1) {
+            last = que.front();
+            tmpQue.push(que.front());
+            que.pop();
         }
-        return ans;
+        swap(tmpQue, que);
+        return tmpQue.front();
+    }
+
+    /** Get the top element. */
+    int top() {
+        return last;
+    }
+
+    /** Returns whether the stack is empty. */
+    bool empty() {
+        return que.empty();
     }
 };
 
 /**
- * Your RLEIterator object will be instantiated and called as such:
- * RLEIterator obj = new RLEIterator(A);
- * int param_1 = obj.next(n);
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue* obj = new MyQueue();
+ * obj->push(x);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->peek();
+ * bool param_4 = obj->empty();
  */
-
 template <class AnsType, class OpreateType, class InitType, class DataType1 = int>
 void test_qa(AnsType& expectAns, OpreateType& opreateParam, InitType& initData, DataType1 firstData = DataType1()) {
     AnsType ans;
-    RLEIterator work(initData);
-    ans.push_back(0);
+    MyStack work;
+    //MyStack work(initData); //按需修改
 
-    for(int i=0; i<firstData.size(); i++) {
-        ans.push_back(work.next(firstData[i]));
+    for(int i=0; i<opreateParam.size(); i++) {
+        int ansTmp = -1;
+        if(opreateParam[i] == "push") {
+            work.push(firstData[i]);
+        }
+        if(opreateParam[i] == "pop") {
+            ansTmp = work.pop();
+        }
+        if(opreateParam[i] == "top") {
+            ansTmp = work.top();
+        }
+        if(opreateParam[i] == "empty") {
+            ansTmp = work.empty();
+        }
+        ans.push_back(ansTmp);
     }
     int index = getIndex();
     bool check = eq(ans, expectAns);
     if(!check) {
         printf("index %d: NO\n", index);
         output("opreateParam", opreateParam);
-        output("initData", initData);
+        output(" initData", initData);
         output("firstData", firstData);
-        output("ans", ans);
+        output("      ans", ans);
         output("expectAns", expectAns);
 
     } else {
@@ -82,15 +105,11 @@ int main() {
     vector<int> firstData;
     vector<int> expectAns;
 
-    opreateParam= { "RLEIterator","next","next","next","next" };
-    initData = {3,8,0,9,2,5};
-    firstData = {{2},{1},{1},{2}};
-    expectAns = {0,8,8,5,-1};
+    opreateParam= {"push","push","top","pop","empty"};
+    initData = {};
+    firstData = {{1},{2},{-1},{-1},{-1}};
+    expectAns = {{-1},{-1},{2},{2},{0} };
     test_qa(expectAns, opreateParam, initData, firstData);
-
-
-
 
     return 0;
 }
-
