@@ -54,7 +54,7 @@ struct ListNode {
     ListNode(int x=0) : val(x), next(NULL) {}
 };
 
-ListNode* born(vector<int>&data, ListNode* root) {
+ListNode* vecToList(vector<int>data, ListNode* root) {
     int index = 0;
     ListNode* pre = NULL;
     for(auto it = data.begin(); it != data.end(); it++) {
@@ -72,6 +72,8 @@ ListNode* born(vector<int>&data, ListNode* root) {
     }
     return root;
 }
+
+
 
 void output(ListNode* root) {
     while(root != nullptr){
@@ -383,7 +385,19 @@ bool eq(TreeNode* first, TreeNode* second) {
     }
     return eq(first->left, second->left) && eq(first->right, second->right);
 }
-
+template <>
+bool eq(ListNode* first, ListNode* second) {
+    if(first == NULL && second == NULL) {
+        return true;
+    }
+    if(first == NULL || second == NULL) {
+        return false;
+    }
+    if(first->val != second->val) {
+        return false;
+    }
+    return eq(first->next, second->next);
+}
 
 
 template <class baseType>
