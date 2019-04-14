@@ -17,18 +17,6 @@ const int debug = 0;
 const int inf = 0x3f3f3f3f;
 #define  myprintf(fmt,args...) do{if(debug)printf(fmt, ##args);}while(0)
 
-//
-int fullbit(int bit){
-    if(bit == 1){
-        return 1;
-    }
-    int ans = 1;
-    for(int i=1;i<bit;i++){
-        ans = ans * 10;
-    }
-    return ans/2 + 10 * fullbit(bit - 1);
-}
-
 //有多少个奇数
 int full(int bit){
     int ans = 1;
@@ -37,6 +25,16 @@ int full(int bit){
     }
     return ans/2;
 }
+
+//
+int fullbit(int bit){
+    if(bit == 1){
+        return 1;
+    }
+    return full(bit-1) + 10 * fullbit(bit - 1);
+}
+
+
 
 string rev(string str){
     std::reverse(str.begin(), str.end());
