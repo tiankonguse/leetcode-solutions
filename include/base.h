@@ -76,7 +76,13 @@ ListNode* vecToList(vector<int>data, ListNode* root) {
 
 
 void output(ListNode* root) {
-    while(root != nullptr){
+    set<ListNode*> s;
+    while(root != nullptr) {
+        if(s.find(root) != s.end()) {
+            printf("[%d]", root->val);
+            break;
+        }
+        s.insert(root);
         printf("%d ", root->val);
         root = root->next;
     }
@@ -146,7 +152,7 @@ void born(vector<Node>&data, TreeNode* root) {
 }
 
 TreeNode* vecToTree(vector<int> data) {
-    if(data.size() == 0){
+    if(data.size() == 0) {
         return nullptr;
     }
 
@@ -155,31 +161,31 @@ TreeNode* vecToTree(vector<int> data) {
     queue<TreeNode*> que;
     que.push(root);
 
-    for(int i=1;i<data.size();){
+    for(int i=1; i<data.size();) {
         TreeNode* preNode = que.front();
         que.pop();
 
-        if(preNode == nullptr){
+        if(preNode == nullptr) {
             continue;
         }
 
         //left child
-        if(i<data.size()){
-            if(data[i] > 0){
+        if(i<data.size()) {
+            if(data[i] > 0) {
                 preNode->left = new TreeNode(data[i]);
                 que.push(preNode->left);
-            }else{
+            } else {
                 que.push(nullptr);
             }
             i++;
         }
 
         //right child
-        if(i<data.size()){
-          if(data[i] > 0){
+        if(i<data.size()) {
+            if(data[i] > 0) {
                 preNode->right = new TreeNode(data[i]);
                 que.push(preNode->right);
-            }else{
+            } else {
                 que.push(nullptr);
             }
             i++;
@@ -249,8 +255,8 @@ void printbase(string val, int base) {
     }
 }
 
-void printfblank(int befotnum, int base){
-    while(befotnum-- >0){
+void printfblank(int befotnum, int base) {
+    while(befotnum-- >0) {
         printbase("", base);
     }
 }
@@ -268,7 +274,7 @@ void output(TreeNode* root) {
     int betweenNum = 1;
     int base = 1;
 
-    for(int i=1;i<deepCount;i++){
+    for(int i=1; i<deepCount; i++) {
         befotnum = betweenNum;
         betweenNum = betweenNum *2 + 1;
     }
@@ -387,16 +393,27 @@ bool eq(TreeNode* first, TreeNode* second) {
 }
 template <>
 bool eq(ListNode* first, ListNode* second) {
+    set<ListNode*> oneSet;
+    set<ListNode*> twoSet;
+    while(first && second && first->val == second->val) {
+        if(oneSet.find(first) != oneSet.end()) {
+            break;
+        }
+        oneSet.insert(first);
+        if(twoSet.find(second) != twoSet.end()) {
+            break;
+        }
+        twoSet.insert(second);
+        first = first->next;
+        second = second->next;
+    }
     if(first == NULL && second == NULL) {
         return true;
     }
-    if(first == NULL || second == NULL) {
-        return false;
+    if(first && second && first->val == second->val) {
+        return true;
     }
-    if(first->val != second->val) {
-        return false;
-    }
-    return eq(first->next, second->next);
+    return false;
 }
 
 
@@ -426,7 +443,7 @@ bool eq(vector<vector<baseType>> first, vector<vector<baseType>> second) {
     }
     return true;
 }
-int getIndex(){
+int getIndex() {
     static int index = 0;
     return index++;
 }
