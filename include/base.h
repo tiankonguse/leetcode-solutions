@@ -128,15 +128,15 @@ enum {
     NODE_ROOT = -1,
 };
 
-struct Node {
-    int index;
-    int val;
-    int pre;
-    int type; // 0 left, 1 right , -1 root
-    Node(int index=-1, int val = -1, int pre = -1, int type = -1):index(index), val(val), pre(pre), type(type) {
-
-    }
-};
+//struct Node {
+//    int index;
+//    int val;
+//    int pre;
+//    int type; // 0 left, 1 right , -1 root
+//    Node(int index=-1, int val = -1, int pre = -1, int type = -1):index(index), val(val), pre(pre), type(type) {
+//
+//    }
+//};
 
 /*
  *  TreeNode list[100];
@@ -154,25 +154,25 @@ struct Node {
  *  born(data, list);
  *
  */
-void born(vector<Node>&data, TreeNode* root) {
-    for(vector<Node>::iterator it = data.begin(); it != data.end(); it++) {
-        int index = it->index;
-        int val = it->val;
-        int pre = it->pre;
-        int type = it->type;
-
-        root[index].val = val;
-        if(pre != -1) {
-            if(type == 0) {
-                root[pre].left = root + index;
-            } else if(type == 1) {
-                root[pre].right = root + index;
-            } else {
-                printf("WARNING: data error. type = %d\n", type);
-            }
-        }
-    }
-}
+//void born(vector<Node>&data, TreeNode* root) {
+//    for(vector<Node>::iterator it = data.begin(); it != data.end(); it++) {
+//        int index = it->index;
+//        int val = it->val;
+//        int pre = it->pre;
+//        int type = it->type;
+//
+//        root[index].val = val;
+//        if(pre != -1) {
+//            if(type == 0) {
+//                root[pre].left = root + index;
+//            } else if(type == 1) {
+//                root[pre].right = root + index;
+//            } else {
+//                printf("WARNING: data error. type = %d\n", type);
+//            }
+//        }
+//    }
+//}
 
 TreeNode* vecToTree(vector<int> data) {
     if(data.size() == 0) {
