@@ -28,6 +28,8 @@ public:
 };
 
 /*
+    //ListNode* root = vecToList({1,2,3,4});
+
     TEST_SMP1(ClassName, FunNAme, expectAns, firstData)
     TEST_SMP2(ClassName, FunNAme, expectAns, firstData, secondData)
 

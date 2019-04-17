@@ -54,6 +54,13 @@ struct ListNode {
     ListNode(int x=0) : val(x), next(NULL) {}
 };
 
+
+struct DoublyListNode {
+    int val;
+    DoublyListNode *next, *prev;
+    DoublyListNode(int x) : val(x), next(NULL), prev(NULL) {}
+};
+
 ListNode* vecToList(vector<int>data, ListNode* root) {
     int index = 0;
     ListNode* pre = NULL;
@@ -65,6 +72,22 @@ ListNode* vecToList(vector<int>data, ListNode* root) {
         now->next = NULL;
         if(pre == NULL) {
             pre = now;
+        } else {
+            pre->next = now;
+            pre = now;
+        }
+    }
+    return root;
+}
+
+
+ListNode* vecToList(vector<int>data) {
+    ListNode* root = NULL;
+    ListNode* pre = NULL;
+    for(auto it = data.begin(); it != data.end(); it++) {
+        ListNode* now = new ListNode(*it);
+        if(pre == NULL) {
+            root = pre = now;
         } else {
             pre->next = now;
             pre = now;
