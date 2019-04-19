@@ -198,7 +198,7 @@ TreeNode* vecToTree(vector<int> data) {
                 preNode->left = new TreeNode(data[i]);
                 que.push(preNode->left);
             } else {
-                que.push(nullptr);
+                //que.push(nullptr);
             }
             i++;
         }
@@ -209,7 +209,7 @@ TreeNode* vecToTree(vector<int> data) {
                 preNode->right = new TreeNode(data[i]);
                 que.push(preNode->right);
             } else {
-                que.push(nullptr);
+                //que.push(nullptr);
             }
             i++;
         }
