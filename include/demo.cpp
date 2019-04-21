@@ -29,6 +29,7 @@ public:
 
 /*
     //ListNode* root = vecToList({1,2,3,4});
+    // vecToTree({});
 
     TEST_SMP1(ClassName, FunNAme, expectAns, firstData)
     TEST_SMP2(ClassName, FunNAme, expectAns, firstData, secondData)
@@ -47,10 +48,6 @@ int main() {
 
     first = 113;
     expectAns = 112;
-    TEST_SMP1(Solution, smallestRepunitDivByK, expectAns, first);
-
-    first = 2;
-    expectAns = -1;
     TEST_SMP1(Solution, smallestRepunitDivByK, expectAns, first);
 
     return 0;
