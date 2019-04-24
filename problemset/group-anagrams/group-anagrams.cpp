@@ -1,10 +1,10 @@
 /*************************************************************************
-    > File Name: add-binary.cpp
+    > File Name: group-anagrams.cpp
     > Author: tiankonguse
     > Mail: i@tiankonguse.com
-    > Created Time: Wed Mar 13 22:45:30 2019
-    > link:
-    > No:
+    > Created Time: Wed Apr 24 00:24:23 2019
+    > link: https://leetcode.com/problems/group-anagrams/
+    > No: 49. Group Anagrams
     > Contest:
  ************************************************************************/
 
@@ -12,20 +12,18 @@
 
 class Solution {
 public:
-    int smallestRepunitDivByK(int K) {
-        int sum = 0;
-        set<int> have;
-        for(int i=1;;i++){
-            sum = (sum * 10 + 1)%K;
-            if(sum == 0){
-                return i;
-            }
-            if(have.find(sum) != have.end()){
-                return -1;
-            }
-            have.insert(sum);
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        map<string, vector<string> >m;
+        for(int i=0; i<strs.size(); i++) {
+            string key = strs[i];
+            sort(key.begin(),key.end());
+            m[key].push_back(strs[i]);
         }
-        return -1;
+        vector<vector<string>> ans;
+        for(auto& p : m) {
+            ans.push_back(p.second);
+        }
+        return ans;
     }
 };
 
@@ -48,16 +46,20 @@ public:
     //TEST_SMP2(Solution, FUNCTION, expectAns, first, second);
 */
 int main() {
-    #define CLASS Solution
-    #define FUNCTION smallestRepunitDivByK
+#define CLASS Solution
+#define FUNCTION groupAnagrams
 
-    int first;
+    vector<string> first;
     int second;
-    int expectAns;
+    vector<vector<string>>  expectAns;
 
-    first = 113;
+    first = {"eat", "tea", "tan", "ate", "nat", "bat"};
     second = 1;
-    expectAns = 112;
+    expectAns = {
+        {"ate","eat","tea"},
+        {"nat","tan"},
+        {"bat"}
+    };
     TEST_SMP1(CLASS, FUNCTION, expectAns, first);
     //TEST_SMP2(Solution, FUNCTION, expectAns, first, second);
 
