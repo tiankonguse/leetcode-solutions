@@ -62,9 +62,6 @@ class MyHashMap {
         now->lurNext->lurPrev = now->lurPrev;
         insertLru(now);
     }
-
-
-
 public:
 
     MyHashMap() {
