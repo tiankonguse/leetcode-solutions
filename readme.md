@@ -1,10 +1,10 @@
 # 加入互动编程基本步骤
 
 
-1. 注册 [github.com](https://github.com/) 账号。  
-2. 使用浏览器打开 https://github.com/tiankonguse/leetcode-solutions[](https://github.com/tiankonguse/leetcode-solutions)。  
-3. 在页面右上角找到“fork”按钮，将该仓库 Fork 到你自己的账户中。  
-4. 把代码拉取到本地。  
+1. 注册 github.com 账号。  
+2. 使用浏览器打开 https://github.com/tiankonguse/leetcode-solutions  
+3. 在页面右上角找到 fork 按钮，将该仓库 Fork 到你自己的账户中。  
+4. 把代码拉取到本地(你也可以到时候上传文件，或者页面上创建文件)。  
    命令行：`git clone https://github.com/tiankonguse/leetcode-solutions.git`  
    IDE工具：使用 [Desktop for Github](https://desktop.github.com/) 将 [leetcode-solutions](https://github.com/tiankonguse/leetcode-solutions.git) 这个你 Fork 过来的仓库克隆到本地。  
 5. 找到 tiankonguse-code 这个公众号，看最新一篇算法相关的文章，里面会提供几道题，尽量独立去做出来，一道题超过半小时没做出来，可以尝试看题解。如果都做完了，可以向前继续找其他文章。  
@@ -14,13 +14,18 @@
 8. 将你的代码进行 Pull Request，来互动并记录你曾做过这道题。  
 
 
-## 如何进行 Pull Request 来提交自己做的题  
+## 如何用自己的代码 Pull Request 互动  
 
 
-注：建议进行 pull request 之前，先参考下一小节《如何保持自己 Fork 的仓库与 原仓库同步》来将代码保持同步。  
+建议进行 pull request 之前，先参考下一小节《如何保持自己 Fork 的仓库与原仓库同步》来将代码保持同步。  
+
+
+这里假设你已经在你的仓库里按照规范提交了你的代码。  
 
 
 1. 创建新分支（如果存在先删除），命名为 from-<昵称>, 然后点击 Create Branch 建立新分支。  
+
+注2：这个文档说明是比较简单粗暴，如果你自己已经会 github 相关操作，就不需要删除分支。  
 
 
 ![](/images/pull-request-create-branch.png)  
@@ -33,6 +38,8 @@
 
 
 3. 输入一个简洁的标题，内容罗列自己做的题目列表，并点击 Create pull request。  
+
+注意输入标题之上的两行文字，第一行是 tiankonguse/leetcode-solutions ，base  是 master, 第二行是自己的仓库，compare 是 自己创建的分支。    
 
 
 ![](/images/pull-request-create-again.png)  
@@ -57,10 +64,16 @@
 1. 在你 Fork 页面中如下图所示，点击 Compare 链接：  
 
 
+点击 Compare 之前，请确保当前分支是 master。  
+
+
 ![](/images/sync_fork_compare.png)  
 
 
 2. 将左边的 base repository 更改成当前自己的 Fork，在图示中即为 {你的昵称}/leetcode-solutions  
+
+
+如果上一步骤忘记切换为 master 分支，这一步骤还来得及补救，在左边的 base 里面选择 master。  
 
 
 ![](/images/sync_fork_choose_base_repository.png)  
