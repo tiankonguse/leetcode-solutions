@@ -1,3 +1,19 @@
+# 目录说明
+
+* readme.md ： 项目说明文档
+* [link.md](link.md) : 大家做过的 Leetcode  题目列表。  
+* include : 管理员维护的 Leetcode 模板 以及 使用样例。  
+* problemset : Leetcode 题目集，大家重点关注这个目录。   
+* contest : 未来互动比赛时使用，保留。  
+* images ： 此项目的图片资源，保留。  
+* jisuanke ： 计蒜客相关算法题，保留。  
+* other ： 其他相关算法题，保留。  
+* .gitignore : 项目配置文件，保留。    
+* run.sh : 自动生成 link.md 脚本，保留。  
+
+
+
+
 # 加入互动编程基本步骤
 
 

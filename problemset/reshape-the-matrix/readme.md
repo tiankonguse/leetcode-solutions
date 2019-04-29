@@ -49,5 +49,5 @@ There is no way to reshape a 2 * 2 matrix to a 2 * 4 matrix. So output the origi
 
 建了一个小密圈，讨论各种算法群。  
 
-![小密圈](../../suanfa_xiaomiquan.jpg)
+![小密圈](/images/suanfa_xiaomiquan.jpg)
 
