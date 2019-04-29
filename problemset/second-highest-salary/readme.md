@@ -20,5 +20,5 @@ For example, given the above Employee table, the second highest salary is 200. I
 
 建了一个小密圈，讨论各种算法群。  
 
-![小密圈](../../suanfa_xiaomiquan.jpg)
+![小密圈](/images/suanfa_xiaomiquan.jpg)
 
