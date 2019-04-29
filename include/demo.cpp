@@ -21,6 +21,7 @@ public:
     //ListNode* root = vecToList({1,2,3,4});
     // vecToTree({});
     // std::reverse(a.begin(),a.end());
+    //int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
 */
 int main() {
     #define CLASS Solution

@@ -27,12 +27,11 @@
 详细解题报告地址：https://mp.weixin.qq.com/s/natRB_8e8sSPnkOgxDR8jg  
 公众号：天空的代码世界
 微信号：tiankonguse 
-![](../../tiankonguse-code.webp)
 
 
 ## helle
 
 建了一个小密圈，讨论各种算法群。  
 
-![小密圈](../../suanfa_xiaomiquan.jpg)
+![小密圈](/images/suanfa_xiaomiquan.jpg)
 

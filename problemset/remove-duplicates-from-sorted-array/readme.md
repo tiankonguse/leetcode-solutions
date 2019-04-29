@@ -14,5 +14,5 @@ Your function should return length = 2, with the first two elements of nums bein
 
 建了一个小密圈，讨论各种算法群。  
 
-![小密圈](../../suanfa_xiaomiquan.jpg)
+![小密圈](/images/suanfa_xiaomiquan.jpg)
 

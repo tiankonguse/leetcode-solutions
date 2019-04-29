@@ -13,5 +13,5 @@ return `["255.255.11.135", "255.255.111.35"]`. (Order does not matter)
 
 建了一个小密圈，讨论各种算法群。  
 
-![小密圈](../../suanfa_xiaomiquan.jpg)
+![小密圈](/images/suanfa_xiaomiquan.jpg)
 
