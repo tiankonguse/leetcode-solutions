@@ -27,7 +27,6 @@
 详细解题报告地址：https://mp.weixin.qq.com/s/natRB_8e8sSPnkOgxDR8jg  
 公众号：天空的代码世界
 微信号：tiankonguse 
-![](../../tiankonguse-code.webp)
 
 
 ## helle
