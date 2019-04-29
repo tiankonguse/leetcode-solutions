@@ -19,18 +19,18 @@
 
 1. 注册 github.com 账号。  
 2. 使用浏览器打开 https://github.com/tiankonguse/leetcode-solutions  
-3. 在页面右上角找到 fork 按钮，将该仓库 Fork 到你自己的账户中。  
+3. 在页面右上角找到 fork 按钮，将该仓库 Fork 到你自己的账户中, 并创建自己的分支，格式: `from-{昵称}`。  
 4. 把代码拉取到本地(你也可以到时候上传文件，或者页面上创建文件)。  
    命令行：`git clone https://github.com/tiankonguse/leetcode-solutions.git`  
    IDE工具：使用 [Desktop for Github](https://desktop.github.com/) 将 [leetcode-solutions](https://github.com/tiankonguse/leetcode-solutions.git) 这个你 Fork 过来的仓库克隆到本地。  
 5. 找到 tiankonguse-code 这个公众号，看最新一篇算法相关的文章，里面会提供几道题，尽量独立去做出来，一道题超过半小时没做出来，可以尝试看题解。如果都做完了，可以向前继续找其他文章。  
-6. 自己做的题按照 `/problemset/题目/leetcode昵称-题目.代码语言后缀` 的格式放入到你 Fork 的项目里。  
-  具体参考 [计划发起一个练习算法项目](https://mp.weixin.qq.com/s/ThqNvzMQAmOI69j7t4mG8Q) 这篇文章的截图。  
-7. 将这些代码提交到自己的 github 仓库里。  
-8. 将你的代码进行 Pull Request，来互动并记录你曾做过这道题。  
+6. 做的题按照 `/problemset/题目/leetcode昵称-题目.代码语言后缀` 的格式放入到你自己的分支里。  
+7. 将你的分支代码提交到自己的 github 仓库里。  
+8. 将你的分支代码进行 Pull Request，来互动并记录你曾做过这道题。  
 
 
-## 如何用自己的代码 Pull Request 互动  
+
+## 如何用自己的分支代码 Pull Request 互动  
 
 
 建议进行 pull request 之前，先参考下一小节《如何保持自己 Fork 的仓库与原仓库同步》来将代码保持同步。  
@@ -132,6 +132,21 @@
 将你的 Fork 删除，而后重新到 https://github.com/tiankonguse/leetcode-solutions 页面拉取最新的代码。  
 
 
+
+## 分支操作说明  
+
+
+主要流程如下图，下面使用文字来解释一下。  
+
+
+![](/images/git-branch-manger.jpg)  
+
+
+1. 所有人都需要创建自己的分支，格式是`form-{昵称}`。  
+2. 对于你的 `master`分支，只能从 原项目 `tiankonguse/leetcode-solutions` 同步过来，不能自己提交。  
+3. 自己的代码，只能在自己的分支`form-{昵称}`里按照规则添加对应的代码文件，可以随时提交到自己的远程仓库里。  
+4. 想要将自己的代码`pull request`到原项目时，需要先将自己的`master`和原项目的`master`对齐（同步1），然后将自己的`master`和自己的分支合并（同步2），最后再`pull request`到原项目（同步3）。  
+5. 上一步骤有三个操作，做的操作都是`pull request`，本质是`merge`操作，只是`from`和`to`的不同，都可以通过同步教程来完成。  
 
 
 
