@@ -215,3 +215,5 @@
 * word-frequency [problem](./problemset/word-frequency) [test](https://leetcode.com/problems/word-frequency/) 
 * word-search [problem](./problemset/word-search) [test](https://leetcode.com/problems/word-search/) 
 * zigzag-conversion [problem](./problemset/zigzag-conversion) [test](https://leetcode.com/problems/zigzag-conversion/) 
+* maximal-square [problem](./problemset/maximal-square) [test](https://leetcode.com/problems/maximal-square/)
+* house-robber-ii [problem](./problemset/house-robber-ii) [test](https://leetcode.com/problems/house-robber-ii/)
