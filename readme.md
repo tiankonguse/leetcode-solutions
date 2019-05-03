@@ -87,60 +87,7 @@
 ## 四、如何保持自己 Fork 的仓库与 原仓库同步  
 
 
-1. 在你 Fork 页面中如下图所示，点击 Compare 链接：  
-
-
-点击 Compare 之前，请确保当前分支是 master。  
-
-
-![](/images/sync_fork_compare.png)  
-
-
-2. 将左边的 base repository 更改成当前自己的 Fork，在图示中即为 {你的昵称}/leetcode-solutions  
-
-
-如果上一步骤忘记切换为 master 分支，这一步骤还来得及补救，在左边的 base 里面选择 master。  
-
-
-![](/images/sync_fork_choose_base_repository.png)  
-
-
-3. 这时候，页面会显示 Comparing changes， 点击 compare across forks 链接。  
-
-
-![](/images/sync-fork-compare-across-forks.png)  
-
-
-4. 将右边的 head repository 更改成 tiankonguse/leetcode-solutions ，在图示中即为  
-
-
-![](/images/sync-fork-choose-head-repository.png)  
-
-
-5. 此时你会看到比较结果。 然后点击 Create pull request（含义为将最新的 leetcode-solutions 合并到自己的项目中）  
-
-
-![](/images/sync-fork-create-pull-request.png)  
-
-
-6. 你在 Pull requests 标签页里会看到你刚刚提交的 Pull request，点击 Merge pull request 按钮。  
-
-
-![](/images/sync-fork-merge-pull-request.png)  
-
-
-7. 同意并合并之后，你的 Fork 与 远程最新的 leetcode-solutions 保持一致了。    
-
-
-![](/images/sync-fork-finish.png)
-
-
-
-当然，有时会出现一些你无法解决的问题，那么，还有一个最后的方法：
-
-
-将你的 Fork 删除，而后重新到 https://github.com/tiankonguse/leetcode-solutions 页面拉取最新的代码。  
-
+参考文章：https://mp.weixin.qq.com/s/cPHUqFz78hDIVH4kqHZJPw  
 
 
 ## 五、分支操作说明  
@@ -152,14 +99,11 @@
 ![](/images/git-branch-manger.jpg)  
 
 
-1. 所有人都需要创建自己的分支，格式是`form-{昵称}`。  
+1. 所有人都需要创建自己的分支，格式是`base-{昵称}`。  
 2. 对于你的 `master`分支，只能从 原项目 `tiankonguse/leetcode-solutions` 同步过来，不能自己提交。  
-3. 自己的代码，只能在自己的分支`form-{昵称}`里按照规则添加对应的代码文件，可以随时提交到自己的远程仓库里。  
-4. 想要将自己的代码`pull request`到原项目时，需要先将自己的`master`和原项目的`master`对齐（同步1），然后将自己的`master`和自己的分支合并（同步2），最后再`pull request`到原项目（同步3）。  
-5. 上一步骤有三个操作，做的操作都是`pull request`，本质是`merge`操作，只是`from`和`to`的不同，都可以通过同步教程来完成。  
-
-
-
+3. 自己的代码，只能在自己的分支`base-{昵称}`里按照规则添加对应的代码文件，可以随时提交到自己的远程仓库里。  
+4. 想要将自己的代码`pull request`到原项目时，需要先将自己的`master`和原项目的`master`对齐（同步1），然后将自己的`master`和自己的分支合并（同步2），最后创建 from 分支再`pull request`到原项目（同步3）。  
+5. 上一步骤有三个操作，所有操作都是`pull request`，本质是`merge`操作，只是`from`和`to`的不同，都可以通过同步教程来完成。  
 
 
 
