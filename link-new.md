@@ -1,6 +1,6 @@
 
 | ID | Title | Solutions |
-| :------: | :------: | :------: |
+| :------: | :------ | :------ |
 | 1037 | [Valid Boomerang](https://leetcode.com/problems/valid-boomerang/) | [01037-valid-boomerang](/problemset-new/01037-valid-boomerang/) |
 | 1038 | [Binary Search Tree to Greater Sum Tree](https://leetcode.com/problems/binary-search-tree-to-greater-sum-tree/) | [01038-binary-search-tree-to-greater-sum-tree](/problemset-new/01038-binary-search-tree-to-greater-sum-tree/) |
 | 1040 | [Moving Stones Until Consecutive II](https://leetcode.com/problems/moving-stones-until-consecutive-ii/) | [01040-moving-stones-until-consecutive-ii](/problemset-new/01040-moving-stones-until-consecutive-ii/) |
