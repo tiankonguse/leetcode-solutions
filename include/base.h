@@ -35,7 +35,7 @@ const int debug = 0;
 const int inf = 0x3f3f3f3f;
 typedef unsigned uint;
 typedef unsigned char uchar;
-const int null = 0;
+const int null = -1;
 #define  myprintf(fmt,args...) do{if(debug)printf(fmt, ##args);}while(0)
 //int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
 
@@ -194,7 +194,7 @@ TreeNode* vecToTree(vector<int> data) {
 
         //left child
         if(i<data.size()) {
-            if(data[i] > 0) {
+            if(data[i] >= 0) {
                 preNode->left = new TreeNode(data[i]);
                 que.push(preNode->left);
             } else {
@@ -205,7 +205,7 @@ TreeNode* vecToTree(vector<int> data) {
 
         //right child
         if(i<data.size()) {
-            if(data[i] > 0) {
+            if(data[i] >= 0) {
                 preNode->right = new TreeNode(data[i]);
                 que.push(preNode->right);
             } else {
