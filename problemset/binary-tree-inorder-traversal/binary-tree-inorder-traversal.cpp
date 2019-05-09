@@ -39,9 +39,9 @@ class Solution {
         if(root == NULL){
             return ;
         }
-
-        dfs(root->left);
+        
         ans.push_back(root->val);
+        dfs(root->left);
         dfs(root->right);
     }
 
