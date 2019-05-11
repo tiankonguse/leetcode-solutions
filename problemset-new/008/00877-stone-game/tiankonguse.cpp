@@ -23,8 +23,8 @@ class Solution {
             return dp[left][right] = 0;
         }
         int nowSum = sum[right] - sum[left];
-        int tryLeft = piles[left] + (nowSum - dfs(piles, left+1, right));
-        int tryRight = piles[right-1] + (nowSum - dfs(piles, left, right-1));
+        int tryLeft = nowSum - dfs(piles, left+1, right);
+        int tryRight = nowSum - dfs(piles, left, right-1);
         return dp[left][right] = max(tryLeft, tryRight);
     }
 
