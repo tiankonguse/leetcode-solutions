@@ -37,7 +37,12 @@ typedef unsigned uint;
 typedef unsigned char uchar;
 const int null = -1;
 #define  myprintf(fmt,args...) do{if(debug)printf(fmt, ##args);}while(0)
+//dir : up, down, right, right
 //int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
+
+// dir : up, right, down, right
+//int dir[4][2] = {{0,1}},{1,0},{0,-1,{-1,0}};
+
 
 /**
  * Definition for singly-linked list.
