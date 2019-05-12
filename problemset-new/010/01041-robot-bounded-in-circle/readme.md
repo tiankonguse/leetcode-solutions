@@ -40,5 +40,6 @@
 [tiankonguse.cpp](./tiankonguse.cpp) 正确的姿势
 [tiankonguse-fast-slow-point.cpp](./tiankonguse-fast-slow-point.cpp) 这里错误的使用了快慢指针，实际上是不对的，但是数据较弱，水过去了。  
 
+## Python
 
-
+[marvelous.py](./marvelous.py)
