@@ -1,1 +1,14 @@
-这道题还没有人做，你可以来抢占一血
+## 98. Validate Binary Search Tree  
+
+
+题意：检查一棵树是不是合法的二叉搜索树。  
+
+思路：DFS 
+
+
+## C++语言  
+
+
+[tiankonguse.cpp](./tiankonguse.cpp)
+
+

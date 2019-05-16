@@ -44,6 +44,11 @@ const int null = -1;
 //int dir[4][2] = {{0,1}},{1,0},{0,-1,{-1,0}};
 
 
+// multiset<int> s;
+// vecToTree({});
+// ListNode* root = vecToList({1,2,3,4});
+// std::reverse(a.begin(),a.end());
+
 /**
  * Definition for singly-linked list.
  * struct ListNode {
