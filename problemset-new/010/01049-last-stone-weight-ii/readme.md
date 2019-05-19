@@ -53,16 +53,6 @@ C - (B - A)
 
 [tiankonguse.cpp](./tiankonguse.cpp)
 
+## Python语言
 
-
-
-
-
-
-
-## C++语言  
-
-[tiankonguse.cpp](./tiankonguse.cpp)
-
-
-
+[marvelous.py](./marvelous.py)
