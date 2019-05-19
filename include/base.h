@@ -37,17 +37,43 @@ typedef unsigned uint;
 typedef unsigned char uchar;
 const int null = -1;
 #define  myprintf(fmt,args...) do{if(debug)printf(fmt, ##args);}while(0)
+
 //dir : up, down, right, right
 //int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
 
 // dir : up, right, down, right
 //int dir[4][2] = {{0,1}},{1,0},{0,-1,{-1,0}};
 
+// 求数组和
+//int sum = accumulate(stones.begin(),stones.end(),0)/2;
 
+
+// 多重set（删除是全删）
 // multiset<int> s;
+
+
+// c++11 遍历容器
+//  for(auto stone : stones)
+
 // vecToTree({});
 // ListNode* root = vecToList({1,2,3,4});
+
+// 反转字符串
 // std::reverse(a.begin(),a.end());
+
+// 优先队列(堆)
+//typedef struct {
+//    int a,b;
+//} Node;
+//struct cmp {
+//    bool operator()(const Node &t1,const Node &t2) {
+//        return t1.b<t2.b;
+//    }
+//};
+// priority_queue<Node,vector<Node>, cmp> Q;
+// priority_queue<int, vector<int>, greater<int>>
+// priority_queue<int, vector<int>, less<<int>>
+
 
 /**
  * Definition for singly-linked list.

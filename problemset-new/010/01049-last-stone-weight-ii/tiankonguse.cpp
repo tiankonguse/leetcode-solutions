@@ -1,10 +1,10 @@
 /*************************************************************************
-    > File Name: last-stone-weight.cpp
+    > File Name: last-stone-weight-ii.cpp
     > Author: tiankonguse
     > Mail: i@tiankonguse.com
     > Created Time: Sun May 19 10:27:35 2019
-    > link: https://leetcode.com/problems/last-stone-weight/
-    > No: 1046. Last Stone Weight
+    > link: https://leetcode.com/problems/last-stone-weight-ii/
+    > No: 1049. Last Stone Weight II
     > Contest: https://leetcode.com/contest/weekly-contest-137
  ************************************************************************/
 
@@ -12,21 +12,27 @@
 
 class Solution {
 public:
-    int lastStoneWeight(vector<int>& stones) {
-        priority_queue<int> que(stones.begin(), stones.end());
-        while(que.size() >= 2) {
-            int y = que.top();
-            que.pop();
-            int x = que.top();
-            que.pop();
-            if(y != x) {
-                que.push(y-x);
+    int lastStoneWeightII(vector<int>& stones) {
+        set<int> s;
+        s.insert(0);
+        int sum = accumulate(stones.begin(),stones.end(),0)/2;
+        for(auto stone : stones) {
+            set<int> tmp;
+            for(auto& val : s) {
+                if(val <= sum) {
+                    tmp.insert(stone + val);
+                }
+                if(val >= -sum) {
+                    tmp.insert(stone - val);
+                }
             }
+            s.swap(tmp);
         }
-        if(que.size() == 0) {
-            return 0;
+        int ans = abs(*s.begin());
+        for(auto& val : s) {
+            ans = min(ans, abs(val));
         }
-        return que.top();
+        return ans;
     }
 };
 
@@ -38,7 +44,7 @@ public:
 */
 int main() {
 #define CLASS Solution
-#define FUNCTION lastStoneWeight
+#define FUNCTION lastStoneWeightII
 
     int first;
     int second;
