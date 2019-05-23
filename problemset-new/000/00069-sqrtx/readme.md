@@ -1,1 +1,11 @@
-这道题还没有人做，你可以来抢占一血
+## Python
+
+[marvelous.py](./marvelous.py)
+
+## Cpp
+
+[freedomDR.cpp](./freedomDR.cpp)
+
+## Go
+
+[freedomDR.go](./freedomDR.go)
