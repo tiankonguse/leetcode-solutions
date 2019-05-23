@@ -1,1 +1,3 @@
-这道题还没有人做，你可以来抢占一血
+## Python
+
+[marvelous.py](./marvelous.py)
