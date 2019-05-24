@@ -13,10 +13,10 @@ class Solution:
         return low
     
     @staticmethod
-    def get_rank(order, mid):
-        n = len(order)
-        rank = 0
-        for i in range(n - 1):
-            index = bisect.bisect_right(order, order[i] + mid, i + 1)
-            rank += index - i - 1
-        return rank
+    def get_rank(nums, possible):
+        cnt = j = 0
+        for i, v in enumerate(nums):
+            while j < len(nums) and nums[j] - v <= possible:
+                j += 1
+            cnt += j - i - 1
+        return cnt
