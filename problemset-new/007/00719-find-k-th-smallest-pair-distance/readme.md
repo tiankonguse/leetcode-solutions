@@ -57,3 +57,6 @@ n个数字，大概会有`C(n,2)`种差值，求最第k小的差值。
 
 [tiankonguse.cpp](./tainkonguse.cpp)
 
+## Python语言
+
+[marvelous.py](./marvelous.py)
