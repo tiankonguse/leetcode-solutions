@@ -20,3 +20,6 @@
 
 [tiankonguse.cpp](./tiankonguse.cpp)
 
+## Python语言
+
+[marvelous.py](./marvelous.py)
