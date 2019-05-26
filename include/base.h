@@ -210,6 +210,45 @@ enum {
 //    }
 //}
 
+// Decodes your encoded data to tree.
+TreeNode* stringToTree(string data) {
+    if(data.length() == 2)
+        return NULL;
+    vector<string> vec;
+
+    int prePos = 1;
+    for(int i=1; i<data.size(); i++) {
+        if(data[i] == ',') {
+            vec.push_back(data.substr(prePos, i-prePos));
+            prePos = i+1;
+        }
+    }
+    vec.push_back(data.substr(prePos, data.size()-prePos-1));
+
+    TreeNode* root = new TreeNode(atoi(vec[0].c_str()));
+    queue<TreeNode*> que;
+    que.push(root);
+
+    for(int i=1; i<vec.size();) {
+        TreeNode* pre = que.front();
+        que.pop();
+        if(!pre)
+            continue;
+        if(i<vec.size() && vec[i] != "null") {
+            pre->left = new TreeNode(atoi(vec[i].c_str()));
+            que.push(pre->left);
+        }
+        i++;
+
+        if(i < vec.size() && vec[i] != "null") {
+            pre->right = new TreeNode(atoi(vec[i].c_str()));
+            que.push(pre->right);
+        }
+        i++;
+    }
+    return root;
+}
+
 TreeNode* vecToTree(vector<int> data) {
     if(data.size() == 0) {
         return nullptr;
