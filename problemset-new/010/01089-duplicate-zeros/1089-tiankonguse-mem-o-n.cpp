@@ -13,30 +13,20 @@
 class Solution {
 public:
     void duplicateZeros(vector<int>& arr) {
-        int zeroNum = 0;
-        int lastPos = 0;
-        for(;lastPos + zeroNum < arr.size();lastPos++){
-            if(arr[lastPos] == 0){
-                zeroNum++;
+        vector<int> ans;
+        for(auto v : arr) {
+            ans.push_back(v);
+            if(ans.size() == arr.size()) {
+                break;
+            }
+            if(v == 0) {
+                ans.push_back(v);
+            }
+            if(ans.size() == arr.size()) {
+                break;
             }
         }
-        lastPos--;
-
-        if(arr[lastPos] == 0 && lastPos + zeroNum == arr.size()){
-            zeroNum--;//last pos is zero, skip
-
-            arr[lastPos + zeroNum] = arr[lastPos];
-            lastPos--;
-        }
-
-        while(lastPos >= 0){
-            if(arr[lastPos] == 0){
-                arr[lastPos + zeroNum] = arr[lastPos];
-                zeroNum--;
-            }
-            arr[lastPos + zeroNum] = arr[lastPos];
-            lastPos--;
-        }
+        arr = ans;
     }
 };
 
