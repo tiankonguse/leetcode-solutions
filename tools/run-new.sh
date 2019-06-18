@@ -19,7 +19,7 @@ for line in $(echo $data | sed 's/ /___/g' | sed 's/"stat"/\n/g' | grep -E "ques
     problem=$(echo $params | awk -F'___' '{ printf "%05d-%s",$1,$2 }')
     mkdir -p "../problemset-new/$problem/"
     echo "run $problem"
-    echo $params | awk -F'___'  '{ printf "| %d | [%s](https://leetcode.com/problems/%s/) | [%05d-%s](/problemset-new/%05d-%s/) |\n",$1,$3,$2,$1,$2,$1,$2 }' >> ../link-new.md
+    echo $params | awk -F'___'  '{ printf "| %d | [%s](https://leetcode.com/problems/%s/) | [%05d-%s](/problemset-new/%03d/%05d-%s/) |\n",$1,$3,$2,$1,$2,$1,$1,$2 }' >> ../link-new.md
 done
 
 echo "end"
