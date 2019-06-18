@@ -109,3 +109,4 @@ $RECYCLE.BIN/
 .tox
 *.mo
 *.stackdump
+tags
