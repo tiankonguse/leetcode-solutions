@@ -1,1 +1,17 @@
-这道题还没有人做，你可以来抢占一血
+# Single Number II
+
+Given an array of integers, every element appears three times except for one. Find that single one.  
+
+Note:  
+
+Your algorithm should have a linear runtime complexity.   
+
+Could you implement it without using extra memory?  
+
+
+题目地址：https://leetcode-cn.com/problems/single-number-ii/  
+
+[解题报告在这里](http://github.tiankonguse.com/blog/2014/10/10/bit-operation/)
+[扩展阅读在这里](http://github.tiankonguse.com/blog/2014/10/22/n-m-problem/)
+
+
