@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "vector": "cpp",
+        "random": "cpp",
+        "map": "cpp",
+        "utility": "cpp"
+    },
+    "C_Cpp.default.compilerPath": "/usr/local/Cellar/gcc@9/9.3.0/bin/g++-9"
+}

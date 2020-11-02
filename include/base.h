@@ -22,19 +22,18 @@ typedef __int64 LL;
 typedef long long LL;
 #endif
 
-template <class T>
-using min_queue = priority_queue<T, vector<T>, greater<T> >;
+// template <class T>
+// using min_queue = priority_queue<T, vector<T>, greater<T> >;
 
-template <class T>
-using max_queue = priority_queue<T>;
+// template <class T>
+// using max_queue = priority_queue<T>;
 
-const double PI = acos(-1.0), eps = 1e-7;
-const int INF = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
-const int max3 = 4100, max4 = 11100, max5 = 200100, max6 = 2000100;
-const int debug = 0;
-const int inf = 0x3f3f3f3f;
-typedef unsigned uint;
-typedef unsigned char uchar;
+const double base_eps = 1e-7;
+// const int INF = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+// const int max3 = 4100, max4 = 11100, max5 = 200100, max6 = 2000100;
+// const int inf = 0x3f3f3f3f;
+// typedef unsigned uint;
+// typedef unsigned char uchar;
 const int null = -1;
 #define  myprintf(fmt,args...) do{if(debug)printf(fmt, ##args);}while(0)
 
@@ -44,24 +43,24 @@ const int null = -1;
 // dir : up, right, down, right
 //int dir[4][2] = {{0,1}},{1,0},{0,-1,{-1,0}};
 
-// ÇóÊý×éºÍ
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //int sum = accumulate(stones.begin(),stones.end(),0)/2;
 
 
-// ¶àÖØset£¨É¾³ýÊÇÈ«É¾£©
+// ï¿½ï¿½ï¿½ï¿½setï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½È«É¾ï¿½ï¿½
 // multiset<int> s;
 
 
-// c++11 ±éÀúÈÝÆ÷
+// c++11 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //  for(auto stone : stones)
 
 // vecToTree({});
 // ListNode* root = vecToList({1,2,3,4});
 
-// ·´×ª×Ö·û´®
+// ï¿½ï¿½×ªï¿½Ö·ï¿½ï¿½ï¿½
 // std::reverse(a.begin(),a.end());
 
-// ÓÅÏÈ¶ÓÁÐ(¶Ñ)
+// ï¿½ï¿½ï¿½È¶ï¿½ï¿½ï¿½(ï¿½ï¿½)
 //typedef struct {
 //    int a,b;
 //} Node;
@@ -483,7 +482,7 @@ bool eq(baseType first, baseType second) {
 template <>
 bool eq(double first, double second) {
     double dis = first - second;
-    return  dis < eps && dis > -eps;
+    return  dis < base_eps && dis > -base_eps;
 }
 
 template <>

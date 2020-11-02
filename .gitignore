@@ -10,7 +10,7 @@
 # except windows execute 
 *.exe
 *.EXE
-
+*.dSYM
 # export mid file
 *.o
 
