@@ -51,7 +51,7 @@ class TreeArray {
   int n;
 };
 
-class DataOffline {
+class DiscreteArray {
  public:
   void Add(ll v) { m[v] = 0; }
   void Build() {
@@ -86,29 +86,29 @@ class DataOffline {
 };
 
 TreeArray treeArray;
-DataOffline dataOffline;
+DiscreteArray discreteArray;
 
 class Solution {
  public:
   int reversePairs(const vector<int>& nums) {
-    dataOffline.Reset();
+    discreteArray.Reset();
     for (auto v : nums) {
-      dataOffline.Add(v);
+      discreteArray.Add(v);
     }
-    dataOffline.Build();
+    discreteArray.Build();
 
-    int index = dataOffline.Size();
+    int index = discreteArray.Size();
     treeArray.Init(index);
 
     int ans = 0;
     for (auto v : nums) {
       ll val = v;
 
-      int it = dataOffline.Upper(val * 2);
+      int it = discreteArray.Upper(val * 2);
       if (it <= index) {
         ans += treeArray.Query(it, index);
       }
-      treeArray.Add(dataOffline.Get(val), 1);
+      treeArray.Add(discreteArray.Get(val), 1);
     }
 
     return ans;

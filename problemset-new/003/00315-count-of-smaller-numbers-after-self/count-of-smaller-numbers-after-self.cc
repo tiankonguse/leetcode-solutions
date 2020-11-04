@@ -51,7 +51,7 @@ class TreeArray {
   int n;
 };
 
-class DataOffline {
+class DiscreteArray {
  public:
   void Add(ll v) { m[v] = 0; }
   void Build() {
@@ -83,7 +83,7 @@ class DataOffline {
 };
 
 TreeArray treeArray;
-DataOffline dataOffline;
+DiscreteArray discreteArray;
 
 class Solution {
  public:
@@ -92,13 +92,13 @@ class Solution {
     ans.resize(nums.size());
 
     for (auto v : nums) {
-      dataOffline.Add(v);
+      discreteArray.Add(v);
     }
-    dataOffline.Build();
-    treeArray.Init(dataOffline.Size());
+    discreteArray.Build();
+    treeArray.Init(discreteArray.Size());
 
     for (int i = nums.size() - 1; i >= 0; i--) {
-      int index = dataOffline.Get(nums[i]);
+      int index = discreteArray.Get(nums[i]);
       ans[i] = treeArray.Query(1, index - 1);
       treeArray.Add(index, 1);
     }

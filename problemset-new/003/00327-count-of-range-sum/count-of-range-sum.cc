@@ -51,7 +51,7 @@ class TreeArray {
   int n;
 };
 
-class DataOffline {
+class DiscreteArray {
  public:
   void Add(ll v) { m[v] = 0; }
   void Build() {
@@ -83,21 +83,21 @@ class DataOffline {
 };
 
 TreeArray treeArray;
-DataOffline dataOffline;
+DiscreteArray discreteArray;
 
 class Solution {
  public:
   int countRangeSum(const vector<int>& nums, const int lower, const int upper) {
     ll sum = 0;
-    dataOffline.Add(0);
+    discreteArray.Add(0);
     for (auto v : nums) {
       sum -= v;
-      dataOffline.Add(v);
-      dataOffline.Add(sum);
+      discreteArray.Add(v);
+      discreteArray.Add(sum);
     }
-    dataOffline.Build();
+    discreteArray.Build();
 
-    int index = dataOffline.Size();
+    int index = discreteArray.Size();
 
     treeArray.Init(index);
 
@@ -111,11 +111,11 @@ class Solution {
       ll val = v - sum;
 
       //   printf("v = %lld l = %lld, r = %lld m[v]=%d\n", v, l, r, m[val]);
-      treeArray.Add(dataOffline.Get(val), 1);  //加入当前后缀
+      treeArray.Add(discreteArray.Get(val), 1);  //加入当前后缀
 
       // [left, right)
-      int left = dataOffline.Lower(l);
-      int right = dataOffline.Upper(r);
+      int left = discreteArray.Lower(l);
+      int right = discreteArray.Upper(r);
 
       if (left == right) {
         continue;
