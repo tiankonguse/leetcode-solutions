@@ -1,7 +1,7 @@
 {
     "tasks": [
         {
-            "label": "c++", // 任务名称，与launch.json的preLaunchTask相对应
+            "label": "mac-cpp", // 任务名称，与launch.json的preLaunchTask相对应
             "type": "shell", // process是vsc把预定义变量和转义解析后直接全部传给command；shell相当于先打开shell再输入命令，所以args还会经过shell再解析一遍
             "command": "/usr/local/Cellar/gcc@9/9.3.0/bin/g++-9", // 要使用的编译器，C++用g++
             "args": [
@@ -23,6 +23,32 @@
                 "focus": false,  // 设为true后可以使执行task时焦点聚集在终端，但对编译C/C++来说，设为true没有意义
                 "showReuseMessage": true,
                 "clear": false,
+                "panel": "shared",  // 不同的文件的编译信息共享一个终端面板
+            }
+        },
+        {
+            "label": "win10-compile-cpp", // 任务名称，与launch.json的preLaunchTask相对应
+            "type": "shell", // process是vsc把预定义变量和转义解析后直接全部传给command；shell相当于先打开shell再输入命令，所以args还会经过shell再解析一遍
+            "command": "D:\\mingw64\\bin\\g++.exe", // 要使用的编译器，C++用g++
+            "args": [
+                "-g",
+                "${file}",
+                "-I./include/",
+                "-o",
+                // "${fileDirname}/${fileBasenameNoExtension}.out",
+                "${workspaceFolder}\\tmp.exe",
+                // "-std=c++17"
+            ],       
+            "group": {
+                "kind": "build",
+                "isDefault": true // 不为true时ctrl shift B就要手动选择了
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always", // 执行任务时是否跳转到终端面板，可以为always，silent，never。具体参见VSC的文档
+                "focus": false,  // 设为true后可以使执行task时焦点聚集在终端，但对编译C/C++来说，设为true没有意义
+                "showReuseMessage": true,
+                "clear": true,
                 "panel": "shared",  // 不同的文件的编译信息共享一个终端面板
             }
         }

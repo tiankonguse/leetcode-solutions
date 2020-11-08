@@ -2,7 +2,7 @@
 *.[oa]
 
 # 只支持 mac 版本，windows 的禁止提交
-.vscode
+#.vscode
 # ignore generated html files,
 #*.html
 
