@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+﻿#include <bits/stdc++.h>
 #include<iostream>
 #include<cstdio>
 #include<cstring>
@@ -43,24 +43,24 @@ const int null = -1;
 // dir : up, right, down, right
 //int dir[4][2] = {{0,1}},{1,0},{0,-1,{-1,0}};
 
-// �������
+// 求数组和
 //int sum = accumulate(stones.begin(),stones.end(),0)/2;
 
 
-// ����set��ɾ����ȫɾ��
+// 多重set（删除是全删）
 // multiset<int> s;
 
 
-// c++11 ��������
+// c++11 遍历容器
 //  for(auto stone : stones)
 
 // vecToTree({});
 // ListNode* root = vecToList({1,2,3,4});
 
-// ��ת�ַ���
+// 反转字符串
 // std::reverse(a.begin(),a.end());
 
-// ���ȶ���(��)
+// 优先队列(堆)
 //typedef struct {
 //    int a,b;
 //} Node;
