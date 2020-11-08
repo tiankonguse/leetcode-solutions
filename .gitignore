@@ -1,6 +1,8 @@
 # ignore objects and archives, anywhere in the tree.
 *.[oa]
 
+# 只支持 mac 版本，windows 的禁止提交
+.vscode
 # ignore generated html files,
 #*.html
 
