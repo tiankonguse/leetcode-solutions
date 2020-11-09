@@ -8,7 +8,7 @@
     > Contest:
  ************************************************************************/
 
-#include "../../include/base.h"
+#include "base.h"
 
 /**
  * Definition for a binary tree node.
@@ -58,18 +58,12 @@ public:
     //int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
 */
 int main() {
-#define CLASS Solution
-#define FUNCTION buildTree
-
-    int first;
-    int second;
-    int expectAns;
-
-    first = 113;
-    second = 1;
-    expectAns = -1;
-    //TEST_SMP1(CLASS, FUNCTION, expectAns, first);
-    //TEST_SMP2(Solution, FUNCTION, expectAns, first, second);
+  TEST_SMP2(Solution, buildTree, vecToTree({3, 9, 20, -1, -1, 15, 7}),
+            vector<int>({3, 9, 20, 15, 7}), vector<int>({9, 3, 15, 20, 7}));
+  TEST_SMP2(Solution, buildTree, vecToTree({}), vector<int>({}),
+            vector<int>({}));
+  TEST_SMP2(Solution, buildTree, vecToTree({1}), vector<int>({1}),
+            vector<int>({1}));
 
     return 0;
 }
