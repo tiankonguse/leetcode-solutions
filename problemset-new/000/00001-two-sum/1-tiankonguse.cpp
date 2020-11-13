@@ -10,18 +10,18 @@
 #include "base.h"
 
 class Solution {
-public:
-    vector<int> twoSum(vector<int>& nums, int target) {
-        map<int,int> m;
-        for(int i=0;i<nums.size();i++){
-            int tmp = target - nums[i];
-            if(m.find(tmp) != m.end()){
-                return {m[tmp], i};
-            }
-            m[nums[i]] = i;
-        }
-        return {};
+ public:
+  vector<int> twoSum(vector<int>& nums, int target) {
+    unordered_map<int, int> m;
+    for (int i = 0; i < nums.size(); i++) {
+      int tmp = target - nums[i];
+      if (m.count(tmp)) {
+        return {m[tmp], i};
+      }
+      m[nums[i]] = i;
     }
+    return {};
+  }
 };
 
 /*
@@ -40,14 +40,8 @@ public:
     TEST_SMP1(Solution, smallestRepunitDivByK, expectAns, first);
 */
 int main() {
-    vector<int> first;
-    int second;
-    vector<int> expectAns;
+  TEST_SMP2(Solution, twoSum, vector<int>({0, 1}), vector<int>({2, 7, 11, 15}),
+            9);
 
-    first = {2, 7, 11, 15};
-    second = 9;
-    expectAns = {0, 1};
-    TEST_SMP2(Solution, twoSum, expectAns, first, second);
-
-    return 0;
+  return 0;
 }

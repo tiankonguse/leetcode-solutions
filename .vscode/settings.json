@@ -1,7 +1,8 @@
 {
     "files.associations": {
         "vector": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "type_traits": "cpp"
     },
     "code-runner.runInTerminal": true
 }
