@@ -11,69 +11,42 @@
 #include "base.h"
 
 class Solution {
-  int find(vector<int>& first, vector<int>& second, int k) {
-    int firstPoint = 0;
-    int secondPoint = 0;
-    int firstSize = first.size();
-    int secondSize = second.size();
-    k++;  // begin 1
-
+  int getMaxEdge(int l, int r, string& s) {
     int ans = 0;
-    while (k > 0) {
-      int firstmid = (firstPoint + firstSize) / 2;
-      int firstLen = firstmid - firstPoint + 1;
-      int secondmid = (secondPoint + secondSize) / 2;
-      int secondLen = secondmid - secondPoint + 1;
-
-      if (firstPoint < firstSize && secondPoint < secondSize) {
-        if (first[firstmid] < second[secondmid]) {
-          if (firstLen + secondLen > k) {
-            secondSize = secondmid;
-          } else {
-            k -= firstLen;
-            firstPoint = firstmid + 1;
-          }
-        } else {
-          if (firstLen + secondLen > k) {
-            firstSize = firstmid;
-          } else {
-            k -= secondLen;
-            secondPoint = secondmid + 1;
-          }
-        }
-      } else if (firstPoint < firstSize) {
-        if (firstLen > k) {
-          firstSize = firstmid;
-        } else if (firstLen < k) {
-          k -= firstLen;
-          firstPoint = firstmid + 1;
-        } else {
-          return first[firstmid];
-        }
-      } else if (secondPoint < secondSize) {
-        if (secondLen > k) {
-          secondSize = secondmid;
-        } else if (secondLen < k) {
-          k -= secondLen;
-          secondPoint = secondmid + 1;
-        } else {
-          return second[secondmid];
-        }
-      }
+    while (l >= 0 && r < s.length() && s[l] == s[r]) {
+      ans++;
+      l--, r++;
     }
     return ans;
   }
 
- public:
-  double findMedianSortedArrays(vector<int>& first, vector<int>& second) {
-    int allNum = first.size() + second.size();
-    if (allNum % 2 == 0) {
-      double a = find(first, second, allNum / 2);
-      double b = find(first, second, allNum / 2 - 1);
-      return (a + b) / 2.0;
-    } else {
-      return find(first, second, allNum / 2);
+  int maxl = 0, maxr = 0, maxAns = 0;
+
+  void update(int d, int l, int r) {
+    int tmpAns = 2 * d;
+    if (l == r) {
+      tmpAns--;
     }
+    if (tmpAns > maxAns) {
+      maxl = l - (d - 1);
+      maxr = r + (d + 1);
+      maxAns = tmpAns;
+    }
+  }
+
+ public:
+  string longestPalindrome(string s) {
+    for (int i = 0; i < s.length(); i++) {
+      int d = getMaxEdge(i, i, s);
+      update(d, i, i);
+    }
+
+    for (int i = 0; i < s.length() - 1; i++) {
+      int d = getMaxEdge(i, i + 1, s);
+      update(d, i, i + 1);
+    }
+
+    return s.substr(maxl, maxAns);
   }
 };
 
@@ -85,14 +58,10 @@ class Solution {
 */
 int main() {
 #define CLASS Solution
-#define FUNCTION findMedianSortedArrays
+#define FUNCTION longestPalindrome
 
-  TEST_SMP2(CLASS, FUNCTION, 2.0, vector<int>({1, 3}), vector<int>({2}));
-
-  TEST_SMP2(CLASS, FUNCTION, 2.5, vector<int>({1, 2}), vector<int>({3, 4}));
-  TEST_SMP2(CLASS, FUNCTION, 0.0, vector<int>({0, 0}), vector<int>({0, 0}));
-  TEST_SMP2(CLASS, FUNCTION, 1.0, vector<int>({}), vector<int>({1}));
-  TEST_SMP2(CLASS, FUNCTION, 2.0, vector<int>({2}), vector<int>({}));
+  TEST_SMP1(CLASS, FUNCTION, string("bab"), string("babad"));
+  TEST_SMP1(CLASS, FUNCTION, string("bb"), string("cbbd"));
 
   return 0;
 }
