@@ -404,9 +404,9 @@ void output(TreeNode* root) {
 }
 
 template <class T>
-void output(const T& data)  = delete;
+void output(const T& data) = delete;
 
-void output(const char* const  &data) { printf("%s ", data); }
+void output(const char* const& data) { printf("%s ", data); }
 
 void output(const bool& data) { printf("%s ", data ? "true" : "false"); }
 
@@ -621,15 +621,16 @@ int getIndex() {
     int index = getIndex();                                                    \
     bool check = eq(ans, expectAns);                                           \
     if (!check) {                                                              \
-      printf("index %d: NO\n", index);                                         \
+      printf("index[%d] %d: NO\n", __LINE__, index);                           \
       output("firstData", firstData);                                          \
       output("secondData", secondData);                                        \
       output("thirdData", thirdData);                                          \
       output("fouthData", fouthData);                                          \
       output("ans", ans);                                                      \
       output("expectAns", expectAns);                                          \
+      printf("\n");                                                            \
+      return 0;                                                                \
     } else {                                                                   \
       printf("index %d: YES\n", index);                                        \
     }                                                                          \
-    printf("\n");                                                              \
   } while (0)
