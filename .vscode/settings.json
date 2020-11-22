@@ -2,7 +2,9 @@
     "files.associations": {
         "vector": "cpp",
         "random": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "valarray": "cpp",
+        "*.tcc": "cpp"
     },
     "code-runner.runInTerminal": true
 }
