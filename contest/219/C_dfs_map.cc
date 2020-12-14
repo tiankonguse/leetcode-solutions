@@ -21,32 +21,35 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-int dp[max3][max3];
-int sum[max3];
-
 class Solution {
+  map<pair<int, int>, int> m;
+  vector<int> sum;
+  int dfs(int l, int r) {
+    pair<int, int> p = {l, r};
+    if (m.count(p)) {
+      return m[p];
+    }
+
+    if (l == r) {
+      return m[p] = 0;
+    }
+
+    int left_val = sum[r] - sum[l] - dfs(l + 1, r);
+    int right_val = sum[r - 1] - sum[l - 1] - dfs(l, r - 1);
+    return m[p] = max(left_val, right_val);
+  }
+
  public:
   int stoneGameVII(vector<int>& str) {
     int n = str.size();
 
+    sum.resize(n + 1);
     sum[0] = 0;
     for (int i = 1; i <= n; i++) {
       sum[i] = sum[i - 1] + str[i - 1];
     }
 
-    for (int i = n; i >= 1; i--) {
-      for (int j = i; j <= n; j++) {
-        if (i == j) {
-          dp[i][j] = 0;
-          continue;
-        }
-        ll left_val = sum[j] - sum[i] - dp[i + 1][j];
-        ll right_val = sum[j - 1] - sum[i - 1] - dp[i][j - 1];
-        dp[i][j] = max(left_val, right_val);
-      }
-    }
-
-    return dp[1][n];
+    return dfs(1, n);
   }
 };
 
