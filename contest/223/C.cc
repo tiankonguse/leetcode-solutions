@@ -31,46 +31,25 @@ class Solution {
     unordered_map<int, int> m;
     
     int ans ;
-    void add(int v){
-        auto it = m.find(v);
+    void update(int key, int val){
+        auto it = m.find(key);
         if(it == m.end()){
-            m[v] = 1;
+            m[key] = val;
             return;
         }
-        
-        if(it->second > 0){
-            it->second++;
-        }else if(it->second < 0){
-            it->second++;
-            ans++; // 匹配一组
-        }else{
-            it->second++;
-        }
-    }
-    void del(int v){
-        auto it = m.find(v);
-        if(it == m.end()){
-            m[v] = -1;
-            return;
+
+        if(it->second * val < 0){
+            ans++; //符号不同，抵消一个
         }
         
-        if(it->second > 0){
-            it->second--;
-            ans++; //匹配一组
-        }else if(it->second < 0){
-            it->second--;
-        }else{
-            it->second--;
-        }
+        it->second += val;
     }
     
     void dfs(int a){
         if(flag[a]) return ;
         flag[a] = 1;
-        //printf("i:%d s=%d t=%d\n", a, source[a], target[a]);
-        add(source[a]);
-        del(target[a]);
-        
+        update(source[a], 1);
+        update(target[a], -1);
         
         for(auto v: edges[a]){
             dfs(v);
@@ -95,7 +74,6 @@ public:
         for(int i=0;i<n;i++){
             if(flag[i] == 1) continue;
             m.clear();
-            //printf("group: \n");
             dfs(i);
         }
         
