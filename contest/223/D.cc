@@ -49,6 +49,7 @@ class Solution {
     return dp[k - 1][(1 << n) - 1];
   }
 };
+
 int main() {
   // TEST_SMP2(Solution, get, 0, 1, 1);
 
