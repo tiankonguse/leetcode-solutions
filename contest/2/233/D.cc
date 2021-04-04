@@ -16,6 +16,7 @@ using max_queue = priority_queue<T>;
 // lower_bound 大于等于
 // upper_bound 大于
 // reserve
+// reverse
 // sum = accumulate(a.begin(), a.end(), 0);
 
 const LL INF = 0x3f3f3f3f3f3f3f3fll;
