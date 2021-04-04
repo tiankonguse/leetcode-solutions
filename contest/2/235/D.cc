@@ -23,7 +23,6 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-
 const int N = 2 * 100100;
 const int M = 30000;
 bool is[N];
@@ -46,26 +45,32 @@ int getprm() {
   return k;
 }
 
+vector<int> m[N];
+pair<int, int> tmpPrm[N];
+int tmp_prm_num;
+
 class Solution {
   int gcd(int x, int y) { return y == 0 ? x : gcd(y, x % y); }
 
-  unordered_map<int, vector<int>> m;
   int max_val = 0;
 
-  vector<pair<int, int>> tmpPrm;
   void init(vector<int>& nums) {
     int prmNum = getprm();
 
     for (const auto v : nums) {
         max_val = max(max_val, v);
     }
+    for(int i=0;i<=max_val;i++){
+        m[i].clear();
+    }
       
     for (const auto v : nums) {
       int tmpVal = v;
-      tmpPrm.clear();
+      
+      tmp_prm_num = 0;
       for (int i = 0; i < prmNum; i++) {
         if (is[tmpVal] || tmpVal == 1) {  //剪枝
-          tmpPrm.push_back({tmpVal, 1});
+          tmpPrm[tmp_prm_num++] = {tmpVal, 1};
           break;
         }
 
@@ -76,23 +81,22 @@ class Solution {
           num++;
           tmpVal /= prm[i];
         }
-        tmpPrm.push_back({prm[i], num});
+        tmpPrm[tmp_prm_num++] = {prm[i], num};
       }
-        
       dfs(0, 1, v);
     }
   }
 
   void dfs(int pos, int ans, int baseVal) {
-    if (pos == tmpPrm.size()) {
+    if (pos == tmp_prm_num) {
         m[ans].push_back(baseVal);
         return;
     }
-    auto& [val, num] = tmpPrm[pos];
+    const auto& [val, num] = tmpPrm[pos];
 
     int pow_val = 1;
-    for (int i = 0; i <= num; i++) {
-      dfs(pos + 1, ans * pow_val,  baseVal);
+    for (int i = 0; i <= num; i++) { // 排列组合求出所有约数
+        dfs(pos + 1, ans * pow_val,  baseVal);
         if(i < num){
             pow_val *= val; //最后一次，不需要计算了
         }
@@ -119,7 +123,7 @@ class Solution {
     init(nums_);
     int ans = 0;
     for (int i = 1; i <= max_val; i++) {
-      if (m.count(i) == 0) continue;
+      if (m[i].size() == 0) continue;
       if (check(m[i], i)) {
         ans++;
       }
