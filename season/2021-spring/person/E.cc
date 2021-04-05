@@ -26,17 +26,8 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
 public:
-    string truncateSentence(string s, int k) {
-        int word_num = 0;
-        for(auto& c: s){
-            if(c == ' '){
-                word_num++;
-            }
-            if(word_num == k){
-                c = '\0';
-            }
-        }
-        return s.c_str();
+    int processTasks(vector<vector<int>>& tasks) {
+
     }
 };
 

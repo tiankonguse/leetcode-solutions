@@ -24,19 +24,43 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+typedef long long ll;
+template <class T>
+using min_queue = priority_queue<T, vector<T>, greater<T>>;
+template <class T>
+using max_queue = priority_queue<T>;
+
 class Solution {
 public:
-    string truncateSentence(string s, int k) {
-        int word_num = 0;
-        for(auto& c: s){
-            if(c == ' '){
-                word_num++;
-            }
-            if(word_num == k){
-                c = '\0';
-            }
+    int magicTower(vector<int>& nums) {
+        ll sum = 1;
+        for(auto v: nums){
+            sum += v;
         }
-        return s.c_str();
+        if(sum <= 0){
+            return -1;
+        }
+        
+        // 肯定有答案
+        min_queue<ll> que; //维护一个最小堆
+        sum = 1;
+        int ans = 0;
+        for(auto v: nums){
+            if(v == 0) continue;
+            if(v < 0){
+                que.push(v);
+            }
+            sum += v;
+            
+            if(sum > 0) continue;
+            
+            //此时 sum <= 0
+            
+            sum -= que.top();
+            que.pop();
+            ans++;
+        }
+        return ans;
     }
 };
 
