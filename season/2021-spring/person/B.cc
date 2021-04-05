@@ -1,50 +1,38 @@
 #include "base.h"
 
-
-
 typedef long long ll;
 class Solution {
-  ll mymin(ll a, ll b ){
-    return a<b?a:b;
-  }
-  int dfs(ll n, ll x, ll y, ll start) {
-    // printf("base n=%lld\n", n);
-    while (true) {
-      // printf("n=%lld x=%lld y=%lld start=%lld\n", n, x, y, start);
-      if (x == 0) {  // 上
-        return (start + x + y) % 9;
-      }
-      if (y + 1 == n) {  // 右
-        return (start + y + x) % 9;
-      }
-      if (x + 1 == n) {  // 下
-        return (start + 3 * (n - 1) - y) % 9;
-      }
-      if (y == 0) {  // 左
-        return (start + 4 * (n - 1) - x) % 9;
-      }
+  ll mymin(ll a, ll b) { return a < b ? a : b; }
+  int solver(ll n, ll x, ll y, ll start) {
+    ll lev = n;
+    lev = mymin(lev, x - 0 + 1);
+    lev = mymin(lev, n - x);
+    lev = mymin(lev, y - 0 + 1);
+    lev = mymin(lev, n - y);
+    lev = lev - 1;
 
-      ll lev = n;
-      lev = mymin(lev, x - 0 + 1);
-      lev = mymin(lev, n - x);
-      lev = mymin(lev, y - 0 + 1);
-      lev = mymin(lev, n - y);
-      lev = lev - 1;
+    // 此时 lev 肯定大于 1
+    // 4 * (n-1) + 4 * (n-2) + .. + 4 * (n - lev)
+    ll pos = 4 * ((n - 1) + (n - 1 - (lev - 1) * 2)) * lev / 2;
+    // printf("lev= %lld pos = %lld\n", lev, pos);
+    start = (start + pos) % 9;
+    x -= lev;
+    y -= lev;
+    n -= lev * 2;
 
-      // 此时 lev 肯定大于 1
-      // 4 * (n-1) + 4 * (n-2) + .. + 4 * (n - lev)
-      ll pos = 4 * ((n - 1) + (n - 1 - (lev - 1) * 2)) * lev  / 2;
-      // printf("lev= %lld pos = %lld\n", lev, pos);
-      start = (start +  pos) % 9;
-      x -= lev;
-      y -= lev;
-      n -= lev * 2;
+    if (x == 0 || y + 1 == n) {  // 上
+      return (start + x + y) % 9;
+    }
+    if (x + 1 == n || y == 0) {  // 下
+      return (start + 4 * (n - 1) - y - x) % 9;
     }
     return 0;
   }
 
  public:
-  int orchestraLayout(int num, int x, int y) { return dfs(num, x, y, 0) + 1; }
+  int orchestraLayout(int num, int x, int y) {
+    return solver(num, x, y, 0) + 1;
+  }
 };
 
 int main() {
