@@ -159,8 +159,7 @@ public:
         if(base_que.size() < M){
             return -1;
         }else{
-            ll sum = mid_que.sum, num = mid_que.sum;
-            return ((sum * 1.0 + 0.5)  / mid_que.num); 
+            return mid_que.sum  / mid_que.num); 
         }
     }
 };
