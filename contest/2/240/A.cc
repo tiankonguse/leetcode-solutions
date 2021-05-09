@@ -42,8 +42,7 @@ class Solution {
       m[v[1]]--;
     }
 
-    int maxYear = 0, maxNum = 0;
-    int sum = 0;
+    int maxYear = 0, maxNum = 0, sum = 0;
     for (auto& p : m) {
       sum += p.second;
       if (sum > maxNum) {

@@ -35,22 +35,21 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
  public:
-  int maxDistance(vector<int>& nums1, vector<int>& nums2) {
-    int l = 0, r = 0;
-    int n = nums1.size(), m = nums2.size();
+int maxDistance(vector<int>& nums1, vector<int>& nums2) {
+  int l = 0, r = 0;
+  int n = nums1.size(), m = nums2.size();
 
-    int ans = 0;
-    for (r = 0; r < m; r++) {
-      while (l < n && l <= r && nums1[l] > nums2[r]) {
-        l++;
-      }
-
-      if (l == n) continue;
-
-      ans = max(ans, r - l);
+  int ans = 0;
+  for (r = 0; r < m; r++) {
+    while (l < n && l <= r && nums1[l] > nums2[r]) {
+      l++;
     }
-    return ans;
+
+    if (l == n) continue;
+    ans = max(ans, r - l);
   }
+  return ans;
+}
 };
 
 int main() {

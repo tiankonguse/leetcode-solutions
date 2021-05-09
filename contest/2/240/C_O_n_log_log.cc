@@ -156,31 +156,29 @@ class Solution {
   }
 
  public:
-  int maxSumMinProduct(vector<int>& nums) {
-    n = nums.size();
-    maxNM = n;
+int maxSumMinProduct(vector<int>& nums) {
+  n = nums.size();
+  maxNM = n;
 
-    memset(lineSegTree.str, 0, sizeof(int) * (n * 2 + 1));
-    for (int i = 1; i <= n; i++) {
-      lineSegTree.str[i] = nums[i - 1];
-    }
-
-    lineSegTree.bulid(1, n);
-
-    ll ans = 0;
-
-    for (int i = 1; i <= n; i++) {
-      int v = nums[i - 1];
-      int l = FindLeft(i, v);
-      int r = FindRight(i, v);
-      ll sum = lineSegTree.querySum(l, r, 1, n);
-      // printf("i=%d sum[%d,%d]=%lld v=%d ans=%lld\n", i, l, r, sum, v, v *
-      // sum);
-      ans = max(ans, sum * v);
-    }
-
-    return ans % mod;
+  memset(lineSegTree.str, 0, sizeof(int) * (n * 2 + 1));
+  for (int i = 1; i <= n; i++) {
+    lineSegTree.str[i] = nums[i - 1];
   }
+
+  lineSegTree.bulid(1, n);
+
+  ll ans = 0;
+
+  for (int i = 1; i <= n; i++) {
+    int v = nums[i - 1];
+    int l = FindLeft(i, v);
+    int r = FindRight(i, v);
+    ll sum = lineSegTree.querySum(l, r, 1, n);
+    ans = max(ans, sum * v);
+  }
+
+  return ans % mod;
+}
 };
 
 int main() {
