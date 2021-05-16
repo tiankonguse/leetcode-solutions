@@ -38,46 +38,22 @@ const int max3 = 1100;
 const int mod = 1000000007;
 
 ll dp[max3][max3];
-ll strA[max3];
-
-
-typedef long long ll;
-const int max3 = 1100;
-const int mod = 1000000007;
-
-ll dp[max3][max3];
-ll strA[max3];
 
 class Solution {
-  void Init(int n) {
-    memset(dp, -1, sizeof(dp));
-
-    strA[0] = 1;
-    for (int i = 1; i <= n; i++) {
-      strA[i] = (strA[i - 1] * i) % mod;
-    }
-  }
-
   // 下标从 1 开始， [1, n][1, k]
   ll dfs(const int n, const int k) {
     if (dp[n][k] != -1) return dp[n][k];
-    if(k == 1) return dp[n][k] = strA[n-1];
+    if (k == 0) return dp[n][k] = 0;
     if (k == n) return dp[n][k] = 1;
-    
 
-
-    // n > k >= 2
-    // i = k >= 2
     ll a = dfs(n - 1, k);
     ll b = dfs(n - 1, k - 1);
-    ll ans = ((n - 1) * a  + b) % mod;
-    //printf("n=%d k=%d a=%lld b=%lld ans=%lld\n", n, k, a, b, ans);
-    return dp[n][k] = ans % mod;
+    return dp[n][k] = ((n - 1) * a + b) % mod;
   }
 
  public:
   int rearrangeSticks(int n, int k) {
-    Init(n);
+    memset(dp, -1, sizeof(dp));
     return dfs(n, k);
   }
 };
