@@ -6,7 +6,7 @@
  ************************************************************************/
 
 
-#include "../../include/base.h"
+#include "base.h"
 
 class MyStack {
     queue<int> que;

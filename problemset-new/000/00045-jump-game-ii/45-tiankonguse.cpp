@@ -8,27 +8,23 @@
     > Contest:
  ************************************************************************/
 
-#include "../../../include/base.h"
+#include "base.h"
 
 class Solution {
-    vector<int> f;
-    int maxPos;
-    void next(vector<int>& nums, int nowPos) {
-        while(nowPos + nums[nowPos] >= maxPos && maxPos  < f.size()) {
-            f[maxPos] = f[nowPos] + 1;
-            maxPos++;
-        }
+ public:
+  int jump(vector<int>& nums) {
+    int n = nums.size();
+    vector<int> ans(n, 0);
+
+    int maxPos = 1;
+    for (int i = 0; i < n; i++) {
+      while (i + nums[i] >= maxPos && maxPos < n) {
+        ans[maxPos] = ans[i] + 1;
+        maxPos++;
+      }
     }
-public:
-    int jump(vector<int>& nums) {
-        f.resize(nums.size(), -1);
-        maxPos = 1;
-        f[0] = 0;
-        for(int i=0; i<nums.size(); i++) {
-            next(nums, i);
-        }
-        return f[nums.size()-1];
-    }
+    return ans.back();
+  }
 };
 
 /*
@@ -41,15 +37,15 @@ int main() {
 #define CLASS Solution
 #define FUNCTION jump
 
-    int first;
-    int second;
-    int expectAns;
+  int first;
+  int second;
+  int expectAns;
 
-    first = 113;
-    second = 1;
-    expectAns = -1;
-    //TEST_SMP1(CLASS, FUNCTION, expectAns, first);
-    //TEST_SMP2(Solution, FUNCTION, expectAns, first, second);
+  first = 113;
+  second = 1;
+  expectAns = -1;
+  // TEST_SMP1(CLASS, FUNCTION, expectAns, first);
+  // TEST_SMP2(Solution, FUNCTION, expectAns, first, second);
 
-    return 0;
+  return 0;
 }
