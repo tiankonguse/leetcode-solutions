@@ -35,7 +35,6 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 ll dp[1111][1111];
 ll sum[1111];
-ll sumEx[1111];
 
 class Solution {
   ll speed;
@@ -48,37 +47,28 @@ class Solution {
     memset(dp, 0, sizeof(dp));
 
     sum[0] = 0;
-    sumEx[0] = 0;
     for (int i = 1; i <= n; i++) {
       sum[i] = sum[i - 1] + dist[i - 1];
-      sumEx[i] = sumEx[i - 1] + DIV(dist[i - 1], speed);
     }
   }
 
   ll DIV(ll a, ll b) { return (a + b - 1) / b; }
 
-  // dp[m][k] 前  m 个跳过 K 次的最短时间(向上取整)
+  // dp[m][k] 前  m 个休息 k 次的最短时间(向上取整)
   ll DFS(int m, int k) {
     if (dp[m][k] != 0) {
       return dp[m][k];
     }
 
-    if (k == m - 1) {  // 全部跳过
+    if (k == 0) {
       ll ans = DIV(sum[m], speed);
       // printf("m=%d k=%d t=%lld\n", m, k, ans);
       return dp[m][k] = ans;
     }
 
-    if (k == 0) {  // 都不不跳过
-      ll ans = DFS(m - 1, 0) + DIV(dist[m - 1], speed);
-      return dp[m][k] = ans;
-    }
-
-    // 跳过 k 次，等价与休息 m-1-k 次
-    ll sleep_num = m - 1 - k;                          // [1, m-2]
-    ll ans = DFS(m - 1, k) + DIV(dist[m - 1], speed);  // 不跳过
-    for (int i = 0; i <= k; i++) {  // 倒数第 i 个不跳过，之后的都跳过
-      ll tmp = DFS(m - 1 - i, k - i) + DIV(sum[m] - sum[m - 1 - i], speed);
+    ll ans = DFS(m - 1, k - 1) + DIV(dist[m - 1], speed);
+    for (int i = k; i < m; i++) {
+      ll tmp = DFS(i, k - 1) + DIV(sum[m] - sum[i], speed);
       // printf("i=%d dfs=%lld DIV=%lld\n", i, DFS(i, k-1), DIV(sum[m] - sum[i],
       // speed)); printf("m=%d k=%d i=%d t=%lld\n", m, k, i, tmp);
       ans = min(tmp, ans);
@@ -87,8 +77,10 @@ class Solution {
     return dp[m][k] = ans;
   }
 
+  // 跳过 k 次，则休息 n-1 - k 次
   bool Check(int k) {
-    if (DFS(n, k) <= hoursBefore) {
+    int max_sleep = n - 1;
+    if (DFS(n, max_sleep - k) <= hoursBefore) {
       return true;
     } else {
       return false;
