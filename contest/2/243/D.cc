@@ -35,23 +35,12 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 double dp[1111][1111];  // dp(i, j) 前i 个跳过 j
                         // 个的最短时间(最后一次不向上取整)
-ll sum[1111];
 
 class Solution {
   ll speed;
   ll hoursBefore;
   int n;
   vector<int> dist;
-
-  void Init() {
-    n = dist.size();
-    memset(dp, 0, sizeof(dp));
-
-    sum[0] = 0;
-    for (int i = 1; i <= n; i++) {
-      sum[i] = sum[i - 1] + dist[i - 1];
-    }
-  }
 
   ll DIV(ll a, ll b) { return a; }
   ll FIX(ll a) { return (a + speed - 1) / speed * speed; }
@@ -62,9 +51,12 @@ class Solution {
       return dp[m][k];
     }
 
+    if (m == 1) {
+      return dp[m][k] = DIV(dist[m - 1], speed);
+    }
+
     if (k == m - 1) {  // 全部跳过
-      ll ans = DIV(sum[m], speed);
-      // printf("m=%d k=%d t=%lld\n", m, k, ans);
+      ll ans = DFS(m - 1, k - 1) + DIV(dist[m - 1], speed);
       return dp[m][k] = ans;
     }
 
@@ -95,14 +87,11 @@ class Solution {
     speed = speed_;
     hoursBefore = hoursBefore_;
 
-    Init();
-
-    if (sum[n] > hoursBefore * speed) {
-      return -1;
-    }
+    n = dist.size();
+    memset(dp, 0, sizeof(dp));
 
     // 全跳过有答案，求最小值
-    int left = 0, right = n - 1;
+    int left = 0, right = n;
     while (left < right) {
       int mid = (left + right) / 2;
       if (Check(mid)) {
@@ -111,7 +100,7 @@ class Solution {
         left = mid + 1;
       }
     }
-    return right;
+    return right == n ? -1 : right;
   }
 };
 
