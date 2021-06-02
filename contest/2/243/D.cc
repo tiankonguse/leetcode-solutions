@@ -33,9 +33,9 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-ll dp[1111][1111];
+double dp[1111][1111];  // dp(i, j) 前i 个跳过 j
+                        // 个的最短时间(最后一次不向上取整)
 ll sum[1111];
-ll sumEx[1111];
 
 class Solution {
   ll speed;
@@ -48,14 +48,13 @@ class Solution {
     memset(dp, 0, sizeof(dp));
 
     sum[0] = 0;
-    sumEx[0] = 0;
     for (int i = 1; i <= n; i++) {
       sum[i] = sum[i - 1] + dist[i - 1];
-      sumEx[i] = sumEx[i - 1] + DIV(dist[i - 1], speed);
     }
   }
 
-  ll DIV(ll a, ll b) { return (a + b - 1) / b; }
+  ll DIV(ll a, ll b) { return a; }
+  ll FIX(ll a) { return (a + speed - 1) / speed * speed; }
 
   // dp[m][k] 前  m 个跳过 K 次的最短时间(向上取整)
   ll DFS(int m, int k) {
@@ -69,26 +68,21 @@ class Solution {
       return dp[m][k] = ans;
     }
 
-    if (k == 0) {  // 都不不跳过
-      ll ans = DFS(m - 1, 0) + DIV(dist[m - 1], speed);
+    if (k == 0) {  // 都不不跳过，前一个需要向上取整
+      ll ans = FIX(DFS(m - 1, 0)) + DIV(dist[m - 1], speed);
       return dp[m][k] = ans;
     }
 
-    // 跳过 k 次，等价与休息 m-1-k 次
-    ll sleep_num = m - 1 - k;                          // [1, m-2]
-    ll ans = DFS(m - 1, k) + DIV(dist[m - 1], speed);  // 不跳过
-    for (int i = 0; i <= k; i++) {  // 倒数第 i 个不跳过，之后的都跳过
-      ll tmp = DFS(m - 1 - i, k - i) + DIV(sum[m] - sum[m - 1 - i], speed);
-      // printf("i=%d dfs=%lld DIV=%lld\n", i, DFS(i, k-1), DIV(sum[m] - sum[i],
-      // speed)); printf("m=%d k=%d i=%d t=%lld\n", m, k, i, tmp);
-      ans = min(tmp, ans);
-    }
+    // 选择跳过 或者 不跳过
+    ll ans_yes_skip = DFS(m - 1, k - 1) + DIV(dist[m - 1], speed);
+    ll ans_no_skip = FIX(DFS(m - 1, k)) + DIV(dist[m - 1], speed);
+
     // printf("m=%d k=%d t=%lld\n", m, k, ans);
-    return dp[m][k] = ans;
+    return dp[m][k] = min(ans_yes_skip, ans_no_skip);
   }
 
   bool Check(int k) {
-    if (DFS(n, k) <= hoursBefore) {
+    if (DFS(n, k) <= hoursBefore * speed) {
       return true;
     } else {
       return false;
@@ -103,10 +97,11 @@ class Solution {
 
     Init();
 
-    if (DIV(sum[n], speed) > hoursBefore) {
+    if (sum[n] > hoursBefore * speed) {
       return -1;
     }
 
+    // 全跳过有答案，求最小值
     int left = 0, right = n - 1;
     while (left < right) {
       int mid = (left + right) / 2;
@@ -115,7 +110,6 @@ class Solution {
       } else {
         left = mid + 1;
       }
-      // printf("left=%d right=%d\n", left, right);
     }
     return right;
   }
