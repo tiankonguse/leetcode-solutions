@@ -8,7 +8,7 @@
     > Contest: https://leetcode.com/contest/weekly-contest-137
  ************************************************************************/
 
-#include "../../../include/base.h"
+#include "base.h"
 
 class Solution {
 public:
