@@ -10,9 +10,5 @@ Given input array nums = [1,1,2],
 Your function should return length = 2, with the first two elements of nums being 1 and 2 respectively. It doesn't matter what you leave beyond the new length.
 
 
-## hello
 
-建了一个小密圈，讨论各种算法群。  
-
-![小密圈](/images/suanfa_xiaomiquan.jpg)
 

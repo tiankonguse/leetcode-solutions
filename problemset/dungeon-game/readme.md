@@ -37,9 +37,5 @@ The knight's health has no upper bound.
 Any room can contain threats or power-ups, even the first room the knight enters and the bottom-right room where the princess is imprisoned.  
 
 
-## hello
 
-建了一个小密圈，讨论各种算法群。  
-
-![小密圈](/images/suanfa_xiaomiquan.jpg)
 

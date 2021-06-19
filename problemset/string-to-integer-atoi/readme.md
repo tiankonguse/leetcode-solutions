@@ -43,9 +43,5 @@ If no valid conversion could be performed, a zero value is returned. If the corr
 
 
 
-## hello
 
-建了一个小密圈，讨论各种算法群。  
-
-![小密圈](/images/suanfa_xiaomiquan.jpg)
 

@@ -8,9 +8,5 @@ Note:
 Try to come up as many solutions as you can, there are at least 3 different ways to solve this problem.
 
 
-## hello
 
-建了一个小密圈，讨论各种算法群。  
-
-![小密圈](/images/suanfa_xiaomiquan.jpg)
 

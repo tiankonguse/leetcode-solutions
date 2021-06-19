@@ -31,9 +31,4 @@ After the rain, water are trapped between the blocks. The total volume of water 
 
 g++ -std=c++11 trapping-rain-water-ii.cpp
 
-## hello
-
-建了一个小密圈，讨论各种算法群。  
-
-![小密圈](/images/suanfa_xiaomiquan.jpg)
 

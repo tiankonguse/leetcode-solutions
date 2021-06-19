@@ -17,9 +17,5 @@ Although the above answer is in lexicographical order, your answer could be in a
 
 
 
-## hello
 
-建了一个小密圈，讨论各种算法群。  
-
-![小密圈](/images/suanfa_xiaomiquan.jpg)
 

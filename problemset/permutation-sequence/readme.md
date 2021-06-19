@@ -20,9 +20,4 @@ Note: Given n will be between 1 and 9 inclusive.
 
 g++ -std=c++11 permutation-sequence.cpp
 
-## hello
-
-建了一个小密圈，讨论各种算法群。  
-
-![小密圈](/images/suanfa_xiaomiquan.jpg)
 

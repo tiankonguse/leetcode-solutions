@@ -24,9 +24,5 @@ For example, after running your query, the above Person table should have the fo
 +----+------------------+
 ```
 
-## hello
 
-建了一个小密圈，讨论各种算法群。  
-
-![小密圈](/images/suanfa_xiaomiquan.jpg)
 

@@ -15,9 +15,4 @@ Here are few examples.
 
 g++ -std=c++11 search-insert-position.cpp
 
-## hello
-
-建了一个小密圈，讨论各种算法群。  
-
-![小密圈](/images/suanfa_xiaomiquan.jpg)
 

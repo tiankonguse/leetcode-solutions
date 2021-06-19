@@ -12,9 +12,5 @@ You may assume that each input would have exactly one solution.
 Input: `numbers={2, 7, 11, 15}, target=9`  
 Output: `index1=1, index2=2`  
 
-## hello
 
-建了一个小密圈，讨论各种算法群。  
-
-![小密圈](/images/suanfa_xiaomiquan.jpg)
 
