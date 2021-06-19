@@ -41,11 +41,8 @@ const int null = -1;
     if (debug) printf(fmt, ##args); \
   } while (0)
 
-// dir : up, down, right, right
 // int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
-
-// dir : up, right, down, right
-// int dir[4][2] = {{0,1}},{1,0},{0,-1,{-1,0}};
+// int dir[8][2] = {{0,1},{1, 1},{1,0},{1,-1}, {0,-1}, {-1, -1}, {-1,0}, {-1, 1}};
 
 // 求数组和
 // int sum = accumulate(stones.begin(),stones.end(),0)/2;

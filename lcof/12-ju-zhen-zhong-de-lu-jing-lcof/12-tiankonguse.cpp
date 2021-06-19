@@ -36,13 +36,61 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
 
-    return 0;
-  }
+class Solution {
+    vector<vector<char>> board;
+    string word;
+    int n, m, l;
+
+    bool Dfs(int x, int y, int pos){
+        if(pos == l) {
+            return true;
+        }
+
+        if(x < 0 || y < 0 || x >= n || y >= m) return false;
+        if(board[x][y] != word[pos]) return false;
+
+        char c = board[x][y];
+        board[x][y] = '0';
+        for(int i = 0; i < 4; i++){
+            int X = x + dir[i][0];
+            int Y = y + dir[i][1];
+            if(Dfs(X, Y, pos + 1)){
+                return true;
+            }
+        }
+        board[x][y] = c;
+        return false;
+    }
+
+public:
+    bool exist(vector<vector<char>>& board_, string& word_) {
+        board.swap(board_);
+        word.swap(word_);
+
+        n = board.size();
+        m = board[0].size();
+        l = word.length();
+
+        if(l == 0){
+            return true;
+        }
+
+        if(l > n * m){
+            return false;
+        }
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(board[i][j] != word[0]) continue;
+                if(Dfs(i, j, 0)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 };
 
 int main() {
