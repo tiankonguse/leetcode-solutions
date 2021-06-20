@@ -1,9 +1,6 @@
 # Leetcode 所有题目题解
 
 
-我的公众号：天空的代码世界  
-
-
 ## 几个原则  
 
 
@@ -26,8 +23,9 @@
 * contest : 未来互动比赛时使用，保留。  
 * [category.md](category.md)：题目的分类  
 * images ： 此项目的图片资源，保留。  
-* jisuanke ： 计蒜客相关算法题，保留。  
 * other ： 其他相关算法题，保留。  
+    * [lcci](other/lcci/) 程序员面试金典
+    * [lcof](other/lcof/) 剑指 OFFER
 * tools : 项目相关的工具集，保留。  
 * .gitignore : 项目配置文件，保留。    
 * [join.md](join.md) 加入项目手册  
