@@ -39,8 +39,12 @@ for line in $(echo $data | sed 's/ /___/g' | sed -e 's/\"stat\"/\'$'\n/g' | grep
     
     problem="$pre-$question__title_slug"
     mkdir -p "../other/lcof/list/$problem/"
+
+    
+    num=$(ls -l ../other/lcof/list/$problem/ | grep -v "readme.md" | grep -v total |  wc -l)
+
     echo "run ${params}___${problem}"
-    echo "${params}___${problem}___${pre}" | awk -F'___'  '{ printf "| 剑指 OFFER %s | [题目](https://leetcode-cn.com/problems/%s/) | [题解](/other/lcof/list/%s/) |\n",$5,$2,$4 }' >> $fineName
+    echo "${params}___${problem}___${pre}___${num}" | awk -F'___'  '{ printf "| 剑指 OFFER %s | [题目](https://leetcode-cn.com/problems/%s/) | [题解数量（%d）](/other/lcof/list/%s/) |\n",$5,$2,$6,$4 }' >> $fineName
     # break
 done
 
