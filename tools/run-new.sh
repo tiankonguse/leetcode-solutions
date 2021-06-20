@@ -28,7 +28,7 @@ for line in $(echo $data | sed 's/ /___/g' | sed -e 's/\"stat\"/\'$'\n/g' | grep
     problem=$(echo $params | awk -F'___' '{ printf "%03d/%05d-%s",$1/100, $1,$2 }')
     mkdir -p "../problemset-new/$problem/"
     echo "run $problem"
-    echo $params | awk -F'___'  '{ printf "| %d | [%s](https://leetcode.com/problems/%s/) | [%05d-%s](/problemset-new/%03d/%05d-%s/) |\n",$1,$3,$2,$1,$2,$1/100,$1,$2 }' >> $fineName
+    echo $params | awk -F'___'  '{ printf "| %d | [%s](https://leetcode-cn.com/problems/%s/) | [%05d-%s](/problemset-new/%03d/%05d-%s/) |\n",$1,$3,$2,$1,$2,$1/100,$1,$2 }' >> $fineName
 done
 
 echo "end"
