@@ -25,7 +25,6 @@ using max_queue = priority_queue<T>;
 // unordered_map / unordered_set
 // 排序，小于是升序：[](auto&a, auto&b){ return a < b; })
 // 优先队列 priority_queue<Node>：大于是升序
-// __builtin_popcount 快速得到 1 的个数
 // struct Node{
 //     int t;
 //     bool operator<(const Node & that)const { return this->t > that.t; }
@@ -38,12 +37,33 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+    int CountBits(int i){
+        int num = 0;
+        while(i){
+            if(i&1) num++;
+            i >>= 1;
+        }
+        return num;
+    }
+public:
+    vector<string> readBinaryWatch(int turnedOn) {
+        vector<int> m(60, 0);
+        for(int i=0;i<60;i++){
+            m[i] = CountBits(i);
+        }
 
-    return 0;
-  }
+        vector<string> ans;
+        for(int i=0;i<12;i++){
+            for(int j=0;j<60;j++){
+                if(m[i] + m[j] == turnedOn) {
+                    char buf[20];
+                    snprintf(buf, sizeof(buf), "%d:%02d", i, j);
+                    ans.push_back(buf);
+                }
+            }
+        }
+        return ans;
+    }
 };
 
 int main() {
