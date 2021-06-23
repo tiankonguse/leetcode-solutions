@@ -20,7 +20,6 @@ using max_queue = priority_queue<T>;
 // vector/array: upper_bound(vec.begin(), vec.end(), v)
 // map: m.upper_bound(v)
 // reserve vector预先分配内存
-// vector: insert 在 it 之前插入
 // reverse(v.begin(), v.end()) 反转
 // sum = accumulate(a.begin(), a.end(), 0);
 // unordered_map / unordered_set
@@ -40,20 +39,8 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
 public:
-    int searchInsert(vector<int>& nums, int target) {
-        auto it = lower_bound(nums.begin(), nums.end(), target);
-        if(it == nums.end()) {
-            nums.push_back(target);
-            return nums.size() - 1; 
-        }
-
-        if(*it == target) {
-            return it - nums.begin();
-        }
-
-        int ans = it - nums.begin();
-        nums.insert(it, target);
-        return ans;
+    int hammingWeight(uint32_t n) {
+        return __builtin_popcount(n);
     }
 };
 
