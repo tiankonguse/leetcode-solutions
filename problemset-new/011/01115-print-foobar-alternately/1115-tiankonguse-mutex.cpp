@@ -30,21 +30,11 @@ using max_queue = priority_queue<T>;
 //     int t;
 //     bool operator<(const Node & that)const { return this->t > that.t; }
 // };
-
+// atomic_int tick; // 原子计数
 // mutex mtx;       // 锁，定义一个即可
 // condition_variable cv; // 条件变量
 // cv.notify_one(); // 事件通知
-// unique_lock<mutex> lck(mtx); 
-// cv.wait(lck); //等待事件
-
-// atomic_int tick; // 原子计数
-// this_thread::yield();  // 线程 sleep
-
-// #include <semaphore.h> // 需要手动包含信号量头文件
-// sem_t sem_done;
-// sem_init(&bar_done, 0 , 1);
-// sem_wait(&bar_done);
-// sem_post(&foo_done);
+// unique_lock<mutex> lck(mtx); cv.wait(lck); 等待事件
 
 const LL INF = 0x3f3f3f3f3f3f3f3fll;
 const double PI = acos(-1.0), eps = 1e-7;
@@ -52,13 +42,44 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+class FooBar {
+private:
+    int n;
+    atomic_int tick; // 原子计数
+    mutex mtx;       // 锁，定义一个即可
+    condition_variable cv_foo, cv_bar; // 条件变量
+public:
+    FooBar(int n) {
+        this->n = n;
+        tick = 0;
+    }
 
-    return 0;
-  }
+    void foo(function<void()> printFoo) {
+        for (int i = 0; i < n; i++) {
+            if(tick == 1){
+                 unique_lock<mutex> lck(mtx); 
+                 cv_bar.wait(lck);
+            }
+        	// printFoo() outputs "foo". Do not change or remove this line.
+        	printFoo();
+            tick = 1;
+            cv_foo.notify_one();
+        }
+    }
+
+    void bar(function<void()> printBar) {
+        
+        for (int i = 0; i < n; i++) {
+            if(tick == 0){
+                 unique_lock<mutex> lck(mtx); 
+                 cv_foo.wait(lck);
+            }
+        	// printBar() outputs "bar". Do not change or remove this line.
+        	printBar();
+            tick = 0;
+            cv_bar.notify_one();
+        }
+    }
 };
 
 int main() {
