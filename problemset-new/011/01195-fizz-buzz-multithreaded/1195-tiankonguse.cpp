@@ -56,7 +56,7 @@ class FizzBuzz {
 private:
     int n;
     atomic_int tick;
-
+mutex mtx;
 public:
     FizzBuzz(int n) {
         this->n = n;
