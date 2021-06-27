@@ -51,14 +51,27 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+public:
+    long long wonderfulSubstrings(string& word) {
+        int n = word.length();
+        vector<long long> dp(1<<10, 0);
+        long long ans = 0;
+        int pre = 0;
 
-    return 0;
-  }
+        dp[0] = 1;
+        for(auto c: word) {
+            int v = 1 << (c - 'a');
+            pre ^= v;
+            ans += dp[pre];
+            for(int i=0;i<10;i++){
+                ans += dp[pre ^ (1<<i)];
+            }
+            dp[pre]++;
+        }
+
+        return ans;
+    }
 };
 
 int main() {
