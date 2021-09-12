@@ -23,8 +23,6 @@ using max_queue = priority_queue<T>;
 // reverse(v.begin(), v.end()) 反转
 // sum = accumulate(a.begin(), a.end(), 0);
 // unordered_map / unordered_set
-// __builtin_popcount 一的个数
-// size_t found=str.find(char/char*/string); std::string::npos
 // 排序，小于是升序：[](auto&a, auto&b){ return a < b; })
 // 优先队列 priority_queue<Node>：大于是升序
 // __builtin_popcount 快速得到 1 的个数
@@ -54,13 +52,28 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
+typedef long long ll;
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    ll interchangeableRectangles(vector<vector<int>>& nums) {
+        sort(nums.begin(), nums.end(), [](auto&a, auto&b){
+            return ll(a[0]) * b[1] < ll(a[1]) * b[0];
+        });
+        ll ans = 0; 
+        vector<ll> pre;
+        ll num = 0;
+        for(auto& v: nums) {
+            if(num > 0 && pre[0] * v[1] == pre[1] * v[0]) {
+                num++;
+            } else {
+                ans += num * (num - 1) / 2;
+                num = 1;
+                pre = {v[0], v[1]};
+            }
+        }
+        ans += num * (num - 1) / 2;
+        return ans;
+    }
 };
 
 int main() {

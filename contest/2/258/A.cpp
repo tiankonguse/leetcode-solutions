@@ -23,8 +23,6 @@ using max_queue = priority_queue<T>;
 // reverse(v.begin(), v.end()) 反转
 // sum = accumulate(a.begin(), a.end(), 0);
 // unordered_map / unordered_set
-// __builtin_popcount 一的个数
-// size_t found=str.find(char/char*/string); std::string::npos
 // 排序，小于是升序：[](auto&a, auto&b){ return a < b; })
 // 优先队列 priority_queue<Node>：大于是升序
 // __builtin_popcount 快速得到 1 的个数
@@ -55,12 +53,25 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    string reversePrefix(string& word, char ch) {
+        int n = word.length();
+        int pos = -1;
+        for(int i = 0; i < n; i++) {
+            if(word[i] == ch) {
+                pos = i;
+                break;
+            }
+        }
+        if(pos != -1) {
+            for(int i=0; i < pos; i++, pos--) {
+                swap(word[i], word[pos]);
+            }
+        }
+        
+        
+        return word;
+    }
 };
 
 int main() {

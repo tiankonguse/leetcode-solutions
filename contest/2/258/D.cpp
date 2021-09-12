@@ -23,8 +23,6 @@ using max_queue = priority_queue<T>;
 // reverse(v.begin(), v.end()) 反转
 // sum = accumulate(a.begin(), a.end(), 0);
 // unordered_map / unordered_set
-// __builtin_popcount 一的个数
-// size_t found=str.find(char/char*/string); std::string::npos
 // 排序，小于是升序：[](auto&a, auto&b){ return a < b; })
 // 优先队列 priority_queue<Node>：大于是升序
 // __builtin_popcount 快速得到 1 的个数
@@ -54,13 +52,63 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
+int flag[100010];
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+    vector<int> nums;
+    vector<int> parents;
+    vector<vector<int>> tree;
+    vector<int> ans;
+    int n;
+    int minVal;
+    
+    void Init(){
+        n = parents.size();
+        tree.resize(n);
+        for(int i=0;i<n;i++) {
+            int p = parents[i];
+            if(p >= 0) {
+                tree[p].push_back(i);
+            }
+        }
+        ans.resize(n, 1);
+        memset(flag, 0, sizeof(flag));
+        minVal = 1;
+    }
+    
+    void Dfs(int p) {
+        int v = nums[p];
+        if(flag[v]) return;
+        flag[v] = 1;
+        for(auto x: tree[p]) {
+            Dfs(x);
+        }
+    }
+    
+public:
+    vector<int> smallestMissingValueSubtree(vector<int>& parents_, vector<int>& nums_) {
+        nums.swap(nums_);
+        parents.swap(parents_);
+        
+        Init();
+        
+        int x = -1;
+        for(int i=0;i<n;i++) {
+            if(nums[i] == 1) {
+                x = i;
+                break;
+            }
+        }
+        
+        while(x != -1) {
+            Dfs(x);
+            while(flag[minVal]) {
+                minVal++;
+            }
+            ans[x] = minVal;
+            x = parents[x];
+        }
+        return ans;
+    }
 };
 
 int main() {

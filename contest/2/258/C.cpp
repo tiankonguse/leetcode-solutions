@@ -23,8 +23,6 @@ using max_queue = priority_queue<T>;
 // reverse(v.begin(), v.end()) 反转
 // sum = accumulate(a.begin(), a.end(), 0);
 // unordered_map / unordered_set
-// __builtin_popcount 一的个数
-// size_t found=str.find(char/char*/string); std::string::npos
 // 排序，小于是升序：[](auto&a, auto&b){ return a < b; })
 // 优先队列 priority_queue<Node>：大于是升序
 // __builtin_popcount 快速得到 1 的个数
@@ -54,13 +52,51 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+int flag[1<<12]; // -1
 
-    return 0;
-  }
+class Solution {
+    bool Check(const int mask, string& s) {
+        if(flag[mask] != -1) return flag[mask];
+        vector<char> bits;
+        
+        int l = 0;
+        int tmp = mask;
+        while(tmp){
+            if((tmp&1) == 1) {
+                bits.push_back(s[l]);
+            }
+            l++;
+            tmp = tmp>>1;
+        }
+        
+        int r = bits.size() - 1;
+        for(int l=0;l<=r;l++,r--){
+            if(bits[l] != bits[r]) {
+                return flag[mask] = 0;
+            }
+        }
+        return flag[mask] = 1;
+    }
+public:
+    int maxProduct(string& s) {
+        memset(flag, -1, sizeof(flag)); 
+        
+int n = s.length();
+int N = 1<<n;
+int ans = 0;
+for(int i=1;i<N;i++){
+    if(!Check(i, s)) continue;
+    for(int j=1;j<N;j++){
+        if(i & j) continue;
+        if(!Check(j, s)) continue;
+        int tmpans = int(__builtin_popcount(i)) * __builtin_popcount(j);
+        if(tmpans > ans){
+            ans = tmpans;
+        }
+    }
+}
+return ans;
+    }
 };
 
 int main() {
