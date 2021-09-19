@@ -54,12 +54,29 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    int sumOfBeauties(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> subMin(n, nums.back());
+        
+        for(int i = n - 2; i >= 0; i--) {
+            subMin[i] = min(subMin[i+1], nums[i+1]);
+        }
+        
+        int ptrMax = 0;
+        int ans = 0;
+        for(int i = 1; i <= n - 2; i++) {
+            ptrMax = max(ptrMax, nums[i - 1]);
+            if(ptrMax < nums[i] && nums[i] < subMin[i]) {
+                //printf("i=%d +2\n", i);
+                ans += 2;
+            }else if(nums[i-1] < nums[i] && nums[i] < nums[i+1]){
+                //printf("i=%d +1\n", i);
+                ans += 1;
+            }
+        }
+        return ans;
+    }
 };
 
 int main() {

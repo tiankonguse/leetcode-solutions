@@ -52,14 +52,85 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+int dp[26][16010];
+typedef unsigned long long ull;
+unordered_set<ull> m;
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+    string ans;
+    string pre;
+    int n;
+    string s;
+    int maxLen;
+    int K;
+    
+    bool Check(){ // 是一个答案就需要返回 true
+        int j = 0, i = 0;
+        int num = 0;
+        
+        while(pre.length() * (K - num) - j + i <= n) {
+            i = dp[pre[j] - 'a'][i];
+            if(i == -1) return false;
+            
+            j++, i++;
+            if(j == pre.length()){
+                num++;
+                if(num == K) {
+                    break;
+                }
+                j = 0;
+            }
+        }
+        
+        if(num == K) {
+            if(pre.length() < ans.length()) return true; // 长度不是最优答案
+            if(pre.length() == ans.length() && pre < ans) return true; // 字典序不是最优答案
+            ans = pre;
+            return true;
+        }
+        return false;
+    }
+    
+    void Dfs(){
+        if(pre.length() == maxLen) {
+            return ; // 出口
+        }
+        
+        // 剪枝，如果 pre 目前一个
+        
+        for(int i = 0; i < 26; i++) {
+            pre.push_back('a' + i);
+            if(Check()) {
+                Dfs();
+            }
+            pre.pop_back();
+        }
+    }
+    
+    void Init() {
+        for(int j=0;j<26;j++) dp[j][n] = -1;
+        
+        for(int i = n - 1; i >= 0; i--) {
+            for(int j = 0; j < 26; j++) {
+                dp[j][i] = dp[j][i + 1];
+            }
+            dp[s[i] - 'a'][i] = i;
+        }
+    }
+public:
+    string longestSubsequenceRepeatedK(string& s_, int k) {
+        s.swap(s_);
+        K = k;
+        
+        n = s.length();
+        maxLen = n / k;
+        
+        pre.reserve(maxLen);
+        Init();
+        Dfs();
+        
+        return ans;
+    }
 };
 
 int main() {

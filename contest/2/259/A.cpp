@@ -54,12 +54,18 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    int finalValueAfterOperations(vector<string>& operations) {
+        int ans = 0;
+        for(auto& s: operations) {
+            if(s[1] == '+') {
+                ans++;
+            }else{
+                ans--;
+            }
+        }
+        return ans;
+    }
 };
 
 int main() {

@@ -53,14 +53,60 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+const int N = 1001;
+const int M = 10000;
+class DetectSquares {
+    unordered_map<int, int> m;
+    vector<vector<int>> X, Y;
+    
+    int E(int a, int b){
+        return a * M + b;
+    }
+public:
+    DetectSquares() {
+        X.resize(N);
+        //Y.resize(N);
+    }
+    
+    
+    void add(const vector<int>& p) {
+        m[E(p[0], p[1])]++;
+        X[p[0]].push_back(p[1]);
+        //Y[p[1]].push_back(p[0]);
+    }
+    
+    int count(const vector<int>& p) {
+        int x0 = p[0], y0 = p[1];
+        int ans = 0;
+        
+        // 左右
+        for(auto y1: X[x0]) {
+            if(y1 == y0) continue; // 面积为 0
+            int l = y1 - y0; // 求出边长
+            
+            for(int i = -1; i <= 1; i+=2) {
+                int x2 = x0 - i * l; // 计算出新的 X 左边， 加 l 或者 减 l
+                if(x2 < 0) {
+                    continue;
+                }
+                int a = E(x2, y0);
+                int b = E(x2, y1);
+                if(m.count(a) && m.count(b)) {
+                    ans += m[a] * m[b];
+                }
+            }
+        }
+        
+        return ans;
+    }
 };
+
+/**
+ * Your DetectSquares object will be instantiated and called as such:
+ * DetectSquares* obj = new DetectSquares();
+ * obj->add(point);
+ * int param_2 = obj->count(point);
+ */
 
 int main() {
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
