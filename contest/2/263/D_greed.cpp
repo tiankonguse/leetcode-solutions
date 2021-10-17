@@ -118,8 +118,8 @@ public:
             path[v].push_back(u);
         }
         
-        InitStepTime();
-        BfsStep();
+        BfsStep(); // 求最短路
+        InitStepTime(); // 求 n+2 跳的所有答案
         
         if(DfsCheck(1, 0)) {
             return stepToTime[step[1] + 1];
