@@ -1,5 +1,8 @@
 #include "base.h"
 
+#define myprintf(format, args...) printf("line[%s]" format, __LINE__, ##args)
+#define myprintf(format, args...)
+
 typedef long long ll;
 typedef long long LL;
 typedef unsigned long long ull;
