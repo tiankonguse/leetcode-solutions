@@ -57,12 +57,35 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    string decodeCiphertext(string& encodedText, int rows) {
+        int n = encodedText.size();
+        int col = n / rows;
+        
+        string ans;
+        ans.reserve(n);
+        
+        
+        for(int i = 0; i < col; i++) {
+            for(int j = 0; j < rows; j++) {
+                int tmpRow = j;
+                int tmpCol = i + j;
+                
+                if(tmpCol >= col) {
+                    ans.push_back(' ');
+                } else {
+                    ans.push_back(encodedText[tmpRow * col + tmpCol]);
+                }
+            }
+        }
+        
+        while(ans.back() == ' ') {
+            ans.pop_back();
+        }
+        
+        
+        return ans;
+    }
 };
 
 int main() {

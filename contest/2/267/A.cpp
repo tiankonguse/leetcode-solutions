@@ -1,7 +1,7 @@
 #include "base.h"
 
 #define myprintf(format, args...) printf("line[%d]" format, __LINE__, ##args)
-#define myprintf(format, args...)
+// #define myprintf(format, args...)
 
 typedef long long ll;
 typedef long long LL;
@@ -17,15 +17,11 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 // int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
-// int dir[8][2] = {{0,1},{1, 1},{1,0},{1,-1}, {0,-1}, {-1, -1}, {-1,0}, {-1, 1}};
-// lower_bound 大于等于
-// upper_bound 大于
-// vector/array: upper_bound(vec.begin(), vec.end(), v)
-// map: m.upper_bound(v)
-// reserve vector预先分配内存
-// reverse(v.begin(), v.end()) 反转
-// sum = accumulate(a.begin(), a.end(), 0);
-// unordered_map / unordered_set
+// int dir[8][2] = {{0,1},{1, 1},{1,0},{1,-1}, {0,-1}, {-1, -1}, {-1,0}, {-1,
+// 1}}; lower_bound 大于等于 upper_bound 大于 vector/array:
+// upper_bound(vec.begin(), vec.end(), v) map: m.upper_bound(v) reserve
+// vector预先分配内存 reverse(v.begin(), v.end()) 反转 sum =
+// accumulate(a.begin(), a.end(), 0); unordered_map / unordered_set
 // __builtin_popcount 一的个数
 // size_t found=str.find(char/char*/string); std::string::npos
 // 排序，小于是升序：[](auto&a, auto&b){ return a < b; })
@@ -38,7 +34,7 @@ using max_queue = priority_queue<T>;
 // mutex mtx;       // 互斥量，锁，定义一个即可
 // condition_variable cv; // 条件变量
 // cv.notify_one(); // 事件通知
-// unique_lock<mutex> lck(mtx); 
+// unique_lock<mutex> lck(mtx);
 // cv.wait(lck); //等待事件
 
 // atomic_int tick; // 原子计数
@@ -57,12 +53,21 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    int timeRequiredToBuy(vector<int>& tickets, int k) {
+        int ans = 0;
+        int n = tickets.size();
+        
+        for(int i=0;i<n;i++) {
+            if(i <= k) {
+                ans += min(tickets[i], tickets[k]);
+            }else{
+                ans += min(tickets[i], tickets[k] - 1);
+            }
+        }
+        
+        return ans;
+    }
 };
 
 int main() {

@@ -56,13 +56,60 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    ListNode* reverseEvenLengthGroups(ListNode* head) {
+        ListNode* root = head;
+        
+        int group = 1;
+        ListNode* pre = head;
+        head = head->next; // 指向第二个
+        
+        while(head) {
+            group++; // 分组个数加一个
+            
+            int num = 0;
+            ListNode* tail = head; // 下个分组的第一个
+            ListNode* tmpPre = head; // 当前分组最后一个
+            
+            while(tail && num < group) {
+                tmpPre = tail;
+                tail = tail->next;
+                num++;
+            }
+            
+            if(num % 2 == 1) { // 奇数，不做反转
+                pre = tmpPre;
+                head = tail;
+                continue;
+            }
+            
+            // 偶数，反转
+            ListNode* last = head; // 反转后，head 是当前分组的最后一个
+            while(head != tmpPre) {
+                pre->next = head->next;
+                head->next = tmpPre->next;
+                tmpPre->next = head;
+                
+                head = pre->next;
+            }
+            
+            pre = last;
+            head = tail;
+        }
+        
+        return root;
+    }
 };
 
 int main() {

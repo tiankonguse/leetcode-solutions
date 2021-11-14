@@ -56,13 +56,78 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+#define myprintf(format, args...) printf("line[%d]" format, __LINE__, ##args)
+#define myprintf(format, args...)
 
-    return 0;
+const int N = 1111;
+int pre[N],Rank[N];
+
+void init(int n) {
+    for(int i=0; i<n; i++) {
+        pre[i] = i, Rank[i] = 0;
+    }
+}
+
+int find_pre(int node) {
+  if (pre[node] != node) {
+    pre[node] = find_pre(pre[node]);
   }
+  return pre[node];
+}
+
+void merge_pre(int from, int to) {
+  from = find_pre(from);
+  to = find_pre(to);
+  if (from != to) {
+    if (Rank[from] > Rank[to]) {
+      pre[to] = from;
+    } else {
+      pre[from] = to;
+      if (Rank[from] == Rank[to]) {
+        ++Rank[to];
+      }
+    }
+  }
+}
+
+class Solution {
+    vector<vector<int>> restrictions;
+    
+    bool Check(int u, int v){
+        int preu = find_pre(u), prev = find_pre(v);
+        if(preu == prev) {
+            return true; // 本来就是朋友，说明合法
+        }
+        myprintf("u=%d preu=%d v=%d prev=%d\n", u, preu, v, prev);
+        
+        for(auto&p: restrictions) {
+            int pre1 = find_pre(p[0]);
+            int pre2 = find_pre(p[1]);
+            myprintf("p0=%d prep0=%d p1=%d prep1=%d\n", p[0], pre1, p[1], pre2);
+            
+            if(pre1 == preu && pre2 == prev) return false;
+            if(pre1 == prev && pre2 == preu) return false;
+        }
+        
+        merge_pre(u, v);
+        return true;
+        
+    }
+public:
+    vector<bool> friendRequests(int n, vector<vector<int>>& restrictions_, vector<vector<int>>& requests) {
+        restrictions.swap(restrictions_);
+        
+        init(n);
+        
+        vector<bool> ans;
+        ans.reserve(requests.size());
+        for(auto&p: requests) {
+            int u = p[0], v = p[1];
+            ans.push_back(Check(u, v));
+            myprintf("ans=%d\n", int(ans.back()));
+        }
+        return ans;
+    }
 };
 
 int main() {
