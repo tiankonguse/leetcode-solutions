@@ -75,12 +75,19 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    vector<int> targetIndices(vector<int>& nums, int target) {
+        vector<int> ans;
+        sort(nums.begin(), nums.end());
+        
+        for(int i=0;i<nums.size();i++) {
+            if(nums[i] == target) {
+                ans.push_back(i);
+            }
+        }
+        
+        return ans;
+    }
 };
 
 int main() {

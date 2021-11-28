@@ -75,12 +75,85 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+    int n;
+    vector<int> flag;
+    vector<vector<int>> path;
+    unordered_set<int> cache;
+    
+    void Dfs(int x){
+        if(flag[x]) {
+            return;
+        }
+        
+        cache.erase(x);
+        flag[x] = 1;
+        
+        for(auto y: path[x]) {
+            Dfs(y);
+        }
+        path[x].clear();
+    }
+    
+    void FastAdd(int x, int y){
+        cache.insert(x);
+        cache.insert(y);
+        path[x].push_back(y);
+        path[y].push_back(x);
+    }
+    
+    void FastClear(){
+        for(auto&x: cache) {
+            path[x].clear();
+        }
+        cache.clear();
+    }
+    
+public:
+    vector<int> findAllPeople(int n_, vector<vector<int>>& meetings, int firstPerson) {
+        n = n_;
+        
+        flag.clear();
+        flag.resize(n, 0);
+        flag[0] = 1;
+        flag[firstPerson] = 1;
+        
+        cache.clear();
+        
+        path.clear();
+        path.resize(n);
+        
+        sort(meetings.begin(), meetings.end(), [](auto&a, auto&b){
+            return a[2] < b[2];
+        });
+        
+        int preTime = -1;
+        for(auto&p: meetings) {
+            int x = p[0], y = p[1], t = p[2];
+            if(preTime != t) {
+                FastClear();
+            }
+            preTime = t;
+            
+            if(flag[x] && flag[y]) {
+                // do nothing
+            }else if(flag[x]) {
+                Dfs(y);
+            }else if(flag[y]) {
+                Dfs(x);
+            } else {
+                FastAdd(x, y);
+            }
+        }
+        
+        vector<int> ans;
+        ans.reserve(n);
+        for(int i = 0; i < n; i++) {
+            if(flag[i]) {
+                ans.push_back(i);
+            }
+        }
+        return ans;
+    }
 };
 
 int main() {

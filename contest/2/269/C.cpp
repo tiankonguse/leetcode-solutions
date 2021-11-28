@@ -75,12 +75,57 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+    vector<int> nums;
+    int n;
+    int minPos, maxPos;
+    
+    void findMinMaxPos(){
+        minPos = 0, maxPos = 0;
+        for(int i = 0; i < n; i++) {
+            if(nums[minPos] > nums[i]) {
+                minPos = i;
+            }
+            if(nums[maxPos] < nums[i]) {
+                maxPos = i;
+            }
+        }
+    }
+    
+    int LeftFirst(){
+        int ans = 0;
+        int l = 0, r = n - 1;
+        
+        ans += minPos - l + 1;
+        l = minPos + 1;
+        
+        ans += min(maxPos - l + 1, r - maxPos + 1);
+        return ans;
+    }
+    
+    int RightFirst() {
+        int ans = 0;
+        int l = 0, r = n - 1;
+        
+        ans += r - maxPos + 1;
+        r = maxPos - 1;
+        
+        ans += min(minPos - l + 1, r - minPos + 1);
+        return ans;
+    }
+    
+public:
+    int minimumDeletions(vector<int>& nums_) {
+        nums.swap(nums_);
+        n = nums.size();
+        
+        findMinMaxPos();
+        
+        if(minPos > maxPos) {
+            swap(minPos, maxPos);
+        }
+        
+        return min(LeftFirst(), RightFirst());
+    }
 };
 
 int main() {
