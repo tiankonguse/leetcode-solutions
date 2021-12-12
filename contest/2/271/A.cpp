@@ -30,8 +30,6 @@ map: m.upper_bound(v)
 区间 [l,r]内满足的个数：
 upper_bound(vec.begin(), vec.end(), r) - lower_bound(vec.begin(), vec.end(), l);
 std::distance(v.begin(), it)
-map/set distance 复杂度 O(N)
-vector/数组 distance 复杂度 O(1)
 
 vector预先分配内存 reserve
 反转 reverse(v.begin(), v.end())
@@ -77,12 +75,23 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    int countPoints(string& rings) {
+        vector<set<char>> rods(10);
+        
+        for(int i = 0; i + 1 < rings.size(); i+=2) {
+            rods[rings[i+1] - '0'].insert(rings[i]);
+        }
+        
+        int ans = 0;
+        for(int i = 0; i < rods.size(); i++) {
+            if(rods[i].size() == 3) {
+                ans++;
+            }
+        }
+        return ans;
+        
+    }
 };
 
 int main() {

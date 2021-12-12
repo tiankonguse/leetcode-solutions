@@ -30,8 +30,6 @@ map: m.upper_bound(v)
 区间 [l,r]内满足的个数：
 upper_bound(vec.begin(), vec.end(), r) - lower_bound(vec.begin(), vec.end(), l);
 std::distance(v.begin(), it)
-map/set distance 复杂度 O(N)
-vector/数组 distance 复杂度 O(1)
 
 vector预先分配内存 reserve
 反转 reverse(v.begin(), v.end())
@@ -76,13 +74,25 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+typedef long long ll;
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    long long subArrayRanges(vector<int>& nums) {
+        ll ans = 0;
+        int n = nums.size();
+        
+        for(int i = 0; i < n; i++) {
+            ll minVal = nums[i], maxVal = nums[i];
+            for(int j = i; j < n; j++) {
+                minVal = min(minVal, ll(nums[j]));
+                maxVal = max(maxVal, ll(nums[j]));
+                ans += maxVal - minVal;
+            }
+        }
+        
+        
+        return ans;
+    }
 };
 
 int main() {
