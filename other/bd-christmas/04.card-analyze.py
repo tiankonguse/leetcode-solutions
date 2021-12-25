@@ -206,11 +206,10 @@ class Card:
             if i < 5:
                 self.g.DrawCircleTangent()
                 self.t.circle(r, 109/2)
-                centers.append((self.g.GetCircleCenter(r), self.t.heading() - 90))
+                dir = self.g.GetCircleCenter(r)
+                centers.append((dir, self.t.heading() - 90))
                 self.t.circle(r, 109/2)
 
-
-        R = 1.82 * self.F
         for p in centers:
             pos = p[0]
             dir = p[1]
@@ -220,7 +219,7 @@ class Card:
             self.t.seth(dir)
             self.t.fd(r)
             self.t.pendown()
-            self.t.fd(dis - r - R)
+            self.t.fd(dis - r - self.R)
 
     def DrawEye(self):
         self.g.DrawDoubleDot(0.38 * self.F, 0, 0.20 * self.F)
@@ -237,7 +236,7 @@ class Card:
         self.g.DrawDoubleDot(-0.45 * self.F, -0.2 * self.F, 0.23 * self.F)
 
 
-c = Card(0, 0, 200)
+c = Card(0, 0, 100)
 X = 1
 Y = 1
 c.SetUp(X, Y)
