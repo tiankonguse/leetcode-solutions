@@ -28,6 +28,7 @@ def DrawOutline():
     t.circle(182, 2 * (90 - 20))
 def DrawHair():
     t.seth(150)
+    # 6 个大弧形 + 5 个小弧形
     for i in range(4):
         t.circle(-35, 143)
         t.circle(19, 110)
@@ -37,6 +38,7 @@ def DrawHair():
     t.circle(19, 100)
     t.circle(-24.5, 150)
 
+    # 五根直线
     DrawLine(-149, -9, -40, 5)
     DrawLine(-83, 52, -67, 20)
     DrawLine(2, 70, -97, 24)

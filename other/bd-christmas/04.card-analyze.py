@@ -146,7 +146,7 @@ class Debug:
 class Card:
     t = turtle
 
-    def __init__(self, x=0, y=0, f=100, c="black", s="fastest"):
+    def __init__(self, x=0, y=0, f=100, c="black", s="normal"):
         self.F = f
         self.C = c
         self.speed = s
@@ -236,7 +236,7 @@ class Card:
         self.g.DrawDoubleDot(-0.45 * self.F, -0.2 * self.F, 0.23 * self.F)
 
 
-c = Card(0, 0, 100)
+c = Card(0, 0, 150)
 X = 1
 Y = 1
 c.SetUp(X, Y)
