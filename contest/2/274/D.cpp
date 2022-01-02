@@ -75,6 +75,7 @@ const LL INF = 0x3f3f3f3f3f3f3f3fll;
 const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
+
 class Solution {
     struct Node{
         int inLoop; // 是否在环上
@@ -137,6 +138,8 @@ class Solution {
                 nodes[v].inLoop = 1;
                 nodes[v].pre = loopMin;
                 nodes[v].rank = loopSize;
+                nodes[v].realPre = v; 
+                nodes[v].extNum = loopSize; 
                 
                 if(v == pre) {
                     break;
@@ -147,23 +150,18 @@ class Solution {
         
         Dfs(pre);
 
-        if(node.inLoop == 0) { // 在环上时，已经初始化，否则自己初始化
+        if(node.inLoop == 0) { 
             node.inLoop = 0;
             node.pre = nodes[pre].pre;
             node.rank = nodes[pre].rank + 1;
+            
+            int realPre = node.realPre = nodes[pre].realPre;
+            nodes[realPre].extNum = max(nodes[realPre].extNum, node.rank);
         }
         
         if(nodes[node.pre].rank == 2) {
-            if(nodes[pre].inLoop) {
-                node.realPre = pre;
-            } else {
-                node.realPre = nodes[pre].realPre;
-            }
             int realPre = node.realPre;
             int nextPre = nums[realPre];
-            
-            nodes[realPre].extNum = max(nodes[realPre].extNum, node.rank);
-            
             
             ans[node.pre] = max(ans[node.pre], nodes[realPre].extNum + nodes[nextPre].extNum - nodes[realPre].rank);
             // printf("may ans: now = %d ans=%d\n", now, ans[node.pre]);
