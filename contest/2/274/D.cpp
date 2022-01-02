@@ -78,12 +78,12 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
     struct Node{
-        int inLoop; // 是否在环上
-        int pre; // 在环上时，环的唯一标示
-        int rank; // 选自己时，答案是多少
         int flag; // 是否计算过
-        int extNum; //  
+        int inLoop; // 是否在环上
+        int pre; // 在环上时，环的唯一标示，选择最小值
+        int rank; // 选自己时，答案是多少
         int realPre; //
+        int extNum; //  
         Node(){
             inLoop = 0;
             pre = -1;
@@ -103,24 +103,25 @@ class Solution {
     int maxLoop;
     
     
-    void Dfs(int now){
+    void Dfs(const int now){
         Node& node = nodes[now];
         if(node.flag == 1) {
             return;
         }
-        // printf("in now = %d\n", now);
         
         node.flag = 1;
         stack.push_back(now);
         hash[now] = 1;
         
         int pre = nums[now];
-        if(hash[pre] == 1) { // 形成一个环
+        if(hash[pre] == 1) { // 形成一个环，递归结束
             int loopSize = 0;
             int loopMin = now;
             
             for(int i = stack.size() - 1; i >= 0; i--) {
                 int v = stack[i];
+                
+                nodes[v].inLoop = 1; // 其他环上节点，这里仅做标记
                 
                 loopSize++;
                 loopMin = min(loopMin, v);
@@ -129,42 +130,34 @@ class Solution {
                 }
             }
             
-            maxLoop = max(maxLoop, loopSize);
+            maxLoop = max(maxLoop, loopSize); // 第一种答案
             
-            // printf("loop, loopSize=%d loopMin=%d pre=%d \n", loopSize, loopMin, pre);
-            for(int i = stack.size() - 1; i >= 0; i--) {
-                int v = stack[i];
-                
-                nodes[v].inLoop = 1;
-                nodes[v].pre = loopMin;
-                nodes[v].rank = loopSize;
-                nodes[v].realPre = v; 
-                nodes[v].extNum = loopSize; 
-                
-                if(v == pre) {
-                    break;
-                }
+            node.pre = loopMin;
+            node.rank = loopSize;
+            node.realPre = now;
+            node.extNum = loopSize;
+        } else { 
+            Dfs(pre);
+            
+            if(node.inLoop == 0) {  // 不在环上
+                node.pre = nodes[pre].pre;
+                node.rank = nodes[pre].rank + 1;
+
+                int realPre = nodes[pre].realPre;
+                node.realPre = realPre;
+                nodes[realPre].extNum = max(nodes[realPre].extNum, node.rank);
+            } else { // 在环上，所有数据复制一遍
+                node.pre = nodes[pre].pre;
+                node.rank = nodes[pre].rank;
+                node.realPre = now;
+                node.extNum = nodes[pre].extNum;
             }
         }
         
-        
-        Dfs(pre);
-
-        if(node.inLoop == 0) { 
-            node.inLoop = 0;
-            node.pre = nodes[pre].pre;
-            node.rank = nodes[pre].rank + 1;
-            
-            int realPre = node.realPre = nodes[pre].realPre;
-            nodes[realPre].extNum = max(nodes[realPre].extNum, node.rank);
-        }
-        
         if(nodes[node.pre].rank == 2) {
-            int realPre = node.realPre;
-            int nextPre = nums[realPre];
-            
-            ans[node.pre] = max(ans[node.pre], nodes[realPre].extNum + nodes[nextPre].extNum - nodes[realPre].rank);
-            // printf("may ans: now = %d ans=%d\n", now, ans[node.pre]);
+            Node& leftNode = nodes[node.realPre];
+            Node& rightNode = nodes[nums[node.realPre]];
+            ans[node.pre] = max(ans[node.pre], leftNode.extNum + rightNode.extNum - leftNode.rank);
         }
         
         
