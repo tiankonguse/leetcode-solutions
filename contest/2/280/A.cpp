@@ -77,12 +77,21 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    int countOperations(int a, int b) {
+        int ans = 0;
+        
+        while(a != 0 && b != 0){
+            if(a > b) {
+                a = a - b;
+            }else {
+                b = b - a;
+            }
+            ans++;
+        }
+        
+        return ans;
+    }
 };
 
 int main() {

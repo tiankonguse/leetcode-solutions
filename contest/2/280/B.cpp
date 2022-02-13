@@ -77,12 +77,51 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+    void CalTop(map<int, int>& m, vector<pair<int, int>>& top){
+        top.reserve(m.size());
+        for(auto&p : m) {
+            top.push_back({p.second, p.first});
+        }
+        sort(top.begin(), top.end(), [](auto&a, auto&b){
+            return a.first > b.first;
+        });
+        
+    }
+    int Cal(pair<int, int>&a, vector<pair<int, int>>& vec){
+        if(vec.size() == 1) {
+            return n - a.first;
+        } else {
+            return n - a.first - vec[1].first;
+        }
+    }
+    int n;
+public:
+    int minimumOperations(vector<int>& nums) {
+        n = nums.size();
+        if(n == 1) {
+            return 0;
+        }
+        
+        map<int, int> one, two;
+        for(int i = 0; i < nums.size(); i++) {
+            if(i%2 == 0) {
+                one[nums[i]]++;
+            } else {
+                two[nums[i]]++;
+            }
+        }
+        
+        vector<pair<int, int>> topOne, topTwo;
+        CalTop(one, topOne);
+        CalTop(two, topTwo);
+        
+        if(topOne.front().second != topTwo.front().second) {
+            return n - topOne.front().first - topTwo.front().first;
+        }else {
+            return min(Cal(topOne.front(), topTwo), Cal(topTwo.front(), topOne));
+        }
+        
+    }
 };
 
 int main() {

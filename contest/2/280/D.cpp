@@ -76,13 +76,69 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+int dp[3][10][1<<18];
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+    vector<int> nums;
+    int maxBit;
+    
+    void mymax(int& a, int b){
+        if(a < 0) {
+            a = b;
+        } else if(a < b){
+            a = b;
+        }
+    }
+    
+    // mask 个数字分配给前 n 个盒子
+    int Dfs(const int n, const int mask, const int maxNum, const int one){
+        
+        int& ret = dp[maxNum][n][mask];
+        if(ret != -1) {
+            return ret;
+        }
+        
+        if(one == 0) {
+            return ret = 0;
+        }
+        
+        if(maxNum == 2) {
+            return ret = Dfs(n-1, mask, 0, one);
+        }
+        
+        if(n * 2 == one || n * 2 == one + 1) { // 必须分配
+            for(int i = 0; i < maxBit; i++) {
+                if(mask & (1<<i)) {
+                    int tmp = (nums[i]&n) + Dfs(n, mask ^ (1<<i), maxNum + 1, one - 1);
+                    mymax(ret, tmp);
+                }
+            }
+            //printf("n=%d mask=%d maxNum=%d one=%d ", n, mask, maxNum, one);
+            //printf("ans=%d force\n", ret);
+            return ret;
+        }
+        
+        // 选择性的分配2 个，1个， 0 个
+        ret = Dfs(n-1, mask, 0, one);
+        for(int i = 0; i < maxBit; i++) {
+            if(mask & (1<<i)) {
+                int tmp = (nums[i]&n) + Dfs(n, mask ^ (1<<i), maxNum + 1, one - 1);
+                mymax(ret, tmp);
+            }
+        }
+        //printf("n=%d mask=%d maxNum=%d one=%d ", n, mask, maxNum, one);
+        //printf("ans=%d mix\n", ret);
+        return ret;
+    }
+    
+public:
+    // C(15, )
+    int maximumANDSum(vector<int>& nums_, int numSlots) {
+        nums.swap(nums_);
+        
+        memset(dp, -1, sizeof(dp));
+        maxBit = nums.size();
+        return Dfs(numSlots, (1<<maxBit) - 1, 0, maxBit);
+    }
 };
 
 int main() {
