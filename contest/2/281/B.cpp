@@ -15,26 +15,11 @@ template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
-int dir4[4][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
-                  {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
-
-int myMax(int& a, int b) {
-  if (a < 0) {
-    a = b;
-  } else if (a < b) {
-    a = b;
-  }
-}
-int myMin(int& a, int b) {
-  if (a < 0) {
-    a = b;
-  } else if (a > b) {
-    a = b;
-  }
-}
 
 /*
+int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
+
+int dir[8][2] = {{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}};
 
 lower_bound 大于等于
 upper_bound 大于
@@ -91,27 +76,41 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+public:
+    ListNode* mergeNodes(ListNode* head) {
+        int sum = 0;
+        ListNode* now = head->next;
+        while(now != NULL) {
+          // 此时肯定是 0 -> val -> 0 [-> val -> 0]
+          while(now->next->val != 0) {
+            now->val += now->next->val;
+            now->next = now->next->next; // 合并一个值
+          }
+          // 此时，节点是 now -> 0 -> other
+          now->next = now->next->next; // 删除 0
+          now = now->next;
+        }
 
-    return 0;
-  }
+      return head->next;
+    }
 };
 
 int main() {
-  //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
-  //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
-  //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
+    ListNode* ans = vecToList({4,11});
+    ListNode* head = vecToList({0,3,1,0,4,5,2,0});
+    TEST_SMP1(Solution, mergeNodes, ans, head);
 
-  priority_queue<Node> que;
-  que.push(Node(1));
-  que.push(Node(2));
-  while (!que.empty()) {
-    printf("val:%d\n", que.top().t);
-    que.pop();
-  }
 
   return 0;
 }

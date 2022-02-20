@@ -15,26 +15,11 @@ template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
-int dir4[4][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
-                  {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
-
-int myMax(int& a, int b) {
-  if (a < 0) {
-    a = b;
-  } else if (a < b) {
-    a = b;
-  }
-}
-int myMin(int& a, int b) {
-  if (a < 0) {
-    a = b;
-  } else if (a > b) {
-    a = b;
-  }
-}
 
 /*
+int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
+
+int dir[8][2] = {{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}};
 
 lower_bound 大于等于
 upper_bound 大于
@@ -92,26 +77,35 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+    int Check(int num){
+        int ans = 0;
+        // printf("num=%d ", num);
+        while(num > 0) {
+            ans += num%10;
+            num /= 10;
+        }
+        // printf("ans=%d\n", ans);
+        return ans % 2 == 0;
+    }
+public:
+    int countEven(int num) {
+        int ans = 0;
+        while(num > 0) {
+            ans += Check(num);
+            num--;
+        }
+        return ans;
+    }
 };
 
 int main() {
-  //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
-  //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
-  //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
-
-  priority_queue<Node> que;
-  que.push(Node(1));
-  que.push(Node(2));
-  while (!que.empty()) {
-    printf("val:%d\n", que.top().t);
-    que.pop();
-  }
+    int ans = 2;
+    int nums = 4;
+    TEST_SMP1(Solution, countEven, ans, nums);
+    
+    ans = 14;
+    nums = 30;
+    TEST_SMP1(Solution, countEven, ans, nums);
 
   return 0;
 }

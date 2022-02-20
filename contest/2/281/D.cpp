@@ -15,26 +15,11 @@ template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
-int dir4[4][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
-                  {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
-
-int myMax(int& a, int b) {
-  if (a < 0) {
-    a = b;
-  } else if (a < b) {
-    a = b;
-  }
-}
-int myMin(int& a, int b) {
-  if (a < 0) {
-    a = b;
-  } else if (a > b) {
-    a = b;
-  }
-}
 
 /*
+int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
+
+int dir[8][2] = {{0,1},{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1}};
 
 lower_bound 大于等于
 upper_bound 大于
@@ -91,13 +76,44 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+typedef long long ll;
+typedef long long LL;
+LL Gcd(LL x, LL y) {
+  if (!x || !y) return x ? x : y;
+  for (LL t; t = x % y; x = y, y = t)
+    ;
+  return y;
+}
 
-    return 0;
-  }
+class Solution {
+public:
+    ll coutPairs(vector<int>& nums, int k) {
+        map<ll, ll> m;
+        for(auto v: nums) {
+            int c = Gcd(v, k);
+            m[c]++;
+        }
+        
+        for(auto p: m) {
+           //printf("f=%lld s=%lld\n", p.first, p.second);
+        }
+        
+        ll ans = 0;
+        for(auto i = m.begin(); i != m.end(); i++) {
+            auto j = i;
+            if(j->first * j->first % k == 0) {
+                ans += (j->second - 1) * j->second /2; // C(n, 2)
+            }
+            for(j++;j != m.end();j++) {
+                if(i->first * j->first % k == 0) {
+                    ans += i->second * j->second;
+                }
+            }
+        }
+        
+        
+        return ans;
+    }
 };
 
 int main() {
