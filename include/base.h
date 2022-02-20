@@ -42,7 +42,8 @@ const int null = -1;
   } while (0)
 
 // int dir[4][2] = {{0,1},{0,-1},{1,0},{-1,0}};
-// int dir[8][2] = {{0,1},{1, 1},{1,0},{1,-1}, {0,-1}, {-1, -1}, {-1,0}, {-1, 1}};
+// int dir[8][2] = {{0,1},{1, 1},{1,0},{1,-1}, {0,-1}, {-1, -1}, {-1,0}, {-1,
+// 1}};
 
 // 求数组和
 // int sum = accumulate(stones.begin(),stones.end(),0)/2;
@@ -141,6 +142,22 @@ void output(ListNode* root) {
     root = root->next;
   }
 }
+
+ListNode* clone( ListNode* list_) {
+  if (list_ == NULL) {
+    return NULL;
+  }
+  ListNode root(0);
+  ListNode* head = &root;
+   ListNode* list = list_;
+  while (list) {
+    head->next = new ListNode(list->val);
+    head = head->next;
+    list = list->next;
+  }
+  return root.next;
+}
+
 
 /**
  * Definition for a binary tree node.
@@ -402,21 +419,43 @@ void output(TreeNode* root) {
   printf("\n");
 }
 
+TreeNode* clone(TreeNode* tree) {
+  if (tree == NULL) {
+    return NULL;
+  }
+  TreeNode* root = new TreeNode(tree->val);
+  root->left = clone(tree->left);
+  root->right = clone(tree->right);
+  return root;
+}
+
+
 template <class T>
 void output(const T& data) = delete;
 
+template <class T>
+T clone(const T& data) = delete;
+
 void output(const char* const& data) { printf("%s ", data); }
+char* clone(const char* const& data) { return strdup(data); }
 
 void output(const bool& data) { printf("%s ", data ? "true" : "false"); }
+bool clone(const bool& data) { return data; }
 
 void output(const double& data) { printf("%f ", data); }
+double clone(const double& data) { return data; }
 
 void output(const char& data) { printf("%c ", data); }
+char clone(const char& data) { return data; }
 
 void output(const int& data) { printf("%5d ", data); }
+int clone(const int& data) { return data; }
 
 void output(const long long& data) { printf("%lld ", data); }
+long long clone(const long long& data) { return data; }
+
 void output(const string& data) { printf("%s ", data.c_str()); }
+string clone(const string& data) { return data; }
 
 template <class FirstType, class SecondType>
 void output(const pair<FirstType, SecondType>& data) {
@@ -434,13 +473,20 @@ void output(const vector<baseType>& vec) {
   }
   // printf("\n");
 }
+template <class baseType>
+vector<baseType> clone(const vector<baseType>& vec) {
+  vector<baseType> ans;
+  for (int i = 0; i < vec.size(); i++) {
+    ans.push_back(clone(vec[i]));
+  }
+  return ans;
+}
 
 template <class baseType>
 void output(const vector<vector<baseType>>& matrix) {
   for (int i = 0; i < matrix.size(); i++) {
     output(matrix[i]);
   }
-  // printf("\n");
 }
 
 template <class baseType>
@@ -467,6 +513,8 @@ void output(char const* name, vector<vector<vecType>> data) {
   // printf("\n");
 }
 
+
+
 template <class baseType>
 bool eq(baseType first, baseType second) {
   return first == second;
@@ -491,6 +539,7 @@ bool eq(TreeNode* first, TreeNode* second) {
   }
   return eq(first->left, second->left) && eq(first->right, second->right);
 }
+
 template <>
 bool eq(ListNode* first, ListNode* second) {
   set<ListNode*> oneSet;
@@ -549,7 +598,7 @@ int getIndex() {
 #define TEST_SMP1(ClassName, FunNAme, expectAns, firstData) \
   do {                                                      \
     ClassName work;                                         \
-    auto tmpFirstData = firstData;                          \
+    auto tmpFirstData = clone(firstData);                   \
     auto ans = work.FunNAme(tmpFirstData);                  \
     int index = getIndex();                                 \
     bool check = eq(ans, expectAns);                        \
@@ -567,8 +616,8 @@ int getIndex() {
 #define TEST_SMP2(ClassName, FunNAme, expectAns, firstData, secondData) \
   do {                                                                  \
     ClassName work;                                                     \
-    auto tmpFirstData = firstData;                                      \
-    auto tmpSecondData = secondData;                                    \
+    auto tmpFirstData = clone(firstData);                               \
+    auto tmpSecondData = clone(secondData);                             \
     auto ans = work.FunNAme(tmpFirstData, tmpSecondData);               \
     int index = getIndex();                                             \
     bool check = eq(ans, expectAns);                                    \
@@ -588,9 +637,9 @@ int getIndex() {
                   thirdData)                                            \
   do {                                                                  \
     ClassName work;                                                     \
-    auto tmpFirstData = firstData;                                      \
-    auto tmpSecondData = secondData;                                    \
-    auto tmpThirdData = thirdData;                                      \
+    auto tmpFirstData = clone(firstData);                               \
+    auto tmpSecondData = clone(secondData);                             \
+    auto tmpThirdData = clone(thirdData);                               \
     auto ans = work.FunNAme(tmpFirstData, tmpSecondData, tmpThirdData); \
     int index = getIndex();                                             \
     bool check = eq(ans, expectAns);                                    \
@@ -611,10 +660,10 @@ int getIndex() {
                   thirdData, fouthData)                                        \
   do {                                                                         \
     ClassName work;                                                            \
-    auto tmpFirstData = firstData;                                             \
-    auto tmpSecondData = secondData;                                           \
-    auto tmpThirdData = thirdData;                                             \
-    auto tmpFouthData = fouthData;                                             \
+    auto tmpFirstData = clone(firstData);                                      \
+    auto tmpSecondData = clone(secondData);                                    \
+    auto tmpThirdData = clone(thirdData);                                      \
+    auto tmpFouthData = clone(fouthData);                                      \
     auto ans =                                                                 \
         work.FunNAme(tmpFirstData, tmpSecondData, tmpThirdData, tmpFouthData); \
     int index = getIndex();                                                    \
