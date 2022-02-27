@@ -1,4 +1,6 @@
-#include "base.h"
+#include <bits/stdc++.h>
+
+using namespace std;
 
 #define myprintfex(format, args...) printf("line[%d]" format, __LINE__, ##args)
 // #define myprintfex(format, args...)
@@ -93,27 +95,60 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+char str[max3][max3];
+int nums[max3][max3][4][2];  // {RIGHT, DOWN, RIGHT_DOWN, LEFT_DOWN}{LEN, NUM}
 
-    return 0;
+enum { RIGHT = 0, DOWN, DIA };
+enum { LEN = 0, NUM };
+int dir[4][2] = {{0, 1}, {1, 0}, {1, 1}, {1, -1}};
+
+void Init(int n) {
+  memset(nums, 0, sizeof(nums));
+  for (int i = n; i > 0; i--) {
+    for (int j = n; j > 0; j--) {
+      for (int k = 0; k < 4; k++) {
+        int x = dir[k][0];
+        int y = dir[k][1];
+        nums[i][j][k][LEN] = nums[i + x][j + y][k][LEN] + 1;
+        if (str[i - 1][j - 1] == '#') {
+          nums[i][j][k][NUM] = nums[i + x][j + y][k][NUM] + 1;
+        } else {
+          nums[i][j][k][NUM] = nums[i + x][j + y][k][NUM];
+        }
+      }
+    }
   }
-};
+}
+
+bool Check(int n) {
+  Init(n);
+
+  for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= n; j++) {
+      for (int k = 0; k < 4; k++) {
+        if (nums[i][j][k][LEN] < 6) continue;
+        int x = dir[k][0];
+        int y = dir[k][1];
+        int v = nums[i][j][k][NUM] - nums[i + x * 6][j + y * 6][k][NUM];
+        if (v + 2 >= 6) {
+          // printf("i=%d j=%d k=%d v=%d\n", i, j, k, v);
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
 
 int main() {
-  //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
-  //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
-  //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
-
-  priority_queue<Node> que;
-  que.push(Node(1));
-  que.push(Node(2));
-  while (!que.empty()) {
-    printf("val:%d\n", que.top().t);
-    que.pop();
+  int n;
+  scanf("%d", &n);
+  for (int i = 0; i < n; i++) {
+    scanf("%s", &str[i]);
   }
+
+  printf("%s\n", Check(n) ? "Yes" : "No");
 
   return 0;
 }

@@ -1,4 +1,6 @@
-#include "base.h"
+#include <bits/stdc++.h>
+
+using namespace std;
 
 #define myprintfex(format, args...) printf("line[%d]" format, __LINE__, ##args)
 // #define myprintfex(format, args...)
@@ -93,27 +95,69 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+ll nums[max5];
+int nextPos[max5];
+int n;
+int startPos;
+int loopLen;
+ll loopSum;
 
-    return 0;
+void Init() {
+  memset(nextPos, -1, sizeof(nextPos));
+  int pos = 0;
+
+  while (nextPos[pos] == -1) {
+    int newPos = (pos + nums[pos]) % n;
+    nextPos[pos] = newPos;
+    pos = newPos;
   }
-};
+
+  loopLen = 1;
+  startPos = pos;
+  loopSum = nums[pos];
+  while (nextPos[pos] != startPos) {
+    loopLen++;
+    pos = nextPos[pos];
+    loopSum += nums[pos];
+  }
+}
+
+ll Solver(ll k) {
+  ll ans = 0;
+
+  int pos = 0;
+  while (k > 0 && pos != startPos) {
+    ans += nums[pos];
+    pos = nextPos[pos];
+    k--;
+  }
+
+  if (k >= loopLen) {
+    ans += k / loopLen * loopSum;
+    k %= loopLen;
+  }
+
+  while (k > 0) {
+    ans += nums[pos];
+    pos = nextPos[pos];
+    k--;
+  }
+
+  return ans;
+}
 
 int main() {
-  //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
-  //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
-  //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
+  ll k;
 
-  priority_queue<Node> que;
-  que.push(Node(1));
-  que.push(Node(2));
-  while (!que.empty()) {
-    printf("val:%d\n", que.top().t);
-    que.pop();
+  scanf("%d%lld", &n, &k);
+
+  for (int i = 0; i < n; i++) {
+    scanf("%lld", &nums[i]);
   }
+
+  Init();
+
+  printf("%lld\n", Solver(k));
 
   return 0;
 }

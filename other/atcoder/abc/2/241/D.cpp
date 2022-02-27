@@ -1,4 +1,6 @@
-#include "base.h"
+#include <bits/stdc++.h>
+
+using namespace std;
 
 #define myprintfex(format, args...) printf("line[%d]" format, __LINE__, ##args)
 // #define myprintfex(format, args...)
@@ -93,26 +95,69 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+map<ll, int> m;
 
-    return 0;
+ll SolverBefor(ll x, int k) {
+  if (m.empty()) {
+    return -1;
   }
-};
+
+  auto it = m.upper_bound(x);
+  if (it == m.begin()) {
+    return -1;  // 一个都没有
+  }
+  it--;
+
+  while (k > 0) {
+    k -= it->second;
+    if (k <= 0) {
+      return it->first;
+    }
+
+    if (it == m.begin()) {
+      break;
+    } else {
+      it--;
+    }
+  }
+
+  return -1;
+}
+
+ll SolverAfter(ll x, int k) {
+  if (m.empty()) {
+    return -1;
+  }
+
+  auto it = m.lower_bound(x);
+  while (it != m.end()) {
+    k -= it->second;
+    if (k <= 0) {
+      return it->first;
+    }
+    it++;
+  }
+  return -1;
+}
 
 int main() {
-  //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
-  //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
-  //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
+  int n;
+  scanf("%d", &n);
 
-  priority_queue<Node> que;
-  que.push(Node(1));
-  que.push(Node(2));
-  while (!que.empty()) {
-    printf("val:%d\n", que.top().t);
-    que.pop();
+  while (n--) {
+    int t, k;
+    ll x;
+    scanf("%d%lld", &t, &x);
+
+    if (t == 1) {
+      m[x]++;
+    } else if (t == 2) {
+      scanf("%d", &k);
+      printf("%lld\n", SolverBefor(x, k));
+    } else {
+      scanf("%d", &k);
+      printf("%lld\n", SolverAfter(x, k));
+    }
   }
 
   return 0;

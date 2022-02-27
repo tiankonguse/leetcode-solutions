@@ -94,26 +94,32 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    int minSteps(string& s, string& t) {
+        vector<int> nums1(26, 0), nums2(26, 0);
+        for(auto c: s) {
+            nums1[c-'a']++;
+        }
+        for(auto c: t) {
+            nums2[c-'a']++;
+        }
+        
+        int ans = 0;
+        for(int i = 0; i < 26; i++) {
+            if(nums1[i] < nums2[i]) {
+                ans += nums2[i] - nums1[i];
+            } else {
+                ans += nums1[i] - nums2[i];
+            }
+        }
+        return ans;
+    }
 };
 
 int main() {
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
   //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
   //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
-
-  priority_queue<Node> que;
-  que.push(Node(1));
-  que.push(Node(2));
-  while (!que.empty()) {
-    printf("val:%d\n", que.top().t);
-    que.pop();
-  }
 
   return 0;
 }

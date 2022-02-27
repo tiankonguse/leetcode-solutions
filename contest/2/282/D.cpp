@@ -93,27 +93,82 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
+typedef long long ll;
+ll& myMin(ll& a, ll b) {
+  if (a < 0) {
+    a = b;
+  } else if (a > b) {
+    a = b;
   }
+  return a;
+}
+
+const int MaxBit = 33;
+vector<ll> dpAll;
+vector<ll> loopMin;
+
+class Solution {
+    int changeTime;
+    
+    ll DfsAll(int n){
+        if(dpAll[n] != -1) return dpAll[n];
+        //printf("dfs n = %d\n", n);
+ 
+        ll& ans = dpAll[n];
+        if(n < MaxBit && loopMin[n] != -1) {
+            ans = loopMin[n]; // 不切换
+            //printf("n=%d all=%lld\n", n, ans);
+        }
+        
+        // 如果 ans == -1, 必须切换
+        int maxi = min(MaxBit, n);
+        for(int i = 1; i < maxi; i++) {
+            if(loopMin[i] == -1) break; // 之后的无解
+            
+            ll tmp = DfsAll(n - i);
+            ll newans = loopMin[i] + changeTime + DfsAll(n - i);
+            if(ans == -1 || ans > newans) {
+                ans = newans;
+                //printf("n=%d update i=%d select=%lld next=%lld ans=%lld\n", n, i, loopMin[i], tmp, ans);   
+            } 
+            
+        }
+        return ans;
+    }
+    
+public:
+    int minimumFinishTime(vector<vector<int>>& tires, int changeTime_, int numLaps) {
+        changeTime = changeTime_;
+        
+        ll min32 = 1LL << 32;
+        
+        loopMin.clear();
+        loopMin.resize(MaxBit, -1);
+        for(auto& p: tires) {
+            ll f = p[0], r = p[1];
+            ll sum = 0;
+            for(int i = 1; i < MaxBit; i++) {
+                sum += f;
+                if(sum > min32) {
+                    break;
+                }
+                myMin(loopMin[i], sum);
+                //printf("[%lld, %lld] i=%d f=%lld sum=%lld\n", f, r, i, f, loopMin[i]);
+                f = f * r;
+            }
+        }
+        
+        dpAll.clear();
+        dpAll.resize(numLaps+1, -1);
+        
+        return DfsAll(numLaps);
+    }
 };
 
 int main() {
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
   //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
   //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
-
-  priority_queue<Node> que;
-  que.push(Node(1));
-  que.push(Node(2));
-  while (!que.empty()) {
-    printf("val:%d\n", que.top().t);
-    que.pop();
-  }
 
   return 0;
 }

@@ -1,4 +1,6 @@
-#include "base.h"
+#include <bits/stdc++.h>
+
+using namespace std;
 
 #define myprintfex(format, args...) printf("line[%d]" format, __LINE__, ##args)
 // #define myprintfex(format, args...)
@@ -93,27 +95,18 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
-};
-
 int main() {
-  //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
-  //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
-  //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
+  int nums[20];
 
-  priority_queue<Node> que;
-  que.push(Node(1));
-  que.push(Node(2));
-  while (!que.empty()) {
-    printf("val:%d\n", que.top().t);
-    que.pop();
+  for (int i = 0; i < 10; i++) {
+    scanf("%d", &nums[i]);
   }
+
+  int ans = 0;
+  for (int i = 0; i < 3; i++) {
+    ans = nums[ans];
+  }
+  printf("%d\n", ans);
 
   return 0;
 }

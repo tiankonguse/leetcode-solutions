@@ -93,27 +93,32 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+typedef long long ll;
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    ll minimumTime(vector<int>& time, int totalTrips) {
+        ll l = 1, r = ll(totalTrips) * time[0];
+        
+        while(l < r) { // [l, r]
+            ll m = (l + r) / 2;
+            ll sum = 0;
+            for(auto t: time) {
+                sum += m / t;
+            }
+            if(sum >= totalTrips) {
+                r = m;
+            } else {
+                l = m + 1;
+            }
+        }
+        return r;
+    }
 };
 
 int main() {
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
   //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
   //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
-
-  priority_queue<Node> que;
-  que.push(Node(1));
-  que.push(Node(2));
-  while (!que.empty()) {
-    printf("val:%d\n", que.top().t);
-    que.pop();
-  }
 
   return 0;
 }
