@@ -109,16 +109,52 @@ sem_post(&foo_done);
 
 const LL INF = 0x3f3f3f3f3f3f3f3fll;
 const double PI = acos(-1.0), eps = 1e-7;
-const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 998244353;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+ll nums[max6];
+
+void Init() {
+  nums[0] = 1;
+  nums[1] = 26;
+  for (int i = 2; i < max6; i++) {
+    nums[i] = (nums[i - 2] * 26) % mod;
+  }
+}
+
+char str[max6];
+string str2;
+
+ll Solver(int n) {
+  ll ans = 0;
+
+  str2 = str;
+
+  int l = 0, r = n - 1;
+  while (l <= r) {
+    for (char c = 'A'; c < str[l]; c++) {
+      ans = (ans + nums[max(r - l - 1, 0)]) % mod;
+    }
+    str2[r] = str2[l] = str[l];
+    if (l == r || l + 1 == r) {
+      if (str2 <= str) {
+        ans = (ans + 1) % mod;
+      }
+    }
+    l++, r--;
+  }
+
+  return ans;
+}
+
 int main() {
-  int a, b, c;
-  char str[222];
-
-  scanf("%d%d%d%s", &a, &b, &c, str);
-
-  printf("%d %s\n", a + b + c, str);
+  Init();
+  int t, n;
+  scanf("%d", &t);
+  while (t--) {
+    scanf("%d%s", &n, str);
+    printf("%lld\n", Solver(n));
+  }
 
   return 0;
 }

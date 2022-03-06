@@ -13,23 +13,6 @@ typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 // const int mod = 1e9 + 7;
 
-#define FOR(i, a, b) for (auto i = a; i < b; ++i)
-#define FOR1(i, a, b) for (auto i = a; i <= b; ++i)
-#define DWN(i, b, a) for (auto i = b - 1; i >= a; --i)
-#define DWN1(i, b, a) for (auto i = b; i >= a; --i)
-
-#define IN_INT(x) scanf("%d", &x)
-#define IN_LONG(x) scanf("%lld", &x)
-#define IN_NUM(x) scanf("%lf", &x)
-#define IN_STR(x) scanf("%s", x)
-
-#define OUT_INT(x) printf("%d", x)
-#define OUT_LONG(x) printf("%d", x)
-#define OUT_NUM(x) printf("%lf", x)
-#define OUT_STR(x) printf("%s", x)
-#define OUT_SPACE() putchar(' ')
-#define OUT_LINE() putchar('\n')
-
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
@@ -112,13 +95,61 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+string Next(string s, int p) {
+  char &x = s[p - 2], &y = s[p - 1], &z = s[p];
+  char tmp = z;
+  z = y;
+  y = x;
+  x = tmp;
+  return s;
+}
+int A(int n) {
+  int ans = 1;
+  for (int i = 1; i <= n; i++) {
+    ans *= i;
+  }
+  return ans;
+}
+
+void Solver(int n, int pos = 0) {
+  string str;
+  for (int i = 1; i <= n; i++) {
+    str.push_back('a' + i);
+  }
+  // str[pos] = str.front();
+
+  set<string> s;
+  vector<string> que;
+  que.push_back(str);
+  s.insert(str);
+
+  while (!que.empty()) {
+    str = que.back();
+    que.pop_back();
+
+    for (int i = 2; i < str.size(); i++) {
+      string tmp = Next(str, i);
+      // printf("str=%s i=%d next=%s\n", str.c_str(), i, tmp.c_str());
+      if (s.count(tmp)) continue;
+      que.push_back(tmp);
+      s.insert(tmp);
+    }
+  }
+
+  printf("n=%d ans=%d A=%d\n", n, s.size(), A(n));
+
+  // for (auto str : s) {
+  //   printf("%s\n", str.c_str());
+  // }
+}
+
 int main() {
-  int a, b, c;
-  char str[222];
-
-  scanf("%d%d%d%s", &a, &b, &c, str);
-
-  printf("%d %s\n", a + b + c, str);
+  // Solver(4);
+  for (int i = 3; i <= 26; i++) {
+    // for (int j = 1; j < i; j++) {
+    Solver(i, 0);
+    // }
+  }
 
   return 0;
 }

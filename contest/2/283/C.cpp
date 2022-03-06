@@ -1,6 +1,4 @@
-#include <bits/stdc++.h>
-
-using namespace std;
+#include "base.h"
 
 #define myprintfex(format, args...) printf("line[%d]" format, __LINE__, ##args)
 // #define myprintfex(format, args...)
@@ -12,23 +10,6 @@ typedef unsigned long long ULL;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 // const int mod = 1e9 + 7;
-
-#define FOR(i, a, b) for (auto i = a; i < b; ++i)
-#define FOR1(i, a, b) for (auto i = a; i <= b; ++i)
-#define DWN(i, b, a) for (auto i = b - 1; i >= a; --i)
-#define DWN1(i, b, a) for (auto i = b; i >= a; --i)
-
-#define IN_INT(x) scanf("%d", &x)
-#define IN_LONG(x) scanf("%lld", &x)
-#define IN_NUM(x) scanf("%lf", &x)
-#define IN_STR(x) scanf("%s", x)
-
-#define OUT_INT(x) printf("%d", x)
-#define OUT_LONG(x) printf("%d", x)
-#define OUT_NUM(x) printf("%lf", x)
-#define OUT_STR(x) printf("%s", x)
-#define OUT_SPACE() putchar(' ')
-#define OUT_LINE() putchar('\n')
 
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
@@ -112,13 +93,65 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+    unordered_map<int, TreeNode*> m;
+    unordered_map<int, int> pre;
+    
+    TreeNode* Get(int id){
+        if(m.count(id)) {
+            return m[id];
+        } else {
+            return m[id] = new TreeNode(id);
+        }
+    }
+    
+    
+public:
+    TreeNode* createBinaryTree(vector<vector<int>>& nums) {
+        int pid = 0;
+        for(auto& v: nums) {
+            TreeNode* p = Get(v[0]);
+            TreeNode* c = Get(v[1]);
+            if(v[2] == 1) {
+                p->left = c;
+            } else {
+                p->right = c;
+            }
+            pid = v[0];
+            pre[v[1]] = v[0];
+        }
+        
+        while(pre.count(pid)) {
+            pid = pre[pid];
+        }
+        
+        return Get(pid);
+    }
+};
+
 int main() {
-  int a, b, c;
-  char str[222];
+  //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
+  //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
+  //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
 
-  scanf("%d%d%d%s", &a, &b, &c, str);
-
-  printf("%d %s\n", a + b + c, str);
+  priority_queue<Node> que;
+  que.push(Node(1));
+  que.push(Node(2));
+  while (!que.empty()) {
+    printf("val:%d\n", que.top().t);
+    que.pop();
+  }
 
   return 0;
 }

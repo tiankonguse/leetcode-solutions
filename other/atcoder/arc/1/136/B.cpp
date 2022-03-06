@@ -13,23 +13,6 @@ typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 // const int mod = 1e9 + 7;
 
-#define FOR(i, a, b) for (auto i = a; i < b; ++i)
-#define FOR1(i, a, b) for (auto i = a; i <= b; ++i)
-#define DWN(i, b, a) for (auto i = b - 1; i >= a; --i)
-#define DWN1(i, b, a) for (auto i = b; i >= a; --i)
-
-#define IN_INT(x) scanf("%d", &x)
-#define IN_LONG(x) scanf("%lld", &x)
-#define IN_NUM(x) scanf("%lf", &x)
-#define IN_STR(x) scanf("%s", x)
-
-#define OUT_INT(x) printf("%d", x)
-#define OUT_LONG(x) printf("%d", x)
-#define OUT_NUM(x) printf("%lf", x)
-#define OUT_STR(x) printf("%s", x)
-#define OUT_SPACE() putchar(' ')
-#define OUT_LINE() putchar('\n')
-
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
@@ -112,13 +95,127 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+int nums1[max4], nums2[max4];
+int nums11[max4], nums22[max4];
+map<int, int> m1, m2;
+int n;
+
+void Step1(int* nums, int p) {
+  int &x = nums[p - 2], &y = nums[p - 1], &z = nums[p];
+  int tmp = z;
+  z = y;
+  y = x;
+  x = tmp;
+}
+
+void Sort1(int n, int* nums) {
+  for (int i = 0; i < n - 2; i++) {  // n-3, n-2, n-1
+    int minPos = i;
+    for (int j = i; j < n; j++) {
+      if (nums[j] < nums[minPos]) {
+        minPos = j;
+      }
+    }
+
+    while (i + 2 <= minPos) {  // i, i+1, i+2 后面
+      Step1(nums, minPos);
+      minPos -= 2;
+    }
+
+    if (i + 1 == minPos) {
+      Step1(nums, minPos + 1);
+      Step1(nums, minPos + 1);
+    }
+  }
+}
+
+void Step2(int* nums, int p) {
+  int &x = nums[p - 2], &y = nums[p - 1], &z = nums[p];
+  int tmp = x;
+  x = y;
+  y = z;
+  z = tmp;
+}
+void Sort2(int n, int* nums) {
+  for (int i = 0; i < n - 2; i++) {
+    int minPos = i;
+    for (int j = i; j < n; j++) {
+      if (nums[j] < nums[minPos]) {
+        minPos = j;
+      }
+    }
+
+    while (i + 2 <= minPos) {  // i, i+1, i+2 后面
+      Step2(nums, minPos);
+      minPos -= 1;
+    }
+
+    if (i + 1 == minPos) {
+      Step2(nums, minPos + 1);
+    }
+  }
+}
+
+typedef void(SortFun)(int, int*);
+
+bool CheckEx(int* nums1, int* nums2, SortFun* sortFun1, SortFun* sortFun2) {
+  for (int i = 0; i < n; i++) {
+    nums11[i] = nums1[i];
+    nums22[i] = nums2[i];
+  }
+  sortFun1(n, nums11);
+  sortFun2(n, nums22);
+
+  for (int i = 0; i < n; i++) {
+    if (nums11[i] != nums22[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool Check() {
+  if (m1.size() != m2.size()) return false;
+
+  for (auto p : m1) {
+    int k = p.first, v = p.second;
+    if (m2.count(k) == 0) return false;
+    if (m2[k] != v) return false;
+  }
+
+  for (auto p : m1) {
+    if (p.second == 2) return true;
+  }
+
+  // if (CheckEx(nums1, nums2, Sort1, Sort1)) {
+  //   return true;
+  // }
+  // if (CheckEx(nums1, nums2, Sort2, Sort2)) {
+  //   return true;
+  // }
+  if (CheckEx(nums1, nums2, Sort1, Sort2)) {
+    return true;
+  }
+  // if (CheckEx(nums1, nums2, Sort2, Sort1)) {
+  //   return true;
+  // }
+
+  return false;
+}
+
 int main() {
-  int a, b, c;
-  char str[222];
+  scanf("%d", &n);
+  for (int i = 0; i < n; i++) {
+    scanf("%d", &nums1[i]);
+    m1[nums1[i]]++;
+  }
+  for (int i = 0; i < n; i++) {
+    scanf("%d", &nums2[i]);
+    m2[nums2[i]]++;
+  }
 
-  scanf("%d%d%d%s", &a, &b, &c, str);
-
-  printf("%d %s\n", a + b + c, str);
+  printf("%s\n", Check() ? "Yes" : "No");
 
   return 0;
 }

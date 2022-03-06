@@ -109,16 +109,41 @@ sem_post(&foo_done);
 
 const LL INF = 0x3f3f3f3f3f3f3f3fll;
 const double PI = acos(-1.0), eps = 1e-7;
-const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+// const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+const ll mod = 998244353;
+ll dp[max6][10];
+
+ll dfs(int n, int v) {
+  if (v == 0 || v == 10) return 0;
+  
+  ll& ret = dp[n][v];
+  if (ret != -1) return ret;
+
+  if (n == 1) {
+    return ret = 1;
+  }
+
+  return ret = (dfs(n - 1, v - 1) + dfs(n - 1, v) + dfs(n - 1, v + 1)) % mod;
+}
+
 int main() {
-  int a, b, c;
-  char str[222];
+  int n;
+  scanf("%d", &n);
 
-  scanf("%d%d%d%s", &a, &b, &c, str);
+  memset(dp, -1, sizeof(dp));
+  for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= 9; j++) {
+      dfs(i, j);
+    }
+  }
 
-  printf("%d %s\n", a + b + c, str);
+  ll ans = 0;
+  for (int i = 1; i <= 9; i++) {
+    ans = (ans + dfs(n, i)) % mod;
+  }
+  printf("%lld\n", ans);
 
   return 0;
 }

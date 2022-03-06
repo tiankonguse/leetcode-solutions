@@ -111,14 +111,39 @@ const LL INF = 0x3f3f3f3f3f3f3f3fll;
 const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
+// 9223372036854775807
+char str[max5];
+ll nums[max3];
+map<char, string> m;
 
+char Solver(ll t, ll k) {
+  if (t == 0) {
+    return str[k];
+  }
+  if (k == 0 && t > 3) {
+    t = t % 3;
+    if(t == 0) {
+      return str[k];
+    }
+  }
+    
+  char pre = Solver(t - 1, k / 2);
+  return m[pre][k % 2];
+}
 int main() {
-  int a, b, c;
-  char str[222];
+  // A → BC, B → CA, C → AB
+  m['A'] = "BC";
+  m['B'] = "CA";
+  m['C'] = "AB";
 
-  scanf("%d%d%d%s", &a, &b, &c, str);
-
-  printf("%d %s\n", a + b + c, str);
+  scanf("%s", str);
+  int q;
+  scanf("%d", &q);
+  while (q--) {
+    ll t, k;
+    scanf("%lld%lld", &t, &k);
+    printf("%c\n", Solver(t, k - 1));
+  }
 
   return 0;
 }

@@ -13,23 +13,6 @@ typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 // const int mod = 1e9 + 7;
 
-#define FOR(i, a, b) for (auto i = a; i < b; ++i)
-#define FOR1(i, a, b) for (auto i = a; i <= b; ++i)
-#define DWN(i, b, a) for (auto i = b - 1; i >= a; --i)
-#define DWN1(i, b, a) for (auto i = b; i >= a; --i)
-
-#define IN_INT(x) scanf("%d", &x)
-#define IN_LONG(x) scanf("%lld", &x)
-#define IN_NUM(x) scanf("%lf", &x)
-#define IN_STR(x) scanf("%s", x)
-
-#define OUT_INT(x) printf("%d", x)
-#define OUT_LONG(x) printf("%d", x)
-#define OUT_NUM(x) printf("%lf", x)
-#define OUT_STR(x) printf("%s", x)
-#define OUT_SPACE() putchar(' ')
-#define OUT_LINE() putchar('\n')
-
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
@@ -112,13 +95,55 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+int n;
+int nums[max5], nums2[max5];
+
+void Init() {
+  int minPos = 0;
+  for (int i = 0; i < n; i++) {
+    if (nums[i] < nums[minPos]) {
+      minPos = i;
+    }
+  }
+
+  int j = 0;
+  for (int i = minPos; i < n; i++) {
+    nums2[j++] = nums[i];
+  }
+  for (int i = 0; i < minPos; i++) {
+    nums2[j++] = nums[i];
+  }
+
+  for (int i = 0; i < n; i++) {
+    nums[i] = nums2[i];
+  }
+}
+
 int main() {
-  int a, b, c;
-  char str[222];
+  scanf("%d", &n);
+  for (int i = 0; i < n; i++) {
+    scanf("%d", &nums[i]);
+  }
 
-  scanf("%d%d%d%s", &a, &b, &c, str);
+  ll ans = 0;
 
-  printf("%d %s\n", a + b + c, str);
+  Init();
+
+  ll pre = -1;
+  for (int i = 0; i < n; i++) {
+    ll v = nums[i];
+    if (v >= pre) {  // 前面的可以靠更大的来覆盖到
+      pre = v;
+      continue;
+    }
+
+    // 此时递减了
+    ans += pre - v;
+    pre = v;
+  }
+  ans += pre;
+
+  printf("%lld\n", ans);
 
   return 0;
 }

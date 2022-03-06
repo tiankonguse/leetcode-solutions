@@ -112,13 +112,67 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+struct Node {
+  int id, l, r, ans;
+} nums[max6];
+int A[max5];
+vector<int> flag;
+
+int ans = 0;
+void Add(int x) {
+  // printf("add x=%d\n", x);
+  if (flag[x] % 2 == 1) {
+    ans++;
+  }
+  flag[x]++;
+}
+void Del(int x) {
+  // printf("del x=%d\n", x);
+  if (flag[x] % 2 == 0) {
+    ans--;
+  }
+  flag[x]--;
+}
+
 int main() {
-  int a, b, c;
-  char str[222];
+  int n;
+  scanf("%d", &n);
+  for (int i = 1; i <= n; i++) {
+    scanf("%d", &A[i]);
+  }
 
-  scanf("%d%d%d%s", &a, &b, &c, str);
+  int q;
+  scanf("%d", &q);
+  for (int i = 1; i <= q; i++) {
+    scanf("%d%d", &nums[i].l, &nums[i].r);
+    nums[i].id = i;
+  }
+  int block = sqrt(1.0 * n) + 1;
+  sort(nums + 1, nums + q + 1, [block](Node& a, Node& b) {
+    if (a.l / block == b.l / block) {
+      return a.r < b.r;
+    } else {
+      return a.l / block < b.l / block;
+    }
+  });
 
-  printf("%d %s\n", a + b + c, str);
+  flag.resize(n+1, 0);
+  int l = 1, r = 1;
+  Add(A[1]);
+  for (int i = 1; i <= q; i++) { // [l, r]
+    while (l > nums[i].l) Add(A[--l]);
+    while (r < nums[i].r) Add(A[++r]);
+    while (l < nums[i].l) Del(A[l++]);
+    while (r > nums[i].r) Del(A[r--]);
+    nums[i].ans = ans;
+  }
+
+  sort(nums + 1, nums + q + 1, [](Node& a, Node& b) { return a.id < b.id; });
+
+  for (int i = 1; i <= q; i++) {
+    // printf("ids=%d l=%d r=%d ans=%d\n", nums[i].id, nums[i].l, nums[i].r, nums[i].ans);
+    printf("%d\n", nums[i].ans);
+  }
 
   return 0;
 }

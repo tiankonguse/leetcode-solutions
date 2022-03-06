@@ -112,13 +112,20 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
+set<string> s;
+string str;
+void Dfs(int n){
+  if(n == 0) {
+    s.insert(str);
+    return;
+  }
+
+  
+
+}
+
 int main() {
-  int a, b, c;
-  char str[222];
-
-  scanf("%d%d%d%s", &a, &b, &c, str);
-
-  printf("%d %s\n", a + b + c, str);
-
+  Dfs();
+    
   return 0;
 }

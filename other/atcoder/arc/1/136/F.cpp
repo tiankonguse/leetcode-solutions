@@ -13,23 +13,6 @@ typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 // const int mod = 1e9 + 7;
 
-#define FOR(i, a, b) for (auto i = a; i < b; ++i)
-#define FOR1(i, a, b) for (auto i = a; i <= b; ++i)
-#define DWN(i, b, a) for (auto i = b - 1; i >= a; --i)
-#define DWN1(i, b, a) for (auto i = b; i >= a; --i)
-
-#define IN_INT(x) scanf("%d", &x)
-#define IN_LONG(x) scanf("%lld", &x)
-#define IN_NUM(x) scanf("%lf", &x)
-#define IN_STR(x) scanf("%s", x)
-
-#define OUT_INT(x) printf("%d", x)
-#define OUT_LONG(x) printf("%d", x)
-#define OUT_NUM(x) printf("%lf", x)
-#define OUT_STR(x) printf("%s", x)
-#define OUT_SPACE() putchar(' ')
-#define OUT_LINE() putchar('\n')
-
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>

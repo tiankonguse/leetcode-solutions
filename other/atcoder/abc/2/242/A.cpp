@@ -113,12 +113,16 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 int main() {
-  int a, b, c;
-  char str[222];
+  int a, b, c, x;
+  scanf("%d%d%d%d", &a, &b, &c, &x);
 
-  scanf("%d%d%d%s", &a, &b, &c, str);
-
-  printf("%d %s\n", a + b + c, str);
+  if (x <= a) {
+    printf("%.6f\n", 1.0);
+  } else if (x > b) {
+    printf("%.6f\n", 0.0);
+  } else {
+    printf("%.12f\n", 1.0 * c / (b - a));
+  }
 
   return 0;
 }
