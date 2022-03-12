@@ -101,57 +101,72 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
  *     TreeNode *right;
  *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
  *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left),
+ * right(right) {}
  * };
  */
 class Solution {
-    unordered_map<int, TreeNode*> m;
-    unordered_map<int, int> pre;
-    
-    TreeNode* Get(int id){
-        if(m.count(id)) {
-            return m[id];
-        } else {
-            return m[id] = new TreeNode(id);
-        }
+  unordered_map<int, TreeNode*> m;
+  unordered_map<int, int> pre;
+
+  TreeNode* Get(int id) {
+    if (m.count(id)) {
+      return m[id];
+    } else {
+      return m[id] = new TreeNode(id);
     }
-    
-    
-public:
-    TreeNode* createBinaryTree(vector<vector<int>>& nums) {
-        int pid = 0;
-        for(auto& v: nums) {
-            TreeNode* p = Get(v[0]);
-            TreeNode* c = Get(v[1]);
-            if(v[2] == 1) {
-                p->left = c;
-            } else {
-                p->right = c;
-            }
-            pid = v[0];
-            pre[v[1]] = v[0];
-        }
-        
-        while(pre.count(pid)) {
-            pid = pre[pid];
-        }
-        
-        return Get(pid);
+  }
+
+ public:
+  TreeNode* createBinaryTree(vector<vector<int>>& nums) {
+    int pid = 0;
+    for (auto& v : nums) {
+      TreeNode* p = Get(v[0]);
+      TreeNode* c = Get(v[1]);
+      if (v[2] == 1) {
+        p->left = c;
+      } else {
+        p->right = c;
+      }
+      pid = v[0];
+      pre[v[1]] = v[0];
     }
+
+    while (pre.count(pid)) {
+      pid = pre[pid];
+    }
+
+    return Get(pid);
+  }
 };
+
+// struct Node {
+//   int l, r, cnt;
+// };
+// vector<int> root_;
+// vector<Node> seg_;
+
+// int build(int l, int r) {
+//   int nr = seg_.size();
+//   printf("l=%d r = %d nr=%d\n", l, r, nr);
+//   seg_.push_back({0, 0, 0});
+//   if (l == r) {
+//     return nr;
+//   }
+//   assert(nr < seg_.size());
+//   int mid = (l + r) >> 1;
+//   seg_[nr].l = build(l, mid);
+//   seg_[nr].r = build(mid + 1, r);
+//   return nr;
+// }
 
 int main() {
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
   //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
   //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
 
-  priority_queue<Node> que;
-  que.push(Node(1));
-  que.push(Node(2));
-  while (!que.empty()) {
-    printf("val:%d\n", que.top().t);
-    que.pop();
-  }
+  // int nr = build(1, 2);
+  // printf("num=%d\n", seg_.size());
 
   return 0;
 }

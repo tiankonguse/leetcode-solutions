@@ -93,19 +93,108 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 10000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+typedef unsigned long long ull;
 
-    return 0;
-  }
+class Solution {
+    vector<vector<int>> paths;
+    bool Check(int mid, ull h, ull mod) {
+        unordered_map<ull, int> m;
+
+        ull base = 1;
+        for(int i = 0; i < mid - 1; i++) {
+            base = base * h  % mod;
+        }
+        //printf("mid=%d base=%llu\n", mid, base);
+        
+        bool firstPath = true;
+        for(auto& path: paths) {
+            ull pre = 0;
+            for(int i = 0; i < mid - 1; i++) {
+                pre = (pre * h + path[i]) % mod;
+            }
+            //printf("pre=%llu\n", pre);
+
+            for(int i = mid - 1; i < path.size(); i++) {
+                pre = (pre * h + path[i]) % mod;
+                //printf("i=%d val=%llu\n", i, pre);
+                if(firstPath) {
+                    m[pre] = 2;
+                }else{
+                    if(m.count(pre)) {
+                        m[pre]++;
+                    }
+                }
+                ull preMid = path[i - (mid - 1)] * base % mod;
+                //printf("preMid=%llu\n", preMid);
+                pre = (pre + mod - preMid) % mod;
+                //printf("next pre=%llu\n", pre);
+            }
+            firstPath = false;
+
+            for(auto it = m.begin(); it != m.end(); ) {
+                if(it->second > 1) {
+                    it->second = 1;
+                    it++;
+                } else {
+                    m.erase(it++);
+                }
+            }
+
+            if(m.size() == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    int MinPath(){
+        int len = paths[0].size();
+        for(auto& path: paths) {
+            len = min(len, int(path.size()));
+        }
+        return len;
+    }
+
+    void Init(){
+        for(auto& path: paths) {
+            for(auto& v: path) {
+                v++;
+            }
+        }
+    }
+
+public:
+    int longestCommonSubpath(int n, vector<vector<int>>& paths_) {
+        Init();
+        paths = std::move(paths_);
+        int l = 1, r = MinPath() + 1;
+        while(l < r) { // (l, r)
+            //printf("l=%d r=%d\n", l, r);
+            int mid = (l+r)/2;
+            if(Check(mid, n + 10001,  10e10+7) && Check(mid, n + 10009, 10e10+9)) {
+                //printf("mid=%d Check true\n", mid);
+                l = mid + 1;
+            } else {
+                //printf("mid=%d Check false\n", mid);
+                r = mid;
+            }
+        }
+        return l - 1;
+    }
 };
 
 int main() {
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
   //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
   //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
+
+  priority_queue<Node> que;
+  que.push(Node(1));
+  que.push(Node(2));
+  while (!que.empty()) {
+    printf("val:%d\n", que.top().t);
+    que.pop();
+  }
 
   return 0;
 }

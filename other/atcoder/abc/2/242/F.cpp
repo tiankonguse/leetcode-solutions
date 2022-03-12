@@ -109,23 +109,54 @@ sem_post(&foo_done);
 
 const LL INF = 0x3f3f3f3f3f3f3f3fll;
 const double PI = acos(-1.0), eps = 1e-7;
-const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
-const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 998244353;
+const int max3 = 2555, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-set<string> s;
-string str;
-void Dfs(int n){
-  if(n == 0) {
-    s.insert(str);
-    return;
+ll dp[55][55];
+ll cab[max3][max3];
+
+ll C(int a, int b) {
+  ll& ret = cab[a][b];
+  if (ret != -1) {
+    return ret;
   }
 
-  
+  if (a < b) {
+    return ret = 0;
+  }
 
+  if (a == b || b == 0) {
+    return ret = 1;
+  }
+
+  return ret = (C(a - 1, b) + C(a - 1, b - 1)) % mod;
 }
 
 int main() {
-  Dfs();
-    
+  int n, m, b, w;
+  scanf("%d%d%d%d", &n, &m, &b, &w);
+
+  memset(cab, -1, sizeof(cab));
+
+  ll ans = 0;
+  for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= m; j++) {
+      dp[i][j] = C(i * j, b);
+      for (int x = 1; x <= i; x++) {
+        for (int y = 1; y <= j; y++) {
+          if (x == i && y == j) continue;
+          ll xy = dp[x][y] * C(i, x) % mod * C(j, y) % mod;
+          dp[i][j] = (dp[i][j] - xy + mod) % mod;
+        }
+      }
+
+      ll ni = n - i;
+      ll mj = m - j;
+      ll ij = dp[i][j] * C(n, i) % mod * C(m, j) % mod;
+      ans = (ans + ij * C(ni * mj, w) % mod) % mod;
+    }
+  }
+  printf("%lld\n", ans);
+
   return 0;
 }
