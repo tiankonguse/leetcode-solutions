@@ -3,7 +3,6 @@
 #define myprintfex(format, args...) printf("line[%d]" format, __LINE__, ##args)
 // #define myprintfex(format, args...)
 
-typedef __int128_t int128;
 typedef long long ll;
 typedef long long LL;
 typedef unsigned long long ull;
@@ -38,28 +37,25 @@ int& myMin(int& a, int b) {
 }
 
 /*
-unordered_map / unordered_set
 
 lower_bound 大于等于
 upper_bound 大于
-reserve 预先分配内存 
 
 vector / array : upper_bound(vec.begin(), vec.end(), v)
 map: m.upper_bound(v)
 
 区间 [l,r]内满足的个数：
+upper_bound(vec.begin(), vec.end(), r) - lower_bound(vec.begin(), vec.end(), l);
 std::distance(v.begin(), it)
 map/set distance 复杂度 O(N)
 vector/数组 distance 复杂度 O(1)
 
-upper_bound(vec.begin(), vec.end(), r) - lower_bound(vec.begin(), vec.end(), l);
-
-
-
+vector预先分配内存 reserve
 反转 reverse(v.begin(), v.end())
 
 
 sum = accumulate(a.begin(), a.end(), 0ll);
+unordered_map / unordered_set
 
 __builtin_popcount 一的个数
 
@@ -95,15 +91,27 @@ sem_post(&foo_done);
 const LL INF = 0x3f3f3f3f3f3f3f3fll;
 const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 10000000007;
-const int max3 = 2100, max4 = 20100, max5 = 200100, max6 = 2000100;
+const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    vector<int> findKDistantIndices(vector<int>& nums, int key, int k) {
+        int n = nums.size();
+        
+        vector<int> ans;
+        int pre = 0;
+        for(int i=0;i<n;i++){
+            if(nums[i] == key) {
+                int l = max(i - k, pre), r = min(i + k, n - 1);
+                while(l <= r) {
+                    ans.push_back(l);
+                    l++;
+                }
+                pre = max(pre, r + 1);
+            }
+        }
+        return ans;
+    }
 };
 
 int main() {

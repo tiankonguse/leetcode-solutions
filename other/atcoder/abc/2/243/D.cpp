@@ -1,9 +1,10 @@
-#include "base.h"
+#include <bits/stdc++.h>
+
+using namespace std;
 
 #define myprintfex(format, args...) printf("line[%d]" format, __LINE__, ##args)
 // #define myprintfex(format, args...)
 
-typedef __int128_t int128;
 typedef long long ll;
 typedef long long LL;
 typedef unsigned long long ull;
@@ -11,6 +12,23 @@ typedef unsigned long long ULL;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 // const int mod = 1e9 + 7;
+
+#define FOR(i, a, b) for (auto i = a; i < b; ++i)
+#define FOR1(i, a, b) for (auto i = a; i <= b; ++i)
+#define DWN(i, b, a) for (auto i = b - 1; i >= a; --i)
+#define DWN1(i, b, a) for (auto i = b; i >= a; --i)
+
+#define IN_INT(x) scanf("%d", &x)
+#define IN_LONG(x) scanf("%lld", &x)
+#define IN_NUM(x) scanf("%lf", &x)
+#define IN_STR(x) scanf("%s", x)
+
+#define OUT_INT(x) printf("%d", x)
+#define OUT_LONG(x) printf("%d", x)
+#define OUT_NUM(x) printf("%lf", x)
+#define OUT_STR(x) printf("%s", x)
+#define OUT_SPACE() putchar(' ')
+#define OUT_LINE() putchar('\n')
 
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
@@ -38,28 +56,25 @@ int& myMin(int& a, int b) {
 }
 
 /*
-unordered_map / unordered_set
 
 lower_bound 大于等于
 upper_bound 大于
-reserve 预先分配内存 
 
 vector / array : upper_bound(vec.begin(), vec.end(), v)
 map: m.upper_bound(v)
 
 区间 [l,r]内满足的个数：
+upper_bound(vec.begin(), vec.end(), r) - lower_bound(vec.begin(), vec.end(), l);
 std::distance(v.begin(), it)
 map/set distance 复杂度 O(N)
 vector/数组 distance 复杂度 O(1)
 
-upper_bound(vec.begin(), vec.end(), r) - lower_bound(vec.begin(), vec.end(), l);
-
-
-
+vector预先分配内存 reserve
 反转 reverse(v.begin(), v.end())
 
 
 sum = accumulate(a.begin(), a.end(), 0ll);
+unordered_map / unordered_set
 
 __builtin_popcount 一的个数
 
@@ -94,22 +109,50 @@ sem_post(&foo_done);
 
 const LL INF = 0x3f3f3f3f3f3f3f3fll;
 const double PI = acos(-1.0), eps = 1e-7;
-const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 10000000007;
-const int max3 = 2100, max4 = 20100, max5 = 200100, max6 = 2000100;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
-};
+char str[max6];
 
 int main() {
-  //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
-  //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
-  //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
+  int n;
+  ull x;
+  scanf("%d%llu%s", &n, &x, str);
+
+  ull MAX_VAL = 1;
+  for (int i = 1; i <= 18; i++) {
+    MAX_VAL = MAX_VAL * 10;
+  }
+
+  int cache = 0;
+
+  for (int i = 0; i < n; i++) {
+    switch (str[i]) {
+      case 'U':
+        if (cache > 0) {
+          cache--;
+        } else {
+          x = x / 2;
+        }
+        break;
+      case 'L':
+        if (x * 2 > MAX_VAL) {
+          cache++;
+        } else {
+          x = x * 2;
+        }
+        break;
+      case 'R':
+        if (x * 2 > MAX_VAL) {
+          cache++;
+        } else {
+          x = x * 2 + 1;
+        }
+        break;
+    }
+  }
+
+  printf("%llu\n", x);
 
   return 0;
 }

@@ -3,7 +3,6 @@
 #define myprintfex(format, args...) printf("line[%d]" format, __LINE__, ##args)
 // #define myprintfex(format, args...)
 
-typedef __int128_t int128;
 typedef long long ll;
 typedef long long LL;
 typedef unsigned long long ull;
@@ -38,28 +37,25 @@ int& myMin(int& a, int b) {
 }
 
 /*
-unordered_map / unordered_set
 
 lower_bound 大于等于
 upper_bound 大于
-reserve 预先分配内存 
 
 vector / array : upper_bound(vec.begin(), vec.end(), v)
 map: m.upper_bound(v)
 
 区间 [l,r]内满足的个数：
+upper_bound(vec.begin(), vec.end(), r) - lower_bound(vec.begin(), vec.end(), l);
 std::distance(v.begin(), it)
 map/set distance 复杂度 O(N)
 vector/数组 distance 复杂度 O(1)
 
-upper_bound(vec.begin(), vec.end(), r) - lower_bound(vec.begin(), vec.end(), l);
-
-
-
+vector预先分配内存 reserve
 反转 reverse(v.begin(), v.end())
 
 
 sum = accumulate(a.begin(), a.end(), 0ll);
+unordered_map / unordered_set
 
 __builtin_popcount 一的个数
 
@@ -95,15 +91,55 @@ sem_post(&foo_done);
 const LL INF = 0x3f3f3f3f3f3f3f3fll;
 const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 10000000007;
-const int max3 = 2100, max4 = 20100, max5 = 200100, max6 = 2000100;
+const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
+
+int g[1111][1111];
+vector<vector<pair<int, int>>> m;
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    int digArtifacts(int n, vector<vector<int>>& artifacts, vector<vector<int>>& dig) {
+        memset(g, 0, sizeof(g));
+        
+        int K = artifacts.size();
+        m.clear();
+        m.resize(K+1);
+        
+        for(int k = 1; k <= K; k++){
+            auto& v = artifacts[k - 1];
+            for(int i= v[0]+1; i <= v[2]+1; i++) {
+                for(int j = v[1]+1;j <= v[3]+1;j++) {
+                    g[i][j] = k; // 不存在重叠
+                    m[k].push_back({i, j});
+                }
+            }
+        }
+        
+        for(auto&v: dig){
+            int i = v[0]+1, j = v[1]+1;
+            if(g[i][j] > 0) {
+                g[i][j] = -g[i][j];
+            }
+        }
+        
+        int ans = 0;
+        for(int k = 1; k <= K; k++){
+            bool flag = true;
+            for(auto& p: m[k]) {
+                int i = p.first, j = p.second;
+                if(g[i][j] > 0) {
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag) {
+                ans++;
+            }
+        }
+        
+        
+        return ans;
+    }
 };
 
 int main() {
