@@ -113,13 +113,76 @@ const int max3 = 2100, max4 = 20100, max5 = 200100, max6 = 2000100;
 #define sz(x) (int)(x).size()
 
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+typedef long long ll;
+ll mod = 1000000007;
 
-    return 0;
-  }
+class Solution {
+    ll BinarySearch(ll a, ll b, ll n, ll l){ 
+       // printf("BinarySearch a=%lld b=%lld n=%lld l=%lld\n", a,b,n,l);
+        if(l < n){
+            return b + 1;
+        }
+        if(l == n) {
+            return b;
+        } 
+        
+        return b - l/n + 1;
+        
+    }
+public:
+    int maxInvestment(vector<int>& product, int limit) {
+        map<ll, ll> m;
+        for(auto v: product){
+            m[v]++;
+        }
+        
+        ll ans = 0;
+        ll l = limit;
+        
+        while(m.size() && l > 0) {
+            ll v = m.rbegin()->first;
+            ll n = m.rbegin()->second;
+            m.erase(v);
+            
+            ll vv = 0;
+            if(m.size() > 0){
+                vv = m.rbegin()->first;
+            }
+
+                
+            ll a = vv + 1, b = v;
+            ll num = (b - a + 1) * n;
+            //printf("a=%lld b=%lld n=%d num=%lld l=%lld ans=%lld\n", a, b, n, num, l, ans);
+            if(num <= l){ // [a, b] * n 可以全部买入
+                ans += n * (a + b) * (b - a + 1) / 2;
+                ans %= mod;
+                l -= num;
+                if(vv){
+                    m[vv] += n;
+                }
+                //printf("all del. asn=%lld\n", ans);
+            } else{
+                a = BinarySearch(a, b, n, l); 
+                
+                if(a <= b) { // 完整的投入次数 [a, b]
+                    num = (b - a + 1) * n;
+                    ans += n * (a + b) * (b - a + 1)/2;
+                    ans %= mod;
+                    l -= num;
+                }
+                
+                //printf("all a=%lld num=%lld l=%lld ans=%lld\n", a, num, l, ans);
+                if(l > 0){ // 剩余的不够 n 次
+                    ans += l * (a - 1);
+                    ans %= mod;
+                    l = 0;
+                }
+            }
+            
+        }
+        
+        return ans % mod;
+    }
 };
 
 int main() {

@@ -109,16 +109,73 @@ sem_post(&foo_done);
 
 const LL INF = 0x3f3f3f3f3f3f3f3fll;
 const double PI = acos(-1.0), eps = 1e-7;
-const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
-const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
+const ll inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 998244353;
+const ll max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
+
+ll w[55], p[55], fact[55];
+ll dp[55][55][55];
+
+ll qpow(ll x, ll v) {
+  x = x % mod;
+  ll y = 1;
+  while (v) {
+    if (v & 1) y = y * x % mod;
+    x = x * x % mod;
+    v >>= 1;
+  }
+  return y;
+}
+ll inv(ll x) { return qpow(x, mod - 2); }
+
+ll dfs(ll n, ll m, ll k) {
+  ll& ret = dp[n][m][k];
+  if (ret != -1) {
+    return ret;
+  }
+
+  if (n < m || k < m || (k > 0 && m == 0)) {  // 非法数据
+    ret = 0;
+  } else if (m == 0 && k == 0) {  // 不抽奖
+    ret = 1;
+  } else {
+    ll ans = 0;
+    FOR1(i, 0, k - m + 1) {
+      ll tmp = inv(fact[i]) * qpow(p[n], i) % mod;
+      // printf("n=%lld m=%lld k=%lld i=%lld tmp=%lld\n", n, m, k, i, tmp);
+      if (i == 0) {
+        ans += dfs(n - 1, m, k) * tmp;
+      } else {
+        ans += dfs(n - 1, m - 1, k - i) * tmp;
+      }
+      ans %= mod;
+    }
+    ret = ans;
+  }
+
+  // printf("n=%lld m=%lld k=%lld ret=%lld\n", n, m, k, ret);
+  return ret;
+}
 
 int main() {
-  int a, b, c;
-  char str[222];
+  ll n, m, k;
+  scanf("%lld%lld%lld", &n, &m, &k);
+  ll sum = 0;
+  for (int i = 1; i <= n; i++) {
+    scanf("%lld", &w[i]);
+    sum += w[i];
+  }
+  for (int i = 1; i <= n; i++) {
+    p[i] = w[i] * inv(sum) % mod;
+    // printf("i=%d f=%lld\n", i, p[i]);
+  }
 
-  scanf("%d%d%d%s", &a, &b, &c, str);
+  fact[0] = 1;
+  for (int i = 1; i <= k; i++) {
+    fact[i] = (fact[i - 1] * i) % mod;
+    // printf("i=%d f=%lld\n", i, fact[i]);
+  }
 
-  printf("%d %s\n", a + b + c, str);
-
+  memset(dp, -1, sizeof(dp));
+  printf("%lld\n", dfs(n, m, k) * fact[k] % mod);
   return 0;
 }

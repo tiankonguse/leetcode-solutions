@@ -113,13 +113,74 @@ const int max3 = 2100, max4 = 20100, max5 = 200100, max6 = 2000100;
 #define sz(x) (int)(x).size()
 
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 
-    return 0;
-  }
+vector<int> nums;
+class Solution {
+    int n;
+    vector<int> L, R;
+    void Init(ListNode* head){
+        nums.clear();
+        nums.reserve(100000);
+        while(head){
+            nums.push_back(head->val);
+            head = head->next;
+        }
+        n = nums.size();
+        L.resize(n, -1);
+        R.resize(n, -1);
+    }
+    
+    bool Check(int l, int r, vector<int>& LR){
+        if(l >= r){
+            return true;
+        }
+        if(LR[r] != -1) {
+            return LR[r];
+        }
+        
+        if(nums[l] == nums[r]){
+            return LR[r] = Check(l+1, r-1, LR);
+        }else {
+            return LR[r] = 0;
+        }
+    }
+    
+    bool Solver(){
+        int l = 0, r = n - 1;
+        while(l <= r){
+            // 删除 l
+            if(Check(l+1, r, L)) {
+                return true;
+            }
+            
+            // 删除 r
+            if(Check(l, r-1, R)) {
+                return true;
+            }
+            
+            // 不删除 i
+            if(nums[l] != nums[r]){
+                return false;
+            }
+            l++, r--;
+        }
+        return true;
+    }
+    
+public:
+    bool isPalindrome(ListNode* head) {
+        Init(head);
+        return Solver();
+        
+    }
 };
 
 int main() {

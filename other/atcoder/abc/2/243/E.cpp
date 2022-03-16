@@ -121,74 +121,49 @@ struct Edge {
   }
 };
 
-vector<vector<pair<int, ll>>> g;
-int n;
-Edge edges[max5];
-ll flag[333];
-
-ll Dis(int x, int y) {
-  memset(flag, -1, sizeof(flag));
-
-  priority_queue<pair<ll, int>> que;
-  que.push({0, x});
-  flag[x] = 0;
-
-  while (!que.empty()) {
-    auto p = que.top();
-    que.pop();
-    ll c = p.first;
-    int s = p.second;
-    if (flag[s] < c) {
-      continue;  // 有更优解，前面已经计算
+void floyd(int n, vector<vector<ll>>& g) {
+  FOR(k, 0, n) {
+    FOR(i, 0, n) {
+      if (i == k) continue;
+      FOR(j, 0, n) {
+        ll tmp = g[i][k] + g[k][j];
+        if (tmp < g[i][j]) {
+          g[i][j] = tmp;
+        }
+      }
     }
+  }
+}
 
-    if (s == y) {
-      return flag[s];
-    }
+int main() {
+  vector<vector<ll>> g;
+  vector<Edge> edges;
+  int n, m;
 
-    for (auto& v : g[s]) {
-      int dst = v.first;
-      ll cost = c + v.second;
+  scanf("%d%d", &n, &m);
+  edges.resize(m);
+  g.resize(n, vector<ll>(n, inf));
 
-      if (flag[dst] == -1 || flag[dst] > cost) {
-        flag[dst] = cost;
-        que.push({cost, dst});
+  for (int i = 0; i < m; i++) {
+    edges[i].Read();
+    g[edges[i].x][edges[i].y] = edges[i].c;
+    g[edges[i].y][edges[i].x] = edges[i].c;
+  }
+
+  floyd(n, g);
+
+  int ans = 0;
+  for (int i = 0; i < m; i++) {  // 枚举是否可以删除这条边
+    ll x = edges[i].x, y = edges[i].y, c = edges[i].c;
+
+    FOR(j, 0, n) {
+      if (g[x][j] + g[j][y] <= g[x][y]) {
+        ans++;
+        break;
       }
     }
   }
 
-  return -1;
-}
-
-void Add(int x, int y, ll c) {
-  g[x].push_back({y, c});
-  g[y].push_back({x, c});
-}
-
-int main() {
-  int n, m;
-  scanf("%d%d", &n, &m);
-  g.resize(n);
-  for (int i = 0; i < m; i++) {
-    edges[i].Read();
-  }
-  sort(edges, edges + m, [](auto& a, auto& b) { return a.c < b.c; });
-
-  int ans = 0;
-  for (int i = 0; i < m; i++) {
-    int x = edges[i].x, y = edges[i].y;
-    ll c = edges[i].c;
-    // printf("i=%d x=%d y=%d c=%lld ", i, x, y, c);
-
-    ll l = Dis(x, y);
-    if (l < 0 || l > c) {
-      // printf("add l=%lld\n", l);
-      Add(x, y, c);
-    } else {
-      // printf("del\n");
-      ans++;
-    }
-  }
   printf("%d\n", ans);
 
   return 0;

@@ -113,13 +113,57 @@ const int max3 = 2100, max4 = 20100, max5 = 200100, max6 = 2000100;
 #define sz(x) (int)(x).size()
 
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
 
-    return 0;
-  }
+typedef long long ll;
+const ll mod = 1000000007;
+const ll base = 1005;
+
+class Solution {
+    map<ll, ll> m;
+    ll n;
+    void Init(vector<vector<int>>& nums){
+        n = nums.size();
+        
+        for(auto&vv: nums){
+            sort(vv.begin(), vv.end());
+            ll pre = 0;
+            for(auto v: vv){
+                pre = pre * base + v;
+            }
+            m[pre]++;
+        }
+        
+    }
+public:
+    int coopDevelop(vector<vector<int>>& nums) {
+        Init(nums);
+        
+        ll ans = n * (n-1) / 2;
+         
+        for(auto&vv: nums){ // 子集去重
+            int k = vv.size();
+            for(int i = 1;i < (1<<k) - 1; i++){ 
+                int cnt = 0;
+                ll pre = 0;
+                for(int j = 0; j < k; j++){
+                    if((i>>j) & 1) {
+                        pre = pre * base + vv[j];
+                    }
+                }
+                if(m.count(pre) > 0) {
+                    ans -= m[pre];
+                }
+            }
+        }
+        
+        for(auto p: m) { // 相同去重
+            ll k = p.second;
+            ans -= k * (k - 1) / 2; 
+        }
+        
+        
+        return ans % mod;
+    }
 };
 
 int main() {

@@ -113,14 +113,79 @@ const int max3 = 2100, max4 = 20100, max5 = 200100, max6 = 2000100;
 #define sz(x) (int)(x).size()
 
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+class DiscountSystem {
+    struct Node{
+        int p; // 单笔消费的原价不小于 priceLimit
+        int d; // 可享受 discount 的减免
+        int n; // 该优惠活动共有 number 数量的参加名额
+        int u; // 每个用户最多参与该优惠活动 userLimit 次
+        map<int, int> c;
+        void Init(int priceLimit, int discount, int number, int userLimit){
+            p = priceLimit;
+            d = discount;
+            n = number;
+            u = userLimit;
+        }
+        bool Check(int userId, int cost){
+            if(n == 0) {
+                return false;
+            }
+            
+            if(cost < p) {
+                return false;
+            }
+            
+            if(c.count(userId) && c[userId] == u) {
+                return false;
+            }
+            return true;
+        }
+        void Del(int userId){
+            c[userId]++;
+            n--;
+        }
+    };
+    
+public:
+    map<int, Node> m;
+    DiscountSystem() {
+        
+    }
+    
+    void addActivity(int actId, int priceLimit, int discount, int number, int userLimit) {
+        m[actId].Init(priceLimit, discount, number, userLimit);
+    }
+    
+    void removeActivity(int actId) {
+        m.erase(actId);
+    }
+    
+    int consume(int userId, int cost) {
+        int actId = -1;
+        for(auto& p: m){
+            Node& node = p.second;
+            if(actId != -1 && m[actId].d >= node.d) {
+                continue;
+            }   
+            if(node.Check(userId, cost)){
+                actId = p.first;
+            }
+        }
+        if(actId != -1){
+            cost -= m[actId].d;
+            m[actId].Del(userId);
+        }
+        return cost;
+    }
 };
+
+/**
+ * Your DiscountSystem object will be instantiated and called as such:
+ * DiscountSystem* obj = new DiscountSystem();
+ * obj->addActivity(actId,priceLimit,discount,number,userLimit);
+ * obj->removeActivity(actId);
+ * int param_3 = obj->consume(userId,cost);
+ */
 
 int main() {
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
