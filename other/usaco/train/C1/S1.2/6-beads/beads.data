@@ -1,0 +1,27 @@
+------- test 1 [length 33 bytes] ----
+29
+wwwbbrwrbrbrrbrbrwrwwrbwrwrrb
+------- test 2 [length 6 bytes] ----
+3
+rrr
+------- test 3 [length 81 bytes] ----
+77
+rwrwrwrwrwrwrwrwrwrwrwrwbwrwbwrwrwrwrwrwrwrwrwrwrwrwrwrwrwrwrwrwrwrwrwrwrwrwr
+------- test 4 [length 21 bytes] ----
+17
+wwwwwwwwwwwwwwwww
+------- test 5 [length 54 bytes] ----
+50
+bbrrrbrrrrrrrrbrbbbrbrrbrrrrbbbrbrbbbbbrbrrrbbrbbb
+------- test 6 [length 11 bytes] ----
+8
+rrwwwwbb
+------- test 7 [length 205 bytes] ----
+200
+rrrrrrrrrrrrrrrrrrrrbbbbbbbbbbbbbbbbbbbbrrrrrrrrrrrrrrrrrrrrbbbbbbbbbbbbbbbbbbbbrrrrrrrrrrrrrrrrrrrrbbbbbbbbbbbbbbbbbbbbrrrrrrrrrrrrrrrrrrrrbbbbbbbbbbbbbbbbbbbbrrrrrrrrrrrrrrrrrrrrbbbbbbbbbbbbbbbbbbbb
+------- test 8 [length 355 bytes] ----
+350
+rrbbrbbbwbwwbwbbbbwwrrbbwbrwbrwbbbrbrwrwbrwwwrrbbrrwrbbrwbwrwwwrbrwwwwwrwbwwwrrbrrbbbrbrbbbrbbbrbbwbbbbbrbrrbrwwbrrrrwbwrwrbbwbwrbrbrwwbrrbwbrwwbwwwbrbwrwbwbrbbbwrbwwrrrbwbwbbbbbrrwwwrbrwwrbbwrbbrbbrbwrrwwbrrrbrwbrwwrbwbwrrrbwrwrrbrbbwrwrbrwwwrwbwrrwwwwrrrwrrwbbwrwwrwrbwwbwrrrrbbwrbbrbwwwwwbrbbrbbrbrwbbwbwwbbbbbwwwrbwwbbbwrwwbbrrwrwbwrrwwwrrrwrrwww
+------- test 9 [length 338 bytes] ----
+333
+rwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwbrwb

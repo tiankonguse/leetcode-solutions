@@ -1,0 +1,30 @@
+------- test 1 [length 14 bytes] ----
+COMETQ
+HVNGAT
+------- test 2 [length 13 bytes] ----
+STARAB
+USACO
+------- test 3 [length 12 bytes] ----
+EARTH
+LEFTB
+------- test 4 [length 13 bytes] ----
+PULSAR
+VENUS
+------- test 5 [length 12 bytes] ----
+KANSAS
+UTAH
+------- test 6 [length 11 bytes] ----
+APPLE
+URSA
+------- test 7 [length 10 bytes] ----
+MSFT
+MARS
+------- test 8 [length 13 bytes] ----
+PLUTO
+BKHOLE
+------- test 9 [length 13 bytes] ----
+COWSBC
+RIGHT
+------- test 10 [length 14 bytes] ----
+DRKMTR
+SNIKER

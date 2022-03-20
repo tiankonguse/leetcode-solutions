@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <functional>
-#include <iostream>
+// #include <iostream>
 #include <map>
 #include <queue>
 #include <set>
@@ -143,13 +143,13 @@ void output(ListNode* root) {
   }
 }
 
-ListNode* clone( ListNode* list_) {
+ListNode* clone(ListNode* list_) {
   if (list_ == NULL) {
     return NULL;
   }
   ListNode root(0);
   ListNode* head = &root;
-   ListNode* list = list_;
+  ListNode* list = list_;
   while (list) {
     head->next = new ListNode(list->val);
     head = head->next;
@@ -157,7 +157,6 @@ ListNode* clone( ListNode* list_) {
   }
   return root.next;
 }
-
 
 /**
  * Definition for a binary tree node.
@@ -429,7 +428,6 @@ TreeNode* clone(TreeNode* tree) {
   return root;
 }
 
-
 template <class T>
 void output(const T& data) = delete;
 
@@ -512,8 +510,6 @@ void output(char const* name, vector<vector<vecType>> data) {
   }
   // printf("\n");
 }
-
-
 
 template <class baseType>
 bool eq(baseType first, baseType second) {
@@ -598,17 +594,16 @@ int getIndex() {
 #define TEST_SMP1(ClassName, FunNAme, expectAns, firstData) \
   do {                                                      \
     ClassName work;                                         \
-    auto tmpFirstData = clone(firstData);                   \
-    auto ans = work.FunNAme(tmpFirstData);                  \
-    int index = getIndex();                                 \
-    bool check = eq(ans, expectAns);                        \
-    if (!check) {                                           \
-      printf("index %d: NO\n", index);                      \
+    auto tmpP1 = clone(firstData);                          \
+    auto tmpAns = work.FunNAme(tmpP1);                      \
+                                                            \
+    if (!eq(tmpAns, expectAns)) {                           \
+      printf("index %d: NO\n", getIndex());                 \
       output("firstData", firstData);                       \
-      output("ans", ans);                                   \
+      output("ans", tmpAns);                                \
       output("expectAns", expectAns);                       \
     } else {                                                \
-      printf("index %d: YES\n", index);                     \
+      printf("index %d: YES\n", getIndex());                \
     }                                                       \
     printf("\n");                                           \
   } while (0)
@@ -616,19 +611,17 @@ int getIndex() {
 #define TEST_SMP2(ClassName, FunNAme, expectAns, firstData, secondData) \
   do {                                                                  \
     ClassName work;                                                     \
-    auto tmpFirstData = clone(firstData);                               \
-    auto tmpSecondData = clone(secondData);                             \
-    auto ans = work.FunNAme(tmpFirstData, tmpSecondData);               \
-    int index = getIndex();                                             \
-    bool check = eq(ans, expectAns);                                    \
-    if (!check) {                                                       \
-      printf("index %d: NO\n", index);                                  \
+    auto tmpP1 = clone(firstData);                                      \
+    auto tmpP2 = clone(secondData);                                     \
+    auto tmpAns = work.FunNAme(tmpP1, tmpP2);                           \
+    if (!eq(tmpAns, expectAns)) {                                       \
+      printf("index %d: NO\n", getIndex());                             \
       output("firstData", firstData);                                   \
       output("secondData", secondData);                                 \
-      output("ans", ans);                                               \
+      output("ans", tmpAns);                                            \
       output("expectAns", expectAns);                                   \
     } else {                                                            \
-      printf("index %d: YES\n", index);                                 \
+      printf("index %d: YES\n", getIndex());                            \
     }                                                                   \
     printf("\n");                                                       \
   } while (0)
@@ -637,48 +630,45 @@ int getIndex() {
                   thirdData)                                            \
   do {                                                                  \
     ClassName work;                                                     \
-    auto tmpFirstData = clone(firstData);                               \
-    auto tmpSecondData = clone(secondData);                             \
-    auto tmpThirdData = clone(thirdData);                               \
-    auto ans = work.FunNAme(tmpFirstData, tmpSecondData, tmpThirdData); \
-    int index = getIndex();                                             \
-    bool check = eq(ans, expectAns);                                    \
-    if (!check) {                                                       \
-      printf("index %d: NO\n", index);                                  \
+    auto tmpP1 = clone(firstData);                                      \
+    auto tmpP2 = clone(secondData);                                     \
+    auto tmpP3 = clone(thirdData);                                      \
+    auto tmpAns = work.FunNAme(tmpP1, tmpP2, tmpP3);                    \
+                                                                        \
+    if (!eq(tmpAns, expectAns)) {                                       \
+      printf("index %d: NO\n", getIndex());                             \
       output("firstData", firstData);                                   \
       output("secondData", secondData);                                 \
       output("thirdData", thirdData);                                   \
-      output("ans", ans);                                               \
+      output("ans", tmpAns);                                            \
       output("expectAns", expectAns);                                   \
     } else {                                                            \
-      printf("index %d: YES\n", index);                                 \
+      printf("index %d: YES\n", getIndex());                            \
     }                                                                   \
     printf("\n");                                                       \
   } while (0)
 
-#define TEST_SMP4(ClassName, FunNAme, expectAns, firstData, secondData,        \
-                  thirdData, fouthData)                                        \
-  do {                                                                         \
-    ClassName work;                                                            \
-    auto tmpFirstData = clone(firstData);                                      \
-    auto tmpSecondData = clone(secondData);                                    \
-    auto tmpThirdData = clone(thirdData);                                      \
-    auto tmpFouthData = clone(fouthData);                                      \
-    auto ans =                                                                 \
-        work.FunNAme(tmpFirstData, tmpSecondData, tmpThirdData, tmpFouthData); \
-    int index = getIndex();                                                    \
-    bool check = eq(ans, expectAns);                                           \
-    if (!check) {                                                              \
-      printf("index[%d] %d: NO\n", __LINE__, index);                           \
-      output("firstData", firstData);                                          \
-      output("secondData", secondData);                                        \
-      output("thirdData", thirdData);                                          \
-      output("fouthData", fouthData);                                          \
-      output("ans", ans);                                                      \
-      output("expectAns", expectAns);                                          \
-      printf("\n");                                                            \
-      return 0;                                                                \
-    } else {                                                                   \
-      printf("index %d: YES\n", index);                                        \
-    }                                                                          \
+#define TEST_SMP4(ClassName, FunNAme, expectAns, firstData, secondData, \
+                  thirdData, fouthData)                                 \
+  do {                                                                  \
+    ClassName work;                                                     \
+    auto tmpP1 = clone(firstData);                                      \
+    auto tmpP2 = clone(secondData);                                     \
+    auto tmpP3 = clone(thirdData);                                      \
+    auto tmpP4 = clone(fouthData);                                      \
+    auto tmpAns = work.FunNAme(tmpP1, tmpP2, tmpP3, tmpP4);             \
+                                                                        \
+    if (!eq(tmpAns, expectAns)) {                                       \
+      printf("index[%d] %d: NO\n", __LINE__, getIndex());               \
+      output("firstData", firstData);                                   \
+      output("secondData", secondData);                                 \
+      output("thirdData", thirdData);                                   \
+      output("fouthData", fouthData);                                   \
+      output("ans", tmpAns);                                            \
+      output("expectAns", expectAns);                                   \
+      printf("\n");                                                     \
+      return 0;                                                         \
+    } else {                                                            \
+      printf("index %d: YES\n", getIndex());                            \
+    }                                                                   \
   } while (0)

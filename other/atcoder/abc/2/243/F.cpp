@@ -128,6 +128,9 @@ ll qpow(ll x, ll v) {
 ll inv(ll x) { return qpow(x, mod - 2); }
 
 ll dfs(ll n, ll m, ll k) {
+  if (n < 0 || m < 0 || k < 0) {
+    return 0;
+  }
   ll& ret = dp[n][m][k];
   if (ret != -1) {
     return ret;
@@ -135,8 +138,6 @@ ll dfs(ll n, ll m, ll k) {
 
   if (n < m || k < m || (k > 0 && m == 0)) {  // 非法数据
     ret = 0;
-  } else if (m == 0 && k == 0) {  // 不抽奖
-    ret = 1;
   } else {
     ll ans = 0;
     FOR1(i, 0, k - m + 1) {
@@ -176,6 +177,7 @@ int main() {
   }
 
   memset(dp, -1, sizeof(dp));
+  dp[0][0][0] = 1;
   printf("%lld\n", dfs(n, m, k) * fact[k] % mod);
   return 0;
 }

@@ -5,9 +5,9 @@
 // 推论1：有俩个数p,q,且gcd(q,p)=1,则最大无法表示成px+qy（x>=0,y>=0)的数是pq-q-p.
 
 // 朴素 GCD/gcd 算法，复杂度 Log(n))
-LL Gcd(LL x, LL y) {
+ll Gcd(ll x, ll y) {
   if (!x || !y) return x ? x : y;
-  for (LL t; t = x % y; x = y, y = t)
+  for (ll t; t = x % y; x = y, y = t)
     ;
   return y;
 }

@@ -3,11 +3,13 @@
         {
             "label": "mac-cpp", // 任务名称，与launch.json的preLaunchTask相对应
             "type": "shell", // process是vsc把预定义变量和转义解析后直接全部传给command；shell相当于先打开shell再输入命令，所以args还会经过shell再解析一遍
-            "command": "/usr/local/Cellar/gcc@9/9.3.0/bin/g++-9", // 要使用的编译器，C++用g++
+            //"command": "/usr/local/Cellar/gcc@9/9.3.0/bin/g++-9", // 要使用的编译器，C++用g++
+            "command": "/usr/bin/g++", // 要使用的编译器，C++用g++
             "args": [
                 "-g",
                 "${file}",
                 "-I.\/include\/",
+                "-DUSACO_LOCAL_JUDGE",
                 "-o",
                 // "${fileDirname}/${fileBasenameNoExtension}.out",
                 "tmp.exe",
