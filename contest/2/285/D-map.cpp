@@ -86,102 +86,89 @@ struct Node {
 };
 */
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
-#define lson l, m, rt << 1
-#define rson m + 1, r, rt << 1 | 1
-const int maxn = 1e5 + 10;
-const int kMaxVal = 10e8;
-
-int maxNM;
-
-struct SegInfo {
-  pair<char, ll> r, l;
-  ll kNum;  // build 之后不再变化
-  ll maxNum;
-};
-
-struct SegTree {
-  SegInfo infos[maxn << 2];
-  string s;
-
-  void PushUp(int rt) {
-    SegInfo& P = infos[rt];
-    SegInfo& L = infos[rt << 1];
-    SegInfo& R = infos[rt << 1 | 1];
-
-    if (L.r.first == R.l.first) {
-      pair<char, ll> mid = {L.r.first, L.r.second + R.l.second}; //中间连接起来
-
-      P.l = L.l;
-      P.r = R.r;
-      P.maxNum = max(L.maxNum, R.maxNum);
-      chmax(P.maxNum, mid.second);
-      if (mid.second == L.kNum + R.kNum) {  // 完整覆盖
-        P.l = P.r = mid;
-      } else if (L.kNum == L.maxNum) {  // 左侧完整覆盖
-        P.l = mid;
-      } else if (R.kNum == R.maxNum) {  // 右侧完整覆盖
-        P.r = mid;
-      } else {
-        // do nothing
-      }
-    } else {
-      P.l = L.l;
-      P.r = R.r;
-      P.maxNum = max(L.maxNum, R.maxNum);
-    }
-  }
-
-  void Bulid(int l = 1, int r = maxNM, int rt = 1) {
-    SegInfo& info = infos[rt];
-    info.kNum = r - l + 1;
-    if (l == r) {
-      info.l = info.r = {s[l - 1], 1};
-      info.maxNum = 1;
-      return;
-    }
-    int m = (l + r) >> 1;
-    Bulid(lson);
-    Bulid(rson);
-    PushUp(rt);
-  }
-  void Update(int L, int R, char add, int l = 1, int r = maxNM, int rt = 1) {
-    SegInfo& info = infos[rt];
-    if (L <= l && r <= R) {
-      info.l = info.r = {add, R - L + 1};
-      info.maxNum = R - L + 1;
-      return;
-    }
-    int m = (l + r) >> 1;
-    if (L <= m) Update(L, R, add, lson);
-    if (R > m) Update(L, R, add, rson);
-    PushUp(rt);
-  }
-  ll Query(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
-    SegInfo& info = infos[rt];
-    return info.maxNum;
-  }
-};
-
-SegTree segTree;
-
 class Solution {
+  map<ll, ll> m;
+  map<ll, set<ll>> heap;
+
+  void Add(ll l, ll r) {
+    ll d = r - l + 1;
+    m[l] = r;
+    heap[d].insert(l);
+  }
+  void Del(ll l, ll r) {
+    ll d = r - l + 1;
+    m.erase(l);
+    if (heap[d].size() == 1) {
+      heap.erase(d);
+    } else {
+      heap[d].erase(l);
+    }
+  }
+  ll Search(ll x) {
+    auto it = m.upper_bound(x);
+    it--;
+    return it->first;
+  }
+  ll Top() { return heap.rbegin()->first; }
+
  public:
   vector<int> longestRepeating(string& s, string& ss, vector<int>& nums) {
-    // 线段树做更简单些
+    s = "-" + s + '-';  // 前后打桩
     ll n = s.size();
-    ll m = ss.length();
-    maxNM = n;
-    segTree.s = move(s);
-    segTree.Bulid();
+    ll k = nums.size();
 
-    vi ans(nums.size(), 1);
+    ll pre = 0;
+    rep(i, n) {
+      if (s[i] == s[pre]) {
+        continue;
+      }
+      Add(pre, i - 1);
+      pre = i;
+    }
+    Add(pre, pre);
 
-    rep(i, m) {
-      char c = ss[i];
-      int j = nums[i];
-      segTree.Update(j + 1, j + 1, c);
-      ans[i] = segTree.Query(1, n);
+    vi ans(k, 1);
+
+    rep(i, k) {
+      const char c = ss[i];
+      const int j = nums[i] + 1;
+
+      if (s[j] == c) {  // 不变
+        ans[i] = Top();
+        continue;
+      }
+      s[j] = c;
+
+      ll l = Search(j);
+      ll r = m[l];
+      Del(l, r);  // 删除当前线段
+
+      if (l < j && j < r) {  // 一分为三
+        Add(l, j - 1);
+        Add(j, j);
+        Add(j + 1, r);
+      } else {
+        if (l < r) {     // 拆分出新线段
+          if (l == j) {  //  左边界
+            Add(l + 1, r);
+          } else {  // 右边界
+            Add(l, r - 1);
+          }
+        }
+        l = r = j;
+        if (s[l - 1] == s[l]) {  // 左合并
+          l = Search(l - 1);
+          Del(l, m[l]);
+        }
+        if (s[r] == s[r + 1]) {  // 右合并
+          ll tmp = r + 1;
+          r = m[r + 1];
+          Del(tmp, r);
+        }
+        Add(l, r);
+      }
+
+      ans[i] = Top();
     }
 
     return ans;
