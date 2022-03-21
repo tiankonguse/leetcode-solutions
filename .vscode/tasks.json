@@ -12,7 +12,7 @@
                 "-DUSACO_LOCAL_JUDGE",
                 "-o",
                 // "${fileDirname}/${fileBasenameNoExtension}.out",
-                "tmp.exe",
+                "tmp/tmp.exe",
                 "-std=c++17",
             ],       
             "group": {
