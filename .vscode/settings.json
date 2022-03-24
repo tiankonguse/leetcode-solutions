@@ -70,7 +70,8 @@
         "streambuf": "cpp",
         "thread": "cpp",
         "typeindex": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "stack": "cpp"
     },
     "code-runner.runInTerminal": true
 }

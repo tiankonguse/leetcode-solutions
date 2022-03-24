@@ -94,9 +94,7 @@ class Solution {
     for (auto c : nums) {
       if (b == c) continue;
       if (a != -1) {
-        if (a < b && b > c || a > b && b < c) {
-          ans++;
-        }
+        if (a < b && b > c || a > b && b < c) ans++;
       }
       a = b, b = c;
     }

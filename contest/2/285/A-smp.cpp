@@ -89,23 +89,16 @@ struct Node {
 class Solution {
  public:
   int countHillValley(vector<int>& nums) {
-    int n = nums.size();
-    int m = 1;
+    int n = nums.size(), m = 1;
     for (int i = 1; i < n; i++) {
-      if (nums[i] == nums[m - 1]) {
-        continue;
-      } else {
-        nums[m++] = nums[i];
-      }
+      if (nums[i] == nums[m - 1]) continue;
+      nums[m++] = nums[i];
     }
-    nums.resize(m);
 
     int ans = 0;
     for (int i = 1; i + 1 < m; i++) {
       int a = nums[i - 1], b = nums[i], c = nums[i + 1];
-      if (a < b && b > c || a > b && b < c) {
-        ans++;
-      }
+      if (a < b && b > c || a > b && b < c) ans++;
     }
     return ans;
   }

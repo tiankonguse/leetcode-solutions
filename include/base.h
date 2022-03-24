@@ -166,7 +166,10 @@ struct TreeNode {
   int val;
   TreeNode* left;
   TreeNode* right;
-  TreeNode(int x = 0) : val(x), left(NULL), right(NULL) {}
+  TreeNode() : val(0), left(NULL), right(NULL) {}
+  TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+  TreeNode(int x, TreeNode* left, TreeNode* right)
+      : val(x), left(left), right(right) {}
 };
 
 enum {
@@ -495,16 +498,16 @@ void output(char const* name, baseType data) {
 }
 template <class baseType>
 void output(char const* name, vector<baseType> data) {
-  printf("%s size[%3d]:    ", name, data.size());
+  printf("%s size[%3d]:    ", name, (int)data.size());
   output(data);
   printf("\n");
 }
 
 template <class vecType>
 void output(char const* name, vector<vector<vecType>> data) {
-  printf("%s size[%4d]:\n", name, data.size());
+  printf("%s size[%4d]:\n", name, (int)data.size());
   for (int i = 0; i < data.size(); i++) {
-    printf("index[%3d] size[%d]", i, data[i].size());
+    printf("index[%3d] size[%d]", i, (int)data[i].size());
     output(data[i]);
     printf("\n");
   }

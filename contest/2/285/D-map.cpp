@@ -104,10 +104,10 @@ class Solution {
       heap[d].erase(l);
     }
   }
-  ll Search(ll x) {
+  pll Search(ll x) {
     auto it = m.upper_bound(x);
     it--;
-    return it->first;
+    return {it->first, it->second};
   }
   ll Top() { return heap.rbegin()->first; }
 
@@ -139,14 +139,11 @@ class Solution {
       }
       s[j] = c;
 
-      ll l = Search(j);
-      ll r = m[l];
+      auto [l, r] = Search(j);
       Del(l, r);  // 删除当前线段
 
       if (l < j && j < r) {  // 一分为三
-        Add(l, j - 1);
-        Add(j, j);
-        Add(j + 1, r);
+        Add(l, j - 1), Add(j, j), Add(j + 1, r);
       } else {
         if (l < r) {     // 拆分出新线段
           if (l == j) {  //  左边界
@@ -155,15 +152,16 @@ class Solution {
             Add(l, r - 1);
           }
         }
-        l = r = j;
+        l = r = j;               // 不再中间，拆分之后长度肯定是 1
         if (s[l - 1] == s[l]) {  // 左合并
-          l = Search(l - 1);
-          Del(l, m[l]);
+          auto [L, R] = Search(l - 1);
+          Del(L, R);
+          L = l;
         }
         if (s[r] == s[r + 1]) {  // 右合并
-          ll tmp = r + 1;
-          r = m[r + 1];
-          Del(tmp, r);
+          auto [L, R] = Search(r + 1);
+          Del(L, R);
+          r = R;
         }
         Add(l, r);
       }
