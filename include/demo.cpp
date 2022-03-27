@@ -24,7 +24,7 @@ typedef vector<string> vs;
 #define rep(i, n) for (ll i = 0; i < (n); i++)
 #define rep1(i, n) for (ll i = 1; i <= (n); i++)
 #define rrep(i, n) for (ll i = (n)-1; i >= 0; i--)
-#define rrep1(i, n) for (ll i = (n); i >= 0; i--)
+#define rrep1(i, n) for (ll i = (n); i >= 1; i--)
 #define all(v) (v).begin(), (v).end()
 
 template <class T>
