@@ -1,8 +1,23 @@
-## 144. Binary Tree Preorder Traversal
+# Binary Tree Preorder Traversal 
 
-题意：不使用递归，先序遍历二叉树。  
-思路：使用栈来解决。根直接输出，右子树入栈，左子树入栈即可。  
+Given a binary tree, return the preorder traversal of its nodes' values.  
 
-## C++语言
+For example:  
 
-[tiankonguse.cpp](./tiankonguse.cpp)
+Given binary tree `{1,#,2,3}`,  
+
+```
+   1
+    \
+     2
+    /
+   3
+```
+
+return `[1,2,3]`.  
+
+Note: Recursive solution is trivial, could you do it iteratively?  
+
+
+
+

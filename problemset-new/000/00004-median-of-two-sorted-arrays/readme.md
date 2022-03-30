@@ -1,54 +1,10 @@
-## 4. Median of Two Sorted Arrays  
+# Median of Two Sorted Arrays
 
-4. 寻找两个正序数组的中位数
-
-给定两个大小为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的中位数。
-
-进阶：你能设计一个时间复杂度为 O(log (m+n)) 的算法解决此问题吗？
-
- 
-
-示例 1：
-
-输入：nums1 = [1,3], nums2 = [2]
-输出：2.00000
-解释：合并数组 = [1,2,3] ，中位数 2
-示例 2：
-
-输入：nums1 = [1,2], nums2 = [3,4]
-输出：2.50000
-解释：合并数组 = [1,2,3,4] ，中位数 (2 + 3) / 2 = 2.5
-示例 3：
-
-输入：nums1 = [0,0], nums2 = [0,0]
-输出：0.00000
-示例 4：
-
-输入：nums1 = [], nums2 = [1]
-输出：1.00000
-示例 5：
-
-输入：nums1 = [2], nums2 = []
-输出：2.00000
-
-来源：力扣（LeetCode）
-链接：https://leetcode-cn.com/problems/median-of-two-sorted-arrays
-著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+There are two sorted arrays nums1 and nums2 of size m and n respectively. Find the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).
 
 
-题意：给两个有序的数组，求中位数。  
-如果有两个中位数，则求和除`2`。  
 
 
-思路：这道题可以转化为在`[left1, right1)`和`[left2,right2)`区间内，求第`k`小的数字。  
 
-
-每次求出两个区间的中位数，比如值分别是`mid1`和`mid2`,且假设`mid1 < mid2`。
-如果`len(mid1) + len(mid2)>k`，那么我们可以确定答案不在`[mid2,right2)`内，此时`k`不变。
-如果`len(mid1) + len(mid2)<=k`，则可以确定答案肯定不在`[left1, mid1]`内，此时`k = k - len(mid1)`。
-如果其中一个数组为空了，那就是正规的二分查找了。  
-
-
-依靠上面的理论，可以二分最终找到第k小的数字。
 
 

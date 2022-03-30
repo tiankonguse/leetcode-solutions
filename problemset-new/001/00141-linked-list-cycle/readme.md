@@ -1,1 +1,12 @@
-这道题还没有人做，你可以来抢占一血
+# Linked List Cycle
+
+Given a linked list, determine if it has a cycle in it.  
+
+Follow up:  
+
+
+Can ou solve it without using extra space?  
+
+
+
+

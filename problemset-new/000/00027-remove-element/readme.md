@@ -1,1 +1,9 @@
-这道题还没有人做，你可以来抢占一血
+# Remove Element 
+
+Given an array and a value, remove all instances of that value in place and return the new length.
+
+The order of elements can be changed. It doesn't matter what you leave beyond the new length.
+
+
+
+

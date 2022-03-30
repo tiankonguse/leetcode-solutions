@@ -1,12 +1,13 @@
-# 122. Best Time to Buy and Sell Stock II
+# Best Time to Buy and Sell Stock II
+
+Say you have an array for which the i^{th} element is the price of a given stock on day i.  
 
 
-题意：给一个数组，第`i`个元素代表第`i`天的股票价格。  
-求设计一个算法来买卖股票，从而获取最大利润。  
-要求：同一时间只能拥有一支股票，即在再次购买股票之前，需要卖掉之前的股票。  
+Design an algorithm to find the maximum profit.  
 
+You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times).  
 
-思路：股票肯定是低卖高卖。  
-所以每次需要在最低点买入股票（股票上涨之前买入），局部最高点卖出股票（股票下降之前卖出）。  
+However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).  
+
 
 

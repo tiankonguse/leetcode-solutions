@@ -1,1 +1,18 @@
-这道题还没有人做，你可以来抢占一血
+#  47. Permutations II
+
+Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+
+For example,
+`[1,1,2]` have the following unique permutations:
+
+```
+[
+  [1,1,2],
+  [1,2,1],
+  [2,1,1]
+]
+```
+
+g++ -std=c++11 permutations-ii.cpp
+
+

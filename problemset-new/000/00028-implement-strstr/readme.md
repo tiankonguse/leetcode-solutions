@@ -1,1 +1,10 @@
-这道题还没有人做，你可以来抢占一血
+# Implement strStr() 
+
+Implement strStr().
+
+Returns the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
+
+
+
+
+

@@ -1,1 +1,9 @@
-这道题还没有人做，你可以来抢占一血
+# Merge k Sorted Lists
+
+
+Merge k sorted linked lists and return it as one sorted list.   
+
+Analyze and describe its complexity.  
+
+
+

@@ -1,15 +1,34 @@
-# 36. Valid Sudoku
+# Valid Sudoku
+
+Determine if a Sudoku is valid, according to: []Sudoku Puzzles - The Rules](http://sudoku.com.au/TheRules.aspx).  
 
 
-题意：判断一个 9x9 的数独是否有效。  
+The Sudoku board could be partially filled, where empty cells are filled with the character `'.'`.  
 
 
-规则1：数字 1-9 在每一行只能出现一次。  
-规则2：数字 1-9 在每一列只能出现一次。  
-规则3：数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。  
+```
+ 5 3 . | . 7 . | . . . |
+ 6 . . | 1 9 5 | . . . |
+ . 9 8 | . . . | . 6 . |
+ - - -   - - -   - - -  
+ 8 . . | . 6 . | . . 3 |
+ 4 . . | 8 . 3 | . . 1 |
+ 7 . . | . 2 . | . . 6 |
+ - - -   - - -   - - -  
+ . 6 . | . . . | 2 8 . |
+ . . . | 4 1 9 | . . 5 |
+ . . . | . 8 . | . 7 9 |
+```
+
+A partially filled sudoku which is valid.  
 
 
-思路：使用`map`保存各行、各列、九宫格出现的数字，判断是否出现重复的即可。  
-也可以依次判断这些行、列、宫格是否有重复的数字。  
+Note:  
+
+A valid Sudoku board (partially filled) is not necessarily solvable. Only the filled cells need to be validated.  
+
+
+
+
 
 

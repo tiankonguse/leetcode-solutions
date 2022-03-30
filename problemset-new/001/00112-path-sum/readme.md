@@ -1,19 +1,23 @@
-# 112. Path Sum
+# Path Sum
+
+Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the values along the path equals the given sum.  
 
 
-题意：给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。 
+For example:  
 
+Given the below binary tree and `sum = 22`,  
 
-思路：递归的时候，把路径和带下去即可。  
-只要找到一个就结束递归。  
+```
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \      \
+        7    2      1
+```
 
-
-
-## C++ 语言  
-
-
-[tiankonguse.cpp](./tiankonguse.cpp)
-
+return true, as there exist a root-to-leaf path `5->4->11->2` which sum is 22.  
 
 
 

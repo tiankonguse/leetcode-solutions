@@ -1,1 +1,10 @@
-这道题还没有人做，你可以来抢占一血
+# Factorial Trailing Zeroes
+
+Given an integer n, return the number of trailing zeroes in n!.
+
+Note: Your solution should be in logarithmic time complexity.
+
+
+
+
+

@@ -1,9 +1,13 @@
-## 解题思路
+# 33. Search in Rotated Sorted Array
 
-考察序列A[i..j]，随机选择k(i<k<j)，原始序列分为A[i...k]、A[k+1...j]，根据A[i]与A[k]的大小可以区分出A[i...k]、A[k+1...j]两个序列中哪一个是单调递增，根据单调递增序列判断结果所在序列，重复该过程，直到找到结果或不存在。
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
 
-解决问题的核心在于序列中元素没有重复
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
 
-## Python
+You are given a target value to search. If found in the array return its index, otherwise return -1.
 
-[marvelous.py](./marvelous.py)
+You may assume no duplicate exists in the array.
+
+g++ -std=c++11 search-in-rotated-sorted-array.cpp
+
+

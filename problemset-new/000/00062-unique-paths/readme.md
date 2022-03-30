@@ -1,11 +1,16 @@
-# 62. 不同路径
+# Unique Paths
 
-一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为 “Start” ）。
+A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
 
-机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
+The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).
 
-问总共有多少条不同的路径？
+How many possible unique paths are there?
 
-来源：力扣（LeetCode）
-链接：https://leetcode-cn.com/problems/unique-paths
-著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+Above is a 3 x 7 grid. How many possible unique paths are there?
+
+Note: m and n will be at most 100.
+
+
+
+

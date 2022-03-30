@@ -1,11 +1,9 @@
-## Python
+# Sqrt(x)
 
-[marvelous.py](./marvelous.py)
+Implement int `sqrt(int x)`.
 
-## Cpp
+Compute and return the square root of x.
 
-[freedomDR.cpp](./freedomDR.cpp)
 
-## Go
 
-[freedomDR.go](./freedomDR.go)
+

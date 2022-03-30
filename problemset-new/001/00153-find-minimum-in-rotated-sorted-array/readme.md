@@ -1,8 +1,16 @@
-## Python
-
-[marvelous.py](./marvelous.py)
+# 153. Find Minimum in Rotated Sorted Array
 
 
-## Go
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
 
-[freedomDR.go](./freedomDR.go)
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+Find the minimum element.
+
+You may assume no duplicate exists in the array.
+
+
+
+g++ -std=c++11 find-minimum-in-rotated-sorted-array.cpp
+
+

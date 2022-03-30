@@ -1,15 +1,56 @@
-# 116. Populating Next Right Pointers in Each Node
+# Populating Next Right Pointers in Each Node 
 
 
-题意：给定一个完美二叉树，其所有叶子节点都在同一层，每个父节点都有两个子节点。  
-求每个节点的`next`指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 `NULL`。  
+Given a binary tree  
+
+```
+struct TreeLinkNode {
+    TreeLinkNode *left;
+    TreeLinkNode *right;
+    TreeLinkNode *next;
+}
+```
+
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.  
+
+Initially, all next pointers are set to NULL.  
+
+Note:  
+
+- You may only use constant extra space.  
+- You may assume that it is a perfect binary tree (ie, all leaves are at the same level, and every parent has two children).  
 
 
-思路：对于左子树和右子树，直接递归即可。  
-而对于左子树和右子树的关系，可以发现，每一层只有一个连接，就是左边的最后节点 指向 右边的最左节点。  
-这个可以使用一个循环连接左右子树。  
+For example,  
+
+Given the following perfect binary tree,  
 
 
-## C++语言  
+```
+         1
+       /  \
+      2    3
+     / \  / \
+    4  5  6  7
+```
 
-[tiankonguse.cpp](./tiankonguse.cpp)
+
+After calling your function, the tree should look like:  
+
+
+```
+         1 -> NULL
+       /  \
+      2 -> 3 -> NULL
+     / \  / \
+    4->5->6->7 -> NULL
+```
+
+
+
+
+
+
+
+
+

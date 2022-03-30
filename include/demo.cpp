@@ -1,5 +1,8 @@
 #include "base.h"
 
+#include <bits/stdc++.h>
+using namespace std;
+
 typedef __int128_t int128;
 
 typedef vector<int> vi;

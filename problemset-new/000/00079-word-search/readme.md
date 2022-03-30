@@ -1,1 +1,25 @@
-这道题还没有人做，你可以来抢占一血
+# Word Search
+
+Given a 2D board and a word, find if the word exists in the grid.  
+
+The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once.  
+
+For example,  
+
+Given board =
+
+```
+[
+  ["ABCE"],
+  ["SFCS"],
+  ["ADEE"]
+]
+```
+
+word = `"ABCCED"`, -&gt; returns `true`,
+word = `"SEE"`, -&gt; returns `true`,
+word = `"ABCB"`, -&gt; returns `false`.
+
+
+
+

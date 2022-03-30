@@ -9,8 +9,6 @@
 
 
 这个数据结构应该满足一下这些特征：  
-
-
 1. 出栈一个数据时，需要能够快速删除这个数据。  
 2. 入栈一个数据时，需要能够快速插入这个数据。  
 3. 最小值出栈时，需要快速找到下一个最小值。  
@@ -18,36 +16,23 @@
 
 
 其中第三个特征最重要。  
+由于数据时乱序的，这里必然无法使用线性容器解决这个问题。  
+所以只能选择非线性容器，即树形容器。  
 
 
-大概思路是使用另外一个数据结构维护最小值。  
-
-
-最简单的方法是使用 map 来查找最小值，每次操作复杂度 log(n)。  
-
-
-```
-map<int, int> m;  // <val, count>
-stack<int> valStat;
-```
-
-
-另一个方法是每次将当前最小值压入另一个栈中。  
-
-
-```
-stack<int> minStat;
-stack<int> valStat;
-```
-
-
-
-练习地址：https://leetcode-cn.com/problems/min-stack/  
+练习地址：https://leetcode.com/problems/  
+输入题目编号或者标题即可定位到题目。  
 
 
 详细解题报告地址：https://mp.weixin.qq.com/s/natRB_8e8sSPnkOgxDR8jg  
 公众号：天空的代码世界
 微信号：tiankonguse 
 
+
+## helle
+
+建了一个小密圈，讨论各种算法群。  
+
+![小密圈](/images/suanfa_xiaomiquan.jpg)
 
 

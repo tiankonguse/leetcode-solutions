@@ -1,19 +1,22 @@
-# 145. Binary Tree Postorder Traversal
+# Binary Tree Postorder Traversal 
 
-题意：不使用递归，后序遍历二叉树。  
+Given a binary tree, return the postorder traversal of its nodes' values.  
 
+For example:  
 
-思路：使用栈来代替递归。  
+Given binary tree `{1,#,2,3}`,  
 
-关键是如何判断根已经处理过了。  
-一种简单的方法是将根的两个儿子指向空
-另一种是使用另一个栈来储存这样的根节点
-还有一种方法是自定义结构体，定义一个状态。  
+```
+   1
+    \
+     2
+    /
+   3
+```
 
+return `[3,2,1]`.  
 
-## C++ 语言  
+Note: Recursive solution is trivial, could you do it iteratively?  
 
-
-[tiankonguse.cpp](./tiankonguse.cpp)
 
 

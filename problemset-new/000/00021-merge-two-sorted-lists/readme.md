@@ -1,17 +1,8 @@
-# 21. Merge Two Sorted Lists
+# Merge Two Sorted Lists 
+
+Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.
 
 
-题意：给两个有序链表，请合并后的链表。  
 
 
-思路：有两种方法。
-
-一种是循环合并，维护一个指针头和指针尾，依次将最小的插入到尾指针后面，并更新尾指针。  
-另一种是递归，返回值是合并后的指针头。都不为空，则除了最小值节点，剩余的递归合并，最小值节点指向递归合并后的链表，然后返回最小值节点。  
-
-
-## C++语言  
-
-
-* [21-tiankonguse.cpp](./21-tiankonguse.cpp)
 
