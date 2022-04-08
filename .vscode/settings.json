@@ -82,7 +82,9 @@
         "filesystem": "cpp",
         "span": "cpp",
         "any": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "__config": "cpp",
+        "__nullptr": "cpp"
     },
     "code-runner.runInTerminal": true
 }
