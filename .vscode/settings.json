@@ -84,7 +84,8 @@
         "any": "cpp",
         "ranges": "cpp",
         "__config": "cpp",
-        "__nullptr": "cpp"
+        "__nullptr": "cpp",
+        "locale": "cpp"
     },
     "code-runner.runInTerminal": true
 }

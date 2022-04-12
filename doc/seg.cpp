@@ -7,11 +7,18 @@ const int kMaxVal = 10e8;
 int maxNM;
 
 struct SegTree {
-  ll sign[maxn << 2];  //
-  ll minVal[maxn << 2];
-  ll maxMal[maxn << 2];
+  vector<ll> sign;
+  vector<ll> minVal;
+  vector<ll> maxMal;
+  vector<ll> str;
 
-  ll str[maxn];
+  void Init(int n) {
+    maxNM = n;
+    sign.resize(maxNM << 2, 0);
+    minVal.resize(maxNM << 2, 0);
+    maxMal.resize(maxNM << 2, 0);
+    str.resize(maxNM);
+  }
 
   void PushUp(int rt) {
     minVal[rt] = min(minVal[rt << 1], minVal[rt << 1 | 1]);
