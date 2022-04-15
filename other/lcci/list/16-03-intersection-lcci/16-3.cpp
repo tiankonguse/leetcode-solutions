@@ -89,11 +89,54 @@ struct Node {
 };
 */
 
+struct Point {
+  int x, y;
+};
+
+struct LineSegment {
+  Point s, t;
+  pair<int, int> GetX() { return {min(s.x, t.x), max(s.x, t.x)}; }
+  pair<int, int> GetY() { return {min(s.y, t.y), max(s.y, t.y)}; }
+};
+
 class Solution {
+  LineSegment l1;
+  LineSegment l2;
+  vector<double> ans;
+
+  void Init() {}
+
+  bool CheckXY() {  // 时空交集
+    auto [l1x1, l1x2] = l1.GetX();
+    auto [l2x1, l2x2] = l2.GetX();
+    if (l1x1 > l2x2 || l2x1 > l1x2) return false;
+
+    auto [l1y1, l1y2] = l1.GetY();
+    auto [l2y1, l2y2] = l2.GetY();
+    if (l1y1 > l2y2 || l2y1 > l1y2) return false;
+
+    return true;
+  }
+
  public:
   vector<double> intersection(vector<int>& start1, vector<int>& end1,
                               vector<int>& start2, vector<int>& end2) {  //
-        
+    l1 = LineSegment{Point{start1[0], start1[1]}, Point{end1[0], end1[1]}};
+    l2 = LineSegment{Point{start2[0], start2[1]}, Point{end2[0], end2[1]}};
+    Init();
+    if (!CheckXY()) {
+      return ans
+    }
+
+    // 此时，X 和 Y 都有交集，线段是否有交集需要进一步判断
+
+    if(SameLine()){
+      return ans;
+    }
+
+    
+
+
   }
 };
 
