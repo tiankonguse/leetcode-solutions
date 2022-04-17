@@ -95,7 +95,12 @@
         "compare": "cpp",
         "ios": "cpp",
         "variant": "cpp",
-        "stop_token": "cpp"
+        "stop_token": "cpp",
+        "__errc": "cpp",
+        "__tuple": "cpp",
+        "bit": "cpp",
+        "concepts": "cpp",
+        "numbers": "cpp"
     },
     "code-runner.runInTerminal": true
 }
