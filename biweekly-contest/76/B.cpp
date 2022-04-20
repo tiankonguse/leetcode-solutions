@@ -1,6 +1,6 @@
-#include "base.h"
-
 #include <bits/stdc++.h>
+
+#include "base.h"
 using namespace std;
 
 typedef __int128_t int128;
@@ -89,12 +89,17 @@ struct Node {
 };
 */
 
+typedef long long ll;
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  ll waysToBuyPensPencils(int total, int cost1, int cost2) {
+    ll ans = 0;
+    ll max1 = total / cost1;
+    for (ll i = 0; i <= max1; i++) {
+      ans += (total - i * cost1) / cost2 + 1;
+    }
 
-    return 0;
+    return ans;
   }
 };
 

@@ -1,6 +1,6 @@
-#include "base.h"
-
 #include <bits/stdc++.h>
+
+#include "base.h"
 using namespace std;
 
 typedef __int128_t int128;
@@ -89,14 +89,51 @@ struct Node {
 };
 */
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
 
-    return 0;
+typedef long long ll;
+class ATM {
+  vector<ll> nums;
+  vector<ll> base;
+  ll n = 5;
+
+ public:
+  ATM() {
+    n = 5;
+    nums.resize(5, 0);
+    base = {20, 50, 100, 200, 500};
+  }
+
+  void deposit(vector<int> banknotesCount) {
+    for (int i = 0; i < n; i++) {
+      nums[i] += banknotesCount[i];
+    }
+  }
+
+  vector<int> withdraw(int amount) {
+    vector<int> ans(n, 0);
+    for (int i = n - 1; i >= 0; i--) {
+      ll v = base[i];
+      ll m = min(amount / v, nums[i]);
+      ans[i] += m;
+      nums[i] -= m;
+      amount -= v * m;
+    }
+
+    if (amount == 0) {
+      return ans;
+    } else {
+      deposit(ans);
+      return {-1};
+    }
   }
 };
+
+/**
+ * Your ATM object will be instantiated and called as such:
+ * ATM* obj = new ATM();
+ * obj->deposit(banknotesCount);
+ * vector<int> param_2 = obj->withdraw(amount);
+ */
 
 int main() {
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};

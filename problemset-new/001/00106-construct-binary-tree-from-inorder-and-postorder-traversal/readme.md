@@ -1,5 +1,5 @@
 ## 106. Construct Binary Tree from Inorder and Postorder Traversal  
-
+## 106. 从中序与后序遍历序列构造二叉树
 
 题意：根据一棵树的中序遍历与后序遍历构造二叉树。  
 

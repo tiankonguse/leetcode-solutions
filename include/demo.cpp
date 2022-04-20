@@ -57,6 +57,7 @@ ld PI = acos(-1.0);
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
+// LONG_MIN, LONG_MAX
 
 /*
 unordered_map / unordered_set

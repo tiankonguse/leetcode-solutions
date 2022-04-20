@@ -1,6 +1,6 @@
-#include "base.h"
-
 #include <bits/stdc++.h>
+
+#include "base.h"
 using namespace std;
 
 typedef __int128_t int128;
@@ -90,11 +90,46 @@ struct Node {
 */
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  vector<vector<pair<int, int>>> g;  //<score, y>
+  vector<int> scores;
+  int n, m;
+  int MaxNum = 3;
 
-    return 0;
+ public:
+  int maximumScore(vector<int>& scores_, vector<vector<int>>& edges) {
+    scores.swap(scores_);
+    n = scores.size();
+    m = edges.size();
+
+    g.resize(n);
+    for (auto& e : edges) {
+      int x = e[0], y = e[1];
+      g[x].push_back({scores[y], y});
+      g[y].push_back({scores[x], x});
+    }
+
+    for (int i = 0; i < n; i++) {
+      sort(g[i].begin(), g[i].end());
+    }
+
+    int ans = -1;
+    for (auto& e : edges) {
+      int x = e[0], y = e[1];
+      int xn = g[x].size();
+      int yn = g[y].size();
+
+      for (int i = xn - 1; i >= xn - 3 && i >= 0; i--) {
+        int a = g[x][i].second;
+        if (a == y || a == x) continue;
+        for (int j = yn - 1; j >= yn - 3 && j >= 0; j--) {
+          int b = g[y][j].second;
+          if (b == x || b == y || b == a) continue;
+          ans = max(ans, scores[x] + scores[y] + scores[a] + scores[b]);
+        }
+      }
+    }
+
+    return ans;
   }
 };
 
