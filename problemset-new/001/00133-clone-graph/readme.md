@@ -1,5 +1,7 @@
 # Clone Graph
 
+给你无向 连通 图中一个节点的引用，请你返回该图的 深拷贝（克隆）。
+
 Clone an undirected graph. Each node in the graph contains a label and a list of its neighbors.  
 
 

@@ -89,28 +89,33 @@ struct Node {
 */
 
 typedef long long ll;
-constexpr int INF = 1 << 30;
+constexpr ll INF = 1ll << 31;
 class Solution {
   ll Cal(ll v) {
     ll ans = 0;
-    ans += v / 3;
-    ans += v / 5;
-    ans += v / 7;
-    ans -= v / (3 * 5);
-    ans -= v / (3 * 7);
-    ans -= v / (5 * 7);
-    ans += v / (3 * 5 * 7);
+    for (ll i3 = 1; i3 <= v; i3 *= 3) {
+      for (ll i5 = 1; i5 <= v; i5 *= 5) {
+        if (i3 * i5 > v) continue;
+        for (ll i7 = 1; i7 <= v; i7 *= 7) {
+          if (i3 * i7 > v || i7 * i5 > v) continue;
+          if (i3 * i5 * i7 <= v) {
+            ans++;
+          }
+        }
+      }
+    }
     return ans;
   }
 
  public:
   int getKthMagicNumber(int k) {
     if (k == 1) return 1;
-    k--;
     ll l = 1, r = INF;  // [l, r)
     while (l < r) {
       ll mid = l + (r - l) / 2;
-      if (Cal(mid) >= k) {
+      ll num = Cal(mid);
+      //   printf("l=%lld r=%lld mid=%lld num=%lld\n",l, r, mid, num);
+      if (num >= k) {
         r = mid;
       } else {
         l = mid + 1;

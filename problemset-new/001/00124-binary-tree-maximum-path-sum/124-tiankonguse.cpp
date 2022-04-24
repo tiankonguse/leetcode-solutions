@@ -20,34 +20,34 @@
  * };
  */
 class Solution {
-    int maxAns;
-    typedef TreeNode T;
-    int dfs(T* root) {
-        if(!root) {
-            return -1;
-        }
-
-        int nowVal = root->val;
-        int leftVal = dfs(root->left);
-        int rightVal = dfs(root->right);
-
-        maxAns = max(maxAns, nowVal); //root
-        maxAns = max(maxAns, nowVal + leftVal); //root + left
-        maxAns = max(maxAns, nowVal + rightVal);//root + right
-        maxAns = max(maxAns, nowVal + rightVal + leftVal); //left + root + right
-
-        int retVal = nowVal;
-        retVal = max(retVal, nowVal + leftVal);
-        retVal = max(retVal, nowVal + rightVal);
-        return retVal;
+  int maxAns;
+  typedef TreeNode T;
+  int dfs(T* root) {
+    if (!root) {
+      return 0;
     }
 
-public:
-    int maxPathSum(TreeNode* root) {
-        maxAns = root->val;
-        dfs(root);
-        return maxAns;
-    }
+    int nowVal = root->val;
+    int leftVal = dfs(root->left);
+    int rightVal = dfs(root->right);
+
+    maxAns = max(maxAns, nowVal);                       // root
+    maxAns = max(maxAns, nowVal + leftVal);             // root + left
+    maxAns = max(maxAns, nowVal + rightVal);            // root + right
+    maxAns = max(maxAns, nowVal + rightVal + leftVal);  // left + root + right
+
+    int retVal = nowVal;
+    retVal = max(retVal, nowVal + leftVal);
+    retVal = max(retVal, nowVal + rightVal);
+    return retVal;
+  }
+
+ public:
+  int maxPathSum(TreeNode* root) {
+    maxAns = root->val;
+    dfs(root);
+    return maxAns;
+  }
 };
 
 /*
@@ -60,16 +60,16 @@ int main() {
 #define CLASS Solution
 #define FUNCTION maxPathSum
 
-    TreeNode* first;
-    int expectAns;
+  TreeNode* first;
+  int expectAns;
 
-    first = vecToTree({1,2,3});
-    expectAns = 6;
-    TEST_SMP1(CLASS, FUNCTION, expectAns, first);
+  first = vecToTree({1, 2, 3});
+  expectAns = 6;
+  TEST_SMP1(CLASS, FUNCTION, expectAns, first);
 
-    first = vecToTree({-10,9,20,null,null,15,7});
-    expectAns = 42;
-    TEST_SMP1(CLASS, FUNCTION, expectAns, first);
+  first = vecToTree({-10, 9, 20, null, null, 15, 7});
+  expectAns = 42;
+  TEST_SMP1(CLASS, FUNCTION, expectAns, first);
 
-    return 0;
+  return 0;
 }

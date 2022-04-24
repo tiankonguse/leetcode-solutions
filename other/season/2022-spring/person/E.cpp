@@ -1,6 +1,6 @@
-#include "base.h"
-
 #include <bits/stdc++.h>
+
+#include "base.h"
 using namespace std;
 
 typedef __int128_t int128;
@@ -90,11 +90,29 @@ struct Node {
 */
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  int n;
+  vector<vector<int>> g;
 
-    return 0;
+ public:
+  long long minimumCost(vector<int>& cost, vector<vector<int>>& roads) {
+    n = cost.size();
+    g.resize(n);
+    for (auto& v : roads) {
+      int x = v[0], y = v[1];
+      g[x].push_back(y);
+      g[y].push_back(x);
+    }
+
+    long long sum = 0;
+    long long maxVal = 0;
+    for (int i = 0; i < n; i++) {
+      ll v = cost[i];
+      if (g[i].size() == 1) {
+        sum += v;
+        maxVal = max(maxVal, v);
+      }
+    }
+    return sum - maxVal;
   }
 };
 
