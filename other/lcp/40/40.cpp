@@ -91,20 +91,34 @@ struct Node {
 class Solution {
  public:
   int maxmiumScore(vector<int>& cards, int cnt) {
-   vvi nums(2);
+    vvi nums(2);
     for (auto v : cards) {
-      nums[v % 2].push(v);
+      nums[v % 2].push_back(v);
     }
-    if (nums[1].size() % 2 == 1 && cards.size() == cnt) {
+    int n0 = nums[0].size();
+    int n1 = nums[1].size();
+    if (n1 % 2 == 1 && cards.size() == cnt) {
       return 0;  // 只有选择所有数字，且有奇数个数字时才没答案
     }
+    vvi afterSum(2);
 
+    for (int i = 0; i < 2; i++) {
+      sort(all(nums[i]));
+      afterSum[i].resize(nums[i].size() + 1, 0);
+      if (nums[i].size()) {
+        for (int j = nums[i].size() - 1; j >= 0; j--) {
+          afterSum[i][j] = afterSum[i][j + 1] + nums[i][j];
+        }
+      }
+    }
 
     int ans = 0;
     // 奇数取 2x 个, 偶数取 cnt-2x， 预处理后缀和，复杂度 O(n)
-
-
-
+    for (int x = 0; x <= n1; x += 2) {
+      int y = cnt - x;
+      if (y > n0 || y < 0) continue;
+      ans = max(ans, afterSum[1][n1 - x] + afterSum[0][n0 - y]);
+    }
     return ans;
   }
 };
