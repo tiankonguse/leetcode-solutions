@@ -38,7 +38,7 @@
             // "type": "lldb",
             "request": "launch", // 请求配置类型，可以为launch（启动）或attach（附加）
             // "program": "${fileDirname}/${fileBasenameNoExtension}.out", // 将要进行调试的程序的路径 ${fileDirname}/${fileBasenameNoExtension}.out
-            "program": "${workspaceFolder}/tmp.exe", // 将要进行调试的程序的路径 ${fileDirname}/${fileBasenameNoExtension}.out
+            "program": "${workspaceFolder}\\tmp\\tmp.exe", // 将要进行调试的程序的路径 ${fileDirname}/${fileBasenameNoExtension}.out
             "args": [], // 程序调试时传递给程序的命令行参数，一般设为空即可
             "stopAtEntry": false, // 设为true时程序将暂停在程序入口处，相当于在main上打断点
             "cwd": "${workspaceFolder}", // 调试程序时的工作目录，此为工作区文件夹；改成${fileDirname}可变为文件所在目录 ${workspaceFolder}
