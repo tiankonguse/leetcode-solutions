@@ -29,6 +29,16 @@ typedef vector<string> vs;
 #define rrep(i, n) for (ll i = (n)-1; i >= 0; i--)
 #define rrep1(i, n) for (ll i = (n); i >= 1; i--)
 #define all(v) (v).begin(), (v).end()
+#define ALL(A) A.begin(), A.end()
+#define LLA(A) A.rbegin(), A.rend()
+#define sz(x) (int)(x).size()
+#define SZ(A) int((A).size())
+#define CPY(A, B) memcpy(A, B, sizeof(A))
+#define CTN(T, x) (T.find(x) != T.end())
+#define PB push_back
+#define MP(A, B) make_pair(A, B)
+#define fi first
+#define se second
 
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
@@ -39,6 +49,18 @@ int dir4[4][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
                   {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 
+template <class T>
+inline void RST(T& A) {
+  memset(A, 0, sizeof(A));
+}
+template <class T>
+inline void FLC(T& A, int x) {
+  memset(A, x, sizeof(A));
+}
+template <class T>
+inline void CLR(T& A) {
+  A.clear();
+}
 template <class T>
 void chmin(T& a, T b) {
   if (a == -1) {
