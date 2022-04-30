@@ -98,12 +98,56 @@ struct Node {
 };
 */
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+class MyHashMap {
+  struct Node {
+    int key;
+    int val;
+    Node* next;
+    Node(int key = 0, int val = 0) : key(key), val(val), next(NULL) {}
+  };
+  vector<Node> hashVec;
 
-    return 0;
+  int myhash(int key) {
+    if (key < 0) key = -key;
+    return key % hashVec.size();
+  }
+  Node* getPre(int key) {
+    int index = myhash(key);
+    Node* pre = &hashVec[index];
+    while (pre->next) {
+      if (pre->next->key == key) {
+        return pre;
+      }
+      pre = pre->next;
+    }
+    return pre;
+  }
+
+ public:
+  MyHashMap() { hashVec.resize(101); }
+  void put(int key, int value) {
+    Node* pre = getPre(key);
+    if (pre->next != NULL) {
+      pre->next->val = value;
+    } else {
+      pre->next = new Node(key, value);
+    }
+  }
+
+  void remove(int key) {
+    Node* pre = getPre(key);
+    if (pre->next != NULL) {
+      Node* now = pre->next;
+      pre->next = now->next;
+      delete now;
+    }
+  }
+  int get(int key) {
+    Node* pre = getPre(key);
+    if (pre->next != NULL) {
+      return pre->next->val;
+    }
+    return -1;
   }
 };
 

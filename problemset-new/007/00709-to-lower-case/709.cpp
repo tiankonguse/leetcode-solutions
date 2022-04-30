@@ -100,10 +100,13 @@ struct Node {
 
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
+  string toLowerCase(string& s) {
+    for (auto& c : s) {
+      if (c >= 'A' && c <= 'Z') {
+        c = c - 'A' + 'a';
+      }
+    }
+    return s;
   }
 };
 

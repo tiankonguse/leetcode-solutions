@@ -100,10 +100,17 @@ struct Node {
 
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
+  bool isOneBitCharacter(vector<int>& bits) {
+    int pre = -1;
+    for (auto v : bits) {
+      if (pre == 1) {
+        pre = -1;
+        continue;
+      } else {
+        pre = v;
+      }
+    }
+    return pre == 0;
   }
 };
 

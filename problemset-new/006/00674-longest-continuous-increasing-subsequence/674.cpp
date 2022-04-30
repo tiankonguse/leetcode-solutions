@@ -41,19 +41,11 @@ int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
 
 template <class T>
 void chmin(T& a, T b) {
-  if (a == -1) {
-    a = b;
-  } else {
-    a = min(a, b);
-  }
+  a = min(a, b);
 }
 template <class T>
 void chmax(T& a, T b) {
-  if (a == -1) {
-    a = b;
-  } else {
-    a = max(a, b);
-  }
+  a = max(a, b);
 }
 
 constexpr int INF = 1 << 30;
@@ -100,10 +92,17 @@ struct Node {
 
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
+  int findLengthOfLCIS(vector<int>& nums) {
+    int ans = 1;
+    int start = 0;
+    for (int i = 1; i < nums.size(); i++) {
+      if (nums[i] > nums[i - 1]) {
+        ans = max(ans, i - start + 1);
+      } else {
+        start = i;
+      }
+    }
+    return ans;
   }
 };
 

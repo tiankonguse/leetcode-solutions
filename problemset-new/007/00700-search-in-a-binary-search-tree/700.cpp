@@ -100,13 +100,16 @@ struct Node {
 
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
+  TreeNode* searchBST(TreeNode* root, int val) {
+    if (!root) return NULL;
+    if (root->val == val) return root;
+    if (root->val < val) {
+      return searchBST(root->right, val);
+    } else {
+      return searchBST(root->left, val);
+    }
   }
 };
-
 int main() {
   printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};

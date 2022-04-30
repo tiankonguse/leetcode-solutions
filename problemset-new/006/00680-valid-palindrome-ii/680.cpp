@@ -41,19 +41,11 @@ int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
 
 template <class T>
 void chmin(T& a, T b) {
-  if (a == -1) {
-    a = b;
-  } else {
-    a = min(a, b);
-  }
+  a = min(a, b);
 }
 template <class T>
 void chmax(T& a, T b) {
-  if (a == -1) {
-    a = b;
-  } else {
-    a = max(a, b);
-  }
+  a = max(a, b);
 }
 
 constexpr int INF = 1 << 30;
@@ -99,11 +91,22 @@ struct Node {
 */
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  string s;
 
-    return 0;
+  bool Dfs(int l, int r, int k) {
+    while (l < r && s[l] == s[r]) {
+      l++, r--;
+    }
+    if (l >= r) return true;
+    if (k == 0) return false;
+
+    return Dfs(l, r - 1, k - 1) || Dfs(l + 1, r, k - 1);
+  }
+
+ public:
+  bool validPalindrome(string& s_) {
+    s.swap(s_);
+    return Dfs(0, s.size() - 1, 1);
   }
 };
 

@@ -41,19 +41,11 @@ int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
 
 template <class T>
 void chmin(T& a, T b) {
-  if (a == -1) {
-    a = b;
-  } else {
-    a = min(a, b);
-  }
+  a = min(a, b);
 }
 template <class T>
 void chmax(T& a, T b) {
-  if (a == -1) {
-    a = b;
-  } else {
-    a = max(a, b);
-  }
+  a = max(a, b);
 }
 
 constexpr int INF = 1 << 30;
@@ -98,12 +90,21 @@ struct Node {
 };
 */
 
+typedef long long ll;
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  double findMaxAverage(vector<int>& nums, int k) {
+    ll sum = 0;
+    for (int i = 0; i < k; i++) {
+      sum += nums[i];
+    }
+    ll maxSum = sum;
 
-    return 0;
+    for (int i = k; i < nums.size(); i++) {
+      sum = sum - nums[i - k] + nums[i];
+      maxSum = max(sum, maxSum);
+    }
+    return maxSum * 1.0 / k;
   }
 };
 

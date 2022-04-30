@@ -100,10 +100,24 @@ struct Node {
 
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
+  int dominantIndex(vector<int>& nums) {
+    int maxNum = nums[0];
+    int maxIndex = 0;
+    for (int i = 0; i < nums.size(); i++) {
+      if (nums[i] > maxNum) {
+        maxNum = nums[i];
+        maxIndex = i;
+      }
+    }
+    for (int i = 0; i < nums.size(); i++) {
+      if (i == maxIndex) {
+        continue;
+      }
+      if (nums[i] * 2 > maxNum) {
+        return -1;
+      }
+    }
+    return maxIndex;
   }
 };
 

@@ -100,10 +100,15 @@ struct Node {
 
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  int smallestRangeI(vector<int>& nums, int k) {
+    int minVal = nums.front();
+    int maxVal = nums.front();
+    for (auto v : nums) {
+      chmin(minVal, v);
+      chmax(minVal, v);
+    }
 
-    return 0;
+    return max(0, maxVal - minVal - 2 * k);
   }
 };
 

@@ -99,11 +99,35 @@ struct Node {
 */
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  struct Node {
+    int l = -1;
+    int r = -1;
+    int c = 0;
+    void Update(int v) {
+      c++;
+      chmin(l, v);
+      chmax(r, v);
+    }
+  };
 
-    return 0;
+ public:
+  int findShortestSubArray(vector<int>& nums) {
+    unordered_map<int, Node> m;
+    int maxVal = 1;
+    for (int i = 0; i < nums.size(); i++) {
+      int v = nums[i];
+      m[v].Update(i);
+      chmax(maxVal, m[v].c);
+    }
+
+    int ans = nums.size();
+    for (auto& [v, node] : m) {
+      if (node.c == maxVal) {
+        chmin(ans, node.r - node.l + 1);
+      }
+    }
+
+    return ans;
   }
 };
 

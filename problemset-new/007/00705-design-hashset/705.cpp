@@ -98,12 +98,59 @@ struct Node {
 };
 */
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+class MyHashSet {
+  struct Node {
+    int val;
+    Node* next;
+    Node(int val = 0) : val(val), next(NULL) {}
+  };
+  vector<Node> hashSet;
 
-    return 0;
+  int myhash(int key) {
+    if (key < 0) key = -key;
+    return key % hashSet.size();
+  }
+
+ public:
+  /** Initialize your data structure here. */
+  MyHashSet() { hashSet.resize(101); }
+
+  void add(int key) {
+    if (contains(key)) return;
+    int index = myhash(key);
+    Node* pre = &hashSet[index];
+    while (pre->next) {
+      pre = pre->next;
+    }
+    pre->next = new Node(key);
+  }
+
+  void remove(int key) {
+    if (!contains(key)) return;
+    int index = myhash(key);
+    Node* pre = &hashSet[index];
+    while (pre->next) {
+      if (pre->next->val == key) {
+        Node* now = pre->next;
+        pre->next = now->next;
+        delete now;
+        return;
+      }
+      pre = pre->next;
+    }
+  }
+
+  /** Returns true if this set contains the specified element */
+  bool contains(int key) {
+    int index = myhash(key);
+    Node* pre = &hashSet[index];
+    while (pre->next) {
+      if (pre->next->val == key) {
+        return true;
+      }
+      pre = pre->next;
+    }
+    return false;
   }
 };
 

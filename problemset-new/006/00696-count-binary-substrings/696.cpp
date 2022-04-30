@@ -41,19 +41,11 @@ int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
 
 template <class T>
 void chmin(T& a, T b) {
-  if (a == -1) {
-    a = b;
-  } else {
-    a = min(a, b);
-  }
+  a = min(a, b);
 }
 template <class T>
 void chmax(T& a, T b) {
-  if (a == -1) {
-    a = b;
-  } else {
-    a = max(a, b);
-  }
+  a = max(a, b);
 }
 
 constexpr int INF = 1 << 30;
@@ -100,10 +92,23 @@ struct Node {
 
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  int countBinarySubstrings(string& s) {
+    int ans = 0;
 
-    return 0;
+    int prepreNum = 0;
+    int preNum = 0;
+    char preVal = '0';
+    for (auto c : s) {
+      if (c == preVal) {
+        preNum++;
+      } else {
+        prepreNum = preNum;
+        preNum = 1;
+        preVal = c;
+      }
+      if (preNum <= prepreNum) ans++;
+    }
+    return ans;
   }
 };
 

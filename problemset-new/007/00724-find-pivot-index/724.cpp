@@ -98,13 +98,32 @@ struct Node {
 };
 */
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
 
-    return 0;
-  }
+class Solution {
+public:
+    int pivotIndex(vector<int>& nums) {
+        const int n = nums.size();
+        if(n == 0){
+            return -1;
+        }
+
+        vector<int> frontSum(nums.size(), 0);
+        vector<int> backSum(nums.size(), 0);
+        frontSum[0] = nums[0];
+        for(int i = 1;i<n;i++){
+            frontSum[i] = frontSum[i-1] + nums[i];
+        }
+        backSum[n - 1] = nums[n - 1];
+        for(int i = n - 2;i>=0;i--){
+            backSum[i] = backSum[i+1] +  nums[i];
+        }
+        for(int i=0;i<n;i++){
+            if(frontSum[i] == backSum[i]){
+                return i;
+            }
+        }
+        return -1;
+    }
 };
 
 int main() {
