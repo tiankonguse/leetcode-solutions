@@ -2,6 +2,7 @@ class TreeArray {
  public:
   void Init(int n_) {
     n = n_;
+    c.clear();
     c.resize(n + 100, 0);
   }
 
