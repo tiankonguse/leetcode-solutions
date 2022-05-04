@@ -91,10 +91,33 @@ struct Node {
 */
 
 class Solution {
-public:
-    string reverseWords(string s) {
-
+  string removeSpaces(string s) {
+    string ans;
+    int index = 0;
+    while (index < s.size()) {
+      while (index < s.size() && s[index] != ' ') ans.push_back(s[index++]);
+      while (index < s.size() && s[index] == ' ') index++;
+      if (index < s.size() && ans.size() > 0) ans.push_back(' ');
     }
+    return ans;
+  }
+
+ public:
+  string reverseWords(string s) {
+    s = removeSpaces(s);
+    auto start = s.begin();
+    for (auto it = s.begin(); it != s.end();) {
+      while (it != s.end() && *it != ' ') {
+        it++;
+      }
+      std::reverse(start, it);
+      if (it == s.end()) break;
+      it++;  // skip space
+      start = it;
+    }
+    std::reverse(s.begin(), s.end());
+    return s;
+  }
 };
 
 int main() {
