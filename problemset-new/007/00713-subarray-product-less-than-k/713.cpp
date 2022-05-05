@@ -120,16 +120,35 @@ struct Node {
 };
 */
 
+typedef long long ll;
 class Solution {
-  int Dfs(int n, int k) {  // 0 ~ n-1
-    if (n == 1) return 0;
-    int preAns = Dfs(n - 1, k);
-    return (k + preAns + 1) % n;
-  }
-
  public:
-  int findTheWinner(int n, int k) {  //
-    return Dfs(n, k - 1) + 1;
+  int numSubarrayProductLessThanK(vector<int>& nums, int k) {
+    if (k <= 1) return 0;
+    int ans = 0;
+    int n = nums.size();
+    int l = 0, r = 0;
+    ll sum = 1;
+
+    while (r < n) {
+      while (sum < k && r < n) {
+        sum *= nums[r];
+        r++;
+        if (sum < k) {
+          ans += r - l;
+        }
+      }
+
+      if (r == n && sum < k) break;
+
+      while (sum >= k) {
+        sum /= nums[l];
+        l++;
+      }
+      ans += r - l;
+    }
+
+    return ans;
   }
 };
 

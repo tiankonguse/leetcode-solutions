@@ -119,7 +119,6 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
 class Solution {
  public:
   int minJump(vector<int>& jump) {

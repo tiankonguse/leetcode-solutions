@@ -121,15 +121,73 @@ struct Node {
 */
 
 class Solution {
-  int Dfs(int n, int k) {  // 0 ~ n-1
-    if (n == 1) return 0;
-    int preAns = Dfs(n - 1, k);
-    return (k + preAns + 1) % n;
-  }
+  long long min;
+  long long max;
 
  public:
-  int findTheWinner(int n, int k) {  //
-    return Dfs(n, k - 1) + 1;
+  Solution() {
+    min = 2147483648;
+    max = 2147483647;
+  }
+  bool isdigit(char c) {
+    if (c >= '0' && c <= '9') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  bool isspace(char c) {
+    switch (c) {
+      case ' ':
+      case '\t':
+      case '\n':
+      case '\v':
+      case '\f':
+      case '\r':
+        return true;
+      default:
+        return false;
+    }
+  }
+  int strToInt(const string& str) {
+    long long ans = 0;
+    int size = str.length();
+    int pos = 0;
+    int sign = 1;
+
+    for (; pos < size; pos++) {
+      if (!isspace(str[pos])) {
+        break;
+      }
+    }
+
+    if (pos == size) {
+      return 0;
+    }
+
+    if (str[pos] == '+') {
+      sign = 1;
+      pos = pos + 1;
+    } else if (str[pos] == '-') {
+      sign = -1;
+      pos = pos + 1;
+    }
+
+    for (; pos < size; pos++) {
+      if (isdigit(str[pos])) {
+        ans = ans * 10 + (str[pos] - '0');
+        if (ans * sign <= -min) {
+          ans = min;
+          break;
+        } else if (ans * sign >= max) {
+          ans = max;
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+    return ans * sign;
   }
 };
 

@@ -131,6 +131,9 @@ class Solution {
   int findTheWinner(int n, int k) {  //
     return Dfs(n, k - 1) + 1;
   }
+
+ public:
+  int lastRemaining(int n, int m) { return findTheWinner(n, m) - 1; }
 };
 
 int main() {

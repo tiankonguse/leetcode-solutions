@@ -121,15 +121,25 @@ struct Node {
 */
 
 class Solution {
-  int Dfs(int n, int k) {  // 0 ~ n-1
-    if (n == 1) return 0;
-    int preAns = Dfs(n - 1, k);
-    return (k + preAns + 1) % n;
-  }
-
  public:
-  int findTheWinner(int n, int k) {  //
-    return Dfs(n, k - 1) + 1;
+  bool isStraight(vector<int>& nums) {
+    int n = nums.size();
+    sort(nums.begin(), nums.end());
+    int l = 0;
+    while (nums[l] == 0 && l < n) {
+      l++;
+    }
+
+    if (l == n) return true;  // 全是 0
+    for (int i = l; i + 1 < n; i++) {
+      if (nums[i] == nums[i + 1]) {
+        return false;  // 除了0， 不能有相同的数字
+      }
+    }
+
+    if (nums.back() - nums[l] >= 5) return false;
+
+    return true;
   }
 };
 

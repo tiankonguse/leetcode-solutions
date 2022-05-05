@@ -119,17 +119,11 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
+typedef long long ll;
 class Solution {
-  int Dfs(int n, int k) {  // 0 ~ n-1
-    if (n == 1) return 0;
-    int preAns = Dfs(n - 1, k);
-    return (k + preAns + 1) % n;
-  }
-
  public:
-  int findTheWinner(int n, int k) {  //
-    return Dfs(n, k - 1) + 1;
+  int add(int a, int b) {
+    return b ? add(a ^ b, static_cast<unsigned int>(a & b) << 1) : a;
   }
 };
 

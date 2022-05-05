@@ -119,20 +119,25 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
 class Solution {
-  int Dfs(int n, int k) {  // 0 ~ n-1
-    if (n == 1) return 0;
-    int preAns = Dfs(n - 1, k);
-    return (k + preAns + 1) % n;
-  }
-
  public:
-  int findTheWinner(int n, int k) {  //
-    return Dfs(n, k - 1) + 1;
+  vector<int> constructArr(vector<int>& a) {
+    int n = a.size();
+    vector<int> befor(n + 2, 1), after(n + 2, 1);
+    for (int i = 1; i <= n; i++) {
+      befor[i] = befor[i - 1] * a[i - 1];
+    }
+    for (int i = n; i >= 1; i--) {
+      after[i] = after[i + 1] * a[i - 1];
+    }
+
+    vector<int> ans;
+    for (int i = 1; i <= n; i++) {
+      ans.push_back(befor[i - 1] * after[i + 1]);
+    }
+    return ans;
   }
 };
-
 int main() {
   printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
