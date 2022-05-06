@@ -124,6 +124,7 @@ class Solution {
 };
 
 int main() {
+  printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
   //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
   //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);

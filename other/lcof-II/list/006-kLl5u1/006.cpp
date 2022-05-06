@@ -29,6 +29,16 @@ typedef vector<string> vs;
 #define rrep(i, n) for (ll i = (n)-1; i >= 0; i--)
 #define rrep1(i, n) for (ll i = (n); i >= 1; i--)
 #define all(v) (v).begin(), (v).end()
+#define ALL(A) A.begin(), A.end()
+#define LLA(A) A.rbegin(), A.rend()
+#define sz(x) (int)(x).size()
+#define SZ(A) int((A).size())
+#define CPY(A, B) memcpy(A, B, sizeof(A))
+#define CTN(T, x) (T.find(x) != T.end())
+#define PB push_back
+#define MP(A, B) make_pair(A, B)
+#define fi first
+#define se second
 
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
@@ -40,12 +50,32 @@ int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
                   {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 
 template <class T>
+inline void RST(T& A) {
+  memset(A, 0, sizeof(A));
+}
+template <class T>
+inline void FLC(T& A, int x) {
+  memset(A, x, sizeof(A));
+}
+template <class T>
+inline void CLR(T& A) {
+  A.clear();
+}
+template <class T>
 void chmin(T& a, T b) {
-  a = min(a, b);
+  if (a == -1) {
+    a = b;
+  } else {
+    a = min(a, b);
+  }
 }
 template <class T>
 void chmax(T& a, T b) {
-  a = max(a, b);
+  if (a == -1) {
+    a = b;
+  } else {
+    a = max(a, b);
+  }
 }
 
 constexpr int INF = 1 << 30;
@@ -57,6 +87,7 @@ ld PI = acos(-1.0);
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
+// LONG_MIN, LONG_MAX
 
 /*
 unordered_map / unordered_set
@@ -88,42 +119,25 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
 class Solution {
  public:
-  vector<vector<int>> threeSum(vector<int>& nums) {
-    vvi ans;
-    int n = nums.size();
-    if (n == 0) return ans;
-    sort(all(nums));
-
-    int pre = nums.front() - 1;
-    rep(i, n) {
-      int l = i + 1, r = n - 1;
-      if (pre == nums[i]) continue;
-      while (l < r) {  // [l, r]
-        int d = nums[l] + nums[r];
-        int sum = -nums[i];
-        if (d == sum) {
-          ans.push_back({nums[i], nums[l], nums[r]});
-          l++, r--;
-        } else if (d > sum) {
-          r--;
-        } else {
-          l++;
-        }
+  vector<int> twoSum(vector<int>& nums, int target) {
+    int l = 0, r = nums.size() - 1;
+    while (l < r) {
+      int sum = nums[l] + nums[r];
+      if (sum == target) return {l, r};
+      if (sum > target) {
+        r--;
+      } else {
+        l++;
       }
     }
-    set<vi> s;
-    for (auto& v : ans) {
-      s.insert(v);
-    }
-
-    return vvi(s.begin(), s.end());
+    return {0, 0};
   }
 };
 
 int main() {
+  printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
   //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
   //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
