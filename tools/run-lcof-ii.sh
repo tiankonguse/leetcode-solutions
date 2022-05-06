@@ -29,7 +29,7 @@ echo "| :------: | :------: | :------: |" >> $fineName
 # linux: sed 's/"stat"/\n/g'
 # mac: sed -e 's/\"stat\"/\'$'\n/g'adv
 
-for line in $(echo $data | sed 's/ /___/g' | sed -e 's/\"stat\"/\'$'\n/g' | grep -E "question__title_slug"); do
+for line in $(echo $data | sed 's/ /___/g' | sed -e 's/\"stat\"/\'$'\n/g' | grep -E "question__title_slug" | grep "___Offer___II___"); do
 #    echo $line
     echo "---"
     # {"question_id":1000228,"question__title":"\u6574\u6570\u9664\u6cd5","question__title_slug":"xoh6Oh","question__hide":false,"total_acs":33692,"total_submitted":160482,"total_column_articles":304,"frontend_question_id":"\u5251\u6307 Offer II 001"
