@@ -90,58 +90,21 @@ struct Node {
 };
 */
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
 class Solution {
-  int Len(ListNode* a) {
-    int len = 0;
-    while (a) {
-      len++;
-      a = a->next;
-    }
-    return len;
-  }
-
-  pair<ListNode*, int> Add(ListNode* a, int an, ListNode* b, int bn) {
-    if (an == 0) return {nullptr, 0};
-    if (an > bn) {
-      auto [c, v] = Add(a->next, an - 1, b, bn);
-      a->val += v;
-      v = a->val / 10;
-      a->val %= 10;
-      return {a, v};
-    } else {
-      auto [c, v] = Add(a->next, an - 1, b->next, bn - 1);
-      a->val += v + b->val;
-      v = a->val / 10;
-      a->val %= 10;
-      return {a, v};
-    }
-  }
-
  public:
-  ListNode* addTwoNumbers(ListNode* a, ListNode* b) {
-    int an = Len(a);
-    int bn = Len(b);
-    if (an < bn) {
-      swap(a, b);
-      swap(an, bn);
+  int findContentChildren(vector<int>& g, vector<int>& s) {
+    sort(g.begin(), g.end());
+    sort(s.begin(), s.end());
+
+    int ans = 0;
+    while (!g.empty() && !s.empty()) {
+      if (g.back() <= s.back()) {
+        s.pop_back();
+        ans++;
+      }
+      g.pop_back();
     }
-    auto [c, v] = Add(a, an, b, bn);
-    if (v > 0) {
-      ListNode* root = new ListNode(v);
-      root->next = c;
-      c = root;
-    }
-    return c;
+    return ans;
   }
 };
 

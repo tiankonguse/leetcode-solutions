@@ -29,6 +29,16 @@ typedef vector<string> vs;
 #define rrep(i, n) for (ll i = (n)-1; i >= 0; i--)
 #define rrep1(i, n) for (ll i = (n); i >= 1; i--)
 #define all(v) (v).begin(), (v).end()
+#define ALL(A) A.begin(), A.end()
+#define LLA(A) A.rbegin(), A.rend()
+#define sz(x) (int)(x).size()
+#define SZ(A) int((A).size())
+#define CPY(A, B) memcpy(A, B, sizeof(A))
+#define CTN(T, x) (T.find(x) != T.end())
+#define PB push_back
+#define MP(A, B) make_pair(A, B)
+#define fi first
+#define se second
 
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
@@ -40,12 +50,32 @@ int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
                   {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 
 template <class T>
+inline void RST(T& A) {
+  memset(A, 0, sizeof(A));
+}
+template <class T>
+inline void FLC(T& A, int x) {
+  memset(A, x, sizeof(A));
+}
+template <class T>
+inline void CLR(T& A) {
+  A.clear();
+}
+template <class T>
 void chmin(T& a, T b) {
-  a = min(a, b);
+  if (a == -1) {
+    a = b;
+  } else {
+    a = min(a, b);
+  }
 }
 template <class T>
 void chmax(T& a, T b) {
-  a = max(a, b);
+  if (a == -1) {
+    a = b;
+  } else {
+    a = max(a, b);
+  }
 }
 
 constexpr int INF = 1 << 30;
@@ -89,7 +119,6 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -101,51 +130,35 @@ struct Node {
  * };
  */
 class Solution {
-  int Len(ListNode* a) {
-    int len = 0;
-    while (a) {
-      len++;
-      a = a->next;
+  ListNode* GetNext(ListNode* head, int n) {
+    while (--n) {
+      head = head->next;
     }
-    return len;
-  }
-
-  pair<ListNode*, int> Add(ListNode* a, int an, ListNode* b, int bn) {
-    if (an == 0) return {nullptr, 0};
-    if (an > bn) {
-      auto [c, v] = Add(a->next, an - 1, b, bn);
-      a->val += v;
-      v = a->val / 10;
-      a->val %= 10;
-      return {a, v};
-    } else {
-      auto [c, v] = Add(a->next, an - 1, b->next, bn - 1);
-      a->val += v + b->val;
-      v = a->val / 10;
-      a->val %= 10;
-      return {a, v};
-    }
+    return head;
   }
 
  public:
-  ListNode* addTwoNumbers(ListNode* a, ListNode* b) {
-    int an = Len(a);
-    int bn = Len(b);
-    if (an < bn) {
-      swap(a, b);
-      swap(an, bn);
+  ListNode* removeNthFromEnd(ListNode* head, int n) {
+    ListNode* tail = GetNext(head, n);
+    if (tail->next == nullptr) {  // 删除第一个
+      return head->next;
     }
-    auto [c, v] = Add(a, an, b, bn);
-    if (v > 0) {
-      ListNode* root = new ListNode(v);
-      root->next = c;
-      c = root;
+
+    ListNode* root = head;
+    ListNode* pre = head;
+    while (tail->next != nullptr) {
+      pre = head;
+      head = head->next;
+      tail = tail->next;
     }
-    return c;
+
+    pre->next = head->next;
+    return root;
   }
 };
 
 int main() {
+  printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
   //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
   //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
