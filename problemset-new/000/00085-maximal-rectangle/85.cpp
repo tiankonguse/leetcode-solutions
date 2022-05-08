@@ -120,7 +120,8 @@ class Solution {
   }
 
  public:
-  int maximalRectangle(vector<vector<char>>& matrix) {
+  int maximalRectangle(vector<string>& matrix) {
+    if (matrix.size() == 0 || matrix[0].size() == 0) return 0;
     ll n = matrix.size();
     ll m = matrix[0].size();
 
