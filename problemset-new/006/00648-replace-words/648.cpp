@@ -120,102 +120,85 @@ struct Node {
 };
 */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
-class Codec {
-  void split(vector<string>& vec, string& data) {
-    int prePos = 1;
-    for (int i = 1; i < data.size(); i++) {
-      if (data[i] == ',') {
-        vec.push_back(data.substr(prePos, i - prePos));
-        prePos = i + 1;
-      }
-    }
-    vec.push_back(data.substr(prePos, data.size() - prePos - 1));
+const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
+struct Node {
+  int endFlag = 0;  // 是否是结束标示符
+  int next[26];
+};
+Node tries[max5];
+class Trie {
+  int index = 0;
+
+  int Add() {
+    int ret = index;
+    Node& node = tries[ret];
+    node.endFlag = false;
+    memset(node.next, -1, sizeof(node.next));
+    index++;
+    return ret;
   }
 
  public:
-  // Encodes a tree to a single string.
-  string serialize(TreeNode* root) {
-    queue<TreeNode*> que;
-    if (root) que.push(root);
-    vector<string> vec;
-    while (!que.empty()) {
-      root = que.front();
-      que.pop();
-      if (root == NULL) {
-        vec.push_back("null");
-      } else {
-        vec.push_back(to_string(root->val));
-        que.push(root->left);
-        que.push(root->right);
-      }
-    }
-
-    int iEnd = vec.size() - 1;
-    while (iEnd > 0 && vec[iEnd] == "null") {
-      iEnd--;
-    }
-
-    string ans = "[";
-    for (int i = 0; i <= iEnd; i++) {
-      if (i) ans.push_back(',');
-      ans.append(vec[i]);
-    }
-    ans.push_back(']');
-    return ans;
+  /** Initialize your data structure here. */
+  void Init() {
+    index = 0;
+    Add();
   }
 
-  // Decodes your encoded data to tree.
-  TreeNode* deserialize(string data) {
-    if (data.length() == 2) return NULL;
-    vector<string> vec;
-    split(vec, data);
-    // for(int i=0;i<vec.size();i++){
-    //     printf("%s\n", vec[i].c_str());
-    // }
-
-    TreeNode* root = new TreeNode(atoi(vec[0].c_str()));
-    queue<TreeNode*> que;
-    que.push(root);
-
-    for (int i = 1; i < vec.size();) {
-      TreeNode* pre = que.front();
-      que.pop();
-      if (!pre) continue;
-      if (i < vec.size()) {
-        if (vec[i] != "null") {
-          pre->left = new TreeNode(atoi(vec[i].c_str()));
-          que.push(pre->left);
-        }
-        i++;
+  /** Inserts a word into the trie. */
+  void insert(const string& word) {
+    int root = 0;
+    for (auto c : word) {
+      int v = c - 'a';
+      if (tries[root].next[v] == -1) {
+        tries[root].next[v] = Add();
       }
-      if (i < vec.size()) {
-        if (vec[i] != "null") {
-          pre->right = new TreeNode(atoi(vec[i].c_str()));
-          que.push(pre->right);
-        }
-        i++;
+      root = tries[root].next[v];
+    }
+    tries[root].endFlag = 1;
+  }
+
+  /** Returns if the word is in the trie. */
+  string search(const string& word) {
+    int root = 0;
+    for (int i = 0; i < word.size(); i++) {
+      char c = word[i];
+      int v = c - 'a';
+      if (tries[root].next[v] == -1) {
+        return word;
+      }
+      root = tries[root].next[v];
+      if (tries[root].endFlag) {
+        return word.substr(0, i + 1);
       }
     }
-
-    // printf("data[%s] %s\n",data.c_str(), serialize(root).c_str());
-
-    return root;
+    return word;
   }
 };
 
-// Your Codec object will be instantiated and called as such:
-// Codec codec;
-// codec.deserialize(codec.serialize(root));
+Trie trie;
+class Solution {
+ public:
+  string replaceWords(vector<string>& dictionary, string& sentence) {
+    trie.Init();
+    for (auto& s : dictionary) {
+      trie.insert(s);
+    }
 
+    string ans;
+    int l = 0;
+    sentence.push_back(' ');
+    while (l + 1 < sentence.size()) {
+      size_t r = sentence.find(' ', l);
+      string s = sentence.substr(l, r - l);
+      ans.append(trie.search(s));
+      ans.push_back(' ');
+      l = r + 1;
+    }
+    ans.pop_back();
+    return ans;
+  }
+};
 int main() {
   printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};

@@ -119,7 +119,6 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -213,8 +212,11 @@ class Codec {
 };
 
 // Your Codec object will be instantiated and called as such:
-// Codec codec;
-// codec.deserialize(codec.serialize(root));
+// Codec* ser = new Codec();
+// Codec* deser = new Codec();
+// string tree = ser->serialize(root);
+// TreeNode* ans = deser->deserialize(tree);
+// return ans;
 
 int main() {
   printf("hello ");

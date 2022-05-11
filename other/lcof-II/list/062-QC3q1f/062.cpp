@@ -120,101 +120,79 @@ struct Node {
 };
 */
 
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
-class Codec {
-  void split(vector<string>& vec, string& data) {
-    int prePos = 1;
-    for (int i = 1; i < data.size(); i++) {
-      if (data[i] == ',') {
-        vec.push_back(data.substr(prePos, i - prePos));
-        prePos = i + 1;
-      }
-    }
-    vec.push_back(data.substr(prePos, data.size() - prePos - 1));
+const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
+struct Node {
+  int endFlag = 0;  // 是否是结束标示符
+  int next[26];
+};
+Node trie[max6];
+class Trie {
+  int index = 0;
+
+  int Add() {
+    int ret = index;
+    Node& node = trie[ret];
+    node.endFlag = false;
+    memset(node.next, -1, sizeof(node.next));
+    index++;
+    return ret;
   }
 
  public:
-  // Encodes a tree to a single string.
-  string serialize(TreeNode* root) {
-    queue<TreeNode*> que;
-    if (root) que.push(root);
-    vector<string> vec;
-    while (!que.empty()) {
-      root = que.front();
-      que.pop();
-      if (root == NULL) {
-        vec.push_back("null");
-      } else {
-        vec.push_back(to_string(root->val));
-        que.push(root->left);
-        que.push(root->right);
-      }
-    }
-
-    int iEnd = vec.size() - 1;
-    while (iEnd > 0 && vec[iEnd] == "null") {
-      iEnd--;
-    }
-
-    string ans = "[";
-    for (int i = 0; i <= iEnd; i++) {
-      if (i) ans.push_back(',');
-      ans.append(vec[i]);
-    }
-    ans.push_back(']');
-    return ans;
+  /** Initialize your data structure here. */
+  Trie() {
+    index = 0;
+    Add();
   }
 
-  // Decodes your encoded data to tree.
-  TreeNode* deserialize(string data) {
-    if (data.length() == 2) return NULL;
-    vector<string> vec;
-    split(vec, data);
-    // for(int i=0;i<vec.size();i++){
-    //     printf("%s\n", vec[i].c_str());
-    // }
-
-    TreeNode* root = new TreeNode(atoi(vec[0].c_str()));
-    queue<TreeNode*> que;
-    que.push(root);
-
-    for (int i = 1; i < vec.size();) {
-      TreeNode* pre = que.front();
-      que.pop();
-      if (!pre) continue;
-      if (i < vec.size()) {
-        if (vec[i] != "null") {
-          pre->left = new TreeNode(atoi(vec[i].c_str()));
-          que.push(pre->left);
-        }
-        i++;
+  /** Inserts a word into the trie. */
+  void insert(const string& word) {
+    int root = 0;
+    for (auto c : word) {
+      int v = c - 'a';
+      if (trie[root].next[v] == -1) {
+        trie[root].next[v] = Add();
       }
-      if (i < vec.size()) {
-        if (vec[i] != "null") {
-          pre->right = new TreeNode(atoi(vec[i].c_str()));
-          que.push(pre->right);
-        }
-        i++;
-      }
+      root = trie[root].next[v];
     }
+    trie[root].endFlag = 1;
+  }
 
-    // printf("data[%s] %s\n",data.c_str(), serialize(root).c_str());
+  /** Returns if the word is in the trie. */
+  bool search(const string& word) {
+    int root = 0;
+    for (auto c : word) {
+      int v = c - 'a';
+      if (trie[root].next[v] == -1) {
+        return false;
+      }
+      root = trie[root].next[v];
+    }
+    return trie[root].endFlag == 1;
+  }
 
-    return root;
+  /** Returns if there is any word in the trie that starts with the given
+   * prefix. */
+  bool startsWith(const string& prefix) {
+    int root = 0;
+    for (auto c : prefix) {
+      int v = c - 'a';
+      if (trie[root].next[v] == -1) {
+        return false;
+      }
+      root = trie[root].next[v];
+    }
+    return true;
   }
 };
 
-// Your Codec object will be instantiated and called as such:
-// Codec codec;
-// codec.deserialize(codec.serialize(root));
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie* obj = new Trie();
+ * obj->insert(word);
+ * bool param_2 = obj->search(word);
+ * bool param_3 = obj->startsWith(prefix);
+ */
 
 int main() {
   printf("hello ");
