@@ -121,32 +121,33 @@ struct Node {
 */
 
 class Solution {
-  string removeSpaces(string s) {
-    string ans;
-    int index = 0;
-    while (index < s.size()) {
-      while (index < s.size() && s[index] != ' ') ans.push_back(s[index++]);
-      while (index < s.size() && s[index] == ' ') index++;
-      if (index < s.size() && ans.size() > 0) ans.push_back(' ');
+  vector<string> ans;
+  string buf;
+
+  void dfs(int n, int left) {
+    if (n == 0 && left == 0) {
+      ans.push_back(buf);
+      return;
     }
-    return ans;
+
+    if (left > 0) {
+      buf.push_back(')');
+      dfs(n, left - 1);
+      buf.pop_back();
+    }
+
+    if (n > 0) {
+      buf.push_back('(');
+      dfs(n - 1, left + 1);
+      buf.pop_back();
+    }
   }
 
  public:
-  string reverseWords(string s) {
-    s = removeSpaces(s);
-    auto start = s.begin();
-    for (auto it = s.begin(); it != s.end();) {
-      while (it != s.end() && *it != ' ') {
-        it++;
-      }
-      std::reverse(start, it);
-      if (it == s.end()) break;
-      it++;  // skip space
-      start = it;
-    }
-    std::reverse(s.begin(), s.end());
-    return s;
+  vector<string> generateParenthesis(int n) {
+    buf.reserve(n * 2);
+    dfs(n, 0);
+    return ans;
   }
 };
 

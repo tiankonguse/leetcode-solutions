@@ -119,34 +119,46 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
 class Solution {
-  string removeSpaces(string s) {
-    string ans;
-    int index = 0;
-    while (index < s.size()) {
-      while (index < s.size() && s[index] != ' ') ans.push_back(s[index++]);
-      while (index < s.size() && s[index] == ' ') index++;
-      if (index < s.size() && ans.size() > 0) ans.push_back(' ');
+  vector<vector<int>> ans;
+  vpll nums;
+  map<ll, ll> m;
+  vector<int> buf;
+  void Add(ll v) {
+    if (m.count(v) == 0) {
+      m[v] = nums.size();
+      nums.push_back({v, 0});
     }
-    return ans;
+    nums[m[v]].second++;
+  }
+
+  void Dfs(ll n, ll sum) {
+    if (sum == 0) {
+      ans.push_back(buf);
+      return;
+    }
+    if (n < 0 || sum < 0) {
+      return;
+    }
+
+    int pre = buf.size();
+    Dfs(n - 1, sum);
+    auto [v, num] = nums[n];
+    rep1(i, num) {
+      buf.push_back(v);
+      Dfs(n - 1, sum - v * i);
+    }
+    buf.resize(pre);
   }
 
  public:
-  string reverseWords(string s) {
-    s = removeSpaces(s);
-    auto start = s.begin();
-    for (auto it = s.begin(); it != s.end();) {
-      while (it != s.end() && *it != ' ') {
-        it++;
-      }
-      std::reverse(start, it);
-      if (it == s.end()) break;
-      it++;  // skip space
-      start = it;
+  vector<vector<int>> combinationSum2(vector<int>& candidates, int sum) {
+    for (auto v : candidates) {
+      Add(v);
     }
-    std::reverse(s.begin(), s.end());
-    return s;
+
+    Dfs(nums.size() - 1, sum);
+    return ans;
   }
 };
 

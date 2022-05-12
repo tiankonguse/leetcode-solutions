@@ -121,10 +121,21 @@ struct Node {
 */
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  bool isAlienSorted(vector<string>& words, string& order) {
+    map<char, char> m;
+    for (int i = 0; i < order.size(); i++) {
+      m[order[i]] = 'a' + i;
+    }
+    for (auto& s : words) {
+      for (auto& c : s) {
+        c = m[c];
+      }
+    }
 
-    return 0;
+    for (int i = 1; i < words.size(); i++) {
+      if (words[i - 1] > words[i]) return false;
+    }
+    return true;
   }
 };
 

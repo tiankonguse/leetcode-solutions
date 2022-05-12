@@ -115,38 +115,47 @@ std::string::npos
 struct Node {
   Node(int t = 0) : t(t) {}
   int t;
-  // 小于是最大堆，大于是最小堆
+// 小于是最大堆，大于是最小堆
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+bool operator<(const ListNode a, const ListNode b) { return a.val > b.val; }
 class Solution {
-  string removeSpaces(string s) {
-    string ans;
-    int index = 0;
-    while (index < s.size()) {
-      while (index < s.size() && s[index] != ' ') ans.push_back(s[index++]);
-      while (index < s.size() && s[index] == ' ') index++;
-      if (index < s.size() && ans.size() > 0) ans.push_back(' ');
-    }
-    return ans;
-  }
-
  public:
-  string reverseWords(string s) {
-    s = removeSpaces(s);
-    auto start = s.begin();
-    for (auto it = s.begin(); it != s.end();) {
-      while (it != s.end() && *it != ' ') {
-        it++;
+  ListNode* mergeKLists(vector<ListNode*>& lists) {
+    priority_queue<ListNode> que;
+
+    for (ListNode* v : lists) {
+      if (v) {
+        que.push(ListNode(v->val, v));
       }
-      std::reverse(start, it);
-      if (it == s.end()) break;
-      it++;  // skip space
-      start = it;
     }
-    std::reverse(s.begin(), s.end());
-    return s;
+
+    ListNode head;
+    ListNode* pre = &head;
+    while (que.size() > 0) {
+      ListNode v = que.top();
+      que.pop();
+      pre->next = v.next;
+      pre = pre->next;
+
+      v.next = v.next->next;
+      if (v.next) {
+        v.val = v.next->val;
+        que.push(v);
+      }
+    }
+    return head.next;
   }
 };
 

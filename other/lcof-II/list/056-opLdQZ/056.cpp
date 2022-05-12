@@ -119,13 +119,45 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+    TreeNode* root;
 
-    return 0;
-  }
+    bool Search(int k){
+        TreeNode* child = root;
+        while(child != nullptr){
+            if(child->val == k) return true;     
+            if(child->val < k){
+                child = child->right;
+            } else {
+                child = child->left;
+            }
+        }
+        return false;
+    }
+
+    bool Dfs(TreeNode* child, int k){
+        if(child == nullptr) return false;
+        if(child->val * 2 != k && Search(k - child->val)){
+            return true;
+        }
+        return Dfs(child->left, k) || Dfs(child->right, k);
+    }
+public:
+    bool findTarget(TreeNode* root, int k) {
+        this->root = root;
+        return Dfs(root, k);
+    }
 };
 
 int main() {

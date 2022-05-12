@@ -119,36 +119,33 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
 class Solution {
-  string removeSpaces(string s) {
-    string ans;
-    int index = 0;
-    while (index < s.size()) {
-      while (index < s.size() && s[index] != ' ') ans.push_back(s[index++]);
-      while (index < s.size() && s[index] == ' ') index++;
-      if (index < s.size() && ans.size() > 0) ans.push_back(' ');
-    }
-    return ans;
-  }
+  vector<int> preSum;
+  int n;
+  int sum;
 
  public:
-  string reverseWords(string s) {
-    s = removeSpaces(s);
-    auto start = s.begin();
-    for (auto it = s.begin(); it != s.end();) {
-      while (it != s.end() && *it != ' ') {
-        it++;
-      }
-      std::reverse(start, it);
-      if (it == s.end()) break;
-      it++;  // skip space
-      start = it;
+  Solution(vector<int>& w) {
+    srand((unsigned)time(NULL));
+    sum = 0;
+    for (int i = 0; i < w.size(); i++) {
+      sum += w[i];
+      preSum.push_back(sum);
     }
-    std::reverse(s.begin(), s.end());
-    return s;
+    n = w.size();
+  }
+
+  int pickIndex() {
+    int v = (rand() % sum) + 1;
+    return lower_bound(preSum.begin(), preSum.end(), v) - preSum.begin();
   }
 };
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(w);
+ * int param_1 = obj->pickIndex();
+ */
 
 int main() {
   printf("hello ");

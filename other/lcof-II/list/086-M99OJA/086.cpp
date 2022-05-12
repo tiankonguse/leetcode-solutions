@@ -121,32 +121,48 @@ struct Node {
 */
 
 class Solution {
-  string removeSpaces(string s) {
-    string ans;
-    int index = 0;
-    while (index < s.size()) {
-      while (index < s.size() && s[index] != ' ') ans.push_back(s[index++]);
-      while (index < s.size() && s[index] == ' ') index++;
-      if (index < s.size() && ans.size() > 0) ans.push_back(' ');
+  vector<vector<int>> dp;
+  vector<vector<int>> g;
+  int Dfs(int l, int r) {
+    if (l > r) return 1;
+    int& ret = dp[l][r];
+    if (l == r) return ret = 1;
+    if (s[l] != s[r]) return ret = 0;
+    return ret = Dfs(l + 1, r - 1);
+  }
+  vector<vector<string>> ans;
+  vector<string> buf;
+  int n;
+  string s;
+  void Dfs2(int x) {
+    if (x == n) {
+      ans.push_back(buf);
+      return;
     }
-    return ans;
+    for (auto& y : g[x]) {
+      buf.push_back(s.substr(x, y - x + 1));
+      Dfs2(y + 1);
+      buf.pop_back();
+    }
   }
 
  public:
-  string reverseWords(string s) {
-    s = removeSpaces(s);
-    auto start = s.begin();
-    for (auto it = s.begin(); it != s.end();) {
-      while (it != s.end() && *it != ' ') {
-        it++;
+  vector<vector<string>> partition(string& s_) {
+    s.swap(s_);
+    n = s.length();
+    dp.resize(n + 1, vector<int>(n + 1, -1));
+    g.resize(n + 1);
+    for (int i = 0; i < n; i++) {
+      for (int j = i; j < n; j++) {
+        if (Dfs(i, j)) {
+          g[i].push_back(j);
+        }
       }
-      std::reverse(start, it);
-      if (it == s.end()) break;
-      it++;  // skip space
-      start = it;
     }
-    std::reverse(s.begin(), s.end());
-    return s;
+
+    Dfs2(0);
+
+    return ans;
   }
 };
 

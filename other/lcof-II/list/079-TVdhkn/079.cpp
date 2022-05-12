@@ -119,37 +119,28 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
 class Solution {
-  string removeSpaces(string s) {
-    string ans;
-    int index = 0;
-    while (index < s.size()) {
-      while (index < s.size() && s[index] != ' ') ans.push_back(s[index++]);
-      while (index < s.size() && s[index] == ' ') index++;
-      if (index < s.size() && ans.size() > 0) ans.push_back(' ');
+  vector<vector<int>> ans;
+  vector<int> buf;
+  vector<int> nums;
+  void Dfs(int n) {
+    if (n < 0) {
+      ans.push_back(buf);
+      return;
     }
-    return ans;
+    Dfs(n - 1);
+    buf.push_back(nums[n]);
+    Dfs(n - 1);
+    buf.pop_back();
   }
 
  public:
-  string reverseWords(string s) {
-    s = removeSpaces(s);
-    auto start = s.begin();
-    for (auto it = s.begin(); it != s.end();) {
-      while (it != s.end() && *it != ' ') {
-        it++;
-      }
-      std::reverse(start, it);
-      if (it == s.end()) break;
-      it++;  // skip space
-      start = it;
-    }
-    std::reverse(s.begin(), s.end());
-    return s;
+  vector<vector<int>> subsets(vector<int>& nums_) {
+    nums.swap(nums_);
+    Dfs(nums.size() - 1);
+    return ans;
   }
 };
-
 int main() {
   printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};

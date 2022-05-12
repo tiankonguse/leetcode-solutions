@@ -120,11 +120,25 @@ struct Node {
 };
 */
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  int maxLev = 0, ans = 0;
+  void Update(int val, int lev) {
+    if (maxLev < lev) {
+      maxLev = lev;
+      ans = val;
+    }
+  }
+  void Dfs(TreeNode* root, int lev) {
+    if (root == nullptr) return;
+    Update(root->val, lev);
+    Dfs(root->left, lev + 1);
+    Dfs(root->right, lev + 1);
+  }
 
-    return 0;
+ public:
+  int findBottomLeftValue(TreeNode* root) {
+    ans = root->val;
+    Dfs(root, 0);
+    return ans;
   }
 };
 

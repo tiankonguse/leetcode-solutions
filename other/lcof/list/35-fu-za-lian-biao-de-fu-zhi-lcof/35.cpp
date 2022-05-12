@@ -120,12 +120,50 @@ struct Node {
 };
 */
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
 
-    return 0;
+class Solution {
+  void CopyList(Node* head) {
+    while (head != NULL) {
+      Node* tmp = new Node(head->val);
+      tmp->next = head->next;
+      tmp->random = head->random;
+      head->next = tmp;
+      head = tmp->next;
+    }
+  }
+  void FixRandom(Node* head) {
+    while (head != NULL) {
+      head = head->next;
+      if (head->random) {
+        head->random = head->random->next;
+      }
+      head = head->next;
+    }
+  }
+
+  Node* SplitList(Node* head) {
+    Node* ans = head->next;
+
+    Node* copy_head = ans;
+    while (head != NULL) {
+      head->next = head->next->next;
+      if (copy_head->next) {
+        copy_head->next = copy_head->next->next;
+      }
+
+      head = head->next;
+      copy_head = copy_head->next;
+    }
+
+    return ans;
+  }
+
+ public:
+  Node* copyRandomList(Node* head) {
+    if (head == NULL) return head;
+    CopyList(head);
+    FixRandom(head);
+    return SplitList(head);
   }
 };
 

@@ -119,34 +119,64 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 
 class Solution {
-  string removeSpaces(string s) {
-    string ans;
-    int index = 0;
-    while (index < s.size()) {
-      while (index < s.size() && s[index] != ' ') ans.push_back(s[index++]);
-      while (index < s.size() && s[index] == ' ') index++;
-      if (index < s.size() && ans.size() > 0) ans.push_back(' ');
+  ListNode* merge(ListNode* left, ListNode* right) {
+    ListNode root(0);
+    ListNode* head = &root;
+
+    while (left && right) {
+      if (left->val < right->val) {
+        head->next = left;
+        head = left;
+        left = left->next;
+      } else {
+        head->next = right;
+        head = right;
+        right = right->next;
+      }
     }
-    return ans;
+
+    if (left != NULL) {
+      head->next = left;
+    } else if (right != NULL) {
+      head->next = right;
+    } else {
+      head->next = NULL;
+    }
+
+    return root.next;
   }
 
  public:
-  string reverseWords(string s) {
-    s = removeSpaces(s);
-    auto start = s.begin();
-    for (auto it = s.begin(); it != s.end();) {
-      while (it != s.end() && *it != ' ') {
-        it++;
-      }
-      std::reverse(start, it);
-      if (it == s.end()) break;
-      it++;  // skip space
-      start = it;
+  ListNode* sortList(ListNode* head) {
+    if (head == NULL || head->next == NULL) {
+      return head;
     }
-    std::reverse(s.begin(), s.end());
-    return s;
+    ListNode* slow = head;
+    ListNode* fast = head;
+    ListNode* pre = head;
+
+    while (fast != NULL) {
+      pre = slow;
+      slow = slow->next;
+      fast = fast->next;
+      if (fast != NULL) {
+        fast = fast->next;
+      }
+    }
+    pre->next = NULL;
+    return merge(sortList(head), sortList(slow));
   }
 };
 

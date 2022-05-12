@@ -119,34 +119,29 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
 class Solution {
-  string removeSpaces(string s) {
-    string ans;
-    int index = 0;
-    while (index < s.size()) {
-      while (index < s.size() && s[index] != ' ') ans.push_back(s[index++]);
-      while (index < s.size() && s[index] == ' ') index++;
-      if (index < s.size() && ans.size() > 0) ans.push_back(' ');
+  bool Check(vector<string>& strs, int j) {
+    int n = strs.size();
+    for (int i = 1; i < n; i++) {
+      if (strs[i][j] < strs[i - 1][j]) {
+        return false;
+      }
     }
-    return ans;
+    return true;
   }
 
  public:
-  string reverseWords(string s) {
-    s = removeSpaces(s);
-    auto start = s.begin();
-    for (auto it = s.begin(); it != s.end();) {
-      while (it != s.end() && *it != ' ') {
-        it++;
+  int minDeletionSize(vector<string>& strs) {
+    int ans = 0;
+
+    int m = strs.front().size();
+    for (int j = 0; j < m; j++) {
+      if (!Check(strs, j)) {
+        ans++;
       }
-      std::reverse(start, it);
-      if (it == s.end()) break;
-      it++;  // skip space
-      start = it;
     }
-    std::reverse(s.begin(), s.end());
-    return s;
+
+    return ans;
   }
 };
 
