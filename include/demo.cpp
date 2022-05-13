@@ -62,20 +62,22 @@ inline void CLR(T& A) {
   A.clear();
 }
 template <class T>
-void chmin(T& a, T b) {
+T& chmin(T& a, T b) {
   if (a == -1) {
     a = b;
   } else {
     a = min(a, b);
   }
+  return a;
 }
 template <class T>
-void chmax(T& a, T b) {
+T& chmax(T& a, T b) {
   if (a == -1) {
     a = b;
   } else {
     a = max(a, b);
   }
+  return a;
 }
 
 constexpr int INF = 1 << 30;
