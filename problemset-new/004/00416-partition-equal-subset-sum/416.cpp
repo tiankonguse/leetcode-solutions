@@ -1,4 +1,7 @@
+#include <bits/stdc++.h>
+
 #include "base.h"
+using namespace std;
 
 typedef __int128_t int128;
 
@@ -24,8 +27,18 @@ typedef vector<string> vs;
 #define rep(i, n) for (ll i = 0; i < (n); i++)
 #define rep1(i, n) for (ll i = 1; i <= (n); i++)
 #define rrep(i, n) for (ll i = (n)-1; i >= 0; i--)
-#define rrep1(i, n) for (ll i = (n); i >= 0; i--)
+#define rrep1(i, n) for (ll i = (n); i >= 1; i--)
 #define all(v) (v).begin(), (v).end()
+#define ALL(A) A.begin(), A.end()
+#define LLA(A) A.rbegin(), A.rend()
+#define sz(x) (int)(x).size()
+#define SZ(A) int((A).size())
+#define CPY(A, B) memcpy(A, B, sizeof(A))
+#define CTN(T, x) (T.find(x) != T.end())
+#define PB push_back
+#define MP(A, B) make_pair(A, B)
+#define fi first
+#define se second
 
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
@@ -37,12 +50,34 @@ int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
                   {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 
 template <class T>
-void chmin(T& a, T b) {
-  a = min(a, b);
+inline void RST(T& A) {
+  memset(A, 0, sizeof(A));
 }
 template <class T>
-void chmax(T& a, T b) {
-  a = max(a, b);
+inline void FLC(T& A, int x) {
+  memset(A, x, sizeof(A));
+}
+template <class T>
+inline void CLR(T& A) {
+  A.clear();
+}
+template <class T>
+T& chmin(T& a, T b) {
+  if (a == -1) {
+    a = b;
+  } else {
+    a = min(a, b);
+  }
+  return a;
+}
+template <class T>
+T& chmax(T& a, T b) {
+  if (a == -1) {
+    a = b;
+  } else {
+    a = max(a, b);
+  }
+  return a;
 }
 
 constexpr int INF = 1 << 30;
@@ -54,6 +89,7 @@ ld PI = acos(-1.0);
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
+// LONG_MIN, LONG_MAX
 
 /*
 unordered_map / unordered_set
@@ -85,24 +121,41 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
-
 class Solution {
-  vvll dp;
-  ll dfs(int m, int n) {
-    ll& ret = dp[m][n];
-    if (ret != 0) return ret;
-    if (m == 0 || n == 0) return ret = 1;
-    return ret = dfs(m - 1, n) + dfs(m, n - 1);
+  vector<int> nums;
+  vector<vector<int>> dp;
+
+  bool Dfs(int sum, int n) {
+    if (sum == 0) return true;
+    if (sum < 0 || n < 0) return false;
+    int& ret = dp[sum][n];
+    if (ret != -1) return ret;
+    return ret = Dfs(sum, n - 1) || Dfs(sum - nums[n], n - 1);
   }
 
  public:
-  int uniquePaths(int m, int n) {
-    dp.resize(m, vll(n, 0));
-    return dfs(m - 1, n - 1);
+  bool canPartition(vector<int>& nums_) {
+    nums.swap(nums_);
+    int sum = 0;
+    for (auto v : nums) {
+      sum += v;
+    }
+    if (sum % 2 == 1) {
+      return false;
+    }
+
+    int n = nums.size();
+    if (n == 1) {
+      return false;
+    }
+
+    dp.resize(sum + 1, vector<int>(n, -1));
+    return Dfs(sum / 2, n - 1);
   }
 };
 
 int main() {
+  printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
   //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
   //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
