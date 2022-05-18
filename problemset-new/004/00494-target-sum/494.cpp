@@ -121,36 +121,28 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
+
 class Solution {
-  vector<int> nums;
-  vector<vector<int>> dp;
-
-  bool Dfs(int sum, int n) {
-    if (sum == 0) return true;
-    if (sum < 0 || n < 0) return false;
-    int& ret = dp[sum][n];
-    if (ret != -1) return ret;
-    return ret = Dfs(sum, n - 1) || Dfs(sum - nums[n], n - 1);
-  }
-
  public:
-  bool canPartition(vector<int>& nums_) {
-    nums.swap(nums_);
-    int sum = 0;
+  int findTargetSumWays(vector<int>& nums, int target) {
+    unordered_map<int, int> m[2];
+
+    int index = 0;
+    m[index][0] = 1;
+
     for (auto v : nums) {
-      sum += v;
-    }
-    if (sum % 2 == 1) {
-      return false;
-    }
+      auto& one = m[index];
+      auto& two = m[1 - index];
+      two.clear();
 
-    int n = nums.size();
-    if (n == 1) {
-      return false;
-    }
+      for (auto& p : one) {
+        two[p.first + v] += p.second;
+        two[p.first - v] += p.second;
+      }
 
-    dp.resize(sum + 1, vector<int>(n, -1));
-    return Dfs(sum / 2, n - 1);
+      index = 1 - index;
+    }
+    return m[index][target];
   }
 };
 

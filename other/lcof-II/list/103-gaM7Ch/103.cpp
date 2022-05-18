@@ -121,39 +121,44 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
+template <class T>
+T& chmin(T& a, T b) {
+  if (a == -1) {
+    a = b;
+  } else {
+    a = min(a, b);
+  }
+  return a;
+}
 class Solution {
-  vector<int> nums;
-  vector<vector<int>> dp;
+  vector<int> coins;
+  vector<int> dp;
 
-  bool Dfs(int sum, int n) {
-    if (sum == 0) return true;
-    if (sum < 0 || n < 0) return false;
-    int& ret = dp[sum][n];
-    if (ret != -1) return ret;
-    return ret = Dfs(sum, n - 1) || Dfs(sum - nums[n], n - 1);
+  int Dfs(int n) {
+    if (n < 0) return -1;
+    int& ret = dp[n];
+    if (ret != -2) return ret;
+
+    ret = -1;
+    for (auto v : coins) {
+      if (v > n) break;
+      int tmp = Dfs(n - v);
+      if (tmp >= 0) {
+        chmin(ret, tmp + 1);
+      }
+    }
+    return ret;
   }
 
  public:
-  bool canPartition(vector<int>& nums_) {
-    nums.swap(nums_);
-    int sum = 0;
-    for (auto v : nums) {
-      sum += v;
-    }
-    if (sum % 2 == 1) {
-      return false;
-    }
-
-    int n = nums.size();
-    if (n == 1) {
-      return false;
-    }
-
-    dp.resize(sum + 1, vector<int>(n, -1));
-    return Dfs(sum / 2, n - 1);
+  int coinChange(vector<int>& coins_, int amount) {
+    coins.swap(coins_);
+    sort(coins.begin(), coins.end());
+    dp.resize(amount + 1, -2);
+    dp[0] = 0;
+    return Dfs(amount);
   }
 };
-
 int main() {
   printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};

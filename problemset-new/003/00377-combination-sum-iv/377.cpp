@@ -123,34 +123,30 @@ struct Node {
 */
 class Solution {
   vector<int> nums;
-  vector<vector<int>> dp;
+  vector<int> dp;
+  int n;
 
-  bool Dfs(int sum, int n) {
-    if (sum == 0) return true;
-    if (sum < 0 || n < 0) return false;
-    int& ret = dp[sum][n];
+  int Dfs(int n) {
+    if (n < 0) return 0;
+
+    int& ret = dp[n];
     if (ret != -1) return ret;
-    return ret = Dfs(sum, n - 1) || Dfs(sum - nums[n], n - 1);
+
+    ret = 0;
+    for (auto v : nums) {
+      if (v > n) break;
+      ret += Dfs(n - v);
+    }
+    return ret;
   }
 
  public:
-  bool canPartition(vector<int>& nums_) {
+  int combinationSum4(vector<int>& nums_, int target) {
     nums.swap(nums_);
-    int sum = 0;
-    for (auto v : nums) {
-      sum += v;
-    }
-    if (sum % 2 == 1) {
-      return false;
-    }
-
-    int n = nums.size();
-    if (n == 1) {
-      return false;
-    }
-
-    dp.resize(sum + 1, vector<int>(n, -1));
-    return Dfs(sum / 2, n - 1);
+    sort(nums.begin(), nums.end());
+    dp.resize(target + 1, -1);
+    dp[0] = 1;
+    return Dfs(target);
   }
 };
 
