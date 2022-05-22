@@ -121,6 +121,7 @@ struct Node {
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
 */
+
 class Solution {
   vector<int> dp;
   int sum;
@@ -131,23 +132,30 @@ class Solution {
     if (ret != -1) return ret;
     // if (sum <= 0) return ret = 1;
     // if (mask == 0) return ret = 0;
-
+    ret = 0;
     for (int i = 0; i < n; i++) {
-      if ((1 << i) & mask == 0) continue;
+      if (((1 << i) & mask) == 0) continue;
       int num = i + 1;
-      if (t + num >= sum) return ret = 1;  // 必胜
+      if (t + num >= sum) {
+        //   printf("hit i=%d\n", i);
+        ret = 1;  // 必胜
+        break;
+      }
       if (Dfs(mask ^ (1 << i), t + num) == 0) {
-        return ret = 1;
+        //   printf("hit i=%d\n", i);
+        ret = 1;
+        break;
       }
     }
-    return ret = 0;
+    // printf("mask=%d t=%d ret=%d\n", mask, t, ret);
+    return ret;
   }
 
  public:
   bool canIWin(int n_, int sum_) {
     this->n = n_;
     this->sum = sum_;
-    if(n * (1+n)/2 < sum) return false;
+    if (n * (1 + n) / 2 < sum) return false;
     int maxBit = 1 << n;
     dp.resize(maxBit, -1);
     return Dfs(maxBit - 1, 0);
@@ -155,10 +163,14 @@ class Solution {
 };
 
 int main() {
-  printf("hello ");
-  for(int i=1;i<=10;i++){
-    for(int j=0;j<=i;j++){
+  printf("hello \n");
+  int k = 1;
+  for (int i = 1; i <= 10; i++) {
+    for (int j = 0; j <= (1 + i) * i / 2; j++) {
+      printf("k=%d\n", k);
       printf("%d\n%d\n", i, j);
+      if (k > 13) return 0;
+      k++;
     }
   }
 
