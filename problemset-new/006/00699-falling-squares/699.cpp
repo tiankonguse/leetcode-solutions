@@ -133,40 +133,26 @@ int maxNM;
 typedef long long ll;
 struct SegTree {
   vector<ll> sign;
-  vector<ll> minVal;
   vector<ll> maxVal;
-  vector<ll> sumVal;
   vector<ll> nums;
-  vector<ll> str;
 
   void Init(int n) {
-    maxNM = n;
+    maxNM = n + 1;
     sign.resize(maxNM << 2, 0);
-    minVal.resize(maxNM << 2, 0);
     maxVal.resize(maxNM << 2, 0);
-    sumVal.resize(maxNM << 2, 0);
     nums.resize(maxNM << 2, 0);
-    str.resize(maxNM);
   }
 
   void PushUp(int rt) {
-    minVal[rt] = min(minVal[rt << 1], minVal[rt << 1 | 1]);
     maxVal[rt] = max(maxVal[rt << 1], maxVal[rt << 1 | 1]);
-    sumVal[rt] = maxVal[rt << 1] + maxVal[rt << 1 | 1];
   }
   void PushDown(int rt) {
     if (sign[rt]) {
-      sign[rt << 1] += sign[rt];
-      sign[rt << 1 | 1] += sign[rt];
+      sign[rt << 1] = sign[rt];
+      sign[rt << 1 | 1] = sign[rt];
 
-      minVal[rt << 1] += sign[rt];
-      minVal[rt << 1 | 1] += sign[rt];
-
-      maxVal[rt << 1] += sign[rt];
-      maxVal[rt << 1 | 1] += sign[rt];
-
-      sumVal[rt << 1] += sign[rt] * nums[rt << 1];
-      sumVal[rt << 1 | 1] += sign[rt] * nums[rt << 1 | 1];
+      maxVal[rt << 1] = sign[rt];
+      maxVal[rt << 1 | 1] = sign[rt];
 
       sign[rt] = 0;
     }
@@ -175,7 +161,7 @@ struct SegTree {
     sign[rt] = 0;
     nums[rt] = r - l + 1;
     if (l == r) {
-      sumVal[rt] = minVal[rt] = maxVal[rt] = str[l];
+      maxVal[rt] = 0;
       return;
     }
     int m = (l + r) >> 1;
@@ -185,10 +171,8 @@ struct SegTree {
   }
   void Update(int L, int R, int add, int l = 1, int r = maxNM, int rt = 1) {
     if (L <= l && r <= R) {
-      sign[rt] += add;
-      minVal[rt] += add;
-      maxVal[rt] += add;
-      sumVal[rt] += add * nums[rt];
+      sign[rt] = add;
+      maxVal[rt] = add;
       return;
     }
     PushDown(rt);
@@ -212,51 +196,43 @@ struct SegTree {
     }
     return ret;
   }
-  ll QueryMin(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
-    if (L <= l && r <= R) {
-      return minVal[rt];
-    }
-    PushDown(rt);
-    int m = (l + r) >> 1;
-    ll ret = __LONG_LONG_MAX__;
-    if (L <= m) {
-      ret = min(ret, QueryMin(L, R, lson));
-    }
-    if (m < R) {
-      ret = min(ret, QueryMin(L, R, rson));
-    }
-    return ret;
-  }
-  ll QuerySum(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
-    if (L <= l && r <= R) {
-      return minVal[rt];
-    }
-    PushDown(rt);
-    int m = (l + r) >> 1;
-    ll ret = 0;
-    if (L <= m) {
-      ret += QuerySum(L, R, lson);
-    }
-    if (m < R) {
-      ret += QuerySum(L, R, rson);
-    }
-    return ret;
-  }
 };
+
 class Solution {
   map<ll, int> m;
+  int n;
   void Add(ll a) {
-    for (int i = -1; i <= 1; i++) {
+    for (int i = 0; i <= 0; i++) {
       m[a + i] = 0;
     }
   }
+  void Init() {
+    n = 1;
+    for (auto& [k, v] : m) {
+      v = n++;
+    }
+  }
+  int H(ll v) { return m[v]; }
 
  public:
   vector<int> fallingSquares(vector<vector<int>>& positions) {
     for (auto& v : positions) {
       Add(v[0]);
-      Add(v[0] + v[1]);
+      Add(v[0] + v[1] - 1);
     }
+    Init();
+    SegTree segTree;
+    segTree.Init(n);
+
+    vector<int> ans;
+    for (auto& v : positions) {
+      int l = H(v[0]);
+      int r = H(v[0] + v[1] - 1);
+      int h = v[1] + segTree.QueryMax(l, r);
+      segTree.Update(l, r, h);
+      ans.push_back(segTree.QueryMax(1, n-1));
+    }
+    return ans;
   }
 };
 
