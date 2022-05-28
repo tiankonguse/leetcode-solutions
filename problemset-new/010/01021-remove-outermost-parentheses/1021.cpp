@@ -124,10 +124,24 @@ struct Node {
 */
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
+  string removeOuterParentheses(const string& s) {
+    string ans;
+    ans.reserve(s.length());
+    int pre = 0;
+    for (auto c : s) {
+      if (c == '(') {
+        pre++;
+        if (pre > 1) {
+          ans.push_back(c);
+        }
+      } else {
+        pre--;
+        if (pre > 0) {
+          ans.push_back(c);
+        }
+      }
+    }
+    return ans;
   }
 };
 

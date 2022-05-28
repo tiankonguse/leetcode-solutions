@@ -124,10 +124,21 @@ struct Node {
 */
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  int lengthOfLIS(vector<int>& nums) {
+    vector<int> rank;
+    rank.reserve(nums.size());
 
-    return 0;
+    for (auto v : nums) {
+      auto it = upper_bound(rank.begin(), rank.end(), v-1);
+      if (it == rank.end()) {
+        rank.push_back(v);
+      } else {
+        if (*it > v) {
+          *it = v;
+        }
+      }
+    }
+    return rank.size();
   }
 };
 
