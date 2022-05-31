@@ -108,7 +108,9 @@ map: m.upper_bound(v)
 map/set distance 复杂度 O(N)
 vector/数组 distance 复杂度 O(1)
 
-
+vector 去重
+sort(nums.begin(), nums.end());
+nums.erase(unique(nums.begin(), nums.end()), nums.end());
 
 size_t found=str.find(string/char/char*);
 std::string::npos
