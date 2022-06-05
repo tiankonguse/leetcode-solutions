@@ -89,7 +89,6 @@ ld PI = acos(-1.0);
 
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
-const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 // LONG_MIN, LONG_MAX
 
 /*
@@ -123,23 +122,120 @@ struct Node {
   // 小于是最大堆，大于是最小堆
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
-
-srand((unsigned)time(NULL));
-rand();
-
-mt19937 gen{random_device{}()};
-uniform_real_distribution<double> dis(min, max);
-function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
-
 */
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
 
-    return 0;
+const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
+struct Node {
+  char val;
+  Node* pre = nullptr;
+  Node* next = nullptr;
+} link[max6];
+
+class TextEditor {
+  Node head, tail;
+  Node* khead;
+  Node* ktail;
+  Node* cur;
+  int index = 0;
+  queue<Node*> que;
+
+  Node* New(char c) {
+    Node* p = nullptr;
+    if (!que.empty()) {
+      p = que.front();
+      que.pop();
+    } else {
+      p = link + index;
+      index++;
+    }
+    p->val = c;
+    p->pre = p->next = nullptr;
+    return p;
+  }
+
+  void Insert(Node* pre, Node* now) {
+    now->pre = pre;
+    now->next = pre->next;
+    pre->next->pre = now;
+    pre->next = now;
+  }
+
+  void Del(Node* now) {
+    Node* pre = now->pre;
+    Node* next = now->next;
+    pre->next = next;
+    next->pre = pre;
+  }
+
+ public:
+  TextEditor() {
+    khead = &head;
+    ktail = &tail;
+    khead->next = ktail;
+    ktail->pre = khead;
+    cur = khead;
+  }
+
+  void addText(const string& text) {
+    for (auto c : text) {
+      Node* p = New(c);
+      Insert(cur, p);
+      cur = p;
+    }
+  }
+
+  int deleteText(int k) {
+    int ans = 0;
+    while (cur != khead && k > 0) {
+      Node* p = cur->pre;
+      Del(cur);
+      que.push(cur);
+      cur = p;
+      ans++;
+      k--;
+    }
+    return ans;
+  }
+
+  string String() {
+    Node* now = cur;
+    string ans;
+    int k = 10;
+    while (now != khead && k > 0) {
+      ans.push_back(now->val);
+      now = now->pre;
+      k--;
+    }
+
+    std::reverse(ans.begin(), ans.end());
+    return ans;
+  }
+
+  string cursorLeft(int k) {
+    while (cur != khead && k > 0) {
+      cur = cur->pre;
+      k--;
+    }
+    return String();
+  }
+
+  string cursorRight(int k) {
+    while (cur->next != ktail && k > 0) {
+      cur = cur->next;
+      k--;
+    }
+    return String();
   }
 };
+
+/**
+ * Your TextEditor object will be instantiated and called as such:
+ * TextEditor* obj = new TextEditor();
+ * obj->addText(text);
+ * int param_2 = obj->deleteText(k);
+ * string param_3 = obj->cursorLeft(k);
+ * string param_4 = obj->cursorRight(k);
+ */
 
 int main() {
   printf("hello ");

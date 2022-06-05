@@ -123,21 +123,21 @@ struct Node {
   // 小于是最大堆，大于是最小堆
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
-
-srand((unsigned)time(NULL));
-rand();
-
-mt19937 gen{random_device{}()};
-uniform_real_distribution<double> dis(min, max);
-function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
-
 */
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  int partitionArray(vector<int>& nums, int k) {
+    sort(nums.begin(), nums.end());
 
-    return 0;
+    int ans = 1;
+    int first = nums.front();
+    for (auto v : nums) {
+      if (v - first > k) {
+        ans++;
+        first = v;
+      }
+    }
+    return ans;
   }
 };
 

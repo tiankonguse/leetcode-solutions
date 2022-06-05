@@ -123,21 +123,22 @@ struct Node {
   // 小于是最大堆，大于是最小堆
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
-
-srand((unsigned)time(NULL));
-rand();
-
-mt19937 gen{random_device{}()};
-uniform_real_distribution<double> dis(min, max);
-function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
-
 */
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
+  int minMaxGame(vector<int>& nums) {
+    int n = nums.size();
+    while (n > 1) {
+      for (int i = 0; i < n; i += 2) {
+        if (i / 2 % 2) {
+          nums[i / 2] = max(nums[i], nums[i + 1]);
+        } else {
+          nums[i / 2] = min(nums[i], nums[i + 1]);
+        }
+      }
+      n = n / 2;
+    }
+    return nums.front();
   }
 };
 
