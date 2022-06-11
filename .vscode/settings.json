@@ -100,7 +100,9 @@
         "__tuple": "cpp",
         "bit": "cpp",
         "concepts": "cpp",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "__cxx_version": "cpp",
+        "version": "cpp"
     },
     "code-runner.runInTerminal": true
 }
