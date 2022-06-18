@@ -22,7 +22,7 @@ struct SegTree {
     maxVal.resize(maxNM << 2, 0);
     sumVal.resize(maxNM << 2, 0);
     nums.resize(maxNM << 2, 0);
-    str.resize(maxNM);
+    str.resize(maxNM+1, 0);
   }
 
   void PushUp(int rt) {

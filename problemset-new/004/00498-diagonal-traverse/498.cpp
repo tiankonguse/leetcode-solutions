@@ -132,82 +132,43 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-class LFUCache {
-  using LP = list<pair<int, int>>; // <k, num>
-  unordered_map<int, LP> lfu;
-  unordered_map<int, pair<int, LP::iterator>>
-      cache;  // key => <value, counter, t>>
-  int capacity;
-  int minNum;
 
-  void Update(int k) {
-    auto& itList = cache[k].second;
-    int num = itList->second;
-
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
-      if (num == minNum) {
-        minNum++;
-      }
+class Solution {
+  int n, m, dir;
+  vector<int> ans;
+  void run(int x, int y, vector<vector<int>>& matrix) {
+    vector<int> tmpLine;
+    while (x >= 0 && x < n && y >= 0 && y < m) {
+      tmpLine.push_back(matrix[x][y]);
+      x++, y--;
     }
-
-    lfu[num + 1].push_front({k, num + 1});
-    itList = lfu[num + 1].begin();
-  }
-  void Expire() {
-    auto itList = lfu[minNum].end();
-    itList--;
-    auto [k, num] = *itList;
-
-    cache.erase(k);
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
+    if (dir == 1) {
+      ans.insert(ans.end(), tmpLine.rbegin(), tmpLine.rend());
+    } else {
+      ans.insert(ans.end(), tmpLine.begin(), tmpLine.end());
     }
-    minNum = 1;  // 触发淘汰，进行插入，最小次数肯定是 1
+    dir = -dir;
   }
 
  public:
-  LFUCache(int capacity_) {
-    capacity = capacity_;
-    lfu[0].push_back({-1, 0});
-    minNum = 1;
-  }
-
-  int get(int k) {
-    auto it = cache.find(k);
-    if (it == cache.end()) return -1;
-
-    int v = it->second.first;
-    Update(k);
-    return v;
-  }
-
-  void put(int k, int v) {
-    if (capacity == 0) return;
-
-    auto it = cache.find(k);
-    if (it == cache.end()) {
-      if (cache.size() == capacity) {
-        Expire();
-      }
-      lfu[0].push_front({k, 0});
-      cache[k] = {v, lfu[0].begin()};
-      minNum = 1;
-    } else {
-      it->second.first = v;
+  vector<int> findDiagonalOrder(vector<vector<int>>& matrix) {
+    n = matrix.size();
+    if (n == 0) {
+      return ans;
     }
-    Update(k);
+    m = matrix[0].size();
+    dir = 1;
+    // x=0, y: 0 => m-1
+    for (int i = 0; i < m; i++) {
+      run(0, i, matrix);
+    }
+    // y=m-1, x: 1 => n-1
+    for (int i = 1; i < n; i++) {
+      run(i, m - 1, matrix);
+    }
+    return ans;
   }
 };
-
-/**
- * Your LFUCache object will be instantiated and called as such:
- * LFUCache* obj = new LFUCache(capacity);
- * int param_1 = obj->get(key);
- * obj->put(key,value);
- */
 
 int main() {
   printf("hello ");

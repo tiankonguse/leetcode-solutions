@@ -132,82 +132,72 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-class LFUCache {
-  using LP = list<pair<int, int>>; // <k, num>
-  unordered_map<int, LP> lfu;
-  unordered_map<int, pair<int, LP::iterator>>
-      cache;  // key => <value, counter, t>>
-  int capacity;
-  int minNum;
+class Solution {
+  using M = unordered_map<char, vector<int>>;
+  using MI = M::const_iterator;
+  int n;
+  void Trans(const string& str, M& stat) {
+    stat.clear();
+    for (int i = 0; i < str.size(); i++) {
+      char c = str[i];
+      stat[c].push_back(i);
+    }
+  }
 
-  void Update(int k) {
-    auto& itList = cache[k].second;
-    int num = itList->second;
+  M base;
+  M unit;
+  vector<int> flagBase;
+  vector<int> flagUnit;
 
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
-      if (num == minNum) {
-        minNum++;
+  bool Dfs(MI it) {
+    if (it == base.end()) {
+      return true;
+    }
+
+    int from = it->first;
+    auto& p1 = it->second;
+
+    auto next = it;
+    next++;
+    for (char to = 'a'; to <= 'z'; to++) {
+      if (unit.count(to) == 0) continue;
+      if (flagUnit[to] == 1) continue;
+      if (p1 != unit[to]) continue;
+
+      flagBase[from] = 1;
+      flagUnit[to] = 1;
+      if (Dfs(next)) {
+        return true;
       }
     }
-
-    lfu[num + 1].push_front({k, num + 1});
-    itList = lfu[num + 1].begin();
+    return false;
   }
-  void Expire() {
-    auto itList = lfu[minNum].end();
-    itList--;
-    auto [k, num] = *itList;
 
-    cache.erase(k);
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
-    }
-    minNum = 1;  // 触发淘汰，进行插入，最小次数肯定是 1
+  bool Check(const string& str) {
+    unit.clear();
+    Trans(str, unit);
+
+    if (base.size() != unit.size()) return false;
+    flagBase.clear();
+    flagBase.resize(256, 0);
+    flagUnit.clear();
+    flagUnit.resize(256, 0);
+    return Dfs(base.begin());
   }
 
  public:
-  LFUCache(int capacity_) {
-    capacity = capacity_;
-    lfu[0].push_back({-1, 0});
-    minNum = 1;
-  }
-
-  int get(int k) {
-    auto it = cache.find(k);
-    if (it == cache.end()) return -1;
-
-    int v = it->second.first;
-    Update(k);
-    return v;
-  }
-
-  void put(int k, int v) {
-    if (capacity == 0) return;
-
-    auto it = cache.find(k);
-    if (it == cache.end()) {
-      if (cache.size() == capacity) {
-        Expire();
+  vector<string> findAndReplacePattern(vector<string>& words, string pattern) {
+    n = pattern.size();
+    Trans(pattern, base);
+    vector<string> ans;
+    for (auto v : words) {
+      if (Check(v)) {
+        ans.push_back(v);
       }
-      lfu[0].push_front({k, 0});
-      cache[k] = {v, lfu[0].begin()};
-      minNum = 1;
-    } else {
-      it->second.first = v;
     }
-    Update(k);
+    return ans;
   }
 };
-
-/**
- * Your LFUCache object will be instantiated and called as such:
- * LFUCache* obj = new LFUCache(capacity);
- * int param_1 = obj->get(key);
- * obj->put(key,value);
- */
 
 int main() {
   printf("hello ");

@@ -132,82 +132,85 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-class LFUCache {
-  using LP = list<pair<int, int>>; // <k, num>
-  unordered_map<int, LP> lfu;
-  unordered_map<int, pair<int, LP::iterator>>
-      cache;  // key => <value, counter, t>>
-  int capacity;
-  int minNum;
 
-  void Update(int k) {
-    auto& itList = cache[k].second;
-    int num = itList->second;
+const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
+struct Node {
+  int endFlag = -1;  // 是否是结束标示符
+  int next[26];
+};
+Node nodes[max5];
+class Trie {
+  int index = 0;
 
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
-      if (num == minNum) {
-        minNum++;
-      }
-    }
-
-    lfu[num + 1].push_front({k, num + 1});
-    itList = lfu[num + 1].begin();
-  }
-  void Expire() {
-    auto itList = lfu[minNum].end();
-    itList--;
-    auto [k, num] = *itList;
-
-    cache.erase(k);
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
-    }
-    minNum = 1;  // 触发淘汰，进行插入，最小次数肯定是 1
+  int Add() {
+    int ret = index;
+    Node& node = nodes[ret];
+    node.endFlag = -1;
+    memset(node.next, -1, sizeof(node.next));
+    index++;
+    return ret;
   }
 
  public:
-  LFUCache(int capacity_) {
-    capacity = capacity_;
-    lfu[0].push_back({-1, 0});
-    minNum = 1;
+  /** Initialize your data structure here. */
+  Trie() { Init(); }
+
+  void Init() {
+    index = 0;
+    Add();
   }
 
-  int get(int k) {
-    auto it = cache.find(k);
-    if (it == cache.end()) return -1;
-
-    int v = it->second.first;
-    Update(k);
-    return v;
-  }
-
-  void put(int k, int v) {
-    if (capacity == 0) return;
-
-    auto it = cache.find(k);
-    if (it == cache.end()) {
-      if (cache.size() == capacity) {
-        Expire();
+  /** Inserts a word into the trie. */
+  void Insert(const string& word, int pos) {
+    int root = 0;
+    for (auto c : word) {
+      int v = c - 'a';
+      if (nodes[root].next[v] == -1) {
+        nodes[root].next[v] = Add();
       }
-      lfu[0].push_front({k, 0});
-      cache[k] = {v, lfu[0].begin()};
-      minNum = 1;
-    } else {
-      it->second.first = v;
+      root = nodes[root].next[v];
     }
-    Update(k);
+    nodes[root].endFlag = pos;
   }
 };
 
-/**
- * Your LFUCache object will be instantiated and called as such:
- * LFUCache* obj = new LFUCache(capacity);
- * int param_1 = obj->get(key);
- * obj->put(key,value);
- */
+Trie trie;
+class Solution {
+  vector<vector<int>> ans;
+
+  /** Returns if the word is in the trie. */
+  void Search(const string& word, int start) {
+    int n = word.length();
+    int root = 0;
+    int index = start;
+    while (index < n) {
+      char c = word[index];
+      int v = c - 'a';
+      int p = nodes[root].next[v];
+      if (p == -1) break;
+      root = p;
+      if (nodes[root].endFlag != -1) {
+        ans[nodes[root].endFlag].push_back(start);
+      }
+      index++;
+    }
+  }
+
+ public:
+  vector<vector<int>> multiSearch(const string& big, vector<string>& smalls) {
+    trie.Init();
+    int n = smalls.size();
+    for (int i = 0; i < n; i++) {
+      trie.Insert(smalls[i], i);
+    }
+    ans.resize(n);
+    for (int i = 0; i < big.size(); i++) {
+      Search(big, i);
+    }
+
+    return ans;
+  }
+};
 
 int main() {
   printf("hello ");

@@ -168,20 +168,43 @@ class NestedInteger {
 };
 
 class NestedIterator {
-  using I = vector<NestedInteger>::iterator;
+  using I = vector<NestedInteger>::const_iterator;
   stack<pair<I, I>> sta;
   vector<NestedInteger> nestedList;
 
  public:
   NestedIterator(vector<NestedInteger>& nestedList_) {
     nestedList.swap(nestedList_);
-    if()
     sta.push({nestedList.begin(), nestedList.end()});
   }
+  void Skip() {
+    while (!sta.empty()) {
+      if (sta.top().first == sta.top().second) {
+        sta.pop();
+        if (!sta.empty()) {
+          sta.top().first++;
+        }
+        continue;
+      }
+      if (sta.top().first->isInteger()) {
+        break;
+      } else {
+        auto& l = sta.top().first->getList();
+        sta.push({l.begin(), l.end()});
+      }
+    }
+  }
+  int next() {
+    Skip();
+    int v = sta.top().first->getInteger();
+    sta.top().first++;
+    return v;
+  }
 
-  int next() {}
-
-  bool hasNext() { return !sta.empty(); }
+  bool hasNext() {
+    Skip();
+    return !sta.empty();
+  }
 };
 
 /**

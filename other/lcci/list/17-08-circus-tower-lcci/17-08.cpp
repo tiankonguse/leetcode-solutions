@@ -132,82 +132,132 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-class LFUCache {
-  using LP = list<pair<int, int>>; // <k, num>
-  unordered_map<int, LP> lfu;
-  unordered_map<int, pair<int, LP::iterator>>
-      cache;  // key => <value, counter, t>>
-  int capacity;
-  int minNum;
+// 1.bulid(); 2.query(a,b) 3.update(a,b)
+#define lson l, m, rt << 1
+#define rson m + 1, r, rt << 1 | 1
+const int maxn = 1e4 + 10;
+const int kMaxVal = 10e8;
 
-  void Update(int k) {
-    auto& itList = cache[k].second;
-    int num = itList->second;
+int maxNM;
 
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
-      if (num == minNum) {
-        minNum++;
-      }
+typedef long long ll;
+struct SegTree {
+  vector<ll> sign;
+  vector<ll> minVal;
+  vector<ll> maxVal;
+  vector<ll> sumVal;
+  vector<ll> nums;
+  vector<ll> str;
+
+  void Init(int n) {
+    maxNM = n;
+    sign.resize(maxNM << 2, 0);
+    minVal.resize(maxNM << 2, 0);
+    maxVal.resize(maxNM << 2, 0);
+    sumVal.resize(maxNM << 2, 0);
+    nums.resize(maxNM << 2, 0);
+    str.resize(maxNM + 1, 0);
+  }
+
+  void PushUp(int rt) {
+    minVal[rt] = min(minVal[rt << 1], minVal[rt << 1 | 1]);
+    maxVal[rt] = max(maxVal[rt << 1], maxVal[rt << 1 | 1]);
+    sumVal[rt] = maxVal[rt << 1] + maxVal[rt << 1 | 1];
+  }
+  void PushDown(int rt) {
+    if (sign[rt]) {
+      sign[rt << 1] += sign[rt];
+      sign[rt << 1 | 1] += sign[rt];
+
+      minVal[rt << 1] += sign[rt];
+      minVal[rt << 1 | 1] += sign[rt];
+
+      maxVal[rt << 1] += sign[rt];
+      maxVal[rt << 1 | 1] += sign[rt];
+
+      sumVal[rt << 1] += sign[rt] * nums[rt << 1];
+      sumVal[rt << 1 | 1] += sign[rt] * nums[rt << 1 | 1];
+
+      sign[rt] = 0;
     }
-
-    lfu[num + 1].push_front({k, num + 1});
-    itList = lfu[num + 1].begin();
   }
-  void Expire() {
-    auto itList = lfu[minNum].end();
-    itList--;
-    auto [k, num] = *itList;
-
-    cache.erase(k);
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
+  void Bulid(int l = 1, int r = maxNM, int rt = 1) {
+    sign[rt] = 0;
+    nums[rt] = r - l + 1;
+    if (l == r) {
+      sumVal[rt] = minVal[rt] = maxVal[rt] = str[l];
+      return;
     }
-    minNum = 1;  // 触发淘汰，进行插入，最小次数肯定是 1
+    int m = (l + r) >> 1;
+    Bulid(lson);
+    Bulid(rson);
+    PushUp(rt);
   }
-
- public:
-  LFUCache(int capacity_) {
-    capacity = capacity_;
-    lfu[0].push_back({-1, 0});
-    minNum = 1;
-  }
-
-  int get(int k) {
-    auto it = cache.find(k);
-    if (it == cache.end()) return -1;
-
-    int v = it->second.first;
-    Update(k);
-    return v;
-  }
-
-  void put(int k, int v) {
-    if (capacity == 0) return;
-
-    auto it = cache.find(k);
-    if (it == cache.end()) {
-      if (cache.size() == capacity) {
-        Expire();
-      }
-      lfu[0].push_front({k, 0});
-      cache[k] = {v, lfu[0].begin()};
-      minNum = 1;
-    } else {
-      it->second.first = v;
+  void Update(int L, int R, int add, int l = 1, int r = maxNM, int rt = 1) {
+    if (L <= l && r <= R) {
+      sign[rt] += add;
+      minVal[rt] += add;
+      maxVal[rt] += add;
+      sumVal[rt] += add * nums[rt];
+      return;
     }
-    Update(k);
+    PushDown(rt);
+    int m = (l + r) >> 1;
+    if (L <= m) Update(L, R, add, lson);
+    if (R > m) Update(L, R, add, rson);
+    PushUp(rt);
+  }
+  ll QueryMax(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
+    if (L <= l && r <= R) {
+      return maxVal[rt];
+    }
+    PushDown(rt);
+    int m = (l + r) >> 1;
+    ll ret = -1;
+    if (L <= m) {
+      ret = max(ret, QueryMax(L, R, lson));
+    }
+    if (m < R) {
+      ret = max(ret, QueryMax(L, R, rson));
+    }
+    return ret;
   }
 };
 
-/**
- * Your LFUCache object will be instantiated and called as such:
- * LFUCache* obj = new LFUCache(capacity);
- * int param_1 = obj->get(key);
- * obj->put(key,value);
- */
+SegTree segTree;
+class Solution {
+ public:
+  int bestSeqAtIndex(vector<int>& height, vector<int>& weight) {
+    int n = height.size();
+    vector<pair<int, int>> nums;  // <x, y>
+    for (int i = 0; i < n; i++) {
+      nums.push_back({height[i], weight[i]});
+    }
+
+    segTree.Init(10011);
+    segTree.Bulid();
+
+    sort(nums.begin(), nums.end(), [](auto& a, auto& b) {
+      if (a.first == b.first) {
+        return a.second > b.second;
+      } else {
+        return a.first < b.first;
+      }
+    });
+
+    ll ans = 1;
+    for (auto [x, y] : nums) {
+      ll preVal = segTree.QueryMax(y, y);
+      ll nowVal = 1;
+      if (y > 1) {
+        nowVal = 1 + segTree.QueryMax(1, y - 1);
+      }
+      ans = max(ans, nowVal);
+      segTree.Update(y, y, nowVal - preVal);
+    }
+    return ans;
+  }
+};
 
 int main() {
   printf("hello ");

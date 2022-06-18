@@ -132,82 +132,13 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-class LFUCache {
-  using LP = list<pair<int, int>>; // <k, num>
-  unordered_map<int, LP> lfu;
-  unordered_map<int, pair<int, LP::iterator>>
-      cache;  // key => <value, counter, t>>
-  int capacity;
-  int minNum;
-
-  void Update(int k) {
-    auto& itList = cache[k].second;
-    int num = itList->second;
-
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
-      if (num == minNum) {
-        minNum++;
-      }
-    }
-
-    lfu[num + 1].push_front({k, num + 1});
-    itList = lfu[num + 1].begin();
-  }
-  void Expire() {
-    auto itList = lfu[minNum].end();
-    itList--;
-    auto [k, num] = *itList;
-
-    cache.erase(k);
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
-    }
-    minNum = 1;  // 触发淘汰，进行插入，最小次数肯定是 1
-  }
-
+class Solution {
  public:
-  LFUCache(int capacity_) {
-    capacity = capacity_;
-    lfu[0].push_back({-1, 0});
-    minNum = 1;
-  }
-
-  int get(int k) {
-    auto it = cache.find(k);
-    if (it == cache.end()) return -1;
-
-    int v = it->second.first;
-    Update(k);
-    return v;
-  }
-
-  void put(int k, int v) {
-    if (capacity == 0) return;
-
-    auto it = cache.find(k);
-    if (it == cache.end()) {
-      if (cache.size() == capacity) {
-        Expire();
-      }
-      lfu[0].push_front({k, 0});
-      cache[k] = {v, lfu[0].begin()};
-      minNum = 1;
-    } else {
-      it->second.first = v;
-    }
-    Update(k);
+  vector<int> sortArray(vector<int>& nums) {
+    sort(nums.begin(), nums.end());
+    return nums;
   }
 };
-
-/**
- * Your LFUCache object will be instantiated and called as such:
- * LFUCache* obj = new LFUCache(capacity);
- * int param_1 = obj->get(key);
- * obj->put(key,value);
- */
 
 int main() {
   printf("hello ");

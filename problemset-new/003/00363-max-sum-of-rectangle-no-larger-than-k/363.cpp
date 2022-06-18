@@ -132,82 +132,39 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-class LFUCache {
-  using LP = list<pair<int, int>>; // <k, num>
-  unordered_map<int, LP> lfu;
-  unordered_map<int, pair<int, LP::iterator>>
-      cache;  // key => <value, counter, t>>
-  int capacity;
-  int minNum;
 
-  void Update(int k) {
-    auto& itList = cache[k].second;
-    int num = itList->second;
-
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
-      if (num == minNum) {
-        minNum++;
-      }
-    }
-
-    lfu[num + 1].push_front({k, num + 1});
-    itList = lfu[num + 1].begin();
-  }
-  void Expire() {
-    auto itList = lfu[minNum].end();
-    itList--;
-    auto [k, num] = *itList;
-
-    cache.erase(k);
-    lfu[num].erase(itList);
-    if (lfu[num].empty()) {
-      lfu.erase(num);
-    }
-    minNum = 1;  // 触发淘汰，进行插入，最小次数肯定是 1
-  }
-
+typedef long long ll;
+class Solution {
  public:
-  LFUCache(int capacity_) {
-    capacity = capacity_;
-    lfu[0].push_back({-1, 0});
-    minNum = 1;
-  }
-
-  int get(int k) {
-    auto it = cache.find(k);
-    if (it == cache.end()) return -1;
-
-    int v = it->second.first;
-    Update(k);
-    return v;
-  }
-
-  void put(int k, int v) {
-    if (capacity == 0) return;
-
-    auto it = cache.find(k);
-    if (it == cache.end()) {
-      if (cache.size() == capacity) {
-        Expire();
+  int maxSumSubmatrix(vector<vector<int>>& matrix, int k) {
+    int n = matrix.size();
+    int m = matrix.front().size();
+    vector<vector<ll>> sum(n + 1, vector<ll>(m + 1, 0));
+    for (int i = 1; i <= n; i++) {
+      for (int j = 1; j <= m; j++) {
+        int v = matrix[i - 1][j - 1];
+        sum[i][j] = sum[i - 1][j] + sum[i][j - 1] - sum[i - 1][j - 1] + v;
       }
-      lfu[0].push_front({k, 0});
-      cache[k] = {v, lfu[0].begin()};
-      minNum = 1;
-    } else {
-      it->second.first = v;
     }
-    Update(k);
+
+    ll ans = INT_MIN;
+    set<ll> s;
+    for (int i0 = 1; i0 <= n; i0++) {
+      for (int i1 = i0; i1 <= n; i1++) {
+        s.clear();
+        for (int j = 1; j <= m; j++) {
+          ll v = sum[i1][j] - sum[i0 - 1][j];
+
+          if (auto it = s.lower_bound(v - k); it != s.end()) {
+            ans = max(ans, *it);
+          }
+          s.insert(v);
+        }
+      }
+    }
+    return ans;
   }
 };
-
-/**
- * Your LFUCache object will be instantiated and called as such:
- * LFUCache* obj = new LFUCache(capacity);
- * int param_1 = obj->get(key);
- * obj->put(key,value);
- */
 
 int main() {
   printf("hello ");
