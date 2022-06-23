@@ -132,65 +132,36 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-
-class Dsu {
-  vector<int> fa, score;
-
- public:
-  void Init(int n) {
-    fa.resize(n);
-    score.resize(n);
-    for (int i = 0; i < n; i++) {
-      fa[i] = i, score[i] = 0;
-    }
-  }
-
-  int Find(int x) {
-    if (fa[x] != x) {
-      fa[x] = Find(fa[x]);
-    }
-    return fa[x];
-  }
-
-  // Union，也成为了 Merge
-  void Union(int x, int y) {
-    x = Find(x);
-    y = Find(y);
-    if (x != y) {
-      if (score[x] > score[y]) {
-        fa[y] = x;
-      } else {
-        fa[x] = y;
-        if (score[x] == score[y]) {
-          ++score[y];
-        }
-      }
-    }
-  }
-};
 class Solution {
+  int Count(const string& s) {
+    int num = 1;
+    for (auto c : s) {
+      if (c == ' ') num++;
+    }
+    return num;
+  }
+
  public:
-  bool isCompliance(vector<vector<int>>& distance, int n) {
-    int m = distance.size();
-    Dsu dsu;
-    dsu.Init(m);
+  string largestWordCount(vector<string>& messages, vector<string>& senders) {
+    unordered_map<string, int> m;
+    int n = messages.size();
 
-    for (int i = 0; i < m; i++) {
-      for (int j = i + 1; j < m; j++) {
-        int d = distance[i][j];
-        if (d <= 2) {
-          dsu.Union(i, j);
-        }
+    for (int i = 0; i < n; i++) {
+      string& s = senders[i];
+      int num = Count(messages[i]);
+      m[senders[i]] += num;
+    }
+
+    string ans;
+    int maxNum = 0;
+    for (auto& [s, num] : m) {
+      if (m[s] > maxNum || (m[s] == maxNum && s > ans)) {
+        ans = s;
+        maxNum = num;
       }
     }
 
-    int ans = 0;
-    for (int i = 0; i < m; i++) {
-      if (i == dsu.Find(i)) {
-        ans++;
-      }
-    }
-    return ans <= n;
+    return ans;
   }
 };
 

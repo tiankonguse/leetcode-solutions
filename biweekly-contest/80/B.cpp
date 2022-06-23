@@ -133,64 +133,28 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-class Dsu {
-  vector<int> fa, score;
-
- public:
-  void Init(int n) {
-    fa.resize(n);
-    score.resize(n);
-    for (int i = 0; i < n; i++) {
-      fa[i] = i, score[i] = 0;
-    }
-  }
-
-  int Find(int x) {
-    if (fa[x] != x) {
-      fa[x] = Find(fa[x]);
-    }
-    return fa[x];
-  }
-
-  // Union，也成为了 Merge
-  void Union(int x, int y) {
-    x = Find(x);
-    y = Find(y);
-    if (x != y) {
-      if (score[x] > score[y]) {
-        fa[y] = x;
-      } else {
-        fa[x] = y;
-        if (score[x] == score[y]) {
-          ++score[y];
-        }
-      }
-    }
-  }
-};
+typedef long long ll;
 class Solution {
+  int Slover(ll a, vector<int>& potions, ll sum) {
+    if (potions.front() * a >= sum) return potions.size();
+    if (potions.back() * a < sum) return 0;
+    int k = (sum + a - 1) / a;
+    auto it = lower_bound(potions.begin(), potions.end(), k);
+    return potions.end() - it;
+  }
+
  public:
-  bool isCompliance(vector<vector<int>>& distance, int n) {
-    int m = distance.size();
-    Dsu dsu;
-    dsu.Init(m);
+  vector<int> successfulPairs(vector<int>& spells, vector<int>& potions,
+                              long long success) {
+    int n = spells.size();
 
-    for (int i = 0; i < m; i++) {
-      for (int j = i + 1; j < m; j++) {
-        int d = distance[i][j];
-        if (d <= 2) {
-          dsu.Union(i, j);
-        }
-      }
+    sort(potions.begin(), potions.end());
+    vector<int> ans(n, 0);
+    for (int i = 0; i < n; i++) {
+      ll a = spells[i];
+      ans[i] = Slover(a, potions, success);
     }
-
-    int ans = 0;
-    for (int i = 0; i < m; i++) {
-      if (i == dsu.Find(i)) {
-        ans++;
-      }
-    }
-    return ans <= n;
+    return ans;
   }
 };
 

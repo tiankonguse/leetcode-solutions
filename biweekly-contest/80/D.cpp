@@ -132,65 +132,37 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-
-class Dsu {
-  vector<int> fa, score;
-
- public:
-  void Init(int n) {
-    fa.resize(n);
-    score.resize(n);
-    for (int i = 0; i < n; i++) {
-      fa[i] = i, score[i] = 0;
-    }
-  }
-
-  int Find(int x) {
-    if (fa[x] != x) {
-      fa[x] = Find(fa[x]);
-    }
-    return fa[x];
-  }
-
-  // Union，也成为了 Merge
-  void Union(int x, int y) {
-    x = Find(x);
-    y = Find(y);
-    if (x != y) {
-      if (score[x] > score[y]) {
-        fa[y] = x;
-      } else {
-        fa[x] = y;
-        if (score[x] == score[y]) {
-          ++score[y];
-        }
-      }
-    }
-  }
-};
+typedef long long ll;
 class Solution {
  public:
-  bool isCompliance(vector<vector<int>>& distance, int n) {
-    int m = distance.size();
-    Dsu dsu;
-    dsu.Init(m);
+  ll countSubarrays(vector<int>& nums, ll k) {
+    ll n = nums.size();
+    vector<ll> preSum(n + 1, 0);
+    for (int i = 1; i <= n; i++) {
+      ll v = nums[i - 1];
+      preSum[i] = preSum[i - 1] + v;
+    }
 
-    for (int i = 0; i < m; i++) {
-      for (int j = i + 1; j < m; j++) {
-        int d = distance[i][j];
-        if (d <= 2) {
-          dsu.Union(i, j);
+    ll ans = 0;
+    for (int i = 0; i < n; i++) {
+      if (nums[i] >= k) continue;
+
+      int l = i, r = n;
+      while (l < r) {
+        int mid = (l + r) / 2;
+        int num = mid - i + 1;
+        ll sum = preSum[mid + 1] - preSum[i];
+        if (sum * num < k) {
+          l = mid + 1;
+        } else {
+          r = mid;
         }
       }
+      //  printf("i=%d num=%d\n", i, r - i);
+      ans += r - i;
     }
 
-    int ans = 0;
-    for (int i = 0; i < m; i++) {
-      if (i == dsu.Find(i)) {
-        ans++;
-      }
-    }
-    return ans <= n;
+    return ans;
   }
 };
 

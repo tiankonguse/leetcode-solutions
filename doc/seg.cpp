@@ -28,7 +28,7 @@ struct SegTree {
   void PushUp(int rt) {
     minVal[rt] = min(minVal[rt << 1], minVal[rt << 1 | 1]);
     maxVal[rt] = max(maxVal[rt << 1], maxVal[rt << 1 | 1]);
-    sumVal[rt] = maxVal[rt << 1] + maxVal[rt << 1 | 1];
+    sumVal[rt] = sumVal[rt << 1] + sumVal[rt << 1 | 1];
   }
   void PushDown(int rt) {
     if (sign[rt]) {
@@ -105,7 +105,7 @@ struct SegTree {
   }
   ll QuerySum(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
     if (L <= l && r <= R) {
-      return minVal[rt];
+      return sumVal[rt];
     }
     PushDown(rt);
     int m = (l + r) >> 1;

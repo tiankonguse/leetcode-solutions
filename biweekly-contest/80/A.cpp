@@ -133,67 +133,37 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-class Dsu {
-  vector<int> fa, score;
-
- public:
-  void Init(int n) {
-    fa.resize(n);
-    score.resize(n);
-    for (int i = 0; i < n; i++) {
-      fa[i] = i, score[i] = 0;
-    }
-  }
-
-  int Find(int x) {
-    if (fa[x] != x) {
-      fa[x] = Find(fa[x]);
-    }
-    return fa[x];
-  }
-
-  // Union，也成为了 Merge
-  void Union(int x, int y) {
-    x = Find(x);
-    y = Find(y);
-    if (x != y) {
-      if (score[x] > score[y]) {
-        fa[y] = x;
-      } else {
-        fa[x] = y;
-        if (score[x] == score[y]) {
-          ++score[y];
-        }
-      }
-    }
-  }
-};
+/*
+它有至少 8 个字符。
+至少包含 一个小写英文 字母。
+至少包含 一个大写英文 字母。
+至少包含 一个数字 。
+至少包含 一个特殊字符 。特殊字符为："!@#$%^&*()-+" 中的一个。
+它
+不 包含 2 个连续相同的字符（比方说 "aab" 不符合该条件，但是 "aba" 符合该条件）。
+*/
 class Solution {
  public:
-  bool isCompliance(vector<vector<int>>& distance, int n) {
-    int m = distance.size();
-    Dsu dsu;
-    dsu.Init(m);
-
-    for (int i = 0; i < m; i++) {
-      for (int j = i + 1; j < m; j++) {
-        int d = distance[i][j];
-        if (d <= 2) {
-          dsu.Union(i, j);
-        }
-      }
+  bool strongPasswordCheckerII(string password) {
+    if (password.size() < 8) return false;
+    bool up = false;
+    bool low = false;
+    bool numer = false;
+    bool sep = false;
+    string s = "!@#$%^&*()-+";
+    set<char> sepVal = {s.begin(), s.end()};
+    char pre = password[1];
+    for (auto c : password) {
+      if (c == pre) return false;
+      if (c >= 'a' && c <= 'z') low = true;
+      if (c >= 'A' && c <= 'Z') up = true;
+      if (c >= '0' && c <= '9') numer = true;
+      if (sepVal.count(c)) sep = true;
+      pre = c;
     }
-
-    int ans = 0;
-    for (int i = 0; i < m; i++) {
-      if (i == dsu.Find(i)) {
-        ans++;
-      }
-    }
-    return ans <= n;
+    return low && up && numer && sep;
   }
 };
-
 int main() {
   printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};

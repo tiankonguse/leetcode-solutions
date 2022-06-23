@@ -132,67 +132,54 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-
-class Dsu {
-  vector<int> fa, score;
-
- public:
-  void Init(int n) {
-    fa.resize(n);
-    score.resize(n);
-    for (int i = 0; i < n; i++) {
-      fa[i] = i, score[i] = 0;
-    }
-  }
-
-  int Find(int x) {
-    if (fa[x] != x) {
-      fa[x] = Find(fa[x]);
-    }
-    return fa[x];
-  }
-
-  // Union，也成为了 Merge
-  void Union(int x, int y) {
-    x = Find(x);
-    y = Find(y);
-    if (x != y) {
-      if (score[x] > score[y]) {
-        fa[y] = x;
-      } else {
-        fa[x] = y;
-        if (score[x] == score[y]) {
-          ++score[y];
-        }
-      }
-    }
-  }
-};
 class Solution {
  public:
-  bool isCompliance(vector<vector<int>>& distance, int n) {
-    int m = distance.size();
-    Dsu dsu;
-    dsu.Init(m);
+  bool matchReplacement(const string& s, const string& sub,
+                        vector<vector<char>>& mappings) {
+    map<char, set<char>> ab;
+    for (auto& v : mappings) {
+      char a = v[0];
+      char b = v[1];
+      ab[a].insert(b);
+    }
 
-    for (int i = 0; i < m; i++) {
-      for (int j = i + 1; j < m; j++) {
-        int d = distance[i][j];
-        if (d <= 2) {
-          dsu.Union(i, j);
+    int n = s.size();
+    int m = sub.size();
+    for (int i = 0; i + m - 2 < n; i++) {
+      bool flag = true;
+      // printf("i=%d\n", i);
+      for (int j = 0; j < m; j++) {
+        char a = sub[j];
+        char b = s[i + j];
+        if(a == b) continue;
+        if (ab[a].count(b) == 0) {
+      // printf("j=%d %c=>%c false\n",j,  a, b);
+          flag = false;
+          break;
         }
+        
+      // printf("%c=>%c true\n", a, b);
+      }
+          // printf("i=%d %d\n", i, flag);
+      if (flag) {
+        return flag;
       }
     }
-
-    int ans = 0;
-    for (int i = 0; i < m; i++) {
-      if (i == dsu.Find(i)) {
-        ans++;
-      }
-    }
-    return ans <= n;
+    return false;
   }
 };
+
+/*
+"fool3e7bar"
+"leet"
+[["e","3"],["t","7"],["t","8"]]
+"fooleetbar"
+"f00l"
+[["o","0"]]
+ "Fool33tbaR"
+"leetd"
+[["e","3"],["t","7"],["t","8"],["d","b"],["p","b"]]
+*/
 
 int main() {
   printf("hello ");
