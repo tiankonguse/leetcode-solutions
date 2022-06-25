@@ -5,7 +5,6 @@ using namespace std;
 
 typedef __int128_t int128;
 
-
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
@@ -91,8 +90,7 @@ ld PI = acos(-1.0);
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
-// LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
-
+// LONG_MIN, LONG_MAX
 
 /*
 unordered_map / unordered_set
@@ -134,17 +132,46 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
+
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  vector<int> minInterval(vector<vector<int>>& intervals,
+                          vector<int>& queries) {
+    set<int> querySet;
+    map<int, int> queryIndex;
+    for (int i = 0; i < queries.size(); i++) {
+      querySet.insert(queries[i]);
+      queryIndex[queries[i]] = -1;
+    }
 
-    return 0;
+    int n = intervals.size();
+    vector<tuple<int, int, int>> nums;
+    nums.reserve(n);
+    for (auto& v : intervals) {
+      int a = v[0], b = v[1];
+      nums.push_back({b - a + 1, a, b});
+    }
+
+    sort(nums.begin(), nums.end());
+    for (int i = 0; i < n; i++) {
+      auto [len, a, b] = nums[i];
+
+      auto it = querySet.lower_bound(a);
+      while (it != querySet.end() && *it <= b) {
+        queryIndex[*it] = len;
+        querySet.erase(it++);
+      }
+    }
+
+    vector<int> ans(queries.size(), -1);
+    for (int i = 0; i < queries.size(); i++) {
+      ans[i] = queryIndex[queries[i]];
+    }
+    return ans;
   }
 };
 
 int main() {
-  printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
   //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
   //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);

@@ -5,7 +5,6 @@ using namespace std;
 
 typedef __int128_t int128;
 
-
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
@@ -89,10 +88,8 @@ constexpr ld EPS = 1e-12;
 ld PI = acos(-1.0);
 
 const double pi = acos(-1.0), eps = 1e-7;
-const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 // LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
-
 
 /*
 unordered_map / unordered_set
@@ -134,12 +131,49 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
+
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+typedef long long ll;
+
+// 乘法取模
+ll MulMod(ll a, ll b, ll c) {
+  ll res = 0LL;
+  for (; b; b >>= 1, a = (a << 1) % c) {
+    if (b & 1) res = (res + a) % c;
+  }
+  return res;
+}
+// 快速幂
+ll PowMod(ll a, ll b, ll c) {
+  ll res = 1LL;
+  for (; b; b >>= 1, a = MulMod(a, a, c)) {
+    if (b & 1) res = MulMod(res, a, c);
+  }
+  return res;
+}
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  int maxNiceDivisors(int n) {
+    if (n < 4) return n;
 
-    return 0;
+    ll ans = 1;
+
+    if (n > 4) {
+      ll k = n / 3;
+
+      n = n % 3;
+      if (n == 1) {
+        k--;
+        n += 3;
+      }
+
+      ans = PowMod(3, k, mod);
+    }
+    if (n > 0) {
+      ans = (ans * n) % mod;
+    }
+
+    return ans;
   }
 };
 

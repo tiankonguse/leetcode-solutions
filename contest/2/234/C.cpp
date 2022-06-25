@@ -5,7 +5,6 @@ using namespace std;
 
 typedef __int128_t int128;
 
-
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
@@ -93,7 +92,6 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 // LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
 
-
 /*
 unordered_map / unordered_set
 
@@ -134,12 +132,38 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
+
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  string evaluate(string s, vector<vector<string>>& knowledge) {
+    unordered_map<string, string> m;
+    for (auto& v : knowledge) {
+      string& a = v[0];
+      string& b = v[1];
+      m[a] = b;
+    }
+    string ans;
+    string key;
+    int flag = 0;
+    for (auto c : s) {
+      if (c == '(') {
+        flag = 1;
+      } else if (c == ')') {
+        flag = 0;
+        if (m.count(key)) {
+          ans.append(m[key]);
+        } else {
+          ans.push_back('?');
+        }
+        key.clear();
+      } else if (flag == 1) {
+        key.push_back(c);
+      } else {
+        ans.push_back(c);
+      }
+    }
 
-    return 0;
+    return ans;
   }
 };
 

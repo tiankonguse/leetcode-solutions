@@ -5,7 +5,6 @@ using namespace std;
 
 typedef __int128_t int128;
 
-
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
@@ -91,8 +90,7 @@ ld PI = acos(-1.0);
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
-// LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
-
+// LONG_MIN, LONG_MAX
 
 /*
 unordered_map / unordered_set
@@ -135,11 +133,62 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  int n;
+  void Next(string& str) {
+    map<char, int> m;  // 字符出现的个数
+    char after = '0';
+    // printf("next str=%s n=%d\n", str.c_str(), n);
+    for (int i = n - 1; i >= 0; i--) {
+      char c = str[i];
+      m[c]++;
 
-    return 0;
+      if (c >= after) {
+        // printf("i=%d c=%c after=%c\n", i, c, after);
+        after = c;
+        continue;
+      }
+
+      // printf("i=%d c=%c\n", i, c);
+
+      auto it = m.upper_bound(c);
+      c = it->first;
+
+      str[i++] = c;
+      m[c]--;
+
+      for (auto [c, num] : m) {
+        while (num) {
+          str[i++] = c;
+          num--;
+        }
+      }
+      break;
+    }
+  }
+
+ public:
+  int getMinSwaps(string num, int k) {
+    n = num.length();
+    string str = num;
+    while (k--) {
+      Next(str);
+    //   printf("k=%d str = %s\n", k, str.c_str());
+    }
+
+    int ans = 0;
+    for (int i = 0; i < n; i++) {
+      if (str[i] == num[i]) continue;
+
+      int k = i;
+      while (str[i] != num[k]) k++;
+
+      while (k > i) {
+        swap(num[k - 1], num[k]);
+        ans++;
+        k--;
+      }
+    }
+    return ans;
   }
 };
 

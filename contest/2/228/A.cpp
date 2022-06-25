@@ -5,7 +5,6 @@ using namespace std;
 
 typedef __int128_t int128;
 
-
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
@@ -93,7 +92,6 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 // LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
 
-
 /*
 unordered_map / unordered_set
 
@@ -134,14 +132,24 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
 
-    return 0;
+class Solution {
+  int Slover(const string& s, int pre) {
+    int ans = 0;
+
+    for (auto c : s) {
+      int v = c - '0';
+      if (v == pre) ans++;
+      pre = 1 - pre;
+    }
+
+    return ans;
   }
+
+ public:
+  int minOperations(const string& s) { return min(Slover(s, 0), Slover(s, 1)); }
 };
+
 
 int main() {
   printf("hello ");

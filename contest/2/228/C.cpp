@@ -134,12 +134,25 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
+typedef long long ll;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 class Solution {
+  ll Cal(ll n) { return (1 + n) * n / 2 % mod; }
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
+  int countHomogenous(const string& s) {
+    ll ans = 0;
+    char pre = ' ';
+    ll num = 0;
+    for (auto c : s) {
+      if (c != pre) {
+        ans = (ans + Cal(num)) % mod;
+        num = 0;
+      }
+      num++;
+      pre = c;
+    }
+    ans = (ans + Cal(num)) % mod;
+    return ans;
   }
 };
 

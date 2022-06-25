@@ -5,7 +5,6 @@ using namespace std;
 
 typedef __int128_t int128;
 
-
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
@@ -91,8 +90,7 @@ ld PI = acos(-1.0);
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
-// LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
-
+// LONG_MIN, LONG_MAX
 
 /*
 unordered_map / unordered_set
@@ -134,12 +132,42 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
 
-    return 0;
+typedef long long ll;
+class Solution {
+  int n;
+  vector<set<ll>> dp;
+  vector<ll> flag;
+  string s;
+
+  ll Dfs(const int k) {
+    if (k == n) return 0;
+    if (flag[k] != -1) return flag[k];
+
+    flag[k] = 1;
+    dp[k].insert(atoll(s.data() + k));
+
+    ll pre = 0;
+    for (int i = k; i < n; i++) {
+      pre = pre * 10 + (s[i] - '0');
+      if (pre > LONG_MAX / 10) break;
+      Dfs(i + 1);
+      if (dp[i + 1].count(pre - 1)) {
+        flag[k]++;
+        dp[k].insert(pre);
+      }
+    }
+    return flag[k];
+  }
+
+ public:
+  bool splitString(string s_) {
+    s.swap(s_);
+
+    n = s.size();
+    dp.resize(n + 1);
+    flag.resize(n + 1, -1);
+    return Dfs(0) > 1;
   }
 };
 
