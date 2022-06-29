@@ -90,7 +90,7 @@ ld PI = acos(-1.0);
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
-// LONG_MIN, LONG_MAX
+// LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
 
 /*
 unordered_map / unordered_set
@@ -123,12 +123,51 @@ struct Node {
   // 小于是最大堆，大于是最小堆
   bool operator<(const Node& that) const { return this->t < that.t; }
 };
+
+srand((unsigned)time(NULL));
+rand();
+
+mt19937 gen{random_device{}()};
+uniform_real_distribution<double> dis(min, max);
+function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
+
 */
 class Solution {
-public:
-    void wiggleSort(vector<int>& nums) {
-        // 1 1 1 1 2 2 2 2 2 2 2 2 5 5 5 5 5
+ public:
+  std::vector<std::string> m_list;
+  std::map<std::string, std::string> m_hash;
+  // Encodes a URL to a shortened URL.ss
+  std::string encode(const std::string& longUrl) {
+    if (longUrl.size() % 2) {
+      return encodeInc(longUrl);
+    } else {
+      return encodeHash(longUrl);
     }
+  }
+
+  std::string encodeInc(const std::string& longUrl) {
+    char buf[128];
+    snprintf(buf, sizeof(buf), "%d", (int)m_list.size());
+    m_list.push_back(longUrl);
+    return buf;
+  }
+
+  std::string encodeHash(const std::string& longUrl) {
+    if (m_hash.find(longUrl) != m_hash.end()) {
+      return m_hash[longUrl];
+    } else {
+      char buf[128];
+      snprintf(buf, sizeof(buf), "%d", (int)m_list.size());
+      m_hash[longUrl] = buf;
+      m_list.push_back(longUrl);
+      return m_hash[longUrl];
+    }
+  }
+
+  // Decodes a shortened URL to its original URL.
+  std::string decode(const std::string& shortUrl) {
+    return m_list[atoi(shortUrl.c_str())];
+  }
 };
 
 int main() {
