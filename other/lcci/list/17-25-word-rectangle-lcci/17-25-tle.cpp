@@ -143,7 +143,6 @@ Node nodes[max5];
 class Trie {
   int index = 0;
 
- public:
   int Add(int v) {
     int ret = index;
     Node& node = nodes[ret];
@@ -154,6 +153,7 @@ class Trie {
     return ret;
   }
 
+ public:
   /** Initialize your data structure here. */
   Trie() { Init(); }
 
@@ -163,7 +163,8 @@ class Trie {
   }
 
   /** Inserts a word into the trie. */
-  void Insert(int root, const string& word) {
+  void Insert(const string& word) {
+    int root = 0;
     for (auto c : word) {
       int v = c - 'a';
       if (nodes[root].next[v] == -1) {
@@ -184,7 +185,6 @@ class Solution {
   vector<vector<pair<int, int>>> dp;  // <first-top, second-left>
   vector<string> ans;
   vector<string> words;
-
   int n, m;
   int ansLen = 0;
 
@@ -233,12 +233,12 @@ class Solution {
     if (n * m <= ansLen) return;
 
     for (int k = 0; k < n; k++) {
-      int left = trie.GetIndex(lenRoot[m], a[k]);
+      int left = trie.GetIndex(0, a[k]);
       if (left == -1) return;
       dp[k][0] = {left, left};
     }
     for (int k = 0; k < m; k++) {
-      int top = trie.GetIndex(lenRoot[n], b[k]);
+      int top = trie.GetIndex(0, b[k]);
       if (top == -1) return;
       dp[0][k] = {top, top};
     }
@@ -250,32 +250,23 @@ class Solution {
     Dfs(1, 1);
   }
 
-  map<int, int> lenRoot;
-
  public:
   vector<string> maxRectangle(vector<string>& words) {
-    sort(words.begin(), words.end(), [](auto&a, auto&b){
-      return a.length() > b.length();
-    });
+    map<char, vector<int>> m;
     dp.resize(101, vector<pair<int, int>>(101, {-1, -1}));
     trie.Init();
-
-    for (auto& s : words) {
-      lenRoot[s.length()];
-    }
-    for (auto& [len, index] : lenRoot) {
-      index = trie.Add(0);
+    for (int i = 0; i < words.size(); i++) {
+      auto& s = words[i];
+      trie.Insert(s);
+      m[s.front()].push_back(i);
     }
 
-    for (auto& s : words) {
-      trie.Insert(lenRoot[s.length()], s);
-    }
-
-    int k = words.size();
-    for (int i = 0; i < k; i++) {
-      for (int j = i; j < k; j++) {
-        if (words[i].front() != words[j].front()) continue;
-        Check(words[i], words[j]);
+    for (auto& [c, docs] : m) {
+      int n = docs.size();
+      for (int i = 0; i < n; i++) {
+        for (int j = i; j < n; j++) {
+          Check(words[docs[i]], words[docs[j]]);
+        }
       }
     }
 
