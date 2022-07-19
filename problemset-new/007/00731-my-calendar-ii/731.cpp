@@ -140,8 +140,8 @@ class MyCalendarTwo {
 
   int QueryMax(int start, int end) {
     while (start <= end) {
-      auto it = m.upper_bound(start);
-      if (it == m.end()) {
+      auto it = m.lower_bound(start);
+      if (it == m.end()) { 
         return 0;  // 插入最大的线段，没有交集
       }
       int e = it->first;
@@ -164,6 +164,7 @@ class MyCalendarTwo {
   }
 
   void Fix(int end) {
+    // 向前合并
     while (1) {
       auto it = m.find(end);
       int preEnd = it->second.first - 1;
@@ -178,11 +179,12 @@ class MyCalendarTwo {
         break;
       }
     }
+
   }
 
   void Merge(int start, int end) {
     while (start <= end) {
-      auto it = m.upper_bound(start);
+      auto it = m.lower_bound(start);
       if (it == m.end()) {
         m[end] = {start, 1};
         Fix(end);
@@ -198,27 +200,28 @@ class MyCalendarTwo {
         return;  // 插入中间线段，没有交集
       }
 
-      if (start < s) {
+      if (start < s) { // [start, s-1] [s, e]
         m[s - 1] = {start, 1};
         start = s;  // 左端点对齐
         Fix(s - 1);
         continue;
       }
 
-      if (start > s) {  // 线段需要拆分
+      if (start > s) {  // [s, start, e]
         it->second.first = start;
         m[start - 1] = {s, 1};
         Fix(start - 1);
         continue;
       }
 
-      if (end < e) {
+      if (end < e) { // [start=s, end, e]
         it->second.first = end + 1;
         m[end] = {start, 2};
         Fix(end);
         return;
       }
 
+      // end >= e
       it->second.second++;
       start = e + 1;
       Fix(e);
