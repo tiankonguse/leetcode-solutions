@@ -1,3 +1,4 @@
+
 // 1.bulid(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
@@ -9,21 +10,22 @@ int maxNM;
 typedef long long ll;
 struct SegTree {
   vector<ll> sign;
-  vector<ll> minVal;
-  vector<ll> maxVal;
+  vector<pair<ll, int>> minVal;
+  vector<pair<ll, int>> maxVal;
   vector<ll> sumVal;
   vector<ll> nums;
   vector<ll> str;
 
   void Init(int n) {
+    n++;
     maxNM = n;
     sign.resize(maxNM << 2, 0);
-    minVal.resize(maxNM << 2, 0);
-    maxVal.resize(maxNM << 2, 0);
+    minVal.resize(maxNM << 2);
+    maxVal.resize(maxNM << 2);
     sumVal.resize(maxNM << 2, 0);
     nums.resize(maxNM << 2, 0);
     str.clear();
-    str.resize(maxNM+1, 0);
+    str.resize(maxNM + 1, 0);
   }
 
   void PushUp(int rt) {
@@ -36,11 +38,11 @@ struct SegTree {
       sign[rt << 1] += sign[rt];
       sign[rt << 1 | 1] += sign[rt];
 
-      minVal[rt << 1] += sign[rt];
-      minVal[rt << 1 | 1] += sign[rt];
+      minVal[rt << 1].first += sign[rt];
+      minVal[rt << 1 | 1].first += sign[rt];
 
-      maxVal[rt << 1] += sign[rt];
-      maxVal[rt << 1 | 1] += sign[rt];
+      maxVal[rt << 1].first += sign[rt];
+      maxVal[rt << 1 | 1].first += sign[rt];
 
       sumVal[rt << 1] += sign[rt] * nums[rt << 1];
       sumVal[rt << 1 | 1] += sign[rt] * nums[rt << 1 | 1];
@@ -52,7 +54,8 @@ struct SegTree {
     sign[rt] = 0;
     nums[rt] = r - l + 1;
     if (l == r) {
-      sumVal[rt] = minVal[rt] = maxVal[rt] = str[l];
+      sumVal[rt] = str[l];
+      minVal[rt] = maxVal[rt] = {str[l], l};
       return;
     }
     int m = (l + r) >> 1;
@@ -63,8 +66,8 @@ struct SegTree {
   void Update(int L, int R, int add, int l = 1, int r = maxNM, int rt = 1) {
     if (L <= l && r <= R) {
       sign[rt] += add;
-      minVal[rt] += add;
-      maxVal[rt] += add;
+      minVal[rt].first += add;
+      maxVal[rt].first += add;
       sumVal[rt] += add * nums[rt];
       return;
     }
@@ -74,13 +77,13 @@ struct SegTree {
     if (R > m) Update(L, R, add, rson);
     PushUp(rt);
   }
-  ll QueryMax(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
+  pair<ll, int> QueryMax(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
     if (L <= l && r <= R) {
       return maxVal[rt];
     }
     PushDown(rt);
     int m = (l + r) >> 1;
-    ll ret = -1;
+    pair<ll, int> ret = {-1, 0};
     if (L <= m) {
       ret = max(ret, QueryMax(L, R, lson));
     }
@@ -89,13 +92,13 @@ struct SegTree {
     }
     return ret;
   }
-  ll QueryMin(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
+  pair<ll, int> QueryMin(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
     if (L <= l && r <= R) {
       return minVal[rt];
     }
     PushDown(rt);
     int m = (l + r) >> 1;
-    ll ret = __LONG_LONG_MAX__;
+    pair<ll, int> ret = {__LONG_LONG_MAX__, 0};
     if (L <= m) {
       ret = min(ret, QueryMin(L, R, lson));
     }
