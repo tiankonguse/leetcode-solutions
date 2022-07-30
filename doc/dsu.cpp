@@ -38,6 +38,15 @@ class Dsu {
       }
     }
   }
+  void AddScore(int x) {
+    x = Find(x);
+    score[x]++;
+  }
+
+  int GetScore(int x) {
+    x = Find(x);
+    return score[x];
+  }
 };
 
 int main() {
