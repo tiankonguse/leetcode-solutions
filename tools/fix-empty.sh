@@ -34,8 +34,8 @@ function Fix(){
 }
 
 Fix "../problemset-new/"
-Fix "../other/lcof"
-Fix "../other/lcci"
+# Fix "../other/lcof"
+# Fix "../other/lcci"
 
 
 
