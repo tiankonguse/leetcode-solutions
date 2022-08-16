@@ -102,7 +102,13 @@
         "concepts": "cpp",
         "numbers": "cpp",
         "__cxx_version": "cpp",
-        "version": "cpp"
+        "version": "cpp",
+        "barrier": "cpp",
+        "coroutine": "cpp",
+        "source_location": "cpp",
+        "latch": "cpp",
+        "semaphore": "cpp",
+        "syncstream": "cpp"
     },
     "code-runner.runInTerminal": true
 }
