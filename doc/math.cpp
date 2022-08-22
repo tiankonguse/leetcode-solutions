@@ -24,7 +24,7 @@ double Fgcd(double a, double b) {
 }
 
 // 扩展 GCD
-int Exgcd(int a, int b, int &x, int &y) {
+int Exgcd(int a, int b, int& x, int& y) {
   if (b == 0) {
     x = 1, y = 0;
     return a;
@@ -37,10 +37,10 @@ int Exgcd(int a, int b, int &x, int &y) {
 }
 
 // 逆元
-ll ModInverse(ll b, ll c){
-    ll x, y;
-    Exgcd(b, c, x, y);
-    return (x%c + c) % c;
+ll ModInverse(ll b, ll c) {
+  ll x, y;
+  Exgcd(b, c, x, y);
+  return (x % c + c) % c;
 }
 
 // 求(a/b)% c(乘法逆元)
@@ -66,7 +66,6 @@ ll PowMod(ll a, ll b, ll c) {
   }
   return res;
 }
-
 
 
 int main() { return 0; }
