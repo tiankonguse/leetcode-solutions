@@ -133,45 +133,192 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
+typedef long long ll;
+struct Node {
+  ll val;
+  vector<string> vec;  // *
+  bool operator<(const Node& o) {
+    if (vec.size() == o.vec.size()) {
+      return vec < o.vec;
+    } else {
+      return vec.size() > o.vec.size();
+    }
+  }
+  bool operator==(const Node& o) { return vec == o.vec; }
+  string ToString() {
+    string ret;
+    ret.append(to_string(val));
+    for (auto& s : vec) {
+      ret.push_back('*');
+      ret.append(s);
+    }
+    return ret;
+  }
+};
+struct Exp {
+  vector<Node> vec;  // +
+};
 class Solution {
-  struct Unit {
-    int type;  // 0 val, 1 name
-    string val;
-    string name;
-  };
-  struct Node {
-    vector<Unit> vec;  // *
-  };
-  struct Exp {
-    vector<Exp> vec;  // +
-  };
-
   map<string, int> names;
   string expression;
-    int n;
-  void Parse(int pos){
-    Exp exp;
+  int n;
+  int pos = 0;
 
-    char c = expression[pos];
-    if(c == '('){
-        
+  Exp Smp(Exp& exp) {
+    sort(exp.vec.begin(), exp.vec.end());
+    Exp ret;
+
+    for (auto& node : exp.vec) {
+      if (node.val == 0) continue;
+      if (ret.vec.empty()) {
+        ret.vec.push_back(node);
+      } else if (ret.vec.back() == node) {
+        ret.vec.back().val += node.val;
+        if (ret.vec.back().val == 0) {
+          ret.vec.pop_back();
+        }
+      } else {
+        ret.vec.push_back(node);
+      }
     }
 
+    return ret;
+  }
+
+  Exp Add(Exp& a, Exp& b) {
+    Exp ret = a;
+    for (auto& node : b.vec) {
+      ret.vec.push_back(node);
+    }
+    return Smp(ret);
+  }
+  Exp Sub(Exp& a, Exp& b) {
+    Exp ret = a;
+    for (auto& node : b.vec) {
+      ret.vec.push_back(node);
+      ret.vec.back().val *= -1;
+    }
+    return Smp(ret);
+  }
+  Exp Mul(Exp& a, Exp& b) {
+    Exp ret;
+    for (auto& nodea : a.vec) {
+      for (auto& nodeb : b.vec) {
+        Node tmp;
+        tmp.val = nodea.val * nodeb.val;
+        for (auto& s : nodea.vec) tmp.vec.push_back(s);
+        for (auto& s : nodeb.vec) tmp.vec.push_back(s);
+        sort(tmp.vec.begin(), tmp.vec.end());
+        ret.vec.push_back(tmp);
+      }
+    }
+    return Smp(ret);
+  }
+
+  void BuildNum(int val, Exp& exp) {
+    Node node;
+    node.val = val;
+    exp.vec.push_back(node);
+  }
+  void Buildname(const string& name, Exp& exp) {
+    Node node;
+    node.val = 1;
+    node.vec.push_back(name);
+
+    exp.vec.push_back(node);
+  }
+
+  void readNum(Exp& exp) {
+    int val = 0;
+    while (pos < n && expression[pos] >= '0' && expression[pos] <= '9') {
+      val = val * 10 + (expression[pos] - '0');
+      pos++;
+    }
+    BuildNum(val, exp);
+  }
+
+  void readName(Exp& exp) {
+    string name;
+    while (pos < n && expression[pos] >= 'a' && expression[pos] <= 'z') {
+      name.push_back(expression[pos]);
+      pos++;
+    }
+    if (names.count(name)) {
+      BuildNum(names[name], exp);
+    } else {
+      Buildname(name, exp);
+    }
+  }
+
+  enum { EXP = 0, NODE = 1, UNIT = 2 };
+
+  // 0:Exp, 1:Node(unit * unit)  2: unit
+  void readExpression(Exp& exp, int lev = EXP) {
+    int tmpPos = pos;
+
+    while (pos < n) {
+      char c = expression[pos];
+      if (c == ' ') {
+        pos++;  // skip ' '
+        continue;
+      } else if (c == '+') {
+        if (lev == UNIT || lev == NODE) break;
+        pos++;  // skip '+'
+        Exp tmp;
+        readExpression(tmp, NODE);
+        exp = Add(exp, tmp);
+      } else if (c == '-') {
+        if (lev == UNIT || lev == NODE) break;
+        pos++;  // skip '-'
+        Exp tmp;
+        readExpression(tmp, NODE);
+        exp = Sub(exp, tmp);
+      } else if (c == '*') {
+        if (lev == UNIT) break;
+        pos++;  // skip '*'
+        Exp tmp;
+        readExpression(tmp, UNIT);
+        exp = Mul(exp, tmp);
+      } else if (c == '(') {
+        pos++;  // skip '('
+        readExpression(exp);
+        pos++;  // skip ')'
+      } else if (c == ')') {
+        break;  // 括号
+      } else if (c >= '0' && c <= '9') {
+        readNum(exp);
+      } else {
+        readName(exp);
+      }
+    }
+
+    // printf("pos=%d ", tmpPos);
+    // for (auto& node : exp.vec) {
+    //   printf("\t %s \n", node.ToString().c_str());
+    // }
   }
 
  public:
   vector<string> basicCalculatorIV(string expression_, vector<string>& evalvars,
                                    vector<int>& evalints) {
-                                    expression.swap(expression_);
-                                    n = expression.size();
+    expression.swap(expression_);
+    n = expression.size();
+    pos = 0;
     for (int i = 0; i < evalvars.size(); i++) {
       names[evalvars[i]] = evalints[i];
     }
 
-    Parse(0);
+    Exp exp;
+    readExpression(exp);
 
-
-
+    vector<string> ans;
+    for (auto& node : exp.vec) {
+      ans.push_back(node.ToString());
+    }
+    if (ans.size() == 1 && ans.back() == "0") {
+      ans.clear();
+    }
+    return ans;
   }
 };
 
