@@ -135,34 +135,18 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 class Solution {
  public:
-  int repeatedStringMatch(string a, string b) {
-    int ans = 0;
-    string tpl;
-    while (tpl.length() < b.length()) {
-      tpl.append(a);
-      ans++;
+  vector<int> finalPrices(vector<int>& prices) {
+    int n = prices.size();
+    for (int i = 0; i < n; i++) {
+      int v = prices[i];
+      for (int j = i + 1; j < n; j++) {
+        if (prices[j] <= prices[i]) {
+          prices[i] -= prices[j];
+          break;
+        }
+      }
     }
-
-    // 1 个：子串
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-    }
-
-    // 后缀 + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-    }
-
-    // 后缀 + k个a + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-1464    }
-
-    return -1;
+    return prices;
   }
 };
 

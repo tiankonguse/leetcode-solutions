@@ -134,35 +134,67 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 */
 
 class Solution {
+  int n, K;
+  vector<vector<pair<int, int>>> dp;
+  vector<int> SUM;
+  pair<int, int> Dfs(int n, int k) {
+    auto& [sum, pos] = dp[k][n];
+    if (pos != -1) return {sum, pos};
+
+    if (n < k * K) {
+      sum = -2;
+      pos = -1;
+      return {sum, pos};  // 没有答案
+    }
+
+    if (k == 0) {  // 出口
+      sum = 0;
+      pos = 0;
+      return {sum, pos};
+    }
+
+    auto [sum1, pos1] = Dfs(n - 1, k);
+    auto [sum2, pos2] = Dfs(n - K, k - 1);
+    sum2 += SUM[n] - SUM[n - K];
+    pos2 = n;
+
+    if (sum1 > sum2) {
+      sum = sum1;
+      pos = pos1;
+    } else if (sum1 < sum2) {
+      sum = sum2;
+      pos = n;
+    } else {
+      sum = sum1;
+      pos = min(pos1, pos2);
+    }
+    //  printf("n=%d k=%d sum=%d pos=%d\n", n, k, sum, pos);
+    return {sum, pos};
+  };
+
  public:
-  int repeatedStringMatch(string a, string b) {
-    int ans = 0;
-    string tpl;
-    while (tpl.length() < b.length()) {
-      tpl.append(a);
-      ans++;
+  vector<int> maxSumOfThreeSubarrays(vector<int>& nums, int k) {
+    n = nums.size();
+    K = k;
+    dp.resize(4, vector<pair<int, int>>(n + 1, {-1, -1}));
+    SUM.resize(n + 1, 0);
+    for (int i = 1; i <= n; i++) {
+      SUM[i] = SUM[i - 1] + nums[i - 1];
     }
 
-    // 1 个：子串
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
+    int num = 3;
+    Dfs(n, num);
+
+    vector<int> ans;
+    int pos = Dfs(n, num).second;
+    while (pos > 0) {
+      //   printf("pos=%d\n", pos);
+      ans.push_back(pos - K);
+      num--;
+      pos = Dfs(pos - K, num).second;
     }
-
-    // 后缀 + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-    }
-
-    // 后缀 + k个a + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-1464    }
-
-    return -1;
+    std::reverse(ans.begin(), ans.end());
+    return ans;
   }
 };
 

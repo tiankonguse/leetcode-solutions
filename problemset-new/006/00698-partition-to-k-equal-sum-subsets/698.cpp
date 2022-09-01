@@ -134,35 +134,33 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 */
 
 class Solution {
+  int n;
+  int sum, sum2, sum4;
+  vector<int> nums;
+
+  void Dfs(int pos, int mask, int preSum) {
+      if(preSum == sum4) {
+          
+      }
+      if(pos == n) 
+    Dfs(pos + 1, mask | (1 << pos), preSum + nums[pos]);
+    Dfs(pos + 1, mask, preSum);
+  }
+
  public:
-  int repeatedStringMatch(string a, string b) {
-    int ans = 0;
-    string tpl;
-    while (tpl.length() < b.length()) {
-      tpl.append(a);
-      ans++;
+  bool canPartitionKSubsets(vector<int>& nums_, int k) {
+    nums.swap(nums_);
+    n = nums.size();
+    sum = 0;
+    for (auto v : nums) {
+      sum += v;
     }
+    if (sum % 4 != 0) return false;
+    sum2 = sum / 2;
+    sum4 = sum / 4;
 
-    // 1 个：子串
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-    }
-
-    // 后缀 + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-    }
-
-    // 后缀 + k个a + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-1464    }
-
-    return -1;
+    int N = 1 << n;
+    Dfs(0, 0, 0);
   }
 };
 

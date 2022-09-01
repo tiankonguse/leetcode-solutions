@@ -133,36 +133,47 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
+int dir8[8][2] = {{-2, -1}, {-1, -2}, {-1, 2}, {-2, 1},
+                  {1, -2},  {2, -1},  {1, 2},  {2, 1}};
 class Solution {
+  pair<double, int> dp[26][26][101];
+  int N;
+  void Init(int n, int K) {
+    N = n;
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        for (int k = 0; k < K; k++) {
+          dp[i][j][k] = {0.0, 0};
+        }
+      }
+    }
+  }
+
+  double Dfs(int x, int y, int k) {
+    if (x < 0 || x >= N || y < 0 || Y >= N) {
+      return 0.0;
+    }
+
+    auto& [ret, flag] = dp[x][y][k];
+    if (flag) {
+      return ret;
+    }
+    flag = 1;
+
+    if (k == 0) {
+      return ret = 1.0;
+    }
+
+    for (int i = 0; i < 8; i++) {
+      ret += Dfs(x + dir8[i][0], y + dir8[i][1], k - 1);
+    }
+    return ret /= 8;
+  }
+
  public:
-  int repeatedStringMatch(string a, string b) {
-    int ans = 0;
-    string tpl;
-    while (tpl.length() < b.length()) {
-      tpl.append(a);
-      ans++;
-    }
-
-    // 1 个：子串
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-    }
-
-    // 后缀 + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-    }
-
-    // 后缀 + k个a + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-1464    }
-
-    return -1;
+  double knightProbability(int n, int k, int row, int column) {
+    Init(n, k);
+    return Dfs(row, column, k);
   }
 };
 

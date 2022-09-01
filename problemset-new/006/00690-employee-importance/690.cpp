@@ -133,36 +133,35 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-class Solution {
+// Definition for Employee.
+class Employee {
  public:
-  int repeatedStringMatch(string a, string b) {
-    int ans = 0;
-    string tpl;
-    while (tpl.length() < b.length()) {
-      tpl.append(a);
-      ans++;
+  int id;
+  int importance;
+  vector<int> subordinates;
+};
+
+class Solution {
+  int ans;
+  map<int, Employee*> g;
+
+  void Dfs(int id) {
+    auto p = g[id];
+    if (p->id == 0) return;
+    ans += p->importance;
+    for (auto id : p->subordinates) {
+      Dfs(id);
     }
+  }
 
-    // 1 个：子串
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
+ public:
+  int getImportance(vector<Employee*> employees, int id) {
+    for (auto p : employees) {
+      g[p->id] = p;
     }
-
-    // 后缀 + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-    }
-
-    // 后缀 + k个a + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-1464    }
-
-    return -1;
+    ans = 0;
+    Dfs(id);
+    return ans;
   }
 };
 

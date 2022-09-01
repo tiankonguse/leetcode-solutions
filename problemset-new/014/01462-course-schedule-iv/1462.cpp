@@ -132,37 +132,50 @@ uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
-
 class Solution {
+  vector<unordered_set<int>> pre;
+  vector<vector<int>> g;
+  vector<int> flag;
+
+  void Dfs(int v) {
+    if (flag[v]) return;
+    flag[v] = 1;
+    for (auto u : g[v]) {
+      Dfs(u);
+      pre[v].insert(u);
+      for (auto p : pre[u]) {
+        pre[v].insert(p);
+      }
+    }
+    // printf("v=%d pre=", v);
+    // for(auto p: pre[v]){
+    //     printf("%d ", p);
+    // }
+    // printf("\n");
+  }
+
  public:
-  int repeatedStringMatch(string a, string b) {
-    int ans = 0;
-    string tpl;
-    while (tpl.length() < b.length()) {
-      tpl.append(a);
-      ans++;
+  vector<bool> checkIfPrerequisite(int n, vector<vector<int>>& prerequisites,
+                                   vector<vector<int>>& queries) {
+    pre.resize(n);
+    g.resize(n);
+    flag.resize(n, 0);
+
+    for (auto& v : prerequisites) {
+      int a = v[0];
+      int b = v[1];
+      g[b].push_back(a);
     }
 
-    // 1 个：子串
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
+    vector<bool> ans;
+    ans.reserve(queries.size());
+    for (auto& q : queries) {
+      int u = q[0];
+      int v = q[1];
+      Dfs(v);
+      ans.push_back(pre[v].count(u));
     }
-
-    // 后缀 + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-    }
-
-    // 后缀 + k个a + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-1464    }
-
-    return -1;
+    return ans;
   }
 };
 

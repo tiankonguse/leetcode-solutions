@@ -133,36 +133,20 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
+template <class T>
+using min_queue = priority_queue<T, vector<T>, greater<T>>;
 class Solution {
  public:
-  int repeatedStringMatch(string a, string b) {
-    int ans = 0;
-    string tpl;
-    while (tpl.length() < b.length()) {
-      tpl.append(a);
-      ans++;
+  int maxProduct(vector<int>& nums) {
+    min_queue<int> heap;
+    for (auto v : nums) {
+      heap.push(v);
+      if (heap.size() > 2) heap.pop();
     }
-
-    // 1 个：子串
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-    }
-
-    // 后缀 + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-    }
-
-    // 后缀 + k个a + 前缀
-    tpl.append(a);
-    ans++;
-    if (tpl.find(b) != std::string::npos) {
-      return ans;
-1464    }
-
-    return -1;
+    int a = heap.top();
+    heap.pop();
+    int b = heap.top();
+    return (a - 1) * (b - 1);
   }
 };
 
