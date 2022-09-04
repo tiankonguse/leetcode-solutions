@@ -136,12 +136,23 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 */
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-    return 0;
-  }
+public:
+    string thousandSeparator(int n) {
+        if(n ==0)return "0";
+        int num = 0;
+        string ans;
+        while(n){
+            if(num == 3){
+                ans.push_back('.');
+                num = 0;
+            }
+            ans.push_back('0' + (n%10));
+            n /= 10;
+            num++;
+        }
+        std::reverse(ans.begin(), ans.end());
+        return ans;
+    }
 };
 
 int main() {

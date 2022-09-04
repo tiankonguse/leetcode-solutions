@@ -136,14 +136,29 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 */
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+public:
+    int longestNiceSubarray(vector<int>& nums) {
+        int ans = 1;
 
-    return 0;
-  }
+        int n = nums.size();
+
+        int preVal = nums[0];
+        int prePos = 0;
+        for(int i=1;i<n;i++){
+          int v = nums[i];
+          while(preVal & v){
+            preVal = preVal ^ nums[prePos];
+            prePos++;
+          }
+
+          preVal = preVal | v;
+          ans = max(ans, i - prePos + 1);
+        }
+        return ans;
+
+
+    }
 };
-
 int main() {
   printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};

@@ -5,7 +5,6 @@ using namespace std;
 
 typedef __int128_t int128;
 
-
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
@@ -93,7 +92,6 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 // LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
 
-
 /*
 unordered_map / unordered_set
 
@@ -135,12 +133,73 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
+typedef long long ll;
+template <class T>
+using min_queue = priority_queue<T, vector<T>, greater<T>>;
+template <class T>
+using max_queue = priority_queue<T>;
+
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  int mostBooked(int n, vector<vector<int>>& meetings) {
+    vector<int> rooms(n, 0);
 
-    return 0;
+    min_queue<int> freeRooms;
+    for (int i = 0; i < n; i++) {
+      freeRooms.push(i);
+    }
+
+    min_queue<pair<ll, int>> useRooms;  // <t, id>
+    min_queue<pair<ll, ll>> wait;      // <start, end>
+    useRooms.push({LONG_MAX, 0});
+    wait.push({LONG_MAX, 0});
+
+    for (auto& v : meetings) {
+      ll start = v[0];
+      ll end = v[1];
+      wait.push({start, end});
+    }
+
+    while (wait.top().first < LONG_MAX) {
+      ll t = min(useRooms.top().first, wait.top().first);
+
+      int flag = 0;
+      while (useRooms.top().first <= t) {
+        auto [T, id] = useRooms.top();
+        useRooms.pop();
+        freeRooms.push(id);
+        flag = 1;
+      }
+
+      while ((!freeRooms.empty()) && wait.top().first <= t) {
+        auto [start, end] = wait.top();
+        wait.pop();
+        int id = freeRooms.top();
+        freeRooms.pop();
+        rooms[id]++;
+        useRooms.push({end + (t - start), id});
+        flag = 1;
+      }
+
+      if (flag == 0 && freeRooms.empty() && wait.top().first <= t) {
+        auto [T, id] = useRooms.top();
+        useRooms.pop();
+
+        auto [start, end] = wait.top();
+        wait.pop();
+
+        rooms[id]++;
+        useRooms.push({end + (T - start), id});
+      }
+    }
+
+    int ans = 0;
+    for (int i = 0; i < n; i++) {
+      if (rooms[i] > rooms[ans]) {
+        ans = i;
+      }
+    }
+    return ans;
   }
 };
 

@@ -5,7 +5,6 @@ using namespace std;
 
 typedef __int128_t int128;
 
-
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
@@ -93,7 +92,6 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 // LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
 
-
 /*
 unordered_map / unordered_set
 
@@ -135,17 +133,62 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
 
-    return 0;
+vector<int> dp;
+int N;
+void Init() {
+  if (dp.size() > 0) return;
+  N = 1000000;
+  dp.resize(N);
+  dp[1] = 1;
+  for (int i = 2; i < N; i++) {
+    dp[i] = dp[i - 1] + 1;
+    if (i % 2 == 0) {
+      dp[i] = min(dp[i], dp[i / 2] + 1);
+    }
+    if (i % 3 == 0) {
+      dp[i] = min(dp[i], dp[i / 3] + 1);
+    }
   }
+
+  for(int i=4;i<N;i++){
+    if(i%6 == 0 && dp[i/2] < dp[i/3]){
+      // printf("%d=>%d\n", i, dp[i]);
+    }
+  }
+
+}
+class Solution {
+  int Dfs(int n){
+    if(n < N) return dp[n];
+    
+    if(n % 6 == 0){
+      return min(Dfs(n/3), Dfs(n/2)) + 1;
+    }else if(n % 2 == 0){
+      int ret = Dfs(n/2) + 1;
+      if((n-1) % 3 == 0){
+        ret = min(ret, Dfs((n-1)/ 3) + 2);
+      }else{
+        ret = min(ret, Dfs((n-2)/ 3) + 3);
+      }
+      return ret;
+    }else if(n % 3 == 0){
+      return min(Dfs(n/3) + 1, Dfs((n-1)/2) + 2);
+    }else{
+      return Dfs(n-1) + 1;
+    }
+  }
+ public:
+  int minDays(int n) { 
+    Init(); 
+    return Dfs(n);
+    }
 };
 
 int main() {
   printf("hello ");
+  Solution s;
+  s.minDays(1);
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
   //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
   //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);

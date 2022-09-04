@@ -135,15 +135,53 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  vector<vector<int>> dp;
+  int target;
 
-    return 0;
+  int Dfs(int pos, int k){
+    int& ret = dp[pos][k];
+    if(ret != -1){
+      return ret;
+    }
+    ret = 0;
+    if(k == 0){
+      if(pos == target){
+        ret = 1;
+      }else{
+        ret = 0;
+      }
+      return ret;
+    }
+
+    ret = ( Dfs(pos-1, k-1) +  Dfs(pos+1, k-1)) % mod;
+
+
+    return ret;
   }
-};
 
+public:
+    int numberOfWays(int startPos, int endPos, int k) {
+      if(startPos > endPos){
+        swap(startPos, endPos);
+      }
+        startPos += k;
+        endPos += k;
+
+
+        if(startPos + k < endPos){
+          return 0; 
+        }
+
+        target = endPos;
+        int N = startPos + k + 1;
+
+        dp.resize(N, vector<int>(k+1, -1));
+      return Dfs(startPos, k);
+
+    }
+};
 int main() {
   printf("hello ");
   //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};

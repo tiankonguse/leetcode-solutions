@@ -5,7 +5,6 @@ using namespace std;
 
 typedef __int128_t int128;
 
-
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
@@ -93,7 +92,6 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 // LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
 
-
 /*
 unordered_map / unordered_set
 
@@ -136,11 +134,42 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 */
 
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  int n;
+  vector<vector<int>> g;
+  vector<int> dp;
 
-    return 0;
+  int Dfs(int a) {
+    int& ret = dp[a];
+    if (ret != -1) return ret;
+    ret = 1;
+
+    for (auto b : g[a]) {
+      ret = max(ret, Dfs(b) + 1);
+    }
+
+    return ret;
+  }
+
+ public:
+  int findLongestChain(vector<vector<int>>& pairs) {
+    sort(pairs.begin(), pairs.end());
+    int n = pairs.size();
+    g.resize(n);
+
+    for (int i = 0; i < n; i++) {
+      for (int j = i + 1; j < n; j++) {
+        if (pairs[i][1] < pairs[j][0]) {
+          g[i].push_back(j);
+        }
+      }
+    }
+
+    dp.resize(n, -1);
+    int ans = 0;
+    for (int i = 0; i < n; i++) {
+      ans = max(ans, Dfs(i));
+    }
+    return ans;
   }
 };
 

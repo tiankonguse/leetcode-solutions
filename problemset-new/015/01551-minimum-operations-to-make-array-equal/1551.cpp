@@ -5,7 +5,6 @@ using namespace std;
 
 typedef __int128_t int128;
 
-
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
@@ -93,7 +92,6 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 // LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
 
-
 /*
 unordered_map / unordered_set
 
@@ -135,12 +133,25 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
+typedef long long ll;
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
+  int minOperations(int n) {
+    if (n == 1) return 0;
 
-    return 0;
+    if (n % 2 == 1) {
+      ll target = n;
+      ll a = 1;
+      ll b = target;
+      ll num = n / 2 + 1;
+      return target * num - (a + b) * num / 2;
+    } else {
+      ll target = n;
+      ll a = 1;
+      ll b = target - 1;
+      ll num = n / 2;
+      return target * num - (a + b) * num / 2;
+    }
   }
 };
 
