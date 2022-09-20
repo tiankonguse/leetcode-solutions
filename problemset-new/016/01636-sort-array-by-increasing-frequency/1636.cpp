@@ -134,57 +134,24 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 */
 
 class Solution {
-  int n;
-  int sum, sumk;
-  vector<int> nums;
-  vector<int> h;
-
-  void Dfs(int pos, int mask, int preSum) {
-    if (preSum == sumk) {
-      h.push_back(mask);
-      return;
-    }
-    if (preSum > sumk || pos == n) return;
-    Dfs(pos + 1, mask | (1 << pos), preSum + nums[pos]);
-    Dfs(pos + 1, mask, preSum);
-  }
-
  public:
-  bool canPartitionKSubsets(vector<int>& nums_, int k) {
-    if (k == 1) return true;
-
-    nums.swap(nums_);
-    n = nums.size();
-    sum = 0;
+  vector<int> frequencySort(vector<int>& nums) {
+    map<int, int> m;
     for (auto v : nums) {
-      sum += v;
+      m[v]++;
     }
-    if (sum % k != 0) return false;
-    sumk = sum / k;
-
-    int N = 1 << n;
-    Dfs(0, 0, 0);
-
-    vector<int> pre, tmp;
-    vector<int> flag;
-    pre.push_back(0);
-    for (int i = 0; i < k; i++) {
-      flag.clear();
-      flag.resize(N, 0);
-
-      tmp.clear();
-      for (auto p : pre) {
-        for (auto v : h) {
-          if (p & v) continue;
-          int mask = p | v;
-          if (flag[mask]) continue;
-          flag[mask] = 1;
-          tmp.push_back(mask);
-        }
+    vector<pair<int, int>> numExs;
+    for (auto [k, c] : m) {
+      numExs.push_back({c, -k});
+    }
+    sort(numExs.begin(), numExs.end());
+    nums.clear();
+    for (auto [c, k] : numExs) {
+      while (c--) {
+        nums.push_back(-k);
       }
-      tmp.swap(pre);
     }
-    return pre.size() == 1;
+    return nums;
   }
 };
 
