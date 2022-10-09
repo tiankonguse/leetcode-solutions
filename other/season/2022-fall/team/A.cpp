@@ -1,6 +1,20 @@
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+
+#include <algorithm>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <functional>
 
 #include "base.h"
+// #include <iostream>
+#include <map>
+#include <queue>
+#include <set>
+#include <stack>
+#include <string>
+#include <vector>
 using namespace std;
 
 typedef __int128_t int128;
@@ -133,86 +147,32 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
 class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
-
-  vector<int> dp;
-  vector<int> tmp;
-
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
-
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
-    }
-    return true;
-  }
-
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
-
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
+  int minNumBooths(vector<string>& demand) {
+    vector<int> allCount(26, 0);
+    for (auto& s : demand) {
+      vector<int> ontCount(26, 0);
+      for (auto c : s) {
+        int v = c - 'a';
+        ontCount[v]++;
+        allCount[v] = max(allCount[v], ontCount[v]);
       }
     }
-    return l;
+
+    int ans = 0;
+    for (auto v : allCount) {
+      ans += v;
+    }
+    return ans;
   }
 };
 
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
-
 int main() {
-  printf("hello ");
-  //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
-  //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
-  //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
+  // printf("hello ");
+  // int ans;
+  // vector<int> jump = {1, 2, 3};
+  // TEST_SMP1(Solution, minJump, ans, jump);
 
   return 0;
 }

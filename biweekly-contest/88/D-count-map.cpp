@@ -133,80 +133,140 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
-class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
+typedef long long ll;
+const int N = 10e5;
+const int M = 20 * N;
 
-  vector<int> dp;
-  vector<int> tmp;
+// 权值线段树， 只有值当做下标
 
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
+struct Node {
+  int L, R;
+  int V;              // 当前子树上节点个数
+  int F;              // 标记是否需要pushdown
+  pair<int, int> LR;  // 左右区间
+  pair<int, int> KV;   // 储存的值
+} nodes[M];
+
+struct ValSegTree {
+  int maxL, maxR;  // [maxL, maxR] key 范围
+  int index;       // 0 代表空树
+
+  void Init(int l, int r) {
+    index = 0;
+    maxL = l;
+    maxR = r;
   }
 
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
+  // 插入一个值，生成一个新的线段树
+  int Insert(int k, int v = 1) { return Insert(maxL, maxR, k, v); }
 
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
+  int Add(int k, int x) { return Merge(Insert(k), x); }
 
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
+  void PushDown(int x) {
+    auto& node = nodes[x];
 
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
+    if (node.LR.first == node.LR.second) return;  // 不可拆分
+    if (node.F == 0) return;                      // 已经拆分
+    node.F = 0;
 
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
+    auto& [l, r] = node.LR;
+    auto& [k, v] = node.KV;
+    int mid = (l + r) >> 1;
+    if (k <= mid) {
+      node.L = Insert(l, mid, k, v);
+    } else {
+      node.R = Insert(mid + 1, r, k, v);
     }
-    return true;
   }
 
- public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
+  // 合并线段树
+  int Merge(int x, int y) {
+    if (x == 0) return y;
+    if (y == 0) return x;
 
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
+    PushDown(x);
+    PushDown(y);
+
+    nodes[x].V += nodes[y].V;
+    nodes[x].L = Merge(nodes[x].L, nodes[y].L);
+    nodes[x].R = Merge(nodes[x].R, nodes[y].R);
+    return x;
+  }
+
+  int Find(int k, int x) {
+    if (x == 0) return -1;
+
+    auto& node = nodes[x];
+
+    if (node.F == 1) {  // 叶子节点
+      if (node.KV.first == k) {
+        return x;
       } else {
-        r = mid;
+        return -1;
       }
     }
-    return l;
+
+    auto& [l, r] = node.LR;
+    int mid = (l + r) >> 1;
+    if (k <= mid) {
+      return Find(k, node.L);
+    } else {
+      return Find(k, node.R);
+    }
+  }
+
+  int PreCount(int k, int x) {
+    if (x == 0) return 0;
+
+    auto& node = nodes[x];
+    auto& [l, r] = node.LR;
+
+    if (k >= r) return node.V;  // 整个树都满足要求
+    if (k < l) return 0;        // 整个树都不满足要求
+
+    if (node.F == 1) {  // 叶子节点
+      if (node.KV.first <= k) {
+        return node.KV.second;
+      } else {
+        return 0;
+      }
+    }
+
+    return PreCount(k, node.L) + PreCount(k, node.R);
+  }
+
+ private:
+  int Insert(int l, int r, int k, int v) {
+    int x = ++index;
+    auto& node = nodes[x];
+    node.L = node.R = 0;
+    node.V = 1;
+    node.F = 1;
+    node.KV = {k, v};
+    node.LR = {l, r};
+    return x;
   }
 };
 
-/*
-[5,3,7]
+ValSegTree valSegTree;
+class Solution {
+ public:
+  long long numberOfPairs(vector<int>& nums1, vector<int>& nums2, ll diff) {
+    int n = nums1.size();
 
-0: 5
-1: 2,8
-2: 9,5,15,1
+    valSegTree.Init(-10e5, 10e5);
 
-*/
+    int x = 0;
+
+    ll ans = 0;
+    for (int i = 0; i < n; i++) {
+      ll v = nums1[i] - nums2[i];
+      ans += valSegTree.PreCount(v + diff, x);
+      x = valSegTree.Add(v, x);
+    }
+    return ans;
+  }
+};
 
 int main() {
   printf("hello ");

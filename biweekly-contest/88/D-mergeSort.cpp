@@ -133,80 +133,84 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
+typedef long long ll;
 class Solution {
-  int ans;
-  vector<int> operate;
   int n;
+  vector<ll> nums;
+  vector<ll> bufs;
+  ll diff;
 
-  vector<int> dp;
-  vector<int> tmp;
-
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
+  ll Search(int l, int r, int v) {  // [l, r]
+    auto end = nums.begin() + r + 1;
+    return end - lower_bound(nums.begin() + l, end, v);
   }
 
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
+  ll MergeSort(const int l, const int r) {  // [l, r]
+    if (l == r) return 0;
 
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
+    int mid = (l + r) / 2;
 
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
+    ll ans = 0;
+    ans += MergeSort(l, mid);
+    ans += MergeSort(mid + 1, r);
 
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
+    // [l, mid] [mid+1, r]
+    for (int i = l; i <= mid; i++) {
+      ans += Search(mid + 1, r, nums[i] - diff);
     }
-    return true;
+
+    int BI = l;
+    int LI = l, RI = mid + 1;
+    while (LI <= mid && RI <= r) {
+      if (nums[LI] <= nums[RI]) {
+        bufs[BI++] = nums[LI++];
+      } else {
+        bufs[BI++] = nums[RI++];
+      }
+    }
+
+    while (LI <= mid) {
+      bufs[BI++] = nums[LI++];
+    }
+    while (RI <= r) {
+      bufs[BI++] = nums[RI++];
+    }
+
+    BI = l;
+    while (BI <= r) {
+      nums[BI] = bufs[BI];
+      BI++;
+    }
+
+    // printf("[%d,%d]: ", l, r);
+    // for (int i = l; i <= r; i++) {
+    //   printf("%d ", nums[i]);
+    // }
+    // printf("\n");
+
+    return ans;
   }
 
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
+  long long numberOfPairs(const vector<int>& nums1, const vector<int>& nums2,
+                          int diff_) {
+    n = nums1.size();
 
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
-      }
+    nums.resize(n);
+    // printf("base: ");
+    for (int i = 0; i < n; i++) {
+      nums[i] = nums1[i] - nums2[i];
+      //   printf("%d ", nums[i]);
     }
-    return l;
+    // printf("\n");
+
+    ll ans = 0;
+    bufs.resize(n);
+    diff = diff_;
+
+    return MergeSort(0, n - 1);
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

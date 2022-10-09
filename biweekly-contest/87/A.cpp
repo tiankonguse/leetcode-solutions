@@ -133,80 +133,37 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
 class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
-
-  vector<int> dp;
-  vector<int> tmp;
-
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
+  vector<int> months;
+  vector<int> preSum;
+  void Init() {
+    months = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int pre = 0;
+    for (auto v : months) {
+      pre += v;
+      preSum.push_back(pre);
+    }
   }
 
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
+  int Parse(const string& s) {
+    int m = (s[0] - '0') * 10 + (s[1] - '0');
+    int d = (s[3] - '0') * 10 + (s[1] - '0');
+    return preSum[m - 1] + d;
+  }
 
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
-    }
-    return true;
+  pair<int, int> Parse(const string& arrive, const string& leave) {
+    return {Parse(arrive), Parse(leave)};
   }
 
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
-
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
-      }
-    }
-    return l;
+  int countDaysTogether(string arriveAlice, string leaveAlice, string arriveBob,
+                        string leaveBob) {
+                            Init();
+    auto [a0, a1] = Parse(arriveAlice, leaveAlice);
+    auto [b0, b1] = Parse(arriveBob, leaveBob);
+    return max(min(a1, b1) - max(a0, b0) + 1, 0);
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

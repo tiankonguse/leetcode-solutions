@@ -133,80 +133,66 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
-class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
-
-  vector<int> dp;
-  vector<int> tmp;
-
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
-
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
-    }
-    return true;
-  }
-
+typedef long long ll;
+class TreeArray {
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
+  void Init(int n_) {
+    n = n_;
+    c.clear();
+    c.resize(n + 100, 0);
+  }
 
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
-      }
+  ll Query(int x) {
+    ll s = 0;
+    while (x > 0) {
+      s += c[x];
+      x -= Lowbit(x);
     }
-    return l;
+    return s;
+  }
+
+  ll Query(int l, int r) { return Query(r) - Query(l - 1); }
+
+  void Add(int x, ll v) {
+    while (x <= n) {
+      c[x] += v;
+      x += Lowbit(x);
+    }
+  }
+
+ private:
+  int Lowbit(int x) { return x & -x; }
+  vector<ll> c;
+  int n;
+};
+TreeArray treeArray;
+class Solution {
+ public:
+  long long numberOfPairs(vector<int>& nums1, vector<int>& nums2, ll diff) {
+    int n = nums1.size();
+
+    map<ll, int> m;
+    for (int i = 0; i < n; i++) {
+      ll v = nums1[i] - nums2[i];
+      m[v] = 0;
+      m[v + diff] = 0;
+    }
+
+    int segSize = 0;
+    for (auto& [k, v] : m) {
+      v = ++segSize;
+    }
+    treeArray.Init(segSize);
+
+    ll ans = 0;
+    for (int i = 0; i < n; i++) {
+      ll v = nums1[i] - nums2[i];
+      ans += treeArray.Query(1, m[v + diff]);
+      treeArray.Add(m[v], 1);
+    }
+    return ans;
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

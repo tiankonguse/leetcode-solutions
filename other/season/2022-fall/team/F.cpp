@@ -133,80 +133,105 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
+int flag[55][55][5];
+enum { LEFT = 1, UP = 2, RIGHT = 3, DOWN = 4 };
+
+int dir4[5][2] = {{0, 0}, {0, -1}, {-1, 0}, {0, 1}, {1, 0}};
+
 class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
+  int n, m;
+  vector<string> shape;
 
-  vector<int> dp;
-  vector<int> tmp;
+  // dir: 进入的方向
+  void DfsWater(int x, int y, int dir) {
+    if (x <= 0 || x > n || y <= 0 || y > n) return;
 
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
+    int& ret = flag[x][y][dir];
+    if (ret != -1) continue;  // 已经有水了
+    ret = 1;
 
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
+    char v = shape[x - 1][y - 1];
+    if (v == '.') {
+      for (int k = 1; k <= 4; k++) {
+        flag[x][y][k] = 1;
+        DfsWater(x + dir[k][0], y + dir[k][0], 4 - k);
       }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
+    }else{
+      
     }
-    return true;
+
+    switch (dir) {
+      case LEFT:
+        if (v == 'l') {
+          k = DOWN;
+          flag[x][y][k] = 1;
+          DfsWater(x + dir[k][0], y + dir[k][0], 4 - k);
+        } else if (v == 'r') {
+          k = UP;
+          flag[x][y][k] = 1;
+          DfsWater(x + dir[k][0], y + dir[k][0], 4 - k);
+        } else {
+          for (int k = 1; k <= 4; k++) {
+            flag[x][y][k] = 1;
+            DfsWater(x + dir[k][0], y + dir[k][0], 4 - k);
+          }
+        }
+        break;
+      case UP:
+        if (v == 'l') {
+          k = LEFT;
+          flag[x][y][k] = 1;
+          DfsWater(x + dir[k][0], y + dir[k][0], 4 - k);
+        } else if (v == 'r') {
+          k = RIGHT;
+          flag[x][y][k] = 1;
+          DfsWater(x + dir[k][0], y + dir[k][0], 4 - k);
+        } else {
+          for (int k = 1; k <= 4; k++) {
+            flag[x][y][k] = 1;
+            DfsWater(x + dir[k][0], y + dir[k][0], 4 - k);
+          }
+        }
+        break;
+      case RIGHT:
+        if (v == 'l') {
+          k = UP;
+          flag[x][y][k] = 1;
+          DfsWater(x + dir[k][0], y + dir[k][0], 4 - k);
+        } else if (v == 'r') {
+          k = DOWN;
+          flag[x][y][k] = 1;
+          DfsWater(x + dir[k][0], y + dir[k][0], 4 - k);
+        } else {
+          for (int k = 1; k <= 4; k++) {
+            flag[x][y][k] = 1;
+            DfsWater(x + dir[k][0], y + dir[k][0], 4 - k);
+          }
+        }
+        break;
+      case DOWN:
+        break;
+    }
   }
 
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
+  int reservoir(vector<string> shape_) {
+    shape.swap(shape_);
+    n = shape.size();
+    m = shape.back().size();
 
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
-      }
+    memset(flag, -1, sizeof(flag));  // 没有水
+
+    for (int i = 1; i <= n; i++) {
+      DfsWater(i, 1, RIGHT);
+      DfsWater(i, m, LEFT);
     }
-    return l;
+    for (int j = 1; j <= m; j++) {
+      DfsWater(1, j, UP);
+      DfsWater(n, j, DOWN);
+    }
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

@@ -133,80 +133,37 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
 class Solution {
-  int ans;
-  vector<int> operate;
   int n;
-
   vector<int> dp;
-  vector<int> tmp;
+  const char* p;
 
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
+  int Dfs(int x) {
+    if (x == n) return 0;
 
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
+    int& ret = dp[x];
+    if (ret != -1) return ret;
 
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
+    int len = (n - x) / 2;
 
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
+    ret = 1;
+    for (int i = 1; i <= len; i++) {
+      if (strncmp(p + x, p + x + i, i) == 0) {
+        ret = max(ret, 1 + Dfs(x + i));
+        break;
       }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
     }
-    return true;
+    return ret;
   }
 
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
-
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
-      }
-    }
-    return l;
+  int deleteString(const string& s) {
+    n = s.length();
+    dp.resize(n + 1, -1);
+    p = s.data();
+    return Dfs(0);
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

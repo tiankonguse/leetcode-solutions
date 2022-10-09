@@ -133,80 +133,26 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
 class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
-
-  vector<int> dp;
-  vector<int> tmp;
-
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
-
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
-    }
-    return true;
-  }
-
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
+  int xorAllNums(vector<int>& nums1, vector<int>& nums2) {
+    int n1 = nums1.size();
+    int n2 = nums2.size();
 
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
+    int ans = 0;
+    if (n2 & 1) {
+      for (auto c : nums1) {
+        ans ^= c;
       }
     }
-    return l;
+    if (n1 & 1) {
+      for (auto c : nums2) {
+        ans ^= c;
+      }
+    }
+    return ans;
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

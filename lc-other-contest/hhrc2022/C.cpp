@@ -133,80 +133,58 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left),
+ * right(right) {}
+ * };
+ */
+
+typedef long long ll;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
+  unordered_map<ll, pair<int, int>> m;
+  vector<TreeNode*> ans;
+  ll B = 7001;
+  ll Base = 201;
+  int index = 402;
 
-  vector<int> dp;
-  vector<int> tmp;
-
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
-
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
+  ll Dfs(TreeNode* root) {
+    ll rootHash = 0;
+    if (root == nullptr) {
+      return 0;
     }
-    return true;
+
+    rootHash = root->val + Base;
+ 
+    rootHash = (rootHash * B + Dfs(root->left)) % mod;
+    rootHash = (rootHash * B + Dfs(root->right)) % mod;
+
+    if (m.count(rootHash) == 0) {
+      m[rootHash] = {index, 0};
+      index++;
+    }
+    m[rootHash].second++;
+
+    if (m[rootHash].second == 2) {
+      ans.push_back(root);
+    }
+
+    return m[rootHash].first;
   }
 
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
-
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
-      }
-    }
-    return l;
+  vector<TreeNode*> lightDistribution(TreeNode* root) {
+    Dfs(root);
+    return ans;
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

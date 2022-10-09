@@ -133,78 +133,56 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
 class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
-
-  vector<int> dp;
-  vector<int> tmp;
-
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
-
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
-    }
-    return true;
-  }
-
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
-
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
+  int longestESR(vector<int>& sales) {
+    int n = sales.size();
+    for (auto& v : sales) {
+      if (v > 8) {
+        v = 1;
       } else {
-        r = mid;
+        v = -1;
       }
     }
-    return l;
+    vector<int> preSum(n + 1, 0);
+    // printf("sum: ");
+    for (int i = 1; i <= n; i++) {
+      preSum[i] = preSum[i - 1] + sales[i - 1];
+      // printf("(%d, %d) , ", i, preSum[i]);
+    }
+    // printf("\n");
+
+    int ans = 0;
+    vector<pair<int, int>> sta;
+    sta.push_back({-n - 1, 0});
+    for (int i = 1; i <= n; i++) {
+      if (sta.empty() || -sta.back().first > preSum[i]) {
+        sta.push_back({-preSum[i], i});
+      }
+
+      // printf("i=%d sum=%d: ", i, preSum[i]);
+      // for (auto [v, k] : sta) {
+      //   printf("{%d, %d}, ", -v, k);
+      // }
+      // printf("\n");
+
+      pair<int, int> val = {-preSum[i], n};
+      auto it = upper_bound(sta.begin(), sta.end(), val);
+      // printf("pos=%d\n", it->second);
+      ans = max(ans, i - it->second);
+    }
+
+    return ans;
   }
 };
 
 /*
-[5,3,7]
+10,2,1,4,3,9,6,9,9
+ 1  2  3  4  5  6  7  8  9
+ 1 -1 -1 -1 -1  1 -1  1  1
+ 1  0 -1 -2 -3 -2 -3 -2 -1
+-1  0  1  2  3
 
-0: 5
-1: 2,8
-2: 9,5,15,1
 
 */
 

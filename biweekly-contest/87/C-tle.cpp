@@ -133,80 +133,52 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
 class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
+  vector<vector<int>> preBit;
 
-  vector<int> dp;
-  vector<int> tmp;
-
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
-
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
+  int H(int l, int r) {
+    int v = 0;
+    for (int j = 0; j < 32; j++) {
+      if (preBit[j][r] > preBit[j][l - 1]) {
+        v = v | (1 << j);
       }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
     }
-    return true;
+    return v;
   }
 
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
+  vector<int> smallestSubarrays(vector<int>& nums) {
+    int n = nums.size();
+    preBit.resize(33, vector<int>(n + 1, 0));
 
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
+    for (int i = 1; i <= n; i++) {
+      int v = nums[i - 1];
+      for (int j = 0; j < 32; j++) {
+        preBit[j][i] = preBit[j][i - 1] + (v % 2);
+        v = v / 2;
       }
     }
-    return l;
+
+    vector<int> ans;
+    ans.resize(n, 1);
+    for (int i = 1; i <= n; i++) {
+      int target = H(i, n);
+
+      int l = i, r = n;  // [l, r]
+      while (l < r) {
+        int mid = (l + r) / 2;
+        int val = H(i, mid);
+        if (val == target) {
+          r = mid;
+        } else {
+          l = mid + 1;
+        }
+      }
+      ans[i - 1] = r - i + 1;
+    }
+    return ans;
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

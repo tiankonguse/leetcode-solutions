@@ -133,80 +133,106 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
+/*
+题意: n 个字符串，每个字符串选择一些字母，最终选择的字母调整顺序后，可以组成
+"helloleetcode" 选择代价：字符串中，左边字符个数 * 右边字符个数。
+注意：选择后，字符串长度减一。
+目标：问是否有答案，有的话输出最小代价。
+
+字符串个数 n = [1, 24]
+字符串长度 m = [1, 8]
+
+
+思路：数位DP
+
+mask: "helloleetcode" 长度为 13，开 1<<13 的空间。
+dp(k, mask): 前 k 个字符串组成 mask 的最小代价。
+答案： dp(n-1, (1<< 13) - 1).
+
+
+状态转移：
+
+for(int i = mask; i>=0; i=(i-1)&mask){ // 枚举第 k 个字符串的 mask 列表
+  dp(k, mask) = min(dp(k, mask), dp(k-1, mask^i) + dpWord(k, i));
+}
+复杂度：O(n * 2^13 * 2^8)
+字符串长度为 8， 合法字符串最多 2^8 个。
+
+
+dpWord(k, i): 第 k 个字符串筛选出 i 的最优答案， 可以预处理得到。
+预处理方法：预处理字符串字符，对有效字符的集合进行枚举，然后贪心计算出合法的
+mask 列表以及答案。
+
+贪心：左右依次寻找最近的。 好像有反例
+
+*/
+
+int dp[24][8192];      // -2 代表未计算， -1 代表无解
+int dpWord[24][8192];  // 一个单词取 mask 的最优答案
+
+struct DoubleLink {
+  int pos = 0;
+  DoubleLink* pre = nullptr;
+  DoubleLink* next = nullptr;
+} head[26], tail[26], buf[100];
+
+int strUseFlag[9];
+
 class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
+  // 长度 13， 7 个不同字符， 相同字符最多出现 4 次
+  string base = "helloleetcode";
+  string kBase;
+  int kBaseLen;
+  int kMaxChar;
+  vector<int> baseStat;
 
-  vector<int> dp;
-  vector<int> tmp;
+  // base 转化为 "abcdefg" 7 个字符，其他字符转化为 'h'
+  void TransChar(vector<string>& words) {
+    map<char, char> m;
+    for (auto c : base) {
+      m[c];
+    }
+    kBaseLen = m.size();
 
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
+    int index = 0;
+    for (auto& [k, v] : m) {
+      v = 'a' + index++;
+    }
+    char other = 'a' + index++;
+    kMaxChar = index;
+
+    kBase = base;
+    for (auto& c : kBase) {
+      c = m[c];
+    }
+
+    for (auto& word : words) {
+      for (auto& c : word) {
+        if (m.count(c)) {
+          c = m[c];
+        } else {
+          c = other;
+        }
+      }
+    }
   }
 
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
+  void InitStat(const string& str, vector<int>& stat) {
+    baseStat.clear();
+    baseStat.resize(kMaxChar, 0);
+    for (auto c : kBase) {
+      baseStat[c - 'a']++;
     }
-    return true;
   }
 
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
+  int Leetcode(vector<string>& words) {
+    TransChar(words);
+    InitBase();
 
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
-      }
-    }
-    return l;
+    return Dfs(n - 1, MASK - 1);
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

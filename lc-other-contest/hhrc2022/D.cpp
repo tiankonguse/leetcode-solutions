@@ -133,80 +133,59 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
-
-  vector<int> dp;
-  vector<int> tmp;
-
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
-
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
+  int index = 1;
+    void DfsIndex(TreeNode* root)){
+      if (root == nullptr) return;
+      root->val = index++;
+      DfsIndex(root->left);
+      DfsIndex(root->right);
     }
-    return true;
-  }
 
- public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
+    vector<vector<int>> dp;
 
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
+    int Dfs(TreeNode* root, int flag) {
+      if (root == nullptr) return 0;
+
+      int v = root->val;
+      int& ret = dp[flag][v];
+      if (ret != -1) return ret;
+
+      if (flag == 0) {       //无限制
+        ret = Dfs(root, 2);  // 当前节点染色
+
+        if (root->left) {
+          ret = min(ret, Dfs(root->left, 2) + Dfs(root->right, 0));
+        }
+        if (root->right) {
+          ret min(ret, Dfs(root->left, 0) + Dfs(root->right, 2));
+        }
+      } else if (flag == 1) {  // 当前节点可以不染色（父节点已染色）
+        ret = Dfs(root, 0);
+        ret = min(ret, Dfs(root->left, 0) + Dfs(root->right, 0));
+      } else {  // 当前节点必须染色
+        ret = 1 + Dfs(root->left, 1) + Dfs(root->right, 1);
       }
+      return ret;
     }
-    return l;
-  }
+
+   public:
+    int minSupplyStationNumber(TreeNode* root) {
+      DfsIndex(root);
+
+      dp.resize(3, vector<int>(index, -1));
+      return Dfs(root, 0);
+    }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

@@ -1,4 +1,4 @@
-﻿#include <bits/stdc++.h>
+﻿// #include <bits/stdc++.h>
 #include <stdarg.h>
 #include <time.h>
 

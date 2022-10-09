@@ -133,80 +133,44 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
 class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
+ public:
+  bool equalFrequency(const string& word) {
+    map<char, int> m;
+    for (auto c : word) {
+      m[c]++;
+    }
 
-  vector<int> dp;
-  vector<int> tmp;
+    map<int, int> mm;
+    for (auto [v, c] : m) {
+      mm[c]++;
+    }
 
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
-
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
+    if (mm.size() == 1) {
+      // abcd || aaaa
+      if (mm.begin()->second == 1 || mm.begin()->first == 1) {
+        return true;
+      } else {
+        // aabb
         return false;
       }
-      tmp.swap(dp);
-    }
-    return true;
-  }
+    } else if (mm.size() == 2) {
+      auto [a, aa] = *mm.begin();
+      auto [b, bb] = *mm.rbegin();
 
- public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
+      // aaaab
+      if (a == 1 && aa == 1) return true;
 
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
-      }
+      // aaabbbb
+      if (a + 1 == b && bb == 1) return true;
+
+      return false;
+
+    } else {
+      return false;
     }
-    return l;
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

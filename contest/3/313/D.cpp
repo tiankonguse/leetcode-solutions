@@ -133,80 +133,92 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
-class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
+typedef long long ll;
 
-  vector<int> dp;
-  vector<int> tmp;
+const int mod1e7 = 1000000007, mod1e9 = 1000000009;
+const int max3 = 5010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
+const ll BASE = 29;
+
+ll h[max3];
+ll h2[max3];
+ll qpowCache[max3];
+ll qpowCache2[max3];
+
+ll H1(int l, int r) {
+  if (l == 0) return h[r];
+  ll pre = h[l - 1] * qpowCache[r - l + 1] % mod1e7;
+  return (h[r] - pre + mod1e7) % mod1e7;
+}
+
+ll H2(int l, int r) {
+  if (l == 0) return h2[r];
+  ll pre = h2[l - 1] * qpowCache2[r - l + 1] % mod1e9;
+  return (h2[r] - pre + mod1e9) % mod1e9;
+}
+
+pair<ll, ll> H(int l, int r) { return {H1(l, r), H2(l, r)}; }
+
+void Init(const char* str, int n) {
+  qpowCache[0] = 1;
+  for (int i = 1; i <= n; i++) {
+    qpowCache[i] = (qpowCache[i - 1] * BASE) % mod1e7;
   }
 
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
+  ll pre = 0;
+  for (int i = 0; i < n; i++) {
+    pre = (pre * BASE + (str[i] - 'a' + 1)) % mod1e7;
+    h[i] = pre;
+  }
 
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
+  qpowCache2[0] = 1;
+  for (int i = 1; i <= n; i++) {
+    qpowCache2[i] = (qpowCache2[i - 1] * BASE) % mod1e9;
+  }
 
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
+  ll pre2 = 0;
+  for (int i = 0; i < n; i++) {
+    pre2 = (pre2 * BASE + (str[i] - 'a' + 1)) % mod1e9;
+    h2[i] = pre2;
+  }
+}
+class Solution {
+  int n;
+  vector<int> dp;
 
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
+  int Dfs(const string& s, int p) {
+    if (p == n) return 0;
 
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
+    int& ret = dp[p];
+    if (ret != -1) return ret;
+
+    int len = (n - p) / 2;
+
+    ret = 1;
+    for (int i = 1; i <= len; i++) {
+      auto hl = H(p, p + i - 1);
+      auto hr = H(p + i, p + i + i - 1);
+      if (hl == hr) {
+        int v = Dfs(s, p + i);
+        printf("left=%s[%lld,%ld] right=%s[%lld,%lld] \n",
+               s.substr(p, i).c_str(), hl.first, hl.second,
+               s.substr(p + i, i).c_str(), hr.first, hr.second);
+        printf("p=%d len=%d next=%d nextAns=%d\n", p, i, p + i, v);
+        ret = max(ret, 1 + v);
       }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
     }
-    return true;
+    return ret;
   }
 
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
+  int deleteString(const string& s) {
+    n = s.length();
+    dp.resize(n + 1, -1);
+    Init(s.data(), n);
 
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
-      }
-    }
-    return l;
+    return Dfs(s, 0);
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

@@ -138,75 +138,61 @@ class Solution {
   int ans;
   vector<int> operate;
   int n;
-
-  vector<int> dp;
-  vector<int> tmp;
-
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
-
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
+  void Init() {
+    // 贪心随意得到一个局部最优解
+    int pre = 0;
+    for (auto& v : operate) {
+      if (pre < 0) {
+        pre += v;
+      } else {
+        pre -= v;
+        v = -v;
       }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
     }
-    return true;
+
+    int maxSum = 0, minSum = 0;
+    // 得到最大区间和
+    int sum = 0;
+    pre = 0;
+    for (auto v : operate) {
+      pre += v;
+      sum = max(sum, pre);
+      if (pre < 0) {
+        pre = 0;
+      }
+    }
+    maxSum = sum;
+
+    // 得到最小区间和
+    sum = 0;
+    pre = 0;
+    for (auto v : operate) {
+      pre += v;
+      sum = min(sum, pre);
+      if (pre > 0) {
+        pre = 0;
+      }
+    }
+    minSum = -sum;
+
+    ans = min(maxSum, minSum);
   }
+
+  vector<vector<int>> dp[2];
+
+  void DfsMax(){}
 
  public:
   int unSuitability(vector<int>& operate_) {
     operate.swap(operate_);
     n = operate.size();
+    Init();
+    dp[2].resize(n, vector<int>(N, 0));  // 最大值
 
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
-      }
-    }
-    return l;
+    DfsMax(0, 0, 0);
+
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");

@@ -133,80 +133,46 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-const int N = 2010;
 class Solution {
-  int ans;
-  vector<int> operate;
-  int n;
-
-  vector<int> dp;
-  vector<int> tmp;
-
-  void Init(vector<int>& v) {
-    v.clear();
-    v.resize(N, 0);
-  }
-
-  bool Check(int maxVal) {
-    Init(dp);
-    Init(tmp);
-    dp[0] = 1;
-
-    for (auto v : operate) {
-      Init(tmp);
-      tmp[0] = 1;
-
-      bool flag = false;
-      for (int i = 0; i < N; i++) {
-        if (dp[i] == 0) continue;
-
-        int V = i + v;
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-
-        V = max(i - v, v - i);
-        if (V <= maxVal) {
-          flag = true;
-          tmp[V] = 1;
-        }
-      }
-
-      if (!flag) {
-        return false;
-      }
-      tmp.swap(dp);
+  vector<vector<int>> ans;
+  void HardCode(int n) {
+    if (n == 1) {
+      ans.push_back({1,1});
     }
-    return true;
+    if (n == 2) {
+      ans.push_back({1,1});
+      ans.push_back({2,1});
+      ans.push_back({2,3});
+    }
+    if (n == 3) {
+      ans.push_back({1,1});
+      ans.push_back({2,1});
+      ans.push_back({3,1});
+      ans.push_back({3,4});
+      ans.push_back({3,5});
+    }
   }
 
  public:
-  int unSuitability(vector<int>& operate_) {
-    operate.swap(operate_);
-    n = operate.size();
-
-    int l = 1, r = 2000;
-    while (l < r) {
-      int mid = (l + r) / 2;
-      if (!Check(mid)) {
-        l = mid + 1;
-      } else {
-        r = mid;
+  vector<vector<int>> sandyLandManagement(int n) {
+    // if (n <= 3) {
+    //   HardCode(n);
+    //   return ans;
+    // }
+    for (int i = 1; i <= n; i++) {
+      ans.push_back({i, 1});
+      int k = i * 2 - 1;
+      int j = i + 3;
+      for (; j <= k; j += 2) {
+        ans.push_back({i, j});
+      }
+      if(i == n && ans.back().back() != n){
+          ans.push_back({n, n});
       }
     }
-    return l;
+    return ans;
   }
 };
-
-/*
-[5,3,7]
-
-0: 5
-1: 2,8
-2: 9,5,15,1
-
-*/
 
 int main() {
   printf("hello ");
