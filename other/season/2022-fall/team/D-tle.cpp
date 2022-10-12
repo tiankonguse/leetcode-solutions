@@ -167,61 +167,42 @@ mask 列表以及答案。
 
 */
 
+int dp[24][8192];  // -2 代表未计算， -1 代表无解
+
 class Solution {
   // 长度 13， 7 个不同字符， 相同字符最多出现 4 次
   string base = "helloleetcode";
   int N;
-  int MASK;
   map<char, int> charToIndex;
+  string indexToChar;
   int charNum;
   vector<int> baseStat;
 
   int n;
   vector<string> words;
+  vector<vector<int>> wordStat;
   vector<vector<int>> wordsCost;
   vector<vector<int>> wordsMask;
 
   int H(vector<int>& stat) {
     int h = 0;
     for (int j = 0; j < charNum; j++) {
-      int v = stat[j];
-      h = (h << baseStat[j]) + (1 << v) - 1;
+      h = (h << baseStat[j]) + stat[j];
     }
     return h;
   }
 
-  int HHH(int h) {
-    if (h == 1) {
-      return 1;
-    } else if (h == 3) {
-      return 2;
-    } else if (h == 7) {
-      return 3;
-    } else if (h == 15) {
-      return 4;
-    } else {
-      return 0;
-    }
-  }
-
-  void HH(int h, vector<int>& stat) {
-    for (int j = charNum - 1; j >= 0; j--) {
-      stat[j] = HHH(h % (1 << baseStat[j]));
-      h >>= baseStat[j];
-    }
-  }
-
-  void TransChar(const vector<string>& words) {
-    n = words.size();
+  void TransChar(vector<string>& words) {
     N = base.length();
-    MASK = 1 << N;
 
+    map<char, char> m;
     for (auto c : base) {
       charToIndex[c];
     }
 
     charNum = 0;
     for (auto& [k, v] : charToIndex) {
+      indexToChar.push_back(k);
       v = charNum++;
     }
 
@@ -229,26 +210,36 @@ class Solution {
     for (auto c : base) {
       baseStat[charToIndex[c]]++;
     }
+
+    wordsCost.resize(n, vector<int>(1 << N, INT_MAX));
+
+    wordStat.resize(n, vector<int>(charNum, 0));
+    for (int i = 0; i < n; i++) {
+      const string& s = words[i];
+      for (auto c : s) {
+        wordStat[i][charToIndex[c]]++;
+      }
+    }
   }
 
-  void UpdateWord(const int i, vector<int>& stat, const int cost) {
-    const int h = H(stat);
+  void UpdateWord(int i, vector<int>& stat, int cost) {
+    int h = H(stat);
     wordsCost[i][h] = min(wordsCost[i][h], cost);
   }
 
-  void DfsWord(const int i, const int l, const int r, const int leftLen,
-               const int rightLen, const int cost, vector<int>& stat) {
-    if (l > r) return;  //
+  void DfsWord(int i, int l, int r, int leftLen, int rightLen, int cost,
+               vector<int>& stat) {
     const string& s = words[i];
+    if (l > r) return;  //
 
-    const int len = r - l + 1;
+    int len = r - l + 1;
 
     // 选择左边
     if (charToIndex.count(s[l])) {
-      const int offset = charToIndex[s[l]];
+      int offset = charToIndex[s[l]];
       if (stat[offset] < baseStat[offset]) {
         stat[offset]++;
-        const int newCost = cost + leftLen * (len - 1 + rightLen);
+        int newCost = cost + leftLen * (len - 1 + rightLen);
         UpdateWord(i, stat, newCost);
         DfsWord(i, l + 1, r, leftLen, rightLen, newCost, stat);
         stat[offset]--;
@@ -260,10 +251,10 @@ class Solution {
 
     // 选择右边
     if (charToIndex.count(s[r])) {
-      const int offset = charToIndex[s[r]];
+      int offset = charToIndex[s[r]];
       if (stat[offset] < baseStat[offset]) {
         stat[offset]++;
-        const int newCost = cost + (leftLen + len - 1) * rightLen;
+        int newCost = cost + (leftLen + len - 1) * rightLen;
         UpdateWord(i, stat, newCost);
         DfsWord(i, l, r - 1, leftLen, rightLen, newCost, stat);
         stat[offset]--;
@@ -274,64 +265,73 @@ class Solution {
     DfsWord(i, l, r - 1, leftLen, rightLen + 1, cost, stat);
   }
 
-  int Solver() {
-    vector<int> dp(MASK, INT_MAX);
-
-    dp[0] = 0;
-
-    for (int i = 0; i < n; i++) {
-      for (int maskPre = MASK - 1; maskPre >= 0; maskPre--) {
-        if (dp[maskPre] == INT_MAX) continue;  // 无效集合
-        vector<int> preStat(charNum, 0);
-        HH(maskPre, preStat);
-        for (auto mask : wordsMask[i]) {
-          vector<int> stat(charNum, 0);
-          HH(mask, stat);
-
-          bool flag = 0;
-          for (int k = 0; k < charNum; k++) {
-            stat[k] += preStat[k];
-            if (stat[k] > baseStat[k]) {
-              flag = 1;
-            }
-          }
-
-          if (flag) continue;
-
-          int h = H(stat);
-          dp[h] = min(dp[h], dp[maskPre] + wordsCost[i][mask]);
-        }
+  int dpWord(int p, int mask) {
+    vector<int> stat(charNum, 0);
+    for (int i = 0; i < N; i++) {
+      int offset = charToIndex[base[i]];
+      if (mask & (1 << i)) {
+        stat[offset]++;
       }
     }
 
-    if (dp[MASK - 1] == INT_MAX) {
-      dp[MASK - 1] = -1;
+    for (int i = 0; i < charNum; i++) {
+      if (stat[i] > wordStat[p][i]) return INT_MAX;
     }
-    return dp[MASK - 1];
+
+    int h = H(stat);
+    return wordsCost[p][h];
+  }
+
+  int Dfs(const int p, const int mask) {
+    if (mask == 0) return 0;
+    if (p < 0) return INT_MAX;
+    printf("p=%d mask=%d \n", p, mask);
+
+    int& ret = dp[p][mask];
+    if (ret != -1) {
+      return ret;
+    }
+    ret = Dfs(p - 1, mask);
+
+    for (auto h: wordsMask[p]) {  // 枚举第 k 个字符串的 mask 列表
+      int wordCost = dpWord(p, i);
+      int cost = Dfs(p - 1, mask ^ i);
+      if (cost != INT_MAX && wordCost != INT_MAX) {
+        ret = min(ret, cost + wordCost);
+      }
+    }
+
+    printf("p=%d mask=%d ret=%d\n", p, mask, ret);
+    return ret;
   }
 
  public:
   int Leetcode(vector<string>& words_) {
     words.swap(words_);
 
+    n = words.size();
     TransChar(words);
 
     wordsMask.resize(n);
-    wordsCost.resize(n, vector<int>(MASK, INT_MAX));
     for (int i = 0; i < n; i++) {
       const string& s = words[i];
       vector<int> stat(charNum, 0);
       DfsWord(i, 0, s.length() - 1, 0, 0, 0, stat);
 
-      wordsMask[i].reserve(MASK);
-      for (int mask = 1; mask < MASK; mask++) {
-        if (wordsCost[i][mask] != INT_MAX) {
-          wordsMask[i].push_back(mask);
+      wordsMask[i].reserve(wordsCost[i].size());
+      for(int j=0;j<wordsCost[i].size();j++){
+        if(wordsCost[i][j] != INT_MAX){
+          wordsMask[i].push_back(j);
         }
       }
     }
 
-    return Solver();
+    memset(dp, -1, sizeof(dp));
+    int ret = Dfs(n - 1, (1 << N) - 1);
+    if (ret == INT_MAX) {
+      ret = -1;
+    }
+    return ret;
   }
 };
 

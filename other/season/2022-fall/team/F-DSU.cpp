@@ -296,15 +296,12 @@ class Solution {
     int ans = 0;
     for (int i = 1; i <= n; i++) {
       for (int j = 1; j <= m; j++) {
-        printf("[%d,%d,%d,%d] ", grid[0][i][j], grid[1][i][j], grid[2][i][j],
-               grid[3][i][j]);
         for (int k = 0; k < 4; k++) {
           if (grid[k][i][j] == WATER) {
             ans++;
           }
         }
       }
-      printf("\n");
     }
     return ans / 2;
   }
