@@ -93,6 +93,7 @@ const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 // LONG_MIN(10进制 10位), LONG_MAX(10进制 19位)
 
+typedef long long ll;
 
 /*
 unordered_map / unordered_set
