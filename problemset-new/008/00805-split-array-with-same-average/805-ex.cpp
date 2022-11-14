@@ -148,13 +148,13 @@ class Solution {
 
   bool Eq(int preSum, int preNum) {
     if (preNum == 0 || preNum == n) return false;
-    return preSum * (n - preNum) == (sum - preSum) * preNum;
+    return preSum * n == sum * preNum;
   }
   bool Gt(int preSum, int preNum) {
-    return preSum * (n - preNum) > (sum - preSum) * preNum;
+    return preSum * n > sum * preNum;
   }
   bool Lt(int preSum, int preNum) {
-    return preSum * (n - preNum) < (sum - preSum) * preNum;
+    return preSum * n < sum * preNum;
   }
 
   bool Dfs(int preSum, int preNum, int pos) {

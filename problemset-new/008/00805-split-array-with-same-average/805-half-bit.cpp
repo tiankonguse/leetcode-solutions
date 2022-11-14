@@ -133,95 +133,77 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-// 复杂度：O(V*n*m) = 5000 * 13500
-// V=10^4 * 30/2
-// n = 30/2
-// m = 30
-//
+/*
+  sum(k) / k    = S - sum(k)) / (n - k)
+ sum(k) * (n-k) = (S - sum(k)) * k
+ sum(k) * n - sum(k) * k = S * k - sum(k) * k
+ sum(k) * n = S * k
+ sum(k)/k = S/n
+*/
 
+typedef long long ll;
 class Solution {
   vector<int> nums;
+  unordered_set<ll> h;
+  int mid;
   int n;
-  int sum;
-  vector<int> sums;
-  vector<vector<vector<int>>> dp;
 
-  bool Eq(int preSum, int preNum) {
-    if (preNum == 0 || preNum == n) return false;
-    return preSum * (n - preNum) == (sum - preSum) * preNum;
+  bool Pre() {
+    for (int i = 1; i < (1 << mid); i++) {
+      int sum = 0;
+      for (int j = 0; j < mid; j++) {
+        if (i & (1 << j)) {
+          sum += nums[j];
+        }
+      }
+      if (sum == 0) {
+        return true;
+      }
+      h.insert(sum);
+    }
+    return false;
   }
-  bool Gt(int preSum, int preNum) {
-    return preSum * (n - preNum) > (sum - preSum) * preNum;
-  }
-  bool Lt(int preSum, int preNum) {
-    return preSum * (n - preNum) < (sum - preSum) * preNum;
-  }
 
-  bool Dfs(int preSum, int preNum, int pos) {
-    if (pos == n) return false;
-    // printf("%d %d %d\n", preSum, preNum, pos);
-    int& ret = dp[preSum][preNum][pos];
-    if (!ret) return false;
-    // 不选择
-    if (Dfs(preSum, preNum, pos + 1)) {
-      return true;
+  bool After() {
+    int num = n - mid;
+    for (int i = 1; i < (1 << num); i++) {
+      int sum = 0;
+      int c = 0;
+      for (int j = mid; j < n; j++) {
+        if (i & (1 << (j - mid))) {
+          sum += nums[j];
+          c++;
+        }
+      }
+      if (sum == 0) {
+        return true;
+      }
+      if (c != num && h.count(-sum)) {
+        return true;
+      }
     }
-
-    preSum += nums[pos];
-    preNum++;
-    pos++;
-
-    if (Eq(preSum, preNum)) {
-      return true;
-    }
-
-    // 后面权重更大，不可能变小
-    if (Gt(preSum, preNum)) {
-      return ret = false;
-    }
-
-    // 选择超过一半，可以通过其他途径得到更优答案
-    if (preNum > n / 2) {
-      return ret = false;
-    }
-
-    // 后面的全部选择，权重依旧不够
-    if (pos < n && Lt(preSum + (sums[n] - sums[pos]), preNum + (n - pos))) {
-      return ret = false;
-    }
-
-    if (Dfs(preSum, preNum, pos)) {
-      return true;
-    }
-
-    return ret = false;
+    return false;
   }
 
  public:
   bool splitArraySameAverage(vector<int>& nums_) {
     nums.swap(nums_);
-    sort(nums.begin(), nums.end());
     n = nums.size();
-    sum = 0;
-
-    sums.push_back(0);
+    if (n == 1) return false;
+    ll sum = 0;
     for (int v : nums) {
       sum += v;
-      sums.push_back(sum);
     }
-
-    // printf("[%d][%d][%d]\n", sum / 2 + 1, n / 2 + 1, n);
-    dp.resize(sum / 2 + 1, vector<vector<int>>(n / 2 + 1, vector<int>(n, 1)));
-
-    return Dfs(0, 0, 0);
+    for (auto& v : nums) {
+      v = v * n - sum;
+    }
+    mid = n / 2;  //[0, mid) [mid, n)
+    if (Pre()) {
+      return true;
+    }
+    return After();
   }
 };
-
-/*
- s0/1  <  (sum-s)/(n-1)  => (sum-sn)/(n-1) > sn/1
-
-
-*/
 
 // [73,37,34,95,4,97,22,53,55,52,46,44,71,24,26,35,96,3]
 // [3863,703,1799,327,3682,4330,3388,6187,5330,6572,938,6842,678,9837,8256,6886,2204,5262,6643,829,745,8755,3549,6627,1633,4290,7]
