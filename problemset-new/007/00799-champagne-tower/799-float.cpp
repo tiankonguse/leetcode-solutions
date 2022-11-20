@@ -20,9 +20,8 @@ class Solution {
   double Add(const double a, const double b) {
     auto ax = Down(a);
     auto bx = Down(b);
-    return (a + b) / 2;
+    return ax + bx;
   }
-  void dump(int i, int j, double p) { printf("[%d,%d]=>{%.6f}\n", i, j, p); }
 
  public:
   double champagneTower(ll poured, int query_row, int query_glass) {
@@ -30,21 +29,13 @@ class Solution {
 
     double zero = 0;
     dp[0][0] = poured;
-    dump(0, 0, poured);
     for (int i = 1; i <= query_row; i++) {
       dp[i][0] = Add(dp[i - 1][0], zero);
-      dump(i, 0, dp[i][0]);
       for (int j = 1; j <= i; j++) {
         dp[i][j] = Add(dp[i - 1][j - 1], dp[i - 1][j]);
-        dump(i, j, dp[i][j]);
       }
     }
 
-    auto ans = dp[query_row][query_glass];
-    if (ans >= 1) {
-      return 1;
-    } else {
-      return ans;
-    }
+    return min(1.0, dp[query_row][query_glass]);
   }
 };

@@ -4,6 +4,21 @@
 using namespace std;
 
 typedef long long ll;
+
+// 朴素 GCD/gcd 算法，复杂度 Log(n))
+ll Gcd(ll x, ll y) {
+  if (!x || !y) return x ? x : y;
+
+  ll t = x - x/ y * y;
+  while (t != 0) {
+    x = y;
+    y = t;
+    t = x - x/ y * y;
+  }
+  return y;
+}
+
+// typedef long long ll;
 typedef pair<ll, ll> pll;
 class Solution {
   pll Smp(pll a) {
@@ -11,7 +26,7 @@ class Solution {
     if (x == 0) {
       return {0, 0};
     }
-    ll c = gcd(x, y);
+    ll c = Gcd(x, y);
     return {x / c, y / c};
   }
 
@@ -39,7 +54,11 @@ class Solution {
       return {ax, ay};
     }
 
-    return Smp({ax * by + bx * ay, ay * by});
+    ll c = Gcd(ay, by);
+    ll cx = by/c * ax  + ay/c *bx;
+    ll cy =  ay/c * by;
+
+    return Smp({cx ,cy});
   }
   void dump(int i, int j, pll p) {
     // printf("[%d,%d]=>{%lld, %lld}\n", i, j, p.first, p.second);
