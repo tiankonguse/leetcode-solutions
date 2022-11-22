@@ -10,49 +10,48 @@
 
 #include "../../include/base.h"
 
-
 typedef long long LL;
 class Solution {
-    LL gcd(LL a, LL b) {
-        if(b == 0)
-            return a;
-        else
-            return gcd(b, a % b);
+  LL gcd(LL a, LL b) {
+    if (b == 0)
+      return a;
+    else
+      return gcd(b, a % b);
+  }
+  LL findIndex(LL A, LL B, LL loopIndex) {
+    LL aNum = 0, bNum = 0;
+    while (1) {
+      if (loopIndex == 0) {
+        return min(aNum, bNum);
+      }
+      if (aNum < bNum) {
+        aNum += A;
+      } else if (aNum > bNum) {
+        bNum += B;
+      } else {
+        aNum += A;
+        bNum += B;
+      }
+      loopIndex--;
     }
-    LL findIndex(LL A, LL B, LL loopIndex) {
-        LL aNum = 0, bNum = 0;
-        while(1) {
-            if(loopIndex == 0) {
-                return min(aNum, bNum);
-            }
-            if(aNum < bNum) {
-                aNum += A;
-            } else if(aNum > bNum) {
-                bNum += B;
-            } else {
-                aNum += A;
-                bNum += B;
-            }
-            loopIndex--;
-        }
+  }
 
-    }
-public:
-    int nthMagicalNumber(int N, int A, int B) {
-        LL mod = 1000000007;
-        LL minGcd = gcd(A, B);
-        LL maxGcd = A/minGcd * B;
-        LL loop = maxGcd/A + maxGcd/B - 1;
+ public:
+  int nthMagicalNumber(int N, int A, int B) {
+    LL mod = 1000000007;
+    LL minGcd = gcd(A, B);
+    LL maxGcd = A / minGcd * B;
+    LL loop = maxGcd / A + maxGcd / B - 1;
 
-        LL loopNum = N /loop;
-        LL loopIndex = N % loop;
+    LL loopNum = N / loop;
+    LL loopIndex = N % loop;
 
-        LL indexVal = findIndex(A, B, loopIndex);
+    LL indexVal = findIndex(A, B, loopIndex);
 
-        LL ans = (loopNum * maxGcd) % mod;
-        ans = (ans + indexVal) % mod;
-        return ans;
-    }
+    LL ans = (loopNum * maxGcd) % mod;
+    ans = (ans + indexVal) % mod;
+    return ans;
+  }
 };
 
 /*
@@ -65,16 +64,16 @@ int main() {
 #define CLASS Solution
 #define FUNCTION nthMagicalNumber
 
-    int first;
-    int second;
-    int third;
-    int expectAns;
+  int first;
+  int second;
+  int third;
+  int expectAns;
 
-    first = 1;
-    second = 2;
-    third = 3;
-    expectAns = 2;
-    TEST_SMP3(CLASS, FUNCTION, expectAns, first, second, third);
+  first = 1;
+  second = 2;
+  third = 3;
+  expectAns = 2;
+  TEST_SMP3(CLASS, FUNCTION, expectAns, first, second, third);
 
-    return 0;
+  return 0;
 }
