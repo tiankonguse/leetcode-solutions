@@ -108,7 +108,8 @@
         "source_location": "cpp",
         "latch": "cpp",
         "semaphore": "cpp",
-        "syncstream": "cpp"
+        "syncstream": "cpp",
+        "__bits": "cpp"
     },
     "code-runner.runInTerminal": true
 }
