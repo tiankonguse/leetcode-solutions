@@ -10,7 +10,7 @@ ll qpow(ll x, ll v, ll mod) {
   }
   return y;
 }
-ll inv(ll x, ll mod) { return qpow(x, mod - 2); }
+ll inv(ll x, ll mod) { return qpow(x, mod - 2, mod); }
 
 /*
 A(n,r)=n(n-1)…(n-r+1)

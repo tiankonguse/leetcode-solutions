@@ -1,33 +1,33 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+// #include <bits/stdc++.h>
+
+#include "base.h"
+using namespace std;
+
+typedef long long ll;
+const ll inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 class Solution {
-    int maxDep, maxSUm;
-public:
-    int deepestLeavesSum(TreeNode* r, int lev = -1) {
-        if(lev == -1){ //init 
-            maxDep = -1, maxSUm = 0;
-        }
-        if(!r){ //empty 
-            
-        }else if(!r->left && !r->right){ //leaves
-            if(lev == maxDep){ //add 
-                maxSUm += r->val; 
-            }else if(lev > maxDep){ //reset
-                maxDep = lev;
-                maxSUm = r->val;
-            }
-        }else{
-            deepestLeavesSum(r->left, lev+1);
-            deepestLeavesSum(r->right, lev+1);
-        }
-        
-        return maxSUm;
+ public:
+  int minimizeSet(ll divisor1, ll divisor2, ll uniqueCnt1, ll uniqueCnt2) {
+    ll ab = divisor1 / gcd(divisor1, divisor2) * divisor2;
+
+    ll l = 1, r = 7 * mod;  // [l,r)
+    while (l < r) {
+      ll mid = (l + r) / 2;
+
+      ll only1 = mid / divisor2 - mid / ab;
+      ll only2 = mid / divisor1 - mid / ab;
+      ll double12 = mid - mid / divisor2 - mid / divisor1 + mid / ab;
+
+      ll shouldDouble = 0;
+      shouldDouble += max(0ll, uniqueCnt1 - only1);
+      shouldDouble += max(0ll, uniqueCnt2 - only2);
+
+      if (shouldDouble <= double12) {
+        r = mid;
+      } else {
+        l = mid + 1;
+      }
     }
+    return r;
+  }
 };
