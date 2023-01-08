@@ -1,5 +1,8 @@
 {
     "files.associations": {
+        "*.cjson": "jsonc",
+        "*.wxss": "css",
+        "*.wxs": "javascript",
         "vector": "cpp",
         "random": "cpp",
         "type_traits": "cpp",
@@ -109,7 +112,8 @@
         "latch": "cpp",
         "semaphore": "cpp",
         "syncstream": "cpp",
-        "__bits": "cpp"
+        "__bits": "cpp",
+        "stacktrace": "cpp"
     },
     "code-runner.runInTerminal": true
 }
