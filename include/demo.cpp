@@ -5,7 +5,6 @@ using namespace std;
 
 typedef __int128_t int128;
 
-
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
@@ -112,7 +111,8 @@ map/set distance 复杂度 O(N)
 vector/数组 distance 复杂度 O(1)
 
 vector 去重
-sort(nums.begin(), nums.end());
+sort(nums.begin(), nums.end()); // 随机排序
+stable_sort(nums.begin(), nums.end()); // 稳定排序
 nums.erase(unique(nums.begin(), nums.end()), nums.end());
 
 size_t found=str.find(string/char/char*);
@@ -141,6 +141,7 @@ class Solution {
   int minJump(vector<int>& jump) {
     int n = jump.size();
 
+sum = accumulate(a.begin(), a.end(), 0ll);
     return 0;
   }
 };

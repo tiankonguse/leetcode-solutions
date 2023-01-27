@@ -125,10 +125,15 @@ struct Node {
 };
 */
 class Solution {
+  // [1, 2, 3] => 2->1->3 = 12
+  // [1, 3, 2] => 1->2->3 | 2->1->3 = 12
+  // [2, 3] = 9
+  // [1, 2] = 4
+  // [1, 3] = 6
  public:
   int maxCoins(vector<int>& nums) {
     int n = nums.size();
-    vector<int> next(n, n);
+    vector<int> next(n, n); // 链表
     for (int i = 0; i < n; i++) {
       next[i] = i + 1;
     }

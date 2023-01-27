@@ -113,7 +113,9 @@
         "semaphore": "cpp",
         "syncstream": "cpp",
         "__bits": "cpp",
-        "stacktrace": "cpp"
+        "stacktrace": "cpp",
+        "expected": "cpp",
+        "spanstream": "cpp"
     },
     "code-runner.runInTerminal": true
 }
