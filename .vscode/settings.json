@@ -115,7 +115,8 @@
         "__bits": "cpp",
         "stacktrace": "cpp",
         "expected": "cpp",
-        "spanstream": "cpp"
+        "spanstream": "cpp",
+        "d-treearraycpp": "cpp"
     },
     "code-runner.runInTerminal": true
 }

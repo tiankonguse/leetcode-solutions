@@ -1,0 +1,85 @@
+// #include <bits/stdc++.h>
+
+#include "base.h"
+using namespace std;
+
+typedef long long ll;
+ll leftLess[4002][4002];
+ll rightGreat[4002][4002];
+
+class TreeArray {
+ public:
+  void Init(int n_) {
+    n = n_;
+    c.clear();
+    c.resize(n + 2, 0);
+  }
+
+  ll Query(int x) {
+    ll s = 0;
+    while (x > 0) {
+      s += c[x];
+      x -= Lowbit(x);
+    }
+    return s;
+  }
+
+  ll Query(int l, int r) { return Query(r) - Query(l - 1); }
+
+  void Add(int x, ll v) {
+    while (x <= n) {
+      c[x] += v;
+      x += Lowbit(x);
+    }
+  }
+
+ private:
+  int Lowbit(int x) { return x & -x; }
+  vector<ll> c;
+  int n;
+};
+TreeArray treeArray;
+class Solution {
+ public:
+  long long countQuadruplets(vector<int>& nums) {
+    int n = nums.size();
+
+    for (int i = 1; i <= n; i++) {
+      for (int j = 1; j <= n; j++) {
+        leftLess[i][j] = rightGreat[i][j] = 0;
+      }
+    }
+
+    treeArray.Init(n);
+    for (int j = 1; j <= n; j++) {
+      int jv = nums[j - 1];
+      for (int k = j + 1; k <= n; k++) {
+        int kv = nums[k - 1];
+        if (jv < kv) continue;
+        leftLess[j][k] = treeArray.Query(1, kv);
+      }
+      treeArray.Add(jv, 1);
+    }
+
+    treeArray.Init(n);
+    for (int k = n; k >= 1; k--) {
+      int kv = nums[k - 1];
+      for (int j = k - 1; j >= 1; j--) {
+        int jv = nums[j - 1];
+        if (jv < kv) continue;
+        rightGreat[j][k] = treeArray.Query(jv, n);
+      }
+      treeArray.Add(kv, 1);
+    }
+
+    ll ans = 0;
+    for (int i = 1; i <= n; i++) {
+      for (int j = i + 1; j <= n; j++) {
+        if (nums[i - 1] < nums[j - 1]) continue;
+        ans += leftLess[i][j] * rightGreat[i][j];
+      }
+    }
+
+    return ans;
+  }
+};

@@ -11,30 +11,44 @@ class Solution {
   long long countQuadruplets(vector<int>& nums) {
     int n = nums.size();
 
-    memset(leftLess, 0, sizeof(leftLess));
-    memset(rightGreat, 0, sizeof(rightGreat));
-
-    for (int i = 1; i <= n; i++) {
-      leftLess[i][nums[i - 1]] = rightGreat[i][nums[i - 1]] = 1;
-    }
-
-    for (int i = 1; i <= n; i++) {
-      for (int j = 1; j <= n; j++) {
-        leftLess[i][j] = leftLess[i-1][j] + leftLess[i][j-1] - leftLess[i-1][j-1];
+    for (int i = 1; i <= n + 1; i++) {
+      for (int j = 1; j <= n + 1; j++) {
+        leftLess[i][j] = rightGreat[i][j] = 0;
       }
     }
 
-    for(int i=n;i>=1;i--){
-      for(int j=n;j>=1;j--){
-        rightGreat[i][j] = rightGreat[i+1][j] + rightGreat[i][j+1] - rightGreat[i+1][j+1];
+    vector<int> h(n + 2, 0);
+    for (int i = 1; i <= n; i++) {
+      h[nums[i - 1]] = i;
+    }
+
+    vector<int> leftFlag(n + 1, 0);
+    for (int j = 1; j <= n; j++) {
+      for (int v = 1; v <= n; v++) {
+        leftLess[j][v] = leftLess[j][v - 1];
+        if (leftFlag[v - 1]) {
+          leftLess[j][v]++;
+        }
       }
+      leftFlag[nums[j - 1]] = 1;
+    }
+
+    vector<int> rightFlag(n + 2, 0);
+    for (int k = n; k >= 1; k--) {
+      for (int v = n; v >= 1; v--) {
+        rightGreat[k][v] = rightGreat[k][v + 1];
+        if (rightFlag[v + 1]) {
+          rightGreat[k][v]++;
+        }
+      }
+      rightFlag[nums[k - 1]] = 1;
     }
 
     ll ans = 0;
-    for (int i = 1; i <= n; i++) {
-      for (int j = i + 1; j <= n; j++) {
-        if (nums[i-1] < nums[j-1]) continue;
-        ans += leftLess[i-1][nums[j-1]-1] * rightGreat[j+1][nums[i-1]+1];
+    for (int j = 1; j <= n; j++) {
+      for (int k = j + 1; k <= n; k++) {
+        if (nums[j - 1] < nums[k - 1]) continue;
+        ans += leftLess[j][nums[k - 1]] * rightGreat[k][nums[j - 1]];
       }
     }
 

@@ -20,15 +20,18 @@ class Solution {
  public:
   long long countQuadruplets(vector<int>& nums) {
     int n = nums.size();
-
-    memset(leftLess, 0, sizeof(leftLess));
-    memset(rightGreat, 0, sizeof(rightGreat));
+    for (int i = 0; i <= n; i++) {
+      for (int j = 0; j <= n; j++) {
+        leftLess[i][j] = rightGreat[i][j] = 0;
+      }
+    }
 
     vector<ll> pre;
     for (int i = 0; i < n; i++) {
       for (int j = i + 1; j < n; j++) {
         if (nums[i] < nums[j]) continue;
-        leftLess[i][j] = upper_bound(pre.begin(), pre.end(), nums[j]) - pre.begin();
+        leftLess[i][j] =
+            upper_bound(pre.begin(), pre.end(), nums[j]) - pre.begin();
       }
       AppendSort(pre, nums[i]);
     }
@@ -37,7 +40,8 @@ class Solution {
     for (int j = n - 1; j >= 0; j--) {
       for (int i = j - 1; i >= 0; i--) {
         if (nums[i] < nums[j]) continue;
-        rightGreat[i][j] = suf.end() - upper_bound(suf.begin(), suf.end(), nums[i]);
+        rightGreat[i][j] =
+            suf.end() - upper_bound(suf.begin(), suf.end(), nums[i]);
       }
       AppendSort(suf, nums[j]);
     }
