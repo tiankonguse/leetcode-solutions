@@ -27,6 +27,7 @@ class Solution {
     }
 
     vector<ll> pre;
+    pre.reserve(n);
     for (int i = 0; i < n; i++) {
       for (int j = i + 1; j < n; j++) {
         if (nums[i] < nums[j]) continue;
@@ -37,6 +38,7 @@ class Solution {
     }
 
     vector<ll> suf;
+    suf.reserve(n);
     for (int j = n - 1; j >= 0; j--) {
       for (int i = j - 1; i >= 0; i--) {
         if (nums[i] < nums[j]) continue;

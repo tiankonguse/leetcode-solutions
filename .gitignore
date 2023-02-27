@@ -112,3 +112,4 @@ $RECYCLE.BIN/
 *.mo
 *.stackdump
 tags
+tmp/

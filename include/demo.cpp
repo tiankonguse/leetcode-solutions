@@ -102,6 +102,9 @@ upper_bound 大于
 reserve 预先分配内存
 reverse(all(vec)) 反转
 sum = accumulate(a.begin(), a.end(), 0ll);
+max_element(a.begin(), a.end());
+min_element(a.begin(), a.end());
+
 __builtin_popcount 一的个数
 vector / array : upper_bound(all(vec), v)
 map: m.upper_bound(v)
