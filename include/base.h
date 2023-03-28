@@ -1,20 +1,23 @@
 ﻿// #include <bits/stdc++.h>
 #include <stdarg.h>
-#include <time.h>
+#include <sys/time.h>
 
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <functional>
-#include <map>
 #include <iostream>
-#include <unordered_map>
+#include <map>
+#include <numeric>
 #include <queue>
 #include <set>
 #include <stack>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 using namespace std;
@@ -595,19 +598,28 @@ int getIndex() {
   return index++;
 }
 
+long long MNow() {
+  struct timeval time_now {};
+  gettimeofday(&time_now, nullptr);
+  return (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
+}
+
 #define TEST_SMP1(ClassName, FunNAme, expectAns, firstData) \
   do {                                                      \
     ClassName work;                                         \
     auto tmpP1 = clone(firstData);                          \
+    long long beginTime = MNow();                           \
     auto tmpAns = work.FunNAme(tmpP1);                      \
+    long long endTime = MNow();                             \
+    long long cost = endTime - beginTime;                   \
                                                             \
     if (!eq(tmpAns, expectAns)) {                           \
-      printf("index %d: NO\n", getIndex());                 \
+      printf("index %d: NO %lldms\n", getIndex(), cost);    \
       output("firstData", firstData);                       \
       output("ans", tmpAns);                                \
       output("expectAns", expectAns);                       \
     } else {                                                \
-      printf("index %d: YES\n", getIndex());                \
+      printf("index %d: YES %lldms\n", getIndex(), cost);   \
     }                                                       \
     printf("\n");                                           \
   } while (0)
@@ -617,15 +629,18 @@ int getIndex() {
     ClassName work;                                                     \
     auto tmpP1 = clone(firstData);                                      \
     auto tmpP2 = clone(secondData);                                     \
+    long long beginTime = MNow();                                       \
     auto tmpAns = work.FunNAme(tmpP1, tmpP2);                           \
+    long long endTime = MNow();                                         \
+    long long cost = endTime - beginTime;                               \
     if (!eq(tmpAns, expectAns)) {                                       \
-      printf("index %d: NO\n", getIndex());                             \
+      printf("index %d: NO %lldms\n", getIndex(), cost);                \
       output("firstData", firstData);                                   \
       output("secondData", secondData);                                 \
       output("ans", tmpAns);                                            \
       output("expectAns", expectAns);                                   \
     } else {                                                            \
-      printf("index %d: YES\n", getIndex());                            \
+      printf("index %d: YES %lldms\n", getIndex(), cost);               \
     }                                                                   \
     printf("\n");                                                       \
   } while (0)
@@ -637,17 +652,20 @@ int getIndex() {
     auto tmpP1 = clone(firstData);                                      \
     auto tmpP2 = clone(secondData);                                     \
     auto tmpP3 = clone(thirdData);                                      \
+    long long beginTime = MNow();                                       \
     auto tmpAns = work.FunNAme(tmpP1, tmpP2, tmpP3);                    \
+    long long endTime = MNow();                                         \
+    long long cost = endTime - beginTime;                               \
                                                                         \
     if (!eq(tmpAns, expectAns)) {                                       \
-      printf("index %d: NO\n", getIndex());                             \
+      printf("index %d: NO %lldms\n", getIndex(), cost);                \
       output("firstData", firstData);                                   \
       output("secondData", secondData);                                 \
       output("thirdData", thirdData);                                   \
       output("ans", tmpAns);                                            \
       output("expectAns", expectAns);                                   \
     } else {                                                            \
-      printf("index %d: YES\n", getIndex());                            \
+      printf("index %d: YES %lldms\n", getIndex(), cost);               \
     }                                                                   \
     printf("\n");                                                       \
   } while (0)
@@ -660,10 +678,13 @@ int getIndex() {
     auto tmpP2 = clone(secondData);                                     \
     auto tmpP3 = clone(thirdData);                                      \
     auto tmpP4 = clone(fouthData);                                      \
+    long long beginTime = MNow();                                       \
     auto tmpAns = work.FunNAme(tmpP1, tmpP2, tmpP3, tmpP4);             \
+    long long endTime = MNow();                                         \
+    long long cost = endTime - beginTime;                               \
                                                                         \
     if (!eq(tmpAns, expectAns)) {                                       \
-      printf("index[%d] %d: NO\n", __LINE__, getIndex());               \
+      printf("index %d: NO %lldms\n", getIndex(), cost);                \
       output("firstData", firstData);                                   \
       output("secondData", secondData);                                 \
       output("thirdData", thirdData);                                   \
@@ -673,6 +694,6 @@ int getIndex() {
       printf("\n");                                                     \
       return 0;                                                         \
     } else {                                                            \
-      printf("index %d: YES\n", getIndex());                            \
+      printf("index %d: YES %lldms\n", getIndex(), cost);               \
     }                                                                   \
   } while (0)

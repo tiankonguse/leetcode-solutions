@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
 
 #include "base.h"
 using namespace std;
@@ -142,18 +142,19 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 class Solution {
  public:
   int minJump(vector<int>& jump) {
-    int n = jump.size();
-
-sum = accumulate(a.begin(), a.end(), 0ll);
-    return 0;
+    ll sum = 0;
+    for (auto v : jump) {
+      sum += v;
+    }
+    return sum;
   }
 };
 
 int main() {
   printf("hello ");
-  //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
-  //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
-  //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
+  int ans = 55;
+  vector<int> cars = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  TEST_SMP1(Solution, minJump, ans, cars);
 
   return 0;
 }
