@@ -3,7 +3,6 @@
 #include "base.h"
 using namespace std;
 
-
 typedef long long ll;
 class Solution {
   vector<vector<int>> g;
@@ -39,7 +38,8 @@ class Solution {
     if (pre == -1) {
       coinAns0[now] = max(coinAns0[now], 1);  //根节点需要选择
     }
-    // printf("root=0  v=%d ans0=%d dep0=%d\n", now, coinAns0[now], coinDeps[now]);
+    // printf("root=0  v=%d ans0=%d dep0=%d\n", now, coinAns0[now],
+    // coinDeps[now]);
   }
   void DfsAns(const int now, const int pre = -1, const int preDep = 0,
               const int preAns = 0) {
@@ -67,8 +67,8 @@ class Solution {
         m.erase(coinDeps[v]);
       }
       childSum -= coinAns0[v];
-    //   printf("root=%d child=%d childSum=%d size=%d\n", now, v, childSum,
-    //          m.size());
+      //   printf("root=%d child=%d childSum=%d size=%d\n", now, v, childSum,
+      //          m.size());
 
       int childMaxDep = preDep;
       if (m.size() > 0) {
@@ -78,19 +78,17 @@ class Solution {
       int childDep = 0, childAns = 0;
 
       // 金币距离大于等于 2，必须选择当前根
-      if (childSum > 0 | childMaxDep >= 2) {
+      if (childMaxDep == 0) {  // 长度为 0 或 1
+        if (coins[now]) {
+          childDep = 1;
+        } else {
+          childDep = 0;
+        }
+      } else if (childMaxDep == 1) {
+        childDep = childMaxDep + 1;
+      } else {
         childDep = 3;
         childAns = childSum + 1;
-      } else {  // 长度为 0 或 1
-        if (childMaxDep == 0) {
-          if (coins[now]) {
-            childDep = 1;
-          } else {
-            childDep = 0;
-          }
-        } else {
-          childDep = childMaxDep + 1;
-        }
       }
 
       DfsAns(v, now, childDep, childAns);
