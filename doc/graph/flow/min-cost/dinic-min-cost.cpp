@@ -22,7 +22,7 @@ class DinicMinCost {
     Add(u, v, w, c), Add(v, u, 0, -c);
   }
 
-  pair<int, int> MCMF(int s, int t) {
+  pair<int, int> Solver(int s, int t) {
     minCost = 0;
     maxFlow = 0;
     while (Spfa(s, t)) {
@@ -81,7 +81,7 @@ int main() {
     scanf("%d%d%d%d", &u, &v, &w, &c);
     dinicMinCost.Addedge(u, v, w, c);
   }
-  auto [minCost, maxFlow] = dinicMinCost.MCMF(s, t);
+  auto [minCost, maxFlow] = dinicMinCost.Solver(s, t);
   printf("%d %d\n", minCost, maxFlow);
   return 0;
 }
