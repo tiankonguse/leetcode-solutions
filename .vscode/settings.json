@@ -116,7 +116,8 @@
         "stacktrace": "cpp",
         "expected": "cpp",
         "spanstream": "cpp",
-        "d-treearraycpp": "cpp"
+        "d-treearraycpp": "cpp",
+        "__verbose_abort": "cpp"
     },
     "code-runner.runInTerminal": true
 }
