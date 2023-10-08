@@ -4,7 +4,6 @@
 
 class AA {
   std::size_t hash_code_;
-
  public:
   template <typename Input>
   void SetTypeid() {
@@ -14,13 +13,9 @@ class AA {
   template <typename Input>
   bool Forward(Input input) {
     if (typeid(int).hash_code() == this->hash_code_) {
-      int tmp = input;
-      return this->Foo(tmp);
+      return this->Foo(int(tmp));
     } else if (typeid(double).hash_code() == this->hash_code_) {
-      double tmp = input;
-      return this->Foo(tmp);
-    } else {
-      abort();
+      return this->Foo(double(tmp));
     }
     return false;
   }

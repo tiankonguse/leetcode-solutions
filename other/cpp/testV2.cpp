@@ -33,6 +33,9 @@ class C : public A<double> {
     printf("this is double, input=%.2lf\n", input);
     return true;
   }
+  virtual bool Foo(int input) {
+    return Foo(double(input));
+  }
 };
 
 int main() {

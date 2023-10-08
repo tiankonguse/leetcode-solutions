@@ -117,7 +117,8 @@
         "expected": "cpp",
         "spanstream": "cpp",
         "d-treearraycpp": "cpp",
-        "__verbose_abort": "cpp"
+        "__verbose_abort": "cpp",
+        "stdfloat": "cpp"
     },
     "code-runner.runInTerminal": true
 }
