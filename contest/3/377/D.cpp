@@ -3,7 +3,6 @@
 #include "base.h"
 using namespace std;
 
-
 typedef long long ll;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 constexpr ll INFL = __LONG_LONG_MAX__;
@@ -27,7 +26,10 @@ ll mp[222][222];
 ll sourceHash[1010][1010];
 ll targetHash[1010][1010];
 ll dp[1010];
-vector<vector<pair<ll, int>>> g(222);
+pair<ll, int> g[222][222];
+int gn[222];
+int vis[222];
+int inQue[222];
 
 void floyd(int n) {  // mp[][] = inf; mp[i][i] = 0;
   for (int i = 0; i < n; i++) {
@@ -52,24 +54,33 @@ using max_queue = priority_queue<T>;
 min_queue<pair<ll, int>> que;
 
 void Dijkstra(const int u, const int n, ll* dis) {
-  vector<int> vis(n, 0);
+  memset(vis, 0, sizeof(vis));
+  memset(inQue, 0, sizeof(inQue));
   que.push({0, u});
   dis[u] = 0;
-    // printf("start u=%d\n", u);
+  inQue[u] = 1;
+  // printf("start u=%d\n", u);
   while (!que.empty()) {
     auto [fromCost, from] = que.top();
     que.pop();
     if (vis[from]) continue;
     vis[from] = 1;
     // printf("vis from=%d\n", from);
-    for (auto [toCost, to] : g[from]) {
-    // printf("from=%d dis[from]=%lld to=%d dis[to]=%lld toCost=%lld newCost=%lld", from,dis[from],to, dis[to], toCost, dis[from] + toCost );
+    for (int i = 0; i < gn[from]; i++) {
+      auto [toCost, to] = g[from][i];
+      // printf("from=%d dis[from]=%lld to=%d dis[to]=%lld toCost=%lld
+      // newCost=%lld", from,dis[from],to, dis[to], toCost, dis[from] + toCost
+      // );
       if (dis[from] + toCost < dis[to]) {
         dis[to] = dis[from] + toCost;
+        que.push({dis[to], to});
+        inQue[to] = 1;
+      } else {
+        if ((!inQue[to]) && dis[to] < inf) {
+          que.push({dis[to], to});
+          inQue[to] = 1;
+        }
       }
-        if(!vis[to] && dis[to]<inf){
-               que.push({dis[to], to});
-          }
     }
   }
 }
@@ -115,14 +126,13 @@ class Solution {
                  vector<int>& cost) {
     const int m = cost.size();
 
-    g.clear();
     H.clear();
     for (int i = 0; i < m; i++) {
       auto& v = original[i];
       ll hv = Hash(v);
       int num = H.size();
       if (H.count(hv) == 0) {
-          // printf("hash v=%s v=%d\n", v.c_str(), num);
+        // printf("hash v=%s v=%d\n", v.c_str(), num);
         H[hv] = num;
       }
       originalH[i] = H[hv];
@@ -133,7 +143,7 @@ class Solution {
 
       int num = H.size();
       if (H.count(hv) == 0) {
-          // printf("hash v=%s v=%d\n", v.c_str(), num);
+        // printf("hash v=%s v=%d\n", v.c_str(), num);
         H[hv] = num;
       }
       changedH[i] = H[hv];
@@ -151,24 +161,25 @@ class Solution {
       ll c = cost[i];
       mp[u][v] = min(mp[u][v], c);
     }
-    g.clear();
-    g.resize(maxChar);
+
+    memset(gn, 0, sizeof(gn));
     for (int i = 0; i < maxChar; i++) {
       for (int j = 0; j < maxChar; j++) {
         if (mp[i][j] != inf) {
-          g[i].push_back({mp[i][j], j});
-            // printf("add edge: u=%d v=%d cost=%lld\n", i, j, mp[i][j]);
+          g[i][gn[i]] = {mp[i][j], j};
+          gn[i]++;
+          // printf("add edge: u=%d v=%d cost=%lld\n", i, j, mp[i][j]);
         }
       }
     }
     for (int i = 0; i < maxChar; i++) {
       Dijkstra(i, maxChar, mp[i]);
     }
-    for (int i = 0; i < maxChar; i++) {
-      for (int j = 0; j < maxChar; j++) {
-        // printf("from=%d to=%d cost=%lld\n", i, j, mp[i][j]);
-      }
-    }
+    // for (int i = 0; i < maxChar; i++) {
+    //   for (int j = 0; j < maxChar; j++) {
+    //     // printf("from=%d to=%d cost=%lld\n", i, j, mp[i][j]);
+    //   }
+    // }
 
     const int n = source.size();
     // init sourceHash
