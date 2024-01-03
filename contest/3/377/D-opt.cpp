@@ -7,9 +7,13 @@ typedef long long ll;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 constexpr ll INFL = __LONG_LONG_MAX__;
 
+ll pow29[1010] = {1};
+ll pown = 1;
+
+const int POW_BASE = 29;
 inline ll Hash(const ll pre, const char c) {
   ll v = c - 'a' + 1;
-  return (pre * 29 + v) % mod;
+  return (pre * POW_BASE + v) % mod;
 }
 
 inline ll Hash(const string& str) {
@@ -19,18 +23,35 @@ inline ll Hash(const string& str) {
   }
   return pre;
 }
+ll qpow(ll x, ll v, ll mod) {
+  x = x % mod;
+  ll y = 1;
+  while (v) {
+    if (v & 1) y = y * x % mod;
+    x = x * x % mod;
+    v >>= 1;
+  }
+  return y;
+}
 
 unordered_map<ll, int> H;
 ll originalH[222], changedH[222];
 ll mp[222][222];
-ll sourceHash[1010][1010];
-ll targetHash[1010][1010];
+ll preOriginalHash[1010];
+ll preChangedHash[1010];
 ll dp[1010];
 pair<ll, int> g[222][222];
 int gn[222];
 int vis[222];
 int inQue[222];
-set<int> replaceLen;
+
+ll RangeHash(int l, int r, ll* preHash) {
+  l--;  //(l, r]
+  const int lr = r - l;
+  ll R = preHash[r];
+  ll L = preHash[l] * pow29[lr] % mod;
+  return (R - L + mod) % mod;
+}
 
 void floyd(int n) {  // mp[][] = inf; mp[i][i] = 0;
   for (int i = 0; i < n; i++) {
@@ -53,6 +74,7 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 min_queue<pair<ll, int>> que;
+set<int> replaceLen;
 
 void Dijkstra(const int u, const int n, ll* dis) {
   memset(vis, 0, sizeof(vis));
@@ -87,7 +109,7 @@ void Dijkstra(const int u, const int n, ll* dis) {
 }
 
 class Solution {
-  ll Dfs(int n) {
+  ll Dfs(const int n) {
     if (dp[n] != INFL) return dp[n];  // 无解
 
     if (source[n - 1] == target[n - 1]) {
@@ -99,11 +121,13 @@ class Solution {
     for (const int len : replaceLen) {
       if (len > n) break;
       const int j = n - len + 1;
+
+      // for (int j = 1; j <= n; j++) {
       Dfs(j - 1);
       if (dp[j - 1] == -1) continue;
 
-      ll u = sourceHash[j - 1][n - 1];
-      ll v = targetHash[j - 1][n - 1];
+      const ll u = RangeHash(j, n, preOriginalHash);
+      const ll v = RangeHash(j, n, preChangedHash);
       if (u == v) {  // 不需要替换
         dp[n] = min(dp[n], dp[j - 1]);
         continue;
@@ -114,8 +138,8 @@ class Solution {
         continue;  // 不存在替换
       }
 
-      int hu = H[u];
-      int hv = H[v];
+      const int hu = H[u];
+      const int hv = H[v];
       if (mp[hu][hv] == inf) {
         continue;  // 不存在替换
       }
@@ -137,6 +161,11 @@ class Solution {
                  vector<string>& changed, vector<int>& cost) {
     source_.swap(source);
     target_.swap(target);
+    while (pown <= 1000) {
+      pow29[pown] = qpow(POW_BASE, pown, mod);
+      pown++;
+    }
+
     const int m = cost.size();
 
     H.clear();
@@ -197,22 +226,11 @@ class Solution {
     // }
 
     const int n = source.size();
-    // init sourceHash
-    for (int i = 0; i < n; i++) {
-      ll pre = 0;
-      for (int j = i; j < n; j++) {
-        pre = Hash(pre, source[j]);
-        sourceHash[i][j] = sourceHash[j][i] = pre;
-      }
-    }
-
-    // init targetHash
-    for (int i = 0; i < n; i++) {
-      ll pre = 0;
-      for (int j = i; j < n; j++) {
-        pre = Hash(pre, target[j]);
-        targetHash[i][j] = targetHash[j][i] = pre;
-      }
+    preOriginalHash[0] = 0;
+    preChangedHash[0] = 0;
+    for (int i = 1; i <= n; i++) {
+      preOriginalHash[i] = Hash(preOriginalHash[i - 1], source[i - 1]);
+      preChangedHash[i] = Hash(preChangedHash[i - 1], target[i - 1]);
     }
 
     dp[0] = 0;
