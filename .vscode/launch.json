@@ -2,23 +2,39 @@
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    // Variables Reference: https://code.visualstudio.com/docs/editor/variables-reference
+
     "version": "0.2.0",
     "configurations": [
+        {
+            "name": "(lldb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/tmp/tmp.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "preLaunchTask": "mac-cpp", // 调试会话开始前执行的任务，一般为编译程序。与tasks.json的label相对应
+            "cwd": "${workspaceFolder}/",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
         {
             "name": "mac-Launch-cpp", // 配置名称，将会在启动配置的下拉菜单中显示
             // "type": "cppdbg", // 配置类型，cppdbg 对应 cpptools 提供的调试功能；可以认为此处只能是cppdbg
             "type": "lldb",
             "request": "launch", // 请求配置类型，可以为launch（启动）或attach（附加）
             // "program": "${fileDirname}/${fileBasenameNoExtension}.out", // 将要进行调试的程序的路径 ${fileDirname}/${fileBasenameNoExtension}.out
-            "program": "tmp/tmp.exe", // 将要进行调试的程序的路径 ${fileDirname}/${fileBasenameNoExtension}.out
+            "program": "${workspaceFolder}/tmp/tmp.exe", // 将要进行调试的程序的路径 ${fileDirname}/${fileBasenameNoExtension}.out
             "args": [], // 程序调试时传递给程序的命令行参数，一般设为空即可
             // "stopAtEntry": false, // 设为true时程序将暂停在程序入口处，相当于在main上打断点
             "cwd": "${workspaceFolder}/", // 调试程序时的工作目录，此为工作区文件夹；改成${fileDirname}可变为文件所在目录 ${workspaceFolder}
             // "environment": [], // 环境变量
-            // "externalConsole": true, // 为true时使用单独的cmd窗口，与其它IDE一致；18年10月后设为false可调用VSC内置终端
+            // "externalConsole": false, // 为true时使用单独的cmd窗口，与其它IDE一致；18年10月后设为false可调用VSC内置终端
             // "MIMode": "lldb", // 指定连接的调试器，可以为gdb或lldb。
             "preLaunchTask": "mac-cpp", // 调试会话开始前执行的任务，一般为编译程序。与tasks.json的label相对应
-            "internalConsoleOptions": "neverOpen", // 如果不设为neverOpen，调试时会跳到“调试控制台”选项卡
+            "console": "internalConsole"
+            // "internalConsoleOptions": "neverOpen", // 如果不设为neverOpen，调试时会跳到“调试控制台”选项卡
             // "showDisplayString": false,
             // "logging": {
             //     "engineLogging": false,
@@ -30,7 +46,7 @@
             // "osx": {
             //     "MIMode": "lldb"
             // },
-            "MIMode": "lldb"
+            // "MIMode": "lldb"
         },
         {
             "name": "win10-launch-cpp", // 配置名称，将会在启动配置的下拉菜单中显示

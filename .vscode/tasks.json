@@ -1,84 +1,110 @@
 {
     "tasks": [
         {
-            "label": "mac-cpp", // 任务名称，与launch.json的preLaunchTask相对应
-            "type": "shell", // process是vsc把预定义变量和转义解析后直接全部传给command；shell相当于先打开shell再输入命令，所以args还会经过shell再解析一遍
-            //"command": "/usr/local/Cellar/gcc@9/9.3.0/bin/g++-9", // 要使用的编译器，C++用g++
-            "command": "/usr/bin/g++", // 要使用的编译器，C++用g++
+            "label": "Open Terminal",
+            "type": "shell",
+            "command": "osascript -e 'tell application \"Terminal\"\ndo script \"echo hello\"\nend tell'",
+            "problemMatcher": []
+        },
+        {
+            "label": "mac-cpp",
+            "type": "shell",
+            "command": "/usr/bin/g++", // The command to be executed. Can be an external program or a shell command.
             "args": [
                 "-g",
                 "${file}",
-                "-I.\/include\/",
+                "-I${workspaceFolder}/include/",
                 "-DUSACO_LOCAL_JUDGE",
                 "-o",
-                // "${fileDirname}/${fileBasenameNoExtension}.out",
-                "tmp/tmp.exe",
-                "-std=c++17",
-            ],       
-            "group": {
+                "${workspaceFolder}/tmp/tmp.exe",
+                "-std=c++17"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [ // The problem matcher(s) to use. Can either be a string or a problem matcher definition or an array of strings and problem matchers.
+                "$gcc"
+            ],
+            "group": { // Defines to which execution group this task belongs to. It supports "build" to add it to the build group and "test" to add it to the test group.
                 "kind": "build",
-                "isDefault": true // 不为true时ctrl shift B就要手动选择了
+                "isDefault": true
             },
             "presentation": {
-                "echo": true,
-                "reveal": "always", // 执行任务时是否跳转到终端面板，可以为always，silent，never。具体参见VSC的文档
-                "focus": false,  // 设为true后可以使执行task时焦点聚集在终端，但对编译C/C++来说，设为true没有意义
-                "showReuseMessage": true,
-                "clear": false,
-                "panel": "shared",  // 不同的文件的编译信息共享一个终端面板
+                "echo": true, // Controls whether the executed command is echoed to the panel. Default is true.
+                "reveal": "always", // Controls whether the terminal running the task is revealed or not. May be overridden by option "revealProblems". Default is "always".
+                "focus": false, // Controls whether the panel takes focus. Default is false. If set to true the panel is revealed as well.
+                "showReuseMessage": true, // Controls whether to show the `Terminal will be reused by tasks, press any key to close it` message.
+                "clear": true, // Controls whether the terminal is cleared before executing the task.
+                "panel": "shared" //Controls if the panel is shared between tasks, dedicated to this task or a new one is created on every run.
             }
         },
         {
-            "label": "win10-compile-cpp", // 任务名称，与launch.json的preLaunchTask相对应
-            "type": "shell", // process是vsc把预定义变量和转义解析后直接全部传给command；shell相当于先打开shell再输入命令，所以args还会经过shell再解析一遍
-            "command": "g++.exe", // 要使用的编译器，C++用g++
+            "label": "win10-compile-cpp",
+            "type": "shell",
+            "command": "g++.exe",
             "args": [
                 "-g",
                 "${file}",
                 "-I./include/",
                 "-o",
-                // "${fileDirname}/${fileBasenameNoExtension}.out",
-                "tmp/tmp.exe",
-                // "-std=c++17"
-            ],       
-            "group": {
-                "kind": "build",
-                "isDefault": true // 不为true时ctrl shift B就要手动选择了
-            },
+                "tmp/tmp.exe"
+            ],
+            "group": "build",
             "presentation": {
                 "echo": true,
-                "reveal": "always", // 执行任务时是否跳转到终端面板，可以为always，silent，never。具体参见VSC的文档
-                "focus": false,  // 设为true后可以使执行task时焦点聚集在终端，但对编译C/C++来说，设为true没有意义
+                "reveal": "always",
+                "focus": false,
                 "showReuseMessage": true,
                 "clear": true,
-                "panel": "shared",  // 不同的文件的编译信息共享一个终端面板
+                "panel": "shared"
             }
         },
         {
-            "label": "win7-compile-cpp", // 任务名称，与launch.json的preLaunchTask相对应
-            "type": "shell", // process是vsc把预定义变量和转义解析后直接全部传给command；shell相当于先打开shell再输入命令，所以args还会经过shell再解析一遍
-            "command": "D:\\mingw64\\bin\\g++.exe", // 要使用的编译器，C++用g++
+            "label": "win7-compile-cpp",
+            "type": "shell",
+            "command": "D:\\mingw64\\bin\\g++.exe",
             "args": [
                 "-g",
                 "${file}",
                 "-I./include/",
                 "-o",
-                // "${fileDirname}/${fileBasenameNoExtension}.out",
-                "${workspaceFolder}/tmp.exe",
-                // "-std=c++17"
-            ],       
-            "group": {
-                "kind": "build",
-                "isDefault": true // 不为true时ctrl shift B就要手动选择了
-            },
+                "${workspaceFolder}/tmp.exe"
+            ],
+            "group": "build",
             "presentation": {
                 "echo": true,
-                "reveal": "always", // 执行任务时是否跳转到终端面板，可以为always，silent，never。具体参见VSC的文档
-                "focus": false,  // 设为true后可以使执行task时焦点聚集在终端，但对编译C/C++来说，设为true没有意义
+                "reveal": "always",
+                "focus": false,
                 "showReuseMessage": true,
                 "clear": true,
-                "panel": "shared",  // 不同的文件的编译信息共享一个终端面板
+                "panel": "shared"
             }
+        },
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++ build active file",
+            "command": "/usr/bin/clang++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-I${workspaceFolder}/include/",
+                "-DUSACO_LOCAL_JUDGE",
+                "${file}",
+                "-o",
+                "${workspaceFolder}/tmp/tmp.exe",
+                "-std=c++17"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Task generated by Debugger."
         }
     ],
     "version": "2.0.0"

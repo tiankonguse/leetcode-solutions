@@ -8,7 +8,7 @@
             ],
             "defines": [],
             "macFrameworkPath": [
-                // "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
             //"compilerPath": "/usr/local/Cellar/gcc@9/9.3.0/bin/g++-9",
             "compilerPath": "/usr/bin/g++",
@@ -30,7 +30,7 @@
             "defines": [],
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "${default}",
+            "intelliSenseMode": "${default}"
         }
     ],
     "version": 4
