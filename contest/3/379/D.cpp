@@ -46,20 +46,25 @@ class Solution {
       int P = p;
       int k = 0;
       int bit = 0;
+      int bit2 = 0;
       int FLAG = 0;
       while (P < N() && k < K()) {
         int v = s[P] - 'a';
         if (!Get(bit, v)) {
           k++;
           Set(bit, v);
+        } else {
+          Set(bit2, v);
         }
         P++;
       }
       if (k == K()) {  // 满足 k 个，分情况讨论
-
-        // 通过修改与下个相同的字符，使得下个不满足
-        ret = max(ret, 1 + Dfs(P, 1));  // 修改前面
-        if (P < N()) {                  // 修改后面
+        if (P < N()) {
+          // 通过修改与下个相同的字符，使得下个不满足
+          int v = s[P] - 'a';
+          if (Get(bit2, v) == 0) {          // 只出现一次
+            ret = max(ret, 1 + Dfs(P, 1));  // 修改前面      // 修改后面
+          }
           for (int i = 0; i < 26; i++) {
             if (Get(bit, i)) continue;
             const char oldChar = s[P];
