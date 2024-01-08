@@ -1,0 +1,40 @@
+------- test 1 [length 15 bytes] ----
+50
+1 2 3
+5 6 7
+------- test 2 [length 14 bytes] ----
+1
+1 1 1
+1 1 1
+------- test 3 [length 14 bytes] ----
+4
+1 2 3
+2 3 4
+------- test 4 [length 15 bytes] ----
+10
+9 9 9
+3 3 3
+------- test 5 [length 18 bytes] ----
+50
+49 50 1
+50 1 2
+------- test 6 [length 18 bytes] ----
+95
+5 6 7
+70 80 90
+------- test 7 [length 22 bytes] ----
+100
+100 100 100
+1 1 1
+------- test 8 [length 21 bytes] ----
+100
+1 50 100
+2 51 99
+------- test 9 [length 22 bytes] ----
+100
+1 100 99
+1 100 98
+------- test 10 [length 18 bytes] ----
+100
+100 1 2
+4 5 6
