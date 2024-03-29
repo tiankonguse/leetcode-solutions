@@ -121,5 +121,12 @@
         "stdfloat": "cpp",
         "format": "cpp"
     },
-    "code-runner.runInTerminal": true
+    "code-runner.runInTerminal": true,
+    "C_Cpp.autocompleteAddParentheses": true,
+    "C_Cpp.default.cppStandard": "gnu++23",
+    "C_Cpp.default.cStandard": "gnu23",
+    "C_Cpp.default.intelliSenseMode": "macos-clang-x64",
+    "C_Cpp.inlayHints.autoDeclarationTypes.enabled": true,
+    "C_Cpp.inlayHints.parameterNames.suppressWhenArgumentContainsName": false,
+    "C_Cpp.clang_format_fallbackStyle": "Google"
 }
