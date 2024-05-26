@@ -119,7 +119,8 @@
         "d-treearraycpp": "cpp",
         "__verbose_abort": "cpp",
         "stdfloat": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "execution": "cpp"
     },
     "code-runner.runInTerminal": true,
     "C_Cpp.autocompleteAddParentheses": true,
