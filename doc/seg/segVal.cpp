@@ -1,5 +1,17 @@
 
-// 权值线段树， 只有值当做下标
+/*
+权值线段树， 只有值当做下标
+
+由于值的范围很大，普通线段树储存不下，这里每个点储存一个区间线段，插入时进行动态开点
+
+
+SegTreeVal segTreeVal;
+segTreeVal.Init(minVal, maxVal);
+segTreeVal.Insert(k, v); // 生成一个独立的线段树
+segTreeVal.Merge(x, y); // 合并两个线段树
+segTreeVal.Add(k, x); // 等价于 Merge(Insert(k, 0), x)
+
+*/
 
 
 const int N = 10e5;
@@ -14,7 +26,7 @@ struct Node {
   pair<int, int> KV;   // 储存的值
 } nodes[M];
 
-struct ValSegTree {
+struct SegTreeVal {
   int maxL, maxR;  // [maxL, maxR] key 范围
   int index;       // 0 代表空树
 
