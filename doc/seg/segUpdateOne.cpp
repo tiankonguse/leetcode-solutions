@@ -6,10 +6,10 @@
 输入数组： vector<int> str; [0, n-1]
 
 SegTree segTree;
-segTree.Init(str);
+segTree.Init(str); // 内部会对数组进行右移，转化为 [1,n]
 segTree.Bulid();
-segTree.Update(l, val); // 区间都加上 val
-segTree.QueryMax/QueryMin/QuerySum 区间查询
+segTree.Update(l, val); // 单点 l 都加上 val, 数据范围 [1,n]
+segTree.QueryMax/QueryMin/QuerySum 区间查询, 数据范围 [1,n]
 */
 
 // 1.bulid(); 2.query(a,b) 3.update(a,b)
