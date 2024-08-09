@@ -6,15 +6,21 @@ using namespace std;
 /*
 
 v1,n1: (v1-q+1)*n1 = v1 * n1 - (q  - 1)* n1
+...
 vk,nk: vk * nk - (q - 1) * n2
-
 sum(a,b) = sum(vi * ni) - (q-1) * sum(ni)
 
 map<vi, ni> h;
 
 
-0 1 0 1 0 1 0 1
-0 1 0 1 1 1 0 1
+p: 0 1 2 3 4 5 5 6 7
+v: 0 1 0 1 0 1 0 1 1
+   8 7 6 5 4 3 2 2 9
+v: 0 1 0 1 1 1 0 1 1
+   4 3 2 2 2 3 2 2 5
+
+
+
 
 完美分裂或合并:
 010 <=> 000
@@ -64,7 +70,7 @@ struct SegTree {
     str.clear();
     // default_val 初始值按需设置，一般是0，也可以按需设置为最大值或者最小值
     str.resize(maxNM + 1, default_val);
-    for (int i = 0; i <= maxNM; i++) {
+    for (int i = 0; i < maxNM; i++) {
       str[i + 1] = default_val;
     }
   }
@@ -147,40 +153,62 @@ struct SegTree {
 SegTree segTreeVN;
 SegTree segTreeN;
 class Solution {
+  int n;
+  map<int, int> h;
+  vector<int> colors;
+
+  int Len(int from, int to) {
+    if (from > to) {
+      return to + n - from + 1;
+    } else {
+      return to - from + 1;
+    }
+  }
+  void Add(int from, int to) {
+    if (from != to) {
+      int v = Len(from, to);
+      segTreeVN.Update(v, v);
+      segTreeN.Update(v, 1);
+      h[from] = to;
+    }
+  };
+  void Remove(int from, int to) {
+    if (from != to) {
+      int v = Len(from, to);
+      segTreeVN.Update(v, -v);
+      segTreeN.Update(v, -1);
+      h.erase(from);
+    }
+  };
+
+  int Pre(int i) {
+    i = (i + n - 1) % n;
+    return i;
+  }
+
+  int Next(int i) {
+    i = (i + n + 1) % n;
+    return i;
+  }
+  map<int, int>::iterator preIt(map<int, int>::iterator it) {
+    if (it == h.begin()) {
+      it = h.end();
+    }
+    it--;
+    return it;
+  }
+
  public:
-  vector<int> numberOfAlternatingGroups(vector<int>& colors,
+  vector<int> numberOfAlternatingGroups(vector<int>& colors_,
                                         vector<vector<int>>& queries) {
-    int n = colors.size();
+    colors.swap(colors_);
+    n = colors.size();
     segTreeVN.Init(n);
     segTreeVN.Bulid();
     segTreeN.Init(n);
     segTreeN.Bulid();
 
-    map<int, int> h;
-
-    auto Add = [&n, &h](int from, int to) {
-      if (from != to) {
-        int v = to - from + 1;
-        if (from > to) {
-          v = to + n - from + 1;
-        }
-        segTreeVN.Update(v, v);
-        segTreeN.Update(v, 1);
-        h[from] = to;
-      }
-    };
-    auto Remove = [&n, &h](int from, int to) {
-      if (from != to) {
-        int v = to - from + 1;
-        if (from > to) {
-          v = to + n - from + 1;
-        }
-        segTreeVN.Update(v, -v);
-        segTreeN.Update(v, -1);
-        h.erase(to);
-      }
-    };
-
+    // 计算中间的交替数组
     int from = 0;
     for (int i = 1; i < n; i++) {
       if (colors[i] == colors[i - 1]) {
@@ -191,23 +219,179 @@ class Solution {
       }
     }
 
-    if (h.size() == 0) {
-      Add(0, n - 1);
-      if (colors.front() == colors.back()) {  // 整个环都是交替的
+    Add(from, n - 1);
+    if (h.size() == 0) {  // 如果未发现交替数组，说明从0到n-1是交替的
+      if (colors.front() == colors.back()) {
         Add(n - 1, 0);
       }
     } else {
       if (colors.front() == colors.back()) {
-        Add(from, n - 1);
         Add(n - 1, 0);
-      } else {
-        // 删除 0 开始的环
-        int to = h[0];
-        Remove(0, to);
-        Add(from, to);
+      } else {  // 前后可以连起来
+        if (colors[0] == colors[1]) {
+          Remove(from, n - 1);
+          Add(from, 0);
+        } else {
+          int to = h[0];
+          Remove(from, n - 1);
+          Remove(0, to);
+          Add(from, to);
+        }
       }
     }
+
+    // for (auto [from, to] : h) {
+    //   printf("%d->%d\n", from, to);
+    // }
+
+    vector<int> ans;
+    ans.reserve(queries.size());
+    for (auto& q : queries) {
+      int op = q[0];
+      if (op == 1) {
+        int len = q[1];
+        /*
+        v1,n1: (v1-q+1)*n1 = v1 * n1 - (q  - 1)* n1
+        ...
+        vk,nk: vk * nk - (q - 1) * n2
+        sum(a,b) = sum(vi * ni) - (q-1) * sum(ni)
+        */
+        if (h.size() == 1) {
+          ans.push_back(n);
+          continue;
+        }
+        int l = len;
+        int r = n;
+        int nv = segTreeVN.QuerySum(l, r);
+        int ni = segTreeN.QuerySum(l, r);
+        int v = nv - (l - 1) * ni;
+        // printf("[%d,%d] nv=%d ni=%d v=%d\n", l, r, nv, ni, v);
+        ans.push_back(v);
+      } else {
+        const int index = q[1];
+        const int value = q[2];
+        if (colors[index] == value) {
+          continue;  // 没有变更
+        }
+
+        /*
+        完美分裂或合并:
+        010 <=> 000
+        101 <=> 111
+
+        边缘分裂或合并:
+        001 <=> 011
+        */
+
+        const int preIndex = Pre(index);
+        const int nextIndex = Next(index);
+
+        if (colors[preIndex] != colors[index] &&
+            colors[index] != colors[nextIndex]) {
+          // 完美拆分 010 => 000 || 101 => 111
+          colors[index] = value;
+          if (h.size() == 1) {  // 整个环都满足
+            int from = 0;
+            int to = n - 1;
+            Remove(from, to);
+            Add(preIndex, index);
+            Add(index, nextIndex);
+            Add(nextIndex, preIndex);
+
+          } else {
+            auto it = h.upper_bound(index);
+            it = preIt(it);
+
+            int from = it->first;
+            int to = it->second;
+            Remove(from, to);
+            Add(from, preIndex);
+            Add(preIndex, index);
+            Add(index, nextIndex);
+            Add(nextIndex, to);
+          }
+
+        } else if (colors[preIndex] == colors[index] &&
+                   colors[index] == colors[nextIndex]) {
+          // 完美合并 000 => 010 || 111 => 101
+          colors[index] = value;
+
+          auto it = h.lower_bound(preIndex);
+          it = preIt(it);
+
+          int preFrom = it->first;
+          int preTo = it->second;
+          Remove(preFrom, preTo);
+          Remove(preIndex, index);
+          Remove(index, nextIndex);
+
+          if (preFrom == nextIndex) {  // 整个环都满足
+            int from = 0;
+            int to = n - 1;
+            Add(from, to);
+          } else {
+            it = h.lower_bound(nextIndex);
+            int nextFrom = it->second;
+            int nextTo = it->second;
+            Remove(nextFrom, nextTo);
+            Add(preFrom, nextTo);
+          }
+        } else if (colors[preIndex] == colors[index] &&
+                   colors[index] != colors[nextIndex]) {
+          // 左侧边缘翻转 001 => 011 || 110 => 100
+          colors[index] = value;
+
+          auto leftIt = h.lower_bound(preIndex);
+          leftIt = preIt(leftIt);
+
+          int preFrom = leftIt->first;
+          int preTo = leftIt->second;
+          Remove(preFrom, preTo);
+          Remove(preIndex, index);
+
+          if (h.size() == 0) {  // 边界不同，其他都相同
+            Add(index, nextIndex);
+            Add(nextIndex, index);
+          } else {
+            auto rightIt = h.lower_bound(index);
+            int nextFrom = rightIt->first;
+            int nextTo = rightIt->second;
+            Remove(nextFrom, nextTo);
+
+            Add(preFrom, index);
+            Add(index, nextIndex);
+            Add(nextIndex, nextTo);
+          }
+
+        } else if (colors[preIndex] != colors[index] &&
+                   colors[index] == colors[nextIndex]) {
+          // 右侧边缘翻转 011 => 001 || 100 => 110
+          colors[index] = value;
+
+          auto leftIt = h.lower_bound(index);
+          leftIt = preIt(leftIt);
+          int preFrom = leftIt->first;
+          int preTo = leftIt->second;
+          Remove(preFrom, preTo);
+          Remove(index, nextIndex);
+
+          if (h.size() == 0) {
+            Add(index, preIndex);
+            Add(preIndex, index);
+          } else {
+            auto rightIt = h.lower_bound(nextIndex);
+            int nextFrom = rightIt->first;
+            int nextTo = rightIt->second;
+            Remove(nextFrom, nextTo);
+
+            Add(preFrom, preIndex);
+            Add(preIndex, index);
+            Add(preIndex, nextTo);
+          }
+        }
+      }
+    }
+
+    return ans;
   }
 };
-
-// 0011
