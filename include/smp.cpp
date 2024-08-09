@@ -3,6 +3,12 @@
 #include "base.h"
 using namespace std;
 
+int debug = 1;
+#define myprintf(fmt, args...)      \
+  do {                              \
+    if (debug) printf(fmt, ##args); \
+  } while (0)
+  
 typedef long long ll;
 class Solution {
  public:
