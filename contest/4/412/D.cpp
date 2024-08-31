@@ -19,138 +19,122 @@ static const auto _ = []() {
 
 typedef long long ll;
 
-const int N = 1000;
-const int NN = N * N;
-vector<int> diff[N][N];
-int diffInit = 0;
-
-vector<int> bits10 = {1, 10, 100, 1000, 10000};
-
-vector<int> H;
-
-void Init() {
-  if (diffInit) return;
-  vector<int> bound = {10, 100, 1000};
-  for (auto n : bound) {
-    for (int i = 0; i < n; i++) {
-      for (int j = i + 1; j < n; j++) {
-        diff[i][j] = diff[i / 10][j / 10];
-        for (auto& v : diff[i][j]) {
-          v++;
-        }
-        if (i % 10 != j % 10) {
-          diff[i][j].push_back(0);
-        }
-        diff[j][i] = diff[i][j];
-      }
-    }
-  }
-
-  H.resize(50001);
-  diffInit = 1;
-}
-
-unordered_map<int, int> valToHash;
+const int maxBit = 7;
+const vector<ll> bits = {1, 10, 100, 1000, 10000, 100000, 1000000};
+const vector<vector<int>> A3 = {{1, 2, 0}, {2, 0, 1}};
 class Solution {
-  vector<int> aa, bb;
-  inline bool CheckEx(int i, int j) { return aa[i] == bb[j] && aa[j] == bb[i]; }
-  bool Check(const int a, const int b) {
-    if (a == b) return true;
-    const int a_nn = a / NN, b_nn = b / NN;
-    const int a_n_n = a / N % N, b_n_n = b / N % N;
-    const int a_n = a % N, b_n = b % N;
-
-    const int diffNum = diff[a_nn][b_nn].size() + diff[a_n_n][b_n_n].size() +
-                        diff[a_n][b_n].size();
-    if (diffNum == 2 || diffNum == 3) {
-      return true;  // hash 相同，2~3个肯定有答案
-    }
-    if (diffNum >= 5) return false;  // 肯定没答案
-
-    aa.clear();
-    bb.clear();
-    // myprintf("a_nn=%d b_nn=%d size=%d\n", a_nn, b_nn,
-    // diff[a_nn][b_nn].size());
-    if (diff[a_nn][b_nn].size()) {  // 最高位
-      for (auto i : diff[a_nn][b_nn]) {
-        aa.push_back(a_nn / bits10[i] % 10);
-        bb.push_back(b_nn / bits10[i] % 10);
-      }
-    }
-    // myprintf("a_n_n=%d b_n_n=%d size=%d\n", a_n_n, b_n_n,
-    //          diff[a_n_n][b_n_n].size());
-    if (diff[a_n_n][b_n_n].size()) {  // 中间三位
-      for (auto i : diff[a_n_n][b_n_n]) {
-        aa.push_back(a_n_n / bits10[i] % 10);
-        bb.push_back(b_n_n / bits10[i] % 10);
-      }
-    }
-    // myprintf("a_n=%d b_n=%d size=%d\n", a_n, b_n, diff[a_n][b_n].size());
-    if (diff[a_n][b_n].size()) {  // 最低三位
-      for (auto i : diff[a_n][b_n]) {
-        aa.push_back(a_n / bits10[i] % 10);
-        bb.push_back(b_n / bits10[i] % 10);
-      }
-    }
-    // myprintf("aa[%d]: ", aa.size());
-    // for (auto v : aa) {
-    //   myprintf("%d ", v);
-    // }
-    // myprintf("\n", "");
-    // myprintf("bb[%d]: ", bb.size());
-    // for (auto v : bb) {
-    //   myprintf("%d ", v);
-    // }
-    // myprintf("\n", "");
-    // 四个排序后保证相等，随便挑两个匹配的化，剩余两个肯定匹配
-    for (int i = 1; i < 4; i++) {
-      if (CheckEx(0, i)) {
-        return true;
-      }
-    }
-    // myprintf("check a=%d b=%d ret=%d \n", a, b, ret);
-    return false;
-  }
-
-  vector<int> bits;
-  int Hash(const int V) {
-    int v = V;
-    if (valToHash.count(v)) {
-      return valToHash[v];
-    }
-    bits.clear();
-    bits.resize(10, 0);
-    while (v) {
-      bits[v % 10]++;
-      v /= 10;
-    }
-    int h = 0;
-    for (int i = 1; i <= 9; i++) {
-      int v = bits[i];
-      while (v--) {
-        h = h * 10 + i;
-      }
-    }
-    return valToHash[V] = h;
+  int SwapBit(const int v, const int i, const int j) {
+    const int vi = v / bits[i] % 10;
+    const int vj = v / bits[j] % 10;
+    return v - vi * bits[i] - vj * bits[j] + vi * bits[j] + vj * bits[i];
   }
 
  public:
   int countPairs(vector<int>& nums) {
-    Init();
-    int n = nums.size();
+    const int n = nums.size();
     int ans = 0;
-    H.resize(n);
-    for (int i = 0; i < n; i++) {
-      H[i] = Hash(nums[i]);
+    unordered_map<int, int> valNum;
+    for (const auto v : nums) {
+      valNum[v]++;
     }
-    for (int i = 0; i < n; i++) {
-      for (int j = i + 1; j < n; j++) {
-        if (H[i] == H[j] && Check(nums[i], nums[j])) {
-          ans++;
+    // 不做任何交换
+    for (const auto v : nums) {
+      ans += valNum[v] - 1;  // 需要排除自己
+    }
+
+    // 交换 2 个位置
+    for (const auto v : nums) {
+      for (int i = 0; i < maxBit; i++) {
+        for (int j = i + 1; j < maxBit; j++) {
+          // 交换 v 的 第 i 和 第 j 位
+          int vi = v / bits[i] % 10;
+          int vj = v / bits[j] % 10;
+          if (vi == vj) continue;
+          int V = SwapBit(v, i, j);
+          if (valNum.count(V)) {
+            ans += valNum[V];
+          }
         }
       }
     }
 
-    return ans;
+    // 交换三个位置
+    for (const auto v : nums) {
+      for (int i = 0; i < maxBit; i++) {
+        for (int j = i + 1; j < maxBit; j++) {
+          for (int k = j + 1; k < maxBit; k++) {
+            int vi = v / bits[i] % 10;
+            int vj = v / bits[j] % 10;
+            int vk = v / bits[k] % 10;
+            if (vi == vj || vi == vk || vj == vk) {
+              continue;  // 有相同的，等价与交换两个位置
+            }
+            vector<int> indexs = {i, j, k};
+            for (auto& a3 : A3) {  // 只有两种情况
+              int V = v;
+              for (int p = 0; p < indexs.size(); p++) {
+                int vOld = v / bits[indexs[p]] % 10;
+                V -= vOld * bits[indexs[p]];
+              }
+
+              for (int p = 0; p < indexs.size(); p++) {
+                int vNew = v / bits[indexs[a3[p]]] % 10;
+                V += vNew * bits[indexs[p]];
+              }
+
+              if (valNum.count(V)) {
+                ans += valNum[V];
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 交换四个位置，两两交换
+    for (const auto v : nums) {
+      for (int a = 0; a < maxBit; a++) {
+        for (int b = a + 1; b < maxBit; b++) {
+          for (int c = b + 1; c < maxBit; c++) {
+            for (int d = c + 1; d < maxBit; d++) {
+              vector<int> indexs = {a, b, c, d};
+              vector<int> values;
+              for (auto k : indexs) {
+                values.push_back(v / bits[k] % 10);
+              }
+
+              int tmp = 0;
+
+              for (int i = 1; i < 4; i++) {  // a 分别后面三个位置交换
+                swap(indexs[1], indexs[i]);
+                swap(values[1], values[i]);
+
+                if (values[0] != values[1] && values[2] != values[3]) {
+                  int V = v;
+                  V = SwapBit(V, indexs[0], indexs[1]);
+                  V = SwapBit(V, indexs[2], indexs[3]);
+                  if (valNum.count(V)) {
+                    tmp += valNum[V];
+                  }
+                }
+
+                swap(indexs[1], indexs[i]);
+                swap(values[1], values[i]);
+              }
+
+              // aabb 的情况，会导致重复多算一次，需要减半
+              sort(values.begin(), values.end());
+              if (values[0] == values[1] && values[2] == values[3]) {
+                tmp /= 2;
+              }
+
+              ans += tmp;
+            }
+          }
+        }
+      }
+    }
+
+    return ans / 2;
   }
 };
