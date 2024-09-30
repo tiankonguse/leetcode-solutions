@@ -7,17 +7,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(lldb) Launch",
-            "type": "cppdbg",
+            "name": "mac-run-home-cpp",
+            "type": "lldb",
             "request": "launch",
+            // "program": "${fileDirname}/${fileBasenameNoExtension}.exe",
             "program": "${workspaceFolder}/tmp/tmp.exe",
             "args": [],
-            "stopAtEntry": false,
-            "preLaunchTask": "mac-cpp", // 调试会话开始前执行的任务，一般为编译程序。与tasks.json的label相对应
-            "cwd": "${workspaceFolder}/",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
+            // "stopAtEntry": false,
+            "preLaunchTask": "mac-build-home-2", // 调试会话开始前执行的任务，一般为编译程序。与tasks.json的label相对应
+            // "cwd": "${fileDirname}/",
+            "cwd": "${workspaceFolder}/tmp/", 
+            // "environment": [],
+            // "externalConsole": false,
+            // "MIMode": "gdb",
+            //  "console": "internalConsole",// Terminal type to use. (This setting is a compatibility alias of 'terminal'.)
+             //internalConsole: Use VScode Debug Console for stdout and stderr. Stdin will be unavailable.
         },
         {
             "name": "mac-Launch-cpp", // 配置名称，将会在启动配置的下拉菜单中显示
