@@ -2,6 +2,7 @@
 ID: tiankonguse
 TASK: bus
 LANG: C++
+OJ: https://qoj.ac/submission/601150
 */
 #define TASK "bus"
 

@@ -1,11 +1,15 @@
 
+mt19937 rnd(time(0));
+
 struct Matrix {
+  ll P;
   int sz;
   vector<vector<ll>> a;
   Matrix(int sz = 1) : sz(sz) {  //
     init(sz);
   }
-  void init(int n) {
+  void init(int n, ll p = 998244353) {
+    P = p;
     sz = n;
     a.clear();
     a.resize(n, vector<ll>(n, 0));
@@ -21,7 +25,7 @@ struct Matrix {
     for (int i = 0; i < sz; i++)
       for (int j = 0; j < sz; j++)
         for (int k = 0; k < sz; k++)
-          ret.a[i][j] = (ret.a[i][j] + a[i][k] * B.a[k][j]) % 998244353;
+          ret.a[i][j] = (ret.a[i][j] + a[i][k] * B.a[k][j]) % P;
     return ret;
   }
   Matrix pow(ll k) {

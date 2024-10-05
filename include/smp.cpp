@@ -9,6 +9,9 @@ int debug = 1;
     if (debug) printf(fmt, ##args); \
   } while (0)
   
+#define myDebug(...) fprintf(stderr, __VA_ARGS__);
+
+
 typedef long long ll;
 class Solution {
  public:
