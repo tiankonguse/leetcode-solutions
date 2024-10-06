@@ -52,9 +52,9 @@ void Solver() {  //
     auto [tu, u] = que.top();
     que.pop();
 
-    // 剪枝，如果有更优解，说明已经计算过了
+    // 剪枝，如果有更优解，使用更优解来 bfs
     if (dp[tu % k][u] < tu) {
-      continue;
+      tu = dp[tu % k][u];
     }
 
     for (auto [v, a] : g[u]) {

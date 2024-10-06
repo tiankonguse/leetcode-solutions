@@ -11,10 +11,10 @@ OJ: https://qoj.ac/submission/601150
 using namespace std;
 
 void InitIO() {
-#ifndef USACO_LOCAL_JUDGE1
-  freopen(TASK ".in", "r", stdin);
-  freopen(TASK ".out", "w", stdout);
-#endif
+// #ifndef USACO_LOCAL_JUDGE1
+//   freopen(TASK ".in", "r", stdin);
+//   freopen(TASK ".out", "w", stdout);
+// #endif
 }
 
 /*
@@ -88,7 +88,7 @@ void Solver() {  //
 
     // 剪枝，如果有更优解，说明已经计算过了
     if (dp[tu % k][u] < tu) {
-      continue;
+      tu = dp[tu % k][u];
     }
 
     for (auto [v, a] : g[u]) {

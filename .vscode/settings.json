@@ -120,7 +120,8 @@
         "__verbose_abort": "cpp",
         "stdfloat": "cpp",
         "format": "cpp",
-        "execution": "cpp"
+        "execution": "cpp",
+        "text_encoding": "cpp"
     },
     "code-runner.runInTerminal": true,
     "C_Cpp.autocompleteAddParentheses": true,
