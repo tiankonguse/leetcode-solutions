@@ -4,9 +4,9 @@
 using namespace std;
 
 int debug = 1;
-#define myprintf(fmt, args...)      \
+#define myprintf(...)      \
   do {                              \
-    if (debug) printf(fmt, ##args); \
+    if (debug) printf(__VA_ARGS__); \
   } while (0)
   
 #define myDebug(...) fprintf(stderr, __VA_ARGS__);
