@@ -33,7 +33,6 @@ vector<ll> flag;
 
 void FlagFrom0(ll a) {
   flag[a] = 1;
-  if (a == n - 1) return;  // 终点
   for (auto [b, _] : g[a]) {
     FlagFrom0(b);
   }
