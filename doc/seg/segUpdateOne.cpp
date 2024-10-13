@@ -62,7 +62,7 @@ struct SegTree {
     Bulid(rson);
     PushUp(rt, l, r);
   }
-  void Update(int L, int add, int l = 1, int r = maxNM, int rt = 1) {
+  void Update(int L, ll add, int l = 1, int r = maxNM, int rt = 1) {
     if (L == l && r == L) {
       minVal[rt].first += add;
       maxVal[rt].first += add;
