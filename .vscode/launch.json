@@ -16,7 +16,8 @@
             // "stopAtEntry": false,
             "preLaunchTask": "mac-build-home-2", // 调试会话开始前执行的任务，一般为编译程序。与tasks.json的label相对应
             // "cwd": "${fileDirname}/",
-            "cwd": "${workspaceFolder}/tmp/", 
+            "cwd": "${fileDirname}/", 
+            // "cwd": "${workspaceFolder}/tmp/", 
             // "environment": [],
             // "externalConsole": false,
             // "MIMode": "gdb",
