@@ -48,9 +48,12 @@ Removing the wall marked by the arrow merges a pair of rooms to make the largest
 
 The castle always has at least two rooms and always has a wall that can be removed.
 
-PROGRAM NAME: castle
-INPUT FORMAT
-The map is stored in the form of numbers, one number for each module ("room"), M numbers on each of N lines to describe the floorplan. The input order corresponds to the numbering in the example diagram above.
+## PROGRAM NAME: castle
+
+## INPUT FORMAT
+
+The map is stored in the form of numbers, one number for each module ("room"), M numbers on each of N lines to describe the floorplan. 
+The input order corresponds to the numbering in the example diagram above.
 
 Each module descriptive-number tells which of the four walls exist and is the sum of up to four integers:
 
@@ -58,34 +61,48 @@ Each module descriptive-number tells which of the four walls exist and is the su
 2: wall to the north
 4: wall to the east
 8: wall to the south
+
 Inner walls are defined twice; a wall to the south in module 1,1 is also indicated as a wall to the north in module 2,1.
 Line 1:	Two space-separated integers: M and N
 Line 2..:	M x N integers, several per line.
 
-SAMPLE INPUT (file castle.in)
+## SAMPLE INPUT (file castle.in)
+
+```
 7 4
 11 6 11 6 3 10 6
 7 9 6 13 5 15 5
 1 10 12 7 13 7 5
 13 11 10 8 10 12 13
-OUTPUT FORMAT
+```
+
+
+## OUTPUT FORMAT
+
 The output contains several lines:
 Line 1:	The number of rooms the castle has.
 Line 2:	The size of the largest room
 Line 3:	The size of the largest room creatable by removing one wall
 Line 4:	The single wall to remove to make the largest room possible
 
-Choose the optimal wall to remove from the set of optimal walls by choosing the module farthest to the west (and then, if still tied, farthest to the south). If still tied, choose 'N' before 'E'.
+Choose the optimal wall to remove from the set of optimal walls by choosing the module farthest to the west (and then, if still tied, farthest to the south). 
+If still tied, choose 'N' before 'E'.
 Name that wall by naming the module that borders it on either the west or south, along with a direction of N or E giving the location of the wall with respect to the module.
 
-SAMPLE OUTPUT (file castle.out)
+## SAMPLE OUTPUT (file castle.out)
+
+```
 5
 9
 16
 4 1 E
-INPUT DETAILS
+```
+
+## INPUT DETAILS
+
 First, the map is partitioned like below. Note that walls not on the outside borders are doubled:
 
+ ```
      1    2    3    4    5    6    7
    ####|####|####|####|####|####|#####
  1 #   |   #|#   |   #|#   |    |    #
@@ -102,9 +119,12 @@ First, the map is partitioned like below. Note that walls not on the outside bor
    #  #|####|####|    |####|   #|#   #
  4 #  #|#   |    |    |    |   #|#   #
    ####|####|####|####|####|####|#####
+ ```
+
 Let's talk about the squares with a (row, column) notation such that the lower right corner is denoted (4, 7).
 
-The input will have four lines, each with 7 numbers. Each number describes one 'room'. >Walls further toward the top are 'north', towards the bottom are 'south', towards the left are 'west', and towards the right are 'east'.
+The input will have four lines, each with 7 numbers. Each number describes one 'room'. 
+>Walls further toward the top are 'north', towards the bottom are 'south', towards the left are 'west', and towards the right are 'east'.
 
 Consider square (1,1) which has three walls: north, south, and west. To encode those three walls, we consult the chart:
 
@@ -112,6 +132,7 @@ Consider square (1,1) which has three walls: north, south, and west. To encode t
 2: wall to the north
 4: wall to the east
 8: wall to the south
+
 and sum the numbers for north (2), south (8), and west (1). 2 + 8 + 1 = 11, so this room is encoded as 11.
 The next room to the right (1,2) has walls on the north (2) and east (4) and thus is encoded as 2 +4 = 6.
 
