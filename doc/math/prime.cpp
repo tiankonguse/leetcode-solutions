@@ -1,5 +1,5 @@
 const int N = 1000000;
-const int M = 300000;
+const int M = 78499;
 bool is[N];
 int prm[M];
 int getprm() {
