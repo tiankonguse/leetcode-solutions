@@ -14,32 +14,57 @@ Ask yourself what questions the algorithm will need to be able to ask the data s
 If not, then either more data must be added to the structure, or you need to find a different representation.
 
 
-Can I code it?
+## Can I code it?
 
-If you don't know or can't remember how to code a given data structure, pick a different one. Make sure that you have a good idea how each of the operations will affect the structure of the data.
+If you don't know or can't remember how to code a given data structure, pick a different one. 
+Make sure that you have a good idea how each of the operations will affect the structure of the data.
 
-Another consideration here is memory. Will the data structure fit in the available memory? If not, compact it or pick a new one. Otherwise, it is already clear from the beginning that it won't work.
 
-Can I Code It In Time?
-As this is a timed contest, you have three to five programs to write in five hours. If it'll take you an hour and a half to code just the data structure for the first problem, then you're almost certainly looking at the wrong structure.
+Another consideration here is memory. 
+Will the data structure fit in the available memory? 
+If not, compact it or pick a new one. 
+Otherwise, it is already clear from the beginning that it won't work.
 
-Can I Debug It?
-It is easy to forget this particular aspect of data structure selection. Remember that a program is useless unless it works. Don't forget that debugging time is a large portion of the contest time, so include its consideration in calculating coding time.
 
-What makes a data structure easy to debug? That is basically determined by the following two properties.
+## Can I Code It In Time?
 
-State Is Easy To Examine The smaller, more compact the representation, in general, the easier it is to examine. Also, statically allocated arrays are much easier to examine than linked lists or even dynamically allocated arrays.
-State can Be Displayed Easily For the more complex data structures, the easiest way to examine them is to write a small routine to output the data. Unfortunately, given time constraints, you'll probably want to limit yourself to text output. This means that structures like trees and graphs are going to be difficult to examine.
-Is It Fast?
-This is, surprisingly, the least important consideration when picking a data structure. A slow program will normally get a noticeable portion of the points, but a fast, incorrect one will not, unless it gets lucky.
+As this is a timed contest, you have three to five programs to write in five hours. 
+If it'll take you an hour and a half to code just the data structure for the first problem, then you're almost certainly looking at the wrong structure.
 
-Conclusion
-In general, remember the KISS principle: "Keep It Simple, Stupid." Sometimes more complexity is very helpful, but make sure you're getting your money's worth. Remember that taking the time to make sure you've got the correct data structure at the start is a lot less expensive than having to replace a data structure later.
+## Can I Debug It?
 
-Things to Avoid: Dynamic Memory
+It is easy to forget this particular aspect of data structure selection. 
+Remember that a program is useless unless it works. Don't forget that debugging time is a large portion of the contest time, so include its consideration in calculating coding time.
+
+What makes a data structure easy to debug? 
+That is basically determined by the following two properties.
+
+State Is Easy To Examine The smaller, more compact the representation, in general, the easier it is to examine. 
+Also, statically allocated arrays are much easier to examine than linked lists or even dynamically allocated arrays.
+
+State can Be Displayed Easily For the more complex data structures, the easiest way to examine them is to write a small routine to output the data. 
+Unfortunately, given time constraints, you'll probably want to limit yourself to text output. 
+This means that structures like trees and graphs are going to be difficult to examine.
+
+## Is It Fast?
+
+This is, surprisingly, the least important consideration when picking a data structure. 
+A slow program will normally get a noticeable portion of the points, but a fast, incorrect one will not, unless it gets lucky.
+
+
+## Conclusion
+
+In general, remember the KISS principle: "Keep It Simple, Stupid." 
+Sometimes more complexity is very helpful, but make sure you're getting your money's worth. 
+Remember that taking the time to make sure you've got the correct data structure at the start is a lot less expensive than having to replace a data structure later.
+
+
+## Things to Avoid: Dynamic Memory
+
 In general, you should avoid dynamic memory, because:
 
 It Is Too Easy To Make Mistakes Using Dynamic Memory
+
 Overwriting past allocated memory, not freeing memory, and not allocating memory are only some of the mistakes that are introduced when dynamic memory is used. In addition, the failure modes for these errors are such that it's hard to tell where the error occurred, as it's likely to be at a (potentially much later) memory operation.
 
 It Is Too Hard To Examine the Data Structure's Contents
