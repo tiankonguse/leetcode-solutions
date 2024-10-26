@@ -19,44 +19,50 @@ void InitIO() {
 
 const ll N = 101;
 ll n;
-vector<vector<ll>> dp;
 vector<vector<ll>> base;
+
+vector<ll> flag;  // 是否已经控股这个公司
+vector<ll> sums;  // 当前节点拥有的各个公司的股份之和
+void Solver(const int a) {
+  flag.clear();
+  flag.resize(N, 0);
+  sums.clear();
+  sums.resize(N, 0);
+  queue<int> que;
+  que.push(a);
+  flag[a] = 1;
+
+  while (!que.empty()) {
+    int b = que.front();
+    que.pop();
+    for (int i = 1; i < N; i++) {  // 控股 b 公司， b 公司的股份传累加到 a 公司
+      sums[i] += base[b][i];
+      if (sums[i] > 50 && flag[i] == 0) {
+        flag[i] = 1;
+        base[a][i] = 100;  // a 控股 i 公司
+        que.push(i);
+      }
+    }
+  }
+}
+
 void Solver() {  //
 
   base.resize(N, vector<ll>(N, 0));
-  dp.resize(N, vector<ll>(N, 0));
   scanf("%lld", &n);
-  queue<tuple<ll, ll, ll>> que;
   while (n--) {
     ll i, j, p;
     scanf("%lld%lld%lld", &i, &j, &p);
     base[i][j] = p;
-    que.push({i, j, p});
   }
-
-  while (!que.empty()) {
-    auto [a, b, x] = que.front();
-    que.pop();
-    if (x >= 50) {  // 直接控股
-      dp[a][b] = 100;
-      // b 的所有控股都是 a 的控股
-      for (ll i = 0; i < N; i++) {
-        if (dp[b][i] == 100 && dp[a][i] != 100) {
-          dp[a][i] = 100;
-          que.push({a, i, 100});
-        }
-      }
-    } else {
-      if (dp[a][b] != 100) {
-        dp[a][b] = x;
-
-        // 新增 a->b， b 可能变成控股公司
-
+  for (ll i = 1; i < N; i++) {
+    Solver(i);
+    for (ll j = 1; j < N; j++) {
+      if (j == i) continue;
+      if (base[i][j] == 100) {
+        printf("%lld %lld\n", i, j);
       }
     }
-
-    // 对
-
   }
 }
 
