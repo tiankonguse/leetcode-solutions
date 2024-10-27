@@ -20,7 +20,7 @@ struct Matrix {
       a[l][l] = 1;
     }
   }
-  Matrix operator*(Matrix& B) {
+  Matrix operator*(const Matrix& B)const {
     Matrix ret(sz);
     for (int i = 0; i < sz; i++)
       for (int j = 0; j < sz; j++)
@@ -28,7 +28,7 @@ struct Matrix {
           ret.a[i][j] = (ret.a[i][j] + a[i][k] * B.a[k][j]) % P;
     return ret;
   }
-  Matrix pow(ll k) {
+  Matrix pow(ll k)const {
     Matrix ret(sz);
     Matrix A = *this;
     ret._union();

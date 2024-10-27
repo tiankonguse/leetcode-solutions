@@ -118,7 +118,7 @@
                 "${file}",
                 "-o",
                 "${workspaceFolder}/tmp/tmp.exe",
-                "-std=c++17",
+                "-std=c++20",
             ],
             "options": {
                 "cwd": "${fileDirname}", // The current working directory of the executed program or script. If omitted Code's current workspace root is used.
