@@ -48,10 +48,12 @@ int main() {
     str[0]++;
   } else if (!ImageOk()) {
     // printf("hit image not ok\n");
-    // 0 1 2 3
-    //   |
-    // 0 1 2 3 4
-    //     |
+    // 0 1 2 3   N=4
+    //   |       P=1
+    // 0 1 2 3 4 N=5
+    //     |     P=2
+    //   abcd[x<9]9999 | 8
+    //=> abcd[x+1]0000 | 000[x+1]dcba
     for (int l = (n - 1) / 2; l >= 0; l--) {
       if (str[l] != '9') {
         str[l]++;

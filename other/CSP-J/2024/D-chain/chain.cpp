@@ -38,7 +38,6 @@ void Solver() {  //
       scanf("%lld", &l);
       sum += l;
       nums[i].resize(l);
-      H[i].clear();
       for (int j = 0; j < l; j++) {
         ll S;
         scanf("%lld", &S);
@@ -47,7 +46,6 @@ void Solver() {  //
     }
 
     querys.resize(q);
-
     R = 1;
     for (int i = 0; i < q; i++) {
       scanf("%lld%lld", &querys[i].first, &querys[i].second);
@@ -60,15 +58,20 @@ void Solver() {  //
     unordered_map<ll, ll> pre;
     unordered_map<ll, ll> now;
     vector<unordered_map<ll, ll>> H;
+
+    auto IsBegin = [](int i, int l) -> bool {  //
+      return 0;
+    };
+
     H.resize(n);
     pre[1] = sum + 1;
-    for (int r = 1; r <= R; r++) {
-      for (int i = 0; i < n; i++) {
-        
+    for (int r = 1; r <= R; r++) {   // 进行 R 轮游戏
+      for (int i = 0; i < n; i++) {  // n 个序列
         now.clear();
-
         int l = 0, r = 0;
         for (int l = 0; l + 1 < nums[i].size(); l++) {
+          if (IsBegin(i, l)) {
+          }
           const ll v = nums[i][l];
           ll vc = H[i][v];
           if (pre.count(v) && pre[v] > vc) {  // 其他行尾部有 v，可以选择 v
