@@ -33,6 +33,12 @@ bool ImageOk() {
   return false;  // 自身是回文串，不满足
 }
 
+void DoImage() {
+  for (int l = 0, r = n - 1; l < r; l++, r--) {
+    str[r] = str[l];
+  }
+}
+
 int main() {
   scanf("%s", str);
   n = strlen(str);
@@ -61,11 +67,11 @@ int main() {
       }
       str[l] = '0';  // 进位
     }
+    DoImage();  // 左半部加 1 之后，右半部复制左半部
+  } else {
+    DoImage();  // 右半部复制左半部，即可得到答案
   }
 
-  for (int l = 0, r = n - 1; l < r; l++, r--) {
-    str[r] = str[l];
-  }
   printf("%s\n", str);
 
   return 0;
