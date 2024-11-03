@@ -121,7 +121,8 @@
         "stdfloat": "cpp",
         "format": "cpp",
         "execution": "cpp",
-        "text_encoding": "cpp"
+        "text_encoding": "cpp",
+        "generator": "cpp"
     },
     "code-runner.runInTerminal": true,
     "C_Cpp.autocompleteAddParentheses": true,

@@ -235,7 +235,7 @@ TreeNode* stringToTree(string data) {
   vector<string> vec;
 
   int prePos = 1;
-  for (int i = 1; i < data.size(); i++) {
+  for (size_t i = 1; i < data.size(); i++) {
     if (data[i] == ',') {
       vec.push_back(data.substr(prePos, i - prePos));
       prePos = i + 1;
@@ -247,7 +247,7 @@ TreeNode* stringToTree(string data) {
   queue<TreeNode*> que;
   que.push(root);
 
-  for (int i = 1; i < vec.size();) {
+  for (size_t i = 1; i < vec.size();) {
     TreeNode* pre = que.front();
     que.pop();
     if (!pre) continue;
@@ -276,7 +276,7 @@ TreeNode* vecToTree(vector<int> data) {
   queue<TreeNode*> que;
   que.push(root);
 
-  for (int i = 1; i < data.size();) {
+  for (size_t i = 1; i < data.size();) {
     TreeNode* preNode = que.front();
     que.pop();
 
@@ -473,7 +473,7 @@ void output(const pair<FirstType, SecondType>& data) {
 
 template <class baseType>
 void output(const vector<baseType>& vec) {
-  for (int i = 0; i < vec.size(); i++) {
+  for (size_t i = 0; i < vec.size(); i++) {
     output(vec[i]);
   }
   // printf("\n");
@@ -481,7 +481,7 @@ void output(const vector<baseType>& vec) {
 template <class baseType>
 vector<baseType> clone(const vector<baseType>& vec) {
   vector<baseType> ans;
-  for (int i = 0; i < vec.size(); i++) {
+  for (size_t i = 0; i < vec.size(); i++) {
     ans.push_back(clone(vec[i]));
   }
   return ans;
@@ -489,7 +489,7 @@ vector<baseType> clone(const vector<baseType>& vec) {
 
 template <class baseType>
 void output(const vector<vector<baseType>>& matrix) {
-  for (int i = 0; i < matrix.size(); i++) {
+  for (size_t i = 0; i < matrix.size(); i++) {
     output(matrix[i]);
   }
 }
@@ -510,8 +510,8 @@ void output(char const* name, vector<baseType> data) {
 template <class vecType>
 void output(char const* name, vector<vector<vecType>> data) {
   printf("%s size[%4d]:\n", name, (int)data.size());
-  for (int i = 0; i < data.size(); i++) {
-    printf("index[%3d] size[%d]", i, (int)data[i].size());
+  for (size_t i = 0; i < data.size(); i++) {
+    printf("index[%3d] size[%d]", int(i), (int)data[i].size());
     output(data[i]);
     printf("\n");
   }
@@ -573,7 +573,7 @@ bool eq(vector<baseType> first, vector<baseType> second) {
   if (first.size() != second.size()) {
     return false;
   }
-  for (int i = 0; i < first.size(); i++) {
+  for (size_t i = 0; i < first.size(); i++) {
     if (!eq(first[i], second[i])) {
       return false;
     }

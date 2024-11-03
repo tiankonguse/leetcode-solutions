@@ -17,9 +17,9 @@ using namespace std;
 typedef long long ll;
 
 void InitIO() {
-#ifndef USACO_LOCAL_JUDGE
-  // freopen(TASK ".in", "r", stdin);
-  // freopen(TASK ".out", "w", stdout);
+#ifdef USACO_LOCAL_JUDGE
+  freopen(TASK ".in", "r", stdin);
+  freopen(TASK ".out", "w", stdout);
 #endif
 }
 

@@ -6,7 +6,7 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include"
             ],
-            "defines": [],
+            "defines": ["USACO_LOCAL_JUDGE"],
             "macFrameworkPath": [
                 "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
