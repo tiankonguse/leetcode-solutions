@@ -19,7 +19,7 @@
                 "${workspaceFolder}/tmp/tmp.exe",
                 "-std=c++17",
                 "-Wall",
-                "-Werror"
+                // "-Werror"
             ],
             "options": {
                 "cwd": "${fileDirname}"
