@@ -19,6 +19,7 @@
                 "${workspaceFolder}/tmp/tmp.exe",
                 "-std=c++17",
                 "-Wall",
+                "-Wno-unused-const-variable",
                 // "-Werror"
             ],
             "options": {
