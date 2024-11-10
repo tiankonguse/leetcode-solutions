@@ -5,20 +5,27 @@ using namespace std::chrono;
 #define ll long long
 #define ull unsigned long long
 
-int main() {
-  system("g++ data.cpp -o data -O2");
-  system("g++ force.cpp -o force -O2");
-  system("g++ std.cpp -o std -O2");
-  for (int i = 1; i <= 100000; ++i) {
-    system("./data > data.out");
+#ifdef USACO_LOCAL_JUDGE
+#define BITS_STDC \
+  " -I/Users/tiankonguse/project/github/leetcode-solutions/include/ "
+#else
+#define BITS_STDC " "
+#endif
+
+int main(int argc, char** argv) {
+  system("g++ ./data.cpp -std=c++17 " BITS_STDC " -o data.exe -O2");
+  system("g++ ./force.cpp -std=c++17 " BITS_STDC "  -o force.exe -O2");
+  system("g++ ./main.cpp -std=c++17 " BITS_STDC " -o main.exe -O2");
+  for (int i = 1; i <= 1000; ++i) {
+    system("./data.exe > data.out");
     auto t1 = steady_clock::now();
-    system("./force < data.out > force.out");
+    system("./force.exe < data.out > force.out");
     auto t2 = steady_clock::now();
-    system("./std < data.out > std.out");
+    system("./main.exe < data.out > main.out");
     auto t3 = steady_clock::now();
     auto my = duration_cast<duration<double, ratio<1, 1000> > >(t2 - t1);
     auto it = duration_cast<duration<double, ratio<1, 1000> > >(t3 - t2);
-    if (system("diff force.out std.out")) {
+    if (system("diff force.out main.out")) {
       printf("Wrong answer on 测试点#%d\n", i);
       printf("my 用时: %.0lfms\n", my.count());
       printf("it 用时: %.0lfms\n", it.count());
