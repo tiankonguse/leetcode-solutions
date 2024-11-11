@@ -20,6 +20,12 @@ void CheckUsacoTask() {
 #endif
 }
 
+int debug = 0;
+#define MyPrintf(...)               \
+  do {                              \
+    if (debug) printf(__VA_ARGS__); \
+  } while (0)
+
 constexpr int INF = 1 << 30;
 constexpr ll INFL = 1LL << 60;
 constexpr ll MOD = 1000000007;
