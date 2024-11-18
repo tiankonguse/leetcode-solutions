@@ -12,9 +12,9 @@ s, a, b 最前面和最后面都没有空格.
 输出
 输出只有 1 行，将s中所有单词a替换成b之后的字符串。
 样例输入
-You want someone to help you
+You want  someone   to    help     you
 You
-I
+III
 样例输出
 I want someone to help you
 
@@ -34,23 +34,26 @@ int main() {
   int wi, wj, p;
   wi = wj = 0;
   while ((c = getchar())) {
+
     if (c == ' ') {
+      temp[wi][wj] = '\0';
+      wi++;
+      wj = 0;
+      // continue;
+    } else if (c == '\n') {
       temp[wi++][wj] = '\0';
       wj = 0;
       break;
-    }
-    if (c == '\n') {
-      temp[wi++][wj] = '\0';
-      wj = 0;
-      break;  // ’‚¿Ô“™Ã¯≥ˆ—≠ª∑
     } else {
-      temp[wi][wj++] = c;
+      temp[wi][wj++] = c; // 单词字母
     }
+
   }
 
   scanf("%s", s1);
   scanf("%s", s2);
   for (p = 0; p < wi; p++) {
+    // printf("[%s]\n", temp[p]);
     if (strcmp(s1, temp[p]) == 0) {
       strcpy(temp[p], s2);  // ÃÊªª
     }
@@ -59,6 +62,6 @@ int main() {
     printf("%s", temp[p]);
     printf(" ");
   }
-  printf("\n");
+  printf("|\n");
   return 0;
 }
