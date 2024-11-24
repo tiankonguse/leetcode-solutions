@@ -6,15 +6,10 @@
 * Time   :
 \****************************************/
 
-#include <cstdio>
+#include <bits/stdc++.h>
 
 typedef long long ll;
 
-#include <cstring>
-
-constexpr int INF = 1 << 30;
-constexpr ll INFL = 1LL << 60;
-const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 #define maxN ____LL
 #define maxM ____LL
 #define infi 0x________LL
@@ -31,7 +26,8 @@ class NetworkFlow {
   struct FST e[maxM << 1];
   int star[maxN], tote;
 
-  void Init() {
+  void Init(const int n) {
+    N = n;
     memset(star, 0, sizeof(star));
     tote = 1;
   }
@@ -69,7 +65,9 @@ class NetworkFlow {
   }
 
  public:
-  ll ISAP() {
+  ll ISAP(const int s, const int t) {
+    S = s;
+    T = t;
     ll ret = 0;
     memset(vh, 0, sizeof(vh));
     memset(h, 0, sizeof(h));

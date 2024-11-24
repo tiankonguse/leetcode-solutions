@@ -692,7 +692,6 @@ long long MNow() {
       output("ans", tmpAns);                                            \
       output("expectAns", expectAns);                                   \
       printf("\n");                                                     \
-      return 0;                                                         \
     } else {                                                            \
       printf("index %d: YES %lldms\n", getIndex(), cost);               \
     }                                                                   \
