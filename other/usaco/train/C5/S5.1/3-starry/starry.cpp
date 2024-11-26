@@ -52,6 +52,8 @@ const char T = '2';
 const int N = 111;
 int n, m;
 char str[N][N];
+// int nums[N][N];
+// int index = 0;
 int dir8[8][2] = {{0, 1},  {1, 1},   {1, 0},  {1, -1},
                   {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 vector<pair<int, int>> stars;
@@ -90,28 +92,30 @@ void Solver(int x, int y) {  //
   }
 
   auto Matrixhash = [](int t, int b, int tb, int l, int r, int lr) {
-    ll h = 0;
+    ll h = 2;
     for (int i = t; i != (b + tb); i += tb) {
       for (int j = l; j != (r + lr); j += lr) {
         if (str[i][j] == T) {
-          h = (h * 2 + 1) % mod;
+          h = (h * 3 + 1) % mod;
         } else {
-          h = (h * 2) % mod;
+          h = (h * 3) % mod;
         }
       }
+      h = (h * 3 + 2) % mod;
     }
     return h;
   };
   auto Matrixhash2 = [](int t, int b, int tb, int l, int r, int lr) {
-    ll h = 0;
+    ll h = 2;
     for (int j = l; j != (r + lr); j += lr) {
       for (int i = t; i != (b + tb); i += tb) {
         if (str[i][j] == T) {
-          h = (h * 2 + 1) % mod;
+          h = (h * 3 + 1) % mod;
         } else {
-          h = (h * 2) % mod;
+          h = (h * 3) % mod;
         }
       }
+      h = (h * 3 + 2) % mod;
     }
     return h;
   };
@@ -153,6 +157,7 @@ void Solver() {  //
   for (int i = 0; i < n; i++) {
     scanf("%s", str[i]);
   }
+  // memset(nums, -1, sizeof(nums));
 
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < m; j++) {
