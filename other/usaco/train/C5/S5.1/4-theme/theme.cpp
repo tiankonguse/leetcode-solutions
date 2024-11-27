@@ -82,10 +82,15 @@ void Solver() {  //
       if (len >= 5) {
         H[hnum++] = {h[i], l};
       }
+      if (len == 7) {
+        printf("[%d,%d] diff range(%d,%d) [%lld,%lld]\n", l, k + 1, l, k,
+               h[i].first, h[i].second);
+      }
     }
     if (hnum <= 1) {
       continue;
     }
+
     sort(H, H + hnum);
     for (int i = 0; i < hnum;) {
       const auto val = H[i].first;
@@ -96,6 +101,9 @@ void Solver() {  //
       }
       const int L = H[i - 1].second;
       if (r < L && len > ans) {
+        if (len == 7) {
+          printf("val=%lld,%lld\n", val.first, val.second);
+        }
         ans = len;
       }
     }
@@ -112,5 +120,20 @@ int main(int argc, char** argv) {
 }
 
 /*
-
+Executing...
+   Test 1: TEST OK [0.007 secs limit:1s, 1688 KB]
+   Test 2: TEST OK [0.007 secs limit:1s, 1756 KB]
+   Test 3: TEST OK [0.011 secs limit:1s, 1684 KB]
+   Test 4: TEST OK [0.007 secs limit:1s, 1688 KB]
+   Test 5: TEST OK [0.004 secs limit:1s, 1752 KB]
+   Test 6: TEST OK [0.004 secs limit:1s, 1688 KB]
+   Test 7: TEST OK [0.014 secs limit:1s, 1688 KB]
+   Test 8: TEST OK [0.060 secs limit:1s, 1752 KB]
+   Test 9: TEST OK [0.311 secs limit:1s, 1696 KB]
+   Test 10: TEST OK [0.004 secs limit:1s, 1620 KB]
+   Test 11: TEST OK [2.702 secs limit:3.5s, 3372 KB]
+   Test 12: TEST OK [2.590 secs limit:3.5s, 3300 KB]
+   Test 13: TEST OK [1.817 secs limit:4.0s, 3312 KB]
+   Test 14: TEST OK [3.133 secs limit:3.5s, 3308 KB]
+   Test 15: TEST OK [3.160 secs limit:3.5s, 3384 KB]
 */
