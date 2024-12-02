@@ -1,10 +1,10 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: picture
 LANG: C++
 MAC EOF: ctrl+D
 */
-#define TASK "demo"
+#define TASK "picture"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -68,46 +68,36 @@ const int kMaxVal = 10e8;
 int maxNM;
 
 typedef long long ll;
+
+map<ll, int> H;
+vector<ll> V;
 struct SegTree {
   vector<ll> sign;
-  vector<ll> sumVal;
   vector<ll> countVal;
-  vector<pair<ll, ll>> ranges;
 
-  void Init(int n, const ll default_val = 0) {
+  void Init(int n) {
     maxNM = n + 1;
     sign.clear();
-    sumVal.clear();
     countVal.clear();
-    ranges.clear();
     sign.resize(maxNM << 2, 0);
-    sumVal.resize(maxNM << 2);
     countVal.resize(maxNM << 2);
-    ranges.resize(maxNM << 2);
   }
 
   // 合并函数，按需进行合并
   void PushUp(int rt, int l, int r) {
-    sumVal[rt] = sumVal[rt << 1] + sumVal[rt << 1 | 1];
-    countVal[rt] = countVal[rt << 1] + countVal[rt << 1 | 1];
-  }
-  int Num(pair<ll, ll> p) { return p.second - p.first + 1; }
-  void PushDown(int rt) {
     if (sign[rt]) {
-      sign[rt << 1] += sign[rt];
-      sign[rt << 1 | 1] += sign[rt];
-
-      sumVal[rt << 1] += sign[rt] * Num(ranges[rt << 1]);
-      sumVal[rt << 1 | 1] += sign[rt] * Num(ranges[rt << 1 | 1]);
-
-      sign[rt] = 0;
+      countVal[rt] = V[r] - V[l-1];
+    } else if (l == r) {
+      countVal[rt] = 0;
+    } else {
+      countVal[rt] = countVal[rt << 1] + countVal[rt << 1 | 1];
     }
+    // if(countVal[rt])printf("rt=%d l=%d r=%d sum=%lld\n", rt, l, r, countVal[rt]);
   }
   void Bulid(int l = 1, int r = maxNM, int rt = 1) {
     sign[rt] = 0;
-    ranges[rt] = {l, r};
     if (l == r) {
-      countVal[rt] = sumVal[rt] = 0;
+      countVal[rt] = 0;
       return;
     }
     int m = (l + r) >> 1;
@@ -118,20 +108,24 @@ struct SegTree {
   void Update(int L, int R, ll add, int l = 1, int r = maxNM, int rt = 1) {
     if (L <= l && r <= R) {
       sign[rt] += add;
-      sumVal[rt] += add * Num(ranges[rt]);
+      PushUp(rt, l, r);
       return;
     }
-    PushDown(rt);
     int m = (l + r) >> 1;
     if (L <= m) Update(L, R, add, lson);
     if (R > m) Update(L, R, add, rson);
     PushUp(rt, l, r);
   }
+  ll QueryAll() { return countVal[1]; }
   ll QuerySum(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
     if (L <= l && r <= R) {
-      return sumVal[rt];
+      return countVal[rt];
     }
-    PushDown(rt);
+    if (sign[rt]) {
+      int ll = max(l, L);
+      int rr = min(r, R);
+      return V[rr] - V[ll-1];
+    }
     int m = (l + r) >> 1;
     ll ret = 0;
     if (L <= m) {
@@ -156,8 +150,8 @@ struct Rec {
 
 int n;
 vector<Rec> recs;
-map<ll, int> H;
-vector<ll> V;
+ll ans = 0;
+
 void Solver() {  //
   scanf("%d", &n);
   recs.resize(n);
@@ -175,34 +169,84 @@ void Solver() {  //
   int vi = 1;
   V.resize(H.size() + 1);
   for (auto& [v, i] : H) {
-    i = vi++;
+    i = vi;
     V[i] = v;
+    vi++;
   }
+  // for (int i = 1; i < vi; i++) {
+  //   printf("0: i=%d v=%lld\n", i, V[i]);
+  // }
+  // for (auto& [v, i] : H) {
+  //   printf("1: i=%d v=%lld\n", i, v);
+  // }
 
   vector<tuple<ll, ll, ll, ll>> lines;
   lines.reserve(n * 2);
+
   for (int i = 0; i < n; i++) {
     lines.push_back({recs[i].a.x, 0, recs[i].a.y, recs[i].b.y});
     lines.push_back({recs[i].b.x, 1, recs[i].a.y, recs[i].b.y});
   }
   sort(lines.begin(), lines.end());
 
-  ll ans = 0;
   // 初始化线段树
   segTree.Init(vi);
   segTree.Bulid();
-  // 只求竖线，不求横线
-  for (auto [x, op, y0, y1] : lines) {
-    int l = H[y0], r = H[y1];
+  // 只求竖线
+  for (auto [x, op, LV, RV] : lines) {
+    int l = H[LV], r = H[RV];
+    // printf("x=%lld op=%lld LV=%lld[%d] RV=%lld[%d] ans=%lld\n", x, op, LV, l,
+    //        RV, r, ans);
     if (op == 0) {  // 矩阵进入，左边界
-      ll oldLine = segTree.QuerySum(1, vi);
-      segTree.Update(l, r, 1);
-      ll newLine = segTree.QuerySum(1, vi);
+      ll oldLine = segTree.QueryAll();
+      // assert(segTree.QueryAll() == segTree.QuerySum(1, vi));
+      segTree.Update(l+1, r, 1);
+      // assert(segTree.QueryAll() == segTree.QuerySum(1, vi));
+      ll newLine = segTree.QueryAll();
       ans += newLine - oldLine;
-
     } else {  // 矩阵退出，右边界
+      ll oldLine = segTree.QueryAll();
+      // assert(segTree.QueryAll() == segTree.QuerySum(1, vi));
+      segTree.Update(l+1, r, -1);
+      // assert(segTree.QueryAll() == segTree.QuerySum(1, vi));
+      ll newLine = segTree.QueryAll();
+      ans += oldLine - newLine;
+    }
+    // printf("x=%lld op=%lld LV=%lld[%d] RV=%lld[%d] ans=%lld\n", x, op, LV, l,
+    //        RV, r, ans);
+  }
+
+  lines.clear();
+  for (int i = 0; i < n; i++) {
+    lines.push_back({recs[i].a.y, 0, recs[i].a.x, recs[i].b.x});
+    lines.push_back({recs[i].b.y, 1, recs[i].a.x, recs[i].b.x});
+  }
+  sort(lines.begin(), lines.end());
+
+  // 初始化线段树
+  segTree.Init(vi);
+  segTree.Bulid();
+  // 只求竖线
+  for (auto [x, op, LV, RV] : lines) {
+    int l = H[LV], r = H[RV];
+    if (op == 0) {  // 矩阵进入，左边界
+      ll oldLine = segTree.QueryAll();
+      // assert(segTree.QueryAll() == segTree.QuerySum(1, vi));
+      segTree.Update(l+1, r, 1);
+      // assert(segTree.QueryAll() == segTree.QuerySum(1, vi));
+      ll newLine = segTree.QueryAll();
+      ans += newLine - oldLine;
+    } else {  // 矩阵退出，右边界
+      ll oldLine = segTree.QueryAll();
+      // assert(segTree.QueryAll() == segTree.QuerySum(1, vi));
+      segTree.Update(l+1, r, -1);
+      // assert(segTree.QueryAll() == segTree.QuerySum(1, vi));
+      ll newLine = segTree.QueryAll();
+      ans += oldLine - newLine;
     }
   }
+
+  printf("%lld\n", ans);
 }
 
 int main(int argc, char** argv) {
