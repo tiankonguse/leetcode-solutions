@@ -4,6 +4,7 @@ TASK: twofive
 LANG: C++
 MAC EOF: ctrl+D
 DESC: 把它的25个字母排成一个5*5的矩阵，它的每一行和每一列都必须是递增的
+ERROR: 理解为必须从左到右、从上到下读取
 */
 #define TASK "twofive"
 #define TASKEX ""
@@ -54,7 +55,7 @@ ll Dfs(string& s) {
   auto& ret = dp[s[1] - '0'][s[2] - '0'][s[3] - '0'][s[4] - '0'][s[5] - '0'];
   if (ret != -1) return ret;
   ret = 0;
-  for (int i = 5; i > 0; i--) { // 枚举最小值可以选择的位置
+  for (int i = 5; i > 0; i--) {
     if (s[i] > s[i - 1]) {  // 可以选择
       s[i]--;
       ret += Dfs(s);
@@ -86,27 +87,23 @@ void Solver() {  //
     scanf("%d", &m);
 
     string ans;
-    set<char> S;
-    for (int i = 0; i < 25; i++) {
-      S.insert('A' + i);
-    }
-    for (int i = 1; i <=5 ; i++) {
-      for (int j = 1; j <= 5; j++) {
-        states[j]--;
-        ll num = Dfs(states);  // [1, num]
-        printf("i=%d j=%d num=%lld m=%d\n", i, j, num, m);
-        int index = 0;
-        for (const char c : S) {
-          index++;
-          if (num >= m) {  // 选择 c
-            ans.push_back(c);
-            S.erase(c);
+    while (states[5] > '0') {
+      // ll pre = 0;
+      ll sum = Dfs(states);
+      printf("states=[%s] num=%lld m=%d\n", states.data(), sum, m);
+      for (int i = 5; i > 0; i--) {
+        if (states[i] > states[i - 1]) {  // 可以选择 states[i]
+          states[i]--;                    // 选择
+          ll num = Dfs(states);           // [1, num]
+          printf("select=%d states=[%s] num=%lld C=%c\n", i, states.data(), num, dicts[i][states[i] - '0']);
+          if (num >= m) {
+            ans.push_back(dicts[i][states[i] - '0']);
             break;
           } else {
+            states[i]++;  // 选择
             m -= num;
           }
         }
-        printf("index=%d c=%c m=%d\n", index, ans.back(), m);
       }
     }
     printf("%s\n", ans.data());
@@ -141,13 +138,5 @@ int main(int argc, char** argv) {
 }
 
 /*
-ABCDE
-FGHIJ
-KLMNQ
-OPSTV
-RUWXY
 
-K = 25 - (i*5 + j);
-lineLeft = 5-j;
-num = C(K, lineLeft) * f(i+1, 1);
 */
