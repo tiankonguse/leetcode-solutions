@@ -60,81 +60,100 @@ string buf;
 2
 1
 */
-int GetPos(int i, int j) {
+int GetPos(int i, int j) {  // 下标从 0 开始
   i = 5 - i;
   j = j - 1;
   return i * 5 + j;
 }
-int allNum = 0;
-void Dfs(string& s, char c) {
-  if (s[5] == '0') {
-    allNum++;
-    // allAns.push_back(buf);
-    if (allNum % 10000 == 0) {
-      printf("allNum=%d\n", allNum);
-    }
-    return;
-  }
-  for (int i = 5; i > 0; i--) {
-    if (s[i] > s[i - 1]) {  // 可以选择
-      int p = GetPos(s[i], i);
-      buf[p] = c;
-      s[i]--;
-      Dfs(s, c + 1);
-      s[i]++;
-    }
-  }
-}
-
 ll dp[6][6][6][6][6];
-string ans;
-int use[30];
-ll Dfs1(string& s) {
+ll Dfs(string& s, const char c, const string& ans, const vector<int>& use) {
+  if (c == 'Z') return 1;
+  const int ansNum = ans.size();
   auto& ret = dp[s[1] - '0'][s[2] - '0'][s[3] - '0'][s[4] - '0'][s[5] - '0'];
   if (ret != -1) return ret;
   ret = 0;
   for (int i = 5; i > 0; i--) {
     if (s[i] > s[i - 1]) {  // 可以选择
+      const int p = GetPos(s[i] - '0', i);
+      // printf("s[%s] i=%d p=%d ansNum=%d c=%c \n", s.data(), i, p, ansNum, c);
+      if (use[c - 'A' + 1] && p >= ansNum) continue;  // 已使用，必须满足下标
+      if (p < ansNum && ans[p] != c) continue;
+
       s[i]--;
-      ret += Dfs1(s);
+      ret += Dfs(s, c + 1, ans, use);
       s[i]++;
     }
-  }
-  if (ret == 0) {
-    ret = 1;
   }
   return ret;
 }
 
-
 char op[10];
 void Solver() {  //
-  string states = "055555";
-  memset(dp, -1, sizeof(dp));
   // 701149020
- printf("%lld\n",  Dfs1(states));
 
   scanf("%s", op);
   if (op[0] == 'N') {
     int m;
     scanf("%d", &m);
     string ans;
-    memset(S, 0, sizeof(S));
-    memset(use, 0, sizeof(use));
-    for(int i=1;i<=25;i++){
-      for(int c=1;c<=25;c++){
-        if(use[c]) continue; // 枚举选择 c 是否是答案 
-        use[c] = 1;
-
-
-      }
+    vector<int> use(26, 0);
+    string pre;
+    for (int i = 0; i < 25; i++) {
+      pre.push_back('A' + i);
     }
+    for (int i = 0; i < 5; i++) {
+      string buf;
+      for (int j = 0; j < 5; j++) {
+        while (!pre.empty()) {
+          const char c = pre.front();
+          pre.erase(pre.begin());
+
+          use[c - 'A' + 1] = 1;
+          ans.push_back(c);
+
+          memset(dp, -1, sizeof(dp));
+          string states = "055555";
+          ll num = Dfs(states, 'A', ans, use);
+          // printf("i=%d j=%d c=%c ans[%s] pre[%s] buf[%s] num=%lld\n", i, j,
+          // c,
+          //        ans.data(), pre.data(), buf.data(), num);
+          if (num >= m) {  // 选择 c
+            break;
+          } else {
+            ans.pop_back();
+            use[c - 'A' + 1] = 0;
+            buf.push_back(c);
+            m -= num;
+          }
+        }
+      }
+      buf.append(pre);
+      pre = buf;
+    }
+
     printf("%s\n", ans.data());
   } else {
     char str[40];
     scanf("%s", str);
-    string s = str;
     ll ans = 1;
+
+    vector<int> use(26, 0);
+    string buf;
+    for (int i = 0; i < 25; i++) {
+      for (int c = 1; c < str[i] - 'A' + 1; c++) {
+        if (use[c]) continue;
+        buf.push_back(c + 'A' - 1);
+        use[c] = 1;
+        memset(dp, -1, sizeof(dp));
+        string states = "055555";
+        ans += Dfs(states, 'A', buf, use);
+        buf.pop_back();
+        use[c] = 0;
+      }
+      buf.push_back(str[i]);
+      use[str[i] - 'A' + 1] = 1;
+    }
+
     printf("%lld\n", ans);
   }
 }
@@ -147,5 +166,42 @@ int main(int argc, char** argv) {
 }
 
 /*
+
+------- test 1 [length 4 bytes] ----
+N
+1
+------- test 2 [length 28 bytes] ----
+W
+ABCDEFGHIJKLMNOPQRSTUVWXY
+------- test 3 [length 6 bytes] ----
+N
+100
+------- test 4 [length 28 bytes] ----
+W
+ABCDEFGHIJKLMNQOPSTVRUWXY
+------- test 5 [length 8 bytes] ----
+N
+10000
+------- test 6 [length 28 bytes] ----
+W
+ABCDEFGHIKJMNQRLOTVXPSUWY
+------- test 7 [length 12 bytes] ----
+N
+701149020
+------- test 8 [length 28 bytes] ----
+W
+AFKPUBGLQVCHMRWDINSXEJOTY
+------- test 9 [length 12 bytes] ----
+N
+152798377
+------- test 10 [length 28 bytes] ----
+W
+ABDILCEMPSFGNTVHKOUXJQRWY
+------- test 11 [length 12 bytes] ----
+N
+192837465
+------- test 12 [length 28 bytes] ----
+W
+ABCJQDFIMREGKPSHLTUWNOVXY
 
 */
