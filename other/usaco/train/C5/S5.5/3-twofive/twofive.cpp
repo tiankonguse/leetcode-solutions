@@ -4,6 +4,7 @@ TASK: twofive
 LANG: C++
 MAC EOF: ctrl+D
 DESC: 把它的25个字母排成一个5*5的矩阵，它的每一行和每一列都必须是递增的
+ERROR: 理解为必须从左到右、从上到下读取
 */
 #define TASK "twofive"
 #define TASKEX ""
@@ -48,16 +49,54 @@ void InitIO() {
 #endif
 }
 
-ll dp[6][6][6][6][6];
+vector<string> allAns;
+string buf;
 
-ll Dfs(string& s) {
+/*
+  1 2 3 4 5
+5
+4
+3
+2
+1
+*/
+int GetPos(int i, int j) {
+  i = 5 - i;
+  j = j - 1;
+  return i * 5 + j;
+}
+int allNum = 0;
+void Dfs(string& s, char c) {
+  if (s[5] == '0') {
+    allNum++;
+    // allAns.push_back(buf);
+    if (allNum % 10000 == 0) {
+      printf("allNum=%d\n", allNum);
+    }
+    return;
+  }
+  for (int i = 5; i > 0; i--) {
+    if (s[i] > s[i - 1]) {  // 可以选择
+      int p = GetPos(s[i], i);
+      buf[p] = c;
+      s[i]--;
+      Dfs(s, c + 1);
+      s[i]++;
+    }
+  }
+}
+
+ll dp[6][6][6][6][6];
+string ans;
+int use[30];
+ll Dfs1(string& s) {
   auto& ret = dp[s[1] - '0'][s[2] - '0'][s[3] - '0'][s[4] - '0'][s[5] - '0'];
   if (ret != -1) return ret;
   ret = 0;
-  for (int i = 5; i > 0; i--) { // 枚举最小值可以选择的位置
+  for (int i = 5; i > 0; i--) {
     if (s[i] > s[i - 1]) {  // 可以选择
       s[i]--;
-      ret += Dfs(s);
+      ret += Dfs1(s);
       s[i]++;
     }
   }
@@ -67,46 +106,27 @@ ll Dfs(string& s) {
   return ret;
 }
 
-vector<string> dicts = {"",       //
-                        "UPKFA",  //
-                        "VQLGB",  //
-                        "WRMHC",  //
-                        "XSNID",  //
-                        "YTOJE"};
 
 char op[10];
 void Solver() {  //
   string states = "055555";
   memset(dp, -1, sizeof(dp));
-  Dfs(states);
+  // 701149020
+ printf("%lld\n",  Dfs1(states));
 
   scanf("%s", op);
   if (op[0] == 'N') {
     int m;
     scanf("%d", &m);
-
     string ans;
-    set<char> S;
-    for (int i = 0; i < 25; i++) {
-      S.insert('A' + i);
-    }
-    for (int i = 1; i <=5 ; i++) {
-      for (int j = 1; j <= 5; j++) {
-        states[j]--;
-        ll num = Dfs(states);  // [1, num]
-        printf("i=%d j=%d num=%lld m=%d\n", i, j, num, m);
-        int index = 0;
-        for (const char c : S) {
-          index++;
-          if (num >= m) {  // 选择 c
-            ans.push_back(c);
-            S.erase(c);
-            break;
-          } else {
-            m -= num;
-          }
-        }
-        printf("index=%d c=%c m=%d\n", index, ans.back(), m);
+    memset(S, 0, sizeof(S));
+    memset(use, 0, sizeof(use));
+    for(int i=1;i<=25;i++){
+      for(int c=1;c<=25;c++){
+        if(use[c]) continue; // 枚举选择 c 是否是答案 
+        use[c] = 1;
+
+
       }
     }
     printf("%s\n", ans.data());
@@ -115,20 +135,6 @@ void Solver() {  //
     scanf("%s", str);
     string s = str;
     ll ans = 1;
-    for (const char c : s) {
-      for (int i = 5; i > 0; i--) {
-        if (states[i] > states[i - 1]) {  // 可以选择 states[i]
-          states[i]--;                    // 选择
-          ll num = Dfs(states);           // [1, num]
-          if (c == dicts[i][states[i] - '0']) {
-            break;
-          } else {
-            states[i]++;  // 选择
-            ans += num;
-          }
-        }
-      }
-    }
     printf("%lld\n", ans);
   }
 }
@@ -141,13 +147,5 @@ int main(int argc, char** argv) {
 }
 
 /*
-ABCDE
-FGHIJ
-KLMNQ
-OPSTV
-RUWXY
 
-K = 25 - (i*5 + j);
-lineLeft = 5-j;
-num = C(K, lineLeft) * f(i+1, 1);
 */
