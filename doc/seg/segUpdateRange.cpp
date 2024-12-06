@@ -68,7 +68,7 @@ struct SegTree {
       sign[rt] = 0;
     }
   }
-  void Bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     sign[rt] = 0;
     ranges[rt] = {l, r};
     if (l == r) {
@@ -77,8 +77,8 @@ struct SegTree {
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(lson);
-    Bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt, l, r);
   }
   void Update(int L, int R, ll add, int l = 1, int r = maxNM, int rt = 1) {
