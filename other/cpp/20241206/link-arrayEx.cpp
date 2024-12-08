@@ -5,17 +5,20 @@ int linkNext[100];
 int n = 1;
 int head = 0;
 
+int& Next(int node) { return linkNext[node]; }
+int& Data(int node) { return linkData[node]; }
+
 int CreateList() {
   n = 1;
   head = 0;
-  linkNext[head] = -1;
+  Next(head) = -1;
   return head;
 }
 
 int CreateNode(int x) {  // [0,n] 已经分配，从 n+1 位置分配节点储存 x
   ++n;
-  linkData[n] = x;
-  linkNext[n] = -1;
+  Data(n) = x;
+  Next(n) = -1;
   return n;
 }
 
@@ -23,30 +26,27 @@ void Release(int node) {
   // do nothing
 }
 
-int& Next(int node) { return linkNext[node]; }
-int& Data(int node) { return linkData[node]; }
-
 // 插入节点
 void InsertAfter(int head, int node) {
-  linkNext[node] = linkNext[head];
-  linkNext[head] = node;
+  Next(node) = Next(head);
+  Next(head) = node;
 }
 
 // 删除节点
 void DeleteAfter(int head) {
-  if (linkNext[head] != -1) {
-    int node = linkNext[head];
-    linkNext[head] = linkNext[node];
+  if (Next(head) != -1) {
+    int node = Next(head);
+    Next(head) = Next(node);
     Release(node);
   }
 }
 
 // 查找值
 int FindByValue(int head, int value) {
-  head = linkNext[head];  // 跳过头节点
+  head = Next(head);  // 跳过头节点
   while (head != -1) {
-    if (linkData[head] == value) break;
-    head = linkNext[head];
+    if (Data(head) == value) break;
+    head = Next(head);
   }
   return head;
 }

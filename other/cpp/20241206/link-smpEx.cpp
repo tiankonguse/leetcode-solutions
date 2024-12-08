@@ -5,6 +5,9 @@ struct SingleLink {
   struct SingleLink* _next;
 };
 
+SingleLink*& Next(SingleLink* node) { return node->_next; }
+int& Data(SingleLink* node) { return node->_value; }
+
 // 初始化链表
 SingleLink* CreateSingleLink() {  // 返回头节点
   return new SingleLink(0);
@@ -19,9 +22,6 @@ void Release(SingleLink* node) {
   delete node;
   node = nullptr;
 }
-
-SingleLink*& Next(SingleLink* node) { return node->_next; }
-int& Data(SingleLink* node) { return node->_value; }
 
 // 插入节点
 void InsertAfter(SingleLink* head, SingleLink* node) {
@@ -40,10 +40,10 @@ void DeleteAfter(SingleLink* head) {
 
 // 查找值
 SingleLink* FindByValue(SingleLink* head, int value) {
-  head = head->_next;  // 跳过头节点
+  head = Next(head);  // 跳过头节点
   while (head != nullptr) {
-    if (head->_value == value) break;
-    head = head->_next;
+    if (Data(head) == value) break;
+    head = Next(head);
   }
   return head;
 }
