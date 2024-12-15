@@ -137,6 +137,10 @@ mt19937 gen{random_device{}()};
 uniform_real_distribution<double> dis(min, max);
 function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
+auto dfs = [&](auto &dfs) -> void {
+	 dfs(dfs);
+};
+dfs(dfs);
 */
 
 class Solution {
