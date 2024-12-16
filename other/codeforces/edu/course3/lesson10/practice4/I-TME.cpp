@@ -40,6 +40,7 @@ void InitIO() {  //
 
 typedef unsigned int ui;
 ll M = 1LL << 32;
+ll A, B;
 ui a, b;
 ui cur = 0;
 inline ui nextRand() {
@@ -48,6 +49,7 @@ inline ui nextRand() {
 }
 
 const int N = 1 << 24;
+ui preSums[N + 1] = {0};
 
 class TreeArrayEx {
  public:
@@ -59,26 +61,26 @@ class TreeArrayEx {
     t2.resize(n + 10, 0);
   }
 
-  inline void AddEx(int l, int r, ui v) {
+  inline void AddEx(int l, int r, ll v) {
     Add(l, v);
     Add(r + 1, -v);  // 将区间加差分为两个前缀加
   }
 
-  inline ui Query(ui l, ui r) {
-    return (r + 1) * Query(t1, r) - l * Query(t1, l - 1) -
+  inline ll Query(int l, int r) {
+    return (r + 1ll) * Query(t1, r) - 1ll * l * Query(t1, l - 1) -
            (Query(t2, r) - Query(t2, l - 1));
   }
 
  private:
-  inline void Add(int k, ui v) {
-    ui v1 = k * v;
+  inline void Add(int k, ll v) {
+    ll v1 = k * v;
     while (k <= n) {
       t1[k] += v, t2[k] += v1;
       k += Lowbit(k);
     }
   }
-  inline ui Query(vector<ui>& t, int k) {
-    ui ret = 0;
+  inline ll Query(vector<ll>& t, int k) {
+    ll ret = 0;
     while (k) {
       ret += t[k];
       k -= Lowbit(k);
@@ -86,7 +88,7 @@ class TreeArrayEx {
     return ret;
   }
   inline int Lowbit(int x) { return x & -x; }
-  vector<ui> t1, t2;
+  vector<ll> t1, t2;
   int n;
 };
 
@@ -94,7 +96,6 @@ TreeArrayEx treeArray;
 
 void Solver() {  //
   int m, q;
-  ll A, B;
   scanf("%d%d%lld%lld", &m, &q, &A, &B);
   a = A;
   b = B;

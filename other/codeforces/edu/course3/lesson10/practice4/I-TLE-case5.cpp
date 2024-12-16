@@ -38,86 +38,44 @@ using max_queue = priority_queue<T>;
 void InitIO() {  //
 }
 
-typedef unsigned int ui;
 ll M = 1LL << 32;
-ui a, b;
-ui cur = 0;
-inline ui nextRand() {
-  cur = cur * a + b;
+ll a, b;
+ll cur = 0;
+ll nextRand() {
+  cur = (cur * a + b) % M;
   return cur >> 8;
 }
 
-const int N = 1 << 24;
-
-class TreeArrayEx {
- public:
-  void Init(int n_) {
-    n = n_ + 1;
-    t1.clear();
-    t1.resize(n + 10, 0);
-    t2.clear();
-    t2.resize(n + 10, 0);
-  }
-
-  inline void AddEx(int l, int r, ui v) {
-    Add(l, v);
-    Add(r + 1, -v);  // 将区间加差分为两个前缀加
-  }
-
-  inline ui Query(ui l, ui r) {
-    return (r + 1) * Query(t1, r) - l * Query(t1, l - 1) -
-           (Query(t2, r) - Query(t2, l - 1));
-  }
-
- private:
-  inline void Add(int k, ui v) {
-    ui v1 = k * v;
-    while (k <= n) {
-      t1[k] += v, t2[k] += v1;
-      k += Lowbit(k);
-    }
-  }
-  inline ui Query(vector<ui>& t, int k) {
-    ui ret = 0;
-    while (k) {
-      ret += t[k];
-      k -= Lowbit(k);
-    }
-    return ret;
-  }
-  inline int Lowbit(int x) { return x & -x; }
-  vector<ui> t1, t2;
-  int n;
-};
-
-TreeArrayEx treeArray;
-
+int n = 1 << 24;
+vector<ll> preSums;
+int m, q;
+ll adding;
+int l, r;
 void Solver() {  //
-  int m, q;
-  ll A, B;
-  scanf("%d%d%lld%lld", &m, &q, &A, &B);
-  a = A;
-  b = B;
-  treeArray.Init(N);
-
+  preSums.resize(n + 10, 0);
+  scanf("%d%d%lld%lld", &m, &q, &a, &b);
   while (m--) {
-    ui adding = nextRand();
-    ui l = nextRand();
-    ui r = nextRand();
+    adding = nextRand();
+    l = nextRand();
+    r = nextRand();
     if (l > r) swap(l, r);
     l++, r++;
-    treeArray.AddEx(l, r, adding);
+    preSums[l] = (preSums[l] + adding) % M;
+    preSums[r + 1] = (preSums[r + 1] - adding) % M;
   }
-
+  ll pre = 0;
+  for (int i = 0; i < n; i++) {
+    pre = (pre + preSums[i + 1]) % M;
+    preSums[i + 1] = (preSums[i] + pre) % M;
+  }
   ll ans = 0;
   while (q--) {
-    ui l = nextRand();
-    ui r = nextRand();
+    l = nextRand();
+    r = nextRand();
     if (l > r) swap(l, r);
     l++, r++;
-    ans = (ans + treeArray.Query(l, r)) % M;
+    ans = (M + ans + preSums[r] - preSums[l - 1]) % M;
   }
-
   printf("%lld\n", ans);
 }
 
