@@ -1,12 +1,11 @@
 /*
 ID: tiankonguse
-TASK: B. 前缀和后缀子串 - 1
+TASK: A. Z-函数（简单版本）
 LANG: C++
 MAC EOF: ctrl+D
-link:
-https://codeforces.com/edu/course/2/lesson/3/1/practice/contest/272260/problem/B
-PATH: ITMO 学院：试点课程 » Z 函数 » 步骤1 » 实践
-submission:
+link: https://codeforces.com/edu/course/2/lesson/3/2/practice/contest/272261/problem/A
+PATH: ITMO 学院：试点课程”Z-函数”第 2 步”实践”
+submission: https://codeforces.com/edu/course/2/lesson/3/2/practice/contest/272261/submission/297237496
 */
 #define TASK "demo"
 #define TASKEX ""
@@ -35,20 +34,18 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
-int q;
+const int S = 3300;
+char str[S];
+int Z[S];
 void InitIO() {  //
-  scanf("%d", &q);
+  scanf("%s", str);
 }
 
-const int N = 1100;
-char str[N];
-int Z[N];
-
 void z_function(char* s, const int n, int* z) {  //
-  memset(z, 0, n * sizeof(z[0]));
   int l = 0, r = 0;
   z[0] = 0;
   for (int i = 1; i < n; i++) {
+    z[i] = 0;
     if (r >= i) {
       z[i] = min(z[i - l], r - i + 1);
     }
@@ -62,65 +59,13 @@ void z_function(char* s, const int n, int* z) {  //
   }
 }
 
-int isPrefixAndSuffix[N];  // [0,n)
-int preSum[N];             // [1,n]
-
-int Solver(int n, int nn) {
-  z_function(str, nn, Z);
-  for (int i = 0; i <= n; i++) {
-    isPrefixAndSuffix[i] = 0;
-    preSum[i] = 0;
-  }
-  for (int i = n + 1; i < nn; i++) {
-    if (i + Z[i] == nn) {
-      isPrefixAndSuffix[Z[i] - 1] = 1;
-    }
-  }
-
-  for (int i = 0; i < n; i++) {
-    preSum[i + 1] = preSum[i] + isPrefixAndSuffix[i];
-  }
-
-  int ans = 0;
-
-  Z[0] = n;
-  for (int i = 0; i < n; i++) {
-    ans += Z[i] - preSum[Z[i]];
-  }
-  return ans;
-}
-
-int Solver(const int n) {
-  str[n] = '$';
-  for (int i = 0, j = n + 1; i < n; i++, j++) {
-    str[j] = str[i];
-    isPrefixAndSuffix[i] = 0;
-  }
-  int nn = 2 * n + 1;
-  str[nn] = '\0';
-
-  int ans = Solver(n, nn);
-
-  for (int l = 0, r = nn - 1; l < r; l++, r--) {
-    swap(str[l], str[r]);
-  }
-
-  ans += Solver(n, nn);
-
-  return ans;
-}
-
 void Solver() {  //
-  getchar();     // skip \n
-  while (q--) {
-    fgets(str, N, stdin);
-    int n = strlen(str);  // skip \n
-    str[--n] = '\0';
-    // printf("str[%s] n[%d]\n", str, n);
-    printf("%d\n", Solver(n));
+  int n = strlen(str);
+  z_function(str, n, Z);
+  for (int i = 0; i < n; i++) {
+    printf("%d%c", Z[i], i + 1 == n ? '\n' : ' ');
   }
 }
-// str[barbarmiakirkudu] n[16]
 
 void ExSolver() {
 #ifdef USACO_LOCAL_JUDGE

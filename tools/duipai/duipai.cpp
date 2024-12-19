@@ -5,17 +5,24 @@ using namespace std::chrono;
 #define ll long long
 #define ull unsigned long long
 
+#define PRJ_ROOT_PATH "../../"
+
 #ifdef USACO_LOCAL_JUDGE
-#define BITS_STDC \
-  " -I/Users/tiankonguse/project/github/leetcode-solutions/include/ "
+#define BITS_STDC " -I" PRJ_ROOT_PATH "include/ "
+#define CODE_PATh \
+  PRJ_ROOT_PATH "other/codeforces/edu/course2/1-z-function/step1/"
+#define CODE_DATA CODE_PATh "B-duipai-data.cpp"
+#define CODE_FORCE CODE_PATh "B-Prefix-and-suffix-substrings-1-force.cpp"
+#define CODE_MAIN CODE_PATh "B-Prefix-and-suffix-substrings-1.cpp"
 #else
 #define BITS_STDC " "
+#define CODE_PATh ""
 #endif
 
 int main(int argc, char** argv) {
-  system("g++ ./data.cpp -std=c++17 " BITS_STDC " -o data.exe -O2");
-  system("g++ ./force.cpp -std=c++17 " BITS_STDC "  -o force.exe -O2");
-  system("g++ ./main.cpp -std=c++17 " BITS_STDC " -o main.exe -O2");
+  system("g++ " CODE_DATA " -std=c++17 " BITS_STDC " -o data.exe -O2");
+  system("g++ " CODE_FORCE " -std=c++17 " BITS_STDC "  -o force.exe -O2");
+  system("g++ " CODE_MAIN " -std=c++17 " BITS_STDC " -o main.exe -O2");
   for (int i = 1; i <= 1000; ++i) {
     system("./data.exe > data.out");
     auto t1 = steady_clock::now();

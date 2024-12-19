@@ -40,72 +40,42 @@ void InitIO() {  //
   scanf("%d", &q);
 }
 
-const int N = 1100;
+const int N = 550;
 char str[N];
-int Z[N];
 
-void z_function(char* s, const int n, int* z) {  //
-  memset(z, 0, n * sizeof(z[0]));
-  int l = 0, r = 0;
-  z[0] = 0;
-  for (int i = 1; i < n; i++) {
-    if (r >= i) {
-      z[i] = min(z[i - l], r - i + 1);
-    }
-    while (i + z[i] < n && s[z[i]] == s[i + z[i]]) {
-      z[i]++;
-    }
-    if (i + z[i] - 1 > r) {
-      l = i;
-      r = i + z[i] - 1;
-    }
-  }
-}
+int prefix[555][555];
+int suffix[555][555];
 
-int isPrefixAndSuffix[N];  // [0,n)
-int preSum[N];             // [1,n]
+int Solver(const int n) {
+  memset(prefix, 0, sizeof(prefix));
+  memset(suffix, 0, sizeof(suffix));
 
-int Solver(int n, int nn) {
-  z_function(str, nn, Z);
-  for (int i = 0; i <= n; i++) {
-    isPrefixAndSuffix[i] = 0;
-    preSum[i] = 0;
-  }
-  for (int i = n + 1; i < nn; i++) {
-    if (i + Z[i] == nn) {
-      isPrefixAndSuffix[Z[i] - 1] = 1;
+  for (int i = 0; i < n; i++) {                // 枚举起始位置
+    for (int j = i, d = 0; j < n; j++, d++) {  // 枚举结束位置
+      if (str[d] == str[j]) {
+        prefix[i][j] = 1;  // [i,j] = [0, j-i+1]
+      } else {
+        break;
+      }
     }
   }
 
-  for (int i = 0; i < n; i++) {
-    preSum[i + 1] = preSum[i] + isPrefixAndSuffix[i];
+  for (int j = n - 1; j >= 0; j--) {  // 枚举结束位置
+    for (int i = j, d = n - 1; i >= 0; i--, d--) {
+      if (str[d] == str[i]) {
+        suffix[i][j] = 1;
+      } else {
+        break;
+      }
+    }
   }
 
   int ans = 0;
-
-  Z[0] = n;
-  for (int i = 0; i < n; i++) {
-    ans += Z[i] - preSum[Z[i]];
+  for (int i = 0; i < n; i++) {    // 枚举起始位置
+    for (int j = i; j < n; j++) {  // 枚举结束位置
+      ans += prefix[i][j] ^ suffix[i][j];
+    }
   }
-  return ans;
-}
-
-int Solver(const int n) {
-  str[n] = '$';
-  for (int i = 0, j = n + 1; i < n; i++, j++) {
-    str[j] = str[i];
-    isPrefixAndSuffix[i] = 0;
-  }
-  int nn = 2 * n + 1;
-  str[nn] = '\0';
-
-  int ans = Solver(n, nn);
-
-  for (int l = 0, r = nn - 1; l < r; l++, r--) {
-    swap(str[l], str[r]);
-  }
-
-  ans += Solver(n, nn);
 
   return ans;
 }
@@ -116,7 +86,6 @@ void Solver() {  //
     fgets(str, N, stdin);
     int n = strlen(str);  // skip \n
     str[--n] = '\0';
-    // printf("str[%s] n[%d]\n", str, n);
     printf("%d\n", Solver(n));
   }
 }
