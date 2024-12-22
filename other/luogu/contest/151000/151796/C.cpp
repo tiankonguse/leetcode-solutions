@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: B3915 [语言月赛 202401] 跳房子
 LANG: C++
 MAC EOF: ctrl+D
-link:
-PATH:
+link: https://www.luogu.com.cn/problem/B3915
+PATH: 【LGR-172-Div.4】洛谷入门赛 #19
 submission:
 */
-#define TASK "demo"
+#define TASK "C"
 #define TASKEX ""
 
 #include <bits/stdc++.h>

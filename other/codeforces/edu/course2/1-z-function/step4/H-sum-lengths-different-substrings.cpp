@@ -1,11 +1,12 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: H. 不同子串的长度之和
 LANG: C++
 MAC EOF: ctrl+D
 link:
-PATH:
-submission:
+https://codeforces.com/edu/course/2/lesson/3/4/practice/contest/272262/problem/H
+PATH: ITMO 学院：试点课程 » Z 函数 » 步骤4 » 实践
+submission: https://codeforces.com/edu/course/2/lesson/3/4/practice/contest/272262/submission/297455104
 */
 #define TASK "demo"
 #define TASKEX ""
@@ -14,15 +15,6 @@ submission:
 
 using namespace std;
 typedef long long ll;
-
-void CheckUsacoTask() {
-#ifdef USACO_LOCAL_JUDGE
-  string filePath = __FILE__;
-  string fileNameEx = filePath.substr(filePath.rfind('/') + 1);
-  string fileName = fileNameEx.substr(0, fileNameEx.find("."));
-  assert(fileName == TASK TASKEX);
-#endif
-}
 
 int debug = 0;
 #define MyPrintf(...)               \
@@ -43,14 +35,44 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+const int N = 1e4 + 10;
+char S[N];
+int Z[N];
 void InitIO() {  //
-#ifdef USACO_LOCAL_JUDGE
-  freopen(TASK ".in", "r", stdin);
-  freopen(TASK ".out", "w", stdout);
-#endif
+  scanf("%s", S);
 }
 
+void z_function(char* s, int n, int* z) {  //
+  int l = 0, r = 0;
+  z[0] = 0;
+  for (int i = 1; i < n; i++) {
+    z[i] = 0;
+    if (r >= i) {
+      z[i] = min(z[i - l], r - i + 1);
+    }
+    while (i + z[i] < n && s[z[i]] == s[i + z[i]]) {
+      z[i]++;
+    }
+    if (i + z[i] - 1 > r) {
+      l = i;
+      r = i + z[i] - 1;
+    }
+  }
+}
 void Solver() {  //
+  ll ans = 0;
+  int n = strlen(S);
+  for (int i = n - 1; i >= 0; i--) {
+    int nn = n - i;
+    z_function(S + i, nn, Z);
+    int maxPre = 0;
+    for (int j = 0; j < nn; j++) {
+      maxPre = max(maxPre, Z[j]);
+    }
+    ll l = maxPre, r = nn;  // (l, r]
+    ans += (1 + r) * r / 2 - (1 + l) * l / 2;
+  }
+  printf("%lld\n", ans);
 }
 
 void ExSolver() {
@@ -68,7 +90,6 @@ void ExSolver() {
 }
 
 int main(int argc, char** argv) {
-  CheckUsacoTask();
   InitIO();
   ExSolver();
   return 0;

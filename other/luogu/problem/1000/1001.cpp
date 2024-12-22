@@ -15,15 +15,6 @@ submission:
 using namespace std;
 typedef long long ll;
 
-void CheckUsacoTask() {
-#ifdef USACO_LOCAL_JUDGE
-  string filePath = __FILE__;
-  string fileNameEx = filePath.substr(filePath.rfind('/') + 1);
-  string fileName = fileNameEx.substr(0, fileNameEx.find("."));
-  assert(fileName == TASK TASKEX);
-#endif
-}
-
 int debug = 0;
 #define MyPrintf(...)               \
   do {                              \
@@ -44,13 +35,12 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 void InitIO() {  //
-#ifdef USACO_LOCAL_JUDGE
-  freopen(TASK ".in", "r", stdin);
-  freopen(TASK ".out", "w", stdout);
-#endif
 }
 
 void Solver() {  //
+  ll a, b;
+  scanf("%lld%lld", &a, &b);
+  printf("%lld\n", a + b);
 }
 
 void ExSolver() {
@@ -68,7 +58,6 @@ void ExSolver() {
 }
 
 int main(int argc, char** argv) {
-  CheckUsacoTask();
   InitIO();
   ExSolver();
   return 0;

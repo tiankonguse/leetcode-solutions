@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: A 调皮的学
 LANG: C++
 MAC EOF: ctrl+D
-link:
-PATH:
+link: https://www.luogu.com.cn/contest/210959
+PATH:【LGR-210-Div.3】洛谷基础赛 #19 & ALFR Round 3
 submission:
 */
-#define TASK "demo"
+#define TASK "A"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -43,14 +43,31 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+int n;
 void InitIO() {  //
-#ifdef USACO_LOCAL_JUDGE
-  freopen(TASK ".in", "r", stdin);
-  freopen(TASK ".out", "w", stdout);
-#endif
+  // #ifdef USACO_LOCAL_JUDGE
+  //   freopen(TASK ".in", "r", stdin);
+  //   freopen(TASK ".out", "w", stdout);
+  // #endif
+  scanf("%d", &n);
 }
 
+vector<int> nums;
+int m, v;
 void Solver() {  //
+  nums.resize(n + 1, 0);
+  for (int i = 0; i < 3; i++) {
+    scanf("%d", &m);
+    while (m--) {
+      scanf("%d", &v);
+      nums[v]++;
+    }
+  }
+  int ans = 0;
+  for (int i = 1; i <= n; i++) {
+    if (nums[i] != 1) ans++;
+  }
+  printf("%d\n", ans);
 }
 
 void ExSolver() {

@@ -7,7 +7,7 @@ link:
 PATH:
 submission:
 */
-#define TASK "demo"
+#define TASK "D"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -43,14 +43,71 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+int t;
 void InitIO() {  //
 #ifdef USACO_LOCAL_JUDGE
   freopen(TASK ".in", "r", stdin);
   freopen(TASK ".out", "w", stdout);
 #endif
+  scanf("%d", &t);
 }
 
+ll n, m, k;
+ll nums[222][222];
+ll dp[222][222][222];
+
+inline ll Dis(int a, int b) {  // a -> b
+  if (a >= b) {
+    return (a - b) * k;
+  } else {
+    return (m - (b - a)) * k;
+  }
+}
+
+ll SolverEx(ll) {
+  for (int i = n - 1; i >= 0; i--) {
+    for (int j = m - 1; j >= 0; j--) {
+      ll nextMin = INFL;
+      if (i < n - 1) {
+        for (int o = 0; o < m; o++) {
+          nextMin = min(nextMin, dp[i + 1][j][o]);
+        }
+      }
+
+      for (int o = 0; o < m; o++) {
+        if (i == n - 1 && j == m - 1) {
+          dp[i][j][o] = Dis(o, j) + nums[i][o];  // 不能走
+        }
+        if (j < m - 1) {  // 往右走, 右边确定 shift 代价
+          ll tmp = nums[i][o] + dp[i][j + 1][(o + 1) % m];
+          dp[i][j][o] = min(dp[i][j][o], tmp);
+        }
+        if (i < n - 1) {  // 往下走
+          ll tmp = nums[i][o] + Dis(o, j) + nextMin;
+          dp[i][j][o] = min(dp[i][j][o], tmp);
+        }
+      }
+    }
+  }
+  ll nextMin = INFL;
+  for (int o = 0; o < m; o++) {
+    nextMin = min(nextMin, dp[0][0][o]);
+  }
+  return nextMin;
+}
 void Solver() {  //
+  while (t--) {
+    scanf("%lld%lld%lld", &n, &m, &k);
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < m; j++) {
+        scanf("%lld", &nums[i][j]);
+        for (int o = 0; o < m; o++) {
+          dp[i][j][o] = INFL;  // 初始化
+        }
+      }
+    }
+    printf("%lld\n", SolverEx(0));
+  }
 }
 
 void ExSolver() {

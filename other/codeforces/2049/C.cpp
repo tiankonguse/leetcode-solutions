@@ -15,15 +15,6 @@ submission:
 using namespace std;
 typedef long long ll;
 
-void CheckUsacoTask() {
-#ifdef USACO_LOCAL_JUDGE
-  string filePath = __FILE__;
-  string fileNameEx = filePath.substr(filePath.rfind('/') + 1);
-  string fileName = fileNameEx.substr(0, fileNameEx.find("."));
-  assert(fileName == TASK TASKEX);
-#endif
-}
-
 int debug = 0;
 #define MyPrintf(...)               \
   do {                              \
@@ -43,14 +34,63 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+int t;
 void InitIO() {  //
 #ifdef USACO_LOCAL_JUDGE
   freopen(TASK ".in", "r", stdin);
   freopen(TASK ".out", "w", stdout);
 #endif
+  scanf("%d", &t);
+}
+
+const int N = 2e5 + 10;
+int nums[N];
+
+int Mex(int a, int b, int c) {
+  vector<int> bits(5, 0);
+  bits[a] = bits[b] = bits[c] = 1;
+  set<int> s = {a, b, c};
+  for (int i = 0;; i++) {
+    if (bits[i] == 0) return i;
+  }
+  return 0;
+}
+void Solver(int n, int x, int y) {
+  nums[1] = 1;
+  for (int i = 2; i <= n; i++) {
+    if (i == y) {
+      if (i == n) {
+        int a = nums[i - 1];
+        int b = nums[x];
+        int c = nums[1];
+        nums[i] = Mex(a, b, c);
+      } else {
+        int a = nums[i - 1];
+        int b = nums[x];
+        nums[i] = Mex(a, b, a);
+      }
+    } else {
+      if (i == n) {
+        int a = nums[i - 1];
+        int b = nums[1];
+        nums[i] = Mex(a, b, a);
+      } else {
+        int a = nums[i - 1];
+        nums[i] = Mex(a, a, a);
+      }
+    }
+  }
 }
 
 void Solver() {  //
+  while (t--) {
+    int n, x, y;
+    scanf("%d%d%d", &n, &x, &y);
+    Solver(n, x, y);
+    for (int i = 1; i <= n; i++) {
+      printf("%d%c", nums[i], i == n ? '\n' : ' ');
+    }
+  }
 }
 
 void ExSolver() {
@@ -68,7 +108,6 @@ void ExSolver() {
 }
 
 int main(int argc, char** argv) {
-  CheckUsacoTask();
   InitIO();
   ExSolver();
   return 0;

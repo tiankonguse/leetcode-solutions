@@ -15,15 +15,6 @@ submission:
 using namespace std;
 typedef long long ll;
 
-void CheckUsacoTask() {
-#ifdef USACO_LOCAL_JUDGE
-  string filePath = __FILE__;
-  string fileNameEx = filePath.substr(filePath.rfind('/') + 1);
-  string fileName = fileNameEx.substr(0, fileNameEx.find("."));
-  assert(fileName == TASK TASKEX);
-#endif
-}
-
 int debug = 0;
 #define MyPrintf(...)               \
   do {                              \
@@ -43,14 +34,46 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+int t;
 void InitIO() {  //
 #ifdef USACO_LOCAL_JUDGE
   freopen(TASK ".in", "r", stdin);
   freopen(TASK ".out", "w", stdout);
 #endif
+  scanf("%d", &t);
+}
+
+char str[555];
+
+// <-P  S->
+// sp : ok
+// ps : err
+bool Solver(int n) {
+  int s = 0, p = 0;
+  for (int i = 0; i < n; i++) {
+    if (str[i] == 's') {
+      s++;
+      if (p) return false;
+    } else if (str[i] == 'p') {
+      p++;
+    }
+  }
+  if (s == 0 || p == 0) return true;
+  if (s > 1 && p > 1) return false;
+  
+  // 至少有一个字符是 1 个
+  if (p == 1 && str[n - 1] == 'p') return true;
+  if (s == 1 && str[0] == 's') return true;
+  return false;
 }
 
 void Solver() {  //
+  while (t--) {
+    int n;
+    scanf("%d", &n);
+    scanf("%s", str);
+    printf("%s\n", Solver(n) ? "YES" : "NO");
+  }
 }
 
 void ExSolver() {
@@ -68,7 +91,6 @@ void ExSolver() {
 }
 
 int main(int argc, char** argv) {
-  CheckUsacoTask();
   InitIO();
   ExSolver();
   return 0;

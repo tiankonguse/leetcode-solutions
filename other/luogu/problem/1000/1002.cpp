@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: P1002 [NOIP2002 普及组] 过河卒
 LANG: C++
 MAC EOF: ctrl+D
 link:
-PATH:
+PATH: NOIP 2002 普及组第四题
 submission:
 */
-#define TASK "demo"
+#define TASK "1002"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -43,14 +43,42 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+int n, m, x, y;
 void InitIO() {  //
 #ifdef USACO_LOCAL_JUDGE
   freopen(TASK ".in", "r", stdin);
   freopen(TASK ".out", "w", stdout);
 #endif
+  scanf("%d%d%d%d", &n, &m, &x, &y);
 }
 
+ll nums[25][25];
+ll flag[25][25];
+int dir8[9][2] = {{0, 0},  {-1, -2}, {-2, -1}, {1, -2}, {2, -1},
+                  {-1, 2}, {-2, 1},  {1, 2},   {2, 1}};
+
+ll SolverEx() {
+  memset(nums, 0, sizeof(nums));
+  memset(flag, 0, sizeof(flag));
+  for (int i = 0; i < 9; i++) {
+    const int X = x + dir8[i][0];
+    const int Y = y + dir8[i][1];
+    if (X < 0 || X > n || Y < 0 || Y > m) continue;
+    flag[X][Y] = 1;
+  }
+
+  nums[n + 1][m] = 1;
+  for (int i = n; i >= 0; i--) {
+    for (int j = m; j >= 0; j--) {
+      if (flag[i][j]) continue;
+      nums[i][j] = nums[i + 1][j] + nums[i][j + 1];
+      // printf("i=%d j=%d ans=%lld\n", i, j, nums[i][j]);
+    }
+  }
+  return nums[0][0];
+}
 void Solver() {  //
+  printf("%lld\n", SolverEx());
 }
 
 void ExSolver() {

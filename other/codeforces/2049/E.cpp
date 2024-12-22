@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: E
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "demo"
+#define TASK "E"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -43,14 +43,33 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+int t;
 void InitIO() {  //
 #ifdef USACO_LOCAL_JUDGE
   freopen(TASK ".in", "r", stdin);
   freopen(TASK ".out", "w", stdout);
 #endif
+  scanf("%d", &t);
 }
 
 void Solver() {  //
+  while (t--) {
+    int n, sum;
+    scanf("%d", &n);
+    int l = 1, r = n;
+    while (l < r) {
+      const int l0 = l, r0 = r >> 1;
+      const int l1 = r0 + 1, l2 = r;
+      const int len = r0;
+      printf("? %d %d\n", l0, r0);
+      scanf("%d", &sum);
+      if (sum == 1) {
+        
+      } else {
+      }
+      fflush(stdout);
+    }
+  }
 }
 
 void ExSolver() {

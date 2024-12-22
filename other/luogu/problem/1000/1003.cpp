@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: P1003 [NOIP2011 提高组] 铺地毯
 LANG: C++
 MAC EOF: ctrl+D
-link:
-PATH:
+link: https://www.luogu.com.cn/problem/P1003
+PATH: noip2011 提高组 day1 第 1 题。
 submission:
 */
-#define TASK "demo"
+#define TASK "1003"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -43,14 +43,34 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+int n;
+vector<tuple<int, int, int, int>> nums;
 void InitIO() {  //
-#ifdef USACO_LOCAL_JUDGE
-  freopen(TASK ".in", "r", stdin);
-  freopen(TASK ".out", "w", stdout);
-#endif
+                 // #ifdef USACO_LOCAL_JUDGE
+                 //   freopen(TASK ".in", "r", stdin);
+                 //   freopen(TASK ".out", "w", stdout);
+                 // #endif
+  scanf("%d", &n);
+  nums.reserve(n);
+  for (int i = 0; i < n; i++) {
+    int a, b, g, k;
+    scanf("%d%d%d%d", &a, &b, &g, &k);
+    nums.push_back({a, b, a + g - 1, b + k - 1});
+  }
 }
 
 void Solver() {  //
+  int x, y;
+  int ans = -1;
+  scanf("%d%d", &x, &y);
+  for (int i = n - 1; i >= 0; i--) {
+    auto [x0, y0, x1, y1] = nums[i];
+    if (x0 <= x && x <= x1 && y0 <= y && y <= y1) {
+      ans = i + 1;
+      break;
+    }
+  }
+  printf("%d\n", ans);
 }
 
 void ExSolver() {

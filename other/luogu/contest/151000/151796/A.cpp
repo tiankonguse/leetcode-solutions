@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: T417326 分饼干 I
 LANG: C++
 MAC EOF: ctrl+D
-link:
-PATH:
+link: https://www.luogu.com.cn/problem/T417326?contestId=151796
+PATH: 【LGR-172-Div.4】洛谷入门赛 #19
 submission:
 */
-#define TASK "demo"
+#define TASK "A"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -43,14 +43,37 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+const int n = 3;
+ll sum = 0;
+int nums[5];
 void InitIO() {  //
-#ifdef USACO_LOCAL_JUDGE
-  freopen(TASK ".in", "r", stdin);
-  freopen(TASK ".out", "w", stdout);
-#endif
+// #ifdef USACO_LOCAL_JUDGE
+//   freopen(TASK ".in", "r", stdin);
+//   freopen(TASK ".out", "w", stdout);
+// #endif
+  for (int i = 0; i < n; i++) {
+    scanf("%d", &nums[i]);
+    sum += nums[i];
+  }
 }
 
+int x, y;
+void Update(int a, int b) {
+  if (a < b) return;
+  if (x - y > a - b) {
+    x = a;
+    y = b;
+  }
+}
 void Solver() {  //
+  x = sum;
+  y = 0;
+  for (int i = 0; i < n; i++) {
+    int v = nums[i];
+    Update(v, sum - v);
+    Update(sum - v, v);
+  }
+  printf("%d %d\n", x, y);
 }
 
 void ExSolver() {

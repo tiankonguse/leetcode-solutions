@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: B Swap & Delete
 LANG: C++
 MAC EOF: ctrl+D
-link:
-PATH:
+link: https://www.luogu.com.cn/contest/210959
+PATH:【LGR-210-Div.3】洛谷基础赛 #19 & ALFR Round 3
 submission:
 */
-#define TASK "demo"
+#define TASK "B"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -43,14 +43,41 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+int t;
 void InitIO() {  //
-#ifdef USACO_LOCAL_JUDGE
-  freopen(TASK ".in", "r", stdin);
-  freopen(TASK ".out", "w", stdout);
-#endif
+  // #ifdef USACO_LOCAL_JUDGE
+  //   freopen(TASK ".in", "r", stdin);
+  //   freopen(TASK ".out", "w", stdout);
+  // #endif
+  scanf("%d", &t);
+}
+
+int n;
+unordered_map<int, int> h;
+const int N = 1e5 + 10;
+int nums[N];
+int two = 0;
+int solverEx() {
+  if (nums[0] == nums[n - 1]) return 1;
+  if (h[nums[0]] > 1 || h[nums[n - 1]] > 1) return 2;
+  if (two) return 3;
+  return n;
 }
 
 void Solver() {  //
+  while (t--) {
+    scanf("%d", &n);
+    h.clear();
+    two = 0;
+    for (int i = 0; i < n; i++) {
+      scanf("%d", &nums[i]);
+      h[nums[i]]++;
+      if (h[nums[i]] > 1) {
+        two = 1;
+      }
+    }
+    printf("%d\n", solverEx());
+  }
 }
 
 void ExSolver() {

@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: [入门赛 #19] 分饼干 II
 LANG: C++
 MAC EOF: ctrl+D
-link:
-PATH:
+link: https://www.luogu.com.cn/problem/P1749
+PATH: 【LGR-172-Div.4】洛谷入门赛 #19
 submission:
 */
-#define TASK "demo"
+#define TASK "B"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -43,14 +43,24 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+int t;
 void InitIO() {  //
-#ifdef USACO_LOCAL_JUDGE
-  freopen(TASK ".in", "r", stdin);
-  freopen(TASK ".out", "w", stdout);
-#endif
+  // #ifdef USACO_LOCAL_JUDGE
+  //   freopen(TASK ".in", "r", stdin);
+  //   freopen(TASK ".out", "w", stdout);
+  // #endif
+  scanf("%d", &t);
 }
-
+ll k, n;
+bool Check() {
+  ll K = (1 + k) * k / 2;
+  return K <= n;
+}
 void Solver() {  //
+  while (t--) {
+    scanf("%lld%lld", &n, &k);
+    printf("%s\n", Check() ? "Yes" : "No");
+  }
 }
 
 void ExSolver() {

@@ -15,15 +15,6 @@ submission:
 using namespace std;
 typedef long long ll;
 
-void CheckUsacoTask() {
-#ifdef USACO_LOCAL_JUDGE
-  string filePath = __FILE__;
-  string fileNameEx = filePath.substr(filePath.rfind('/') + 1);
-  string fileName = fileNameEx.substr(0, fileNameEx.find("."));
-  assert(fileName == TASK TASKEX);
-#endif
-}
-
 int debug = 0;
 #define MyPrintf(...)               \
   do {                              \
@@ -43,14 +34,35 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+int t;
 void InitIO() {  //
 #ifdef USACO_LOCAL_JUDGE
   freopen(TASK ".in", "r", stdin);
   freopen(TASK ".out", "w", stdout);
 #endif
+  scanf("%d", &t);
 }
 
+int nums[100];
+int Solver(int n) {  //
+  int l = 0, r = n - 1;
+  while (l <= r && nums[l] == 0) l++;
+  while (l <= r && nums[r] == 0) r--;
+  if (l > r) return 0;  // all is zero
+  for (int i = l; i <= r; i++) {
+    if (nums[i] == 0) return 2;
+  }
+  return 1;
+}
 void Solver() {  //
+  while (t--) {
+    int n;
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) {
+      scanf("%d", &nums[i]);
+    }
+    printf("%d\n", Solver(n));
+  }
 }
 
 void ExSolver() {
@@ -68,7 +80,6 @@ void ExSolver() {
 }
 
 int main(int argc, char** argv) {
-  CheckUsacoTask();
   InitIO();
   ExSolver();
   return 0;
