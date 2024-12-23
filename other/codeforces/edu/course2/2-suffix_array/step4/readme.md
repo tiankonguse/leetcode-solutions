@@ -140,3 +140,6 @@ What is the time complexity of this algorithm? Let's see how many times we compa
  ，这意味着它增加不超过 2𝑛
  次。因此，算法的总时间为 𝑂(𝑛)
  。
+
+
+ 
