@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: B. Counting Substrings B. 计算子串
+TASK: A. Suffix Array - 1 A. 后缀数组 - 1
 LANG: C++
 MAC EOF: ctrl+D
 link:
-https://codeforces.com/edu/course/2/lesson/2/3/practice/contest/269118/problem/B
-PATH: ITMO 学院：试点课程 » 后缀数组 » 步骤3 » 实践
+https://codeforces.com/edu/course/2/lesson/2/1/practice/contest/269100/problem/A
+PATH: ITMO 学院：试点课程 » 后缀数组 » 步骤1 » 实践
 submission:
-https://codeforces.com/edu/course/2/lesson/2/3/practice/contest/269118/submission/297006729
+https://codeforces.com/edu/course/2/lesson/2/1/practice/contest/269100/submission/296870949
 */
 #define TASK "demo"
 #define TASKEX ""
@@ -36,7 +36,7 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
-const int N = 3e5 + 10;
+const int N = 4e5 + 10;
 char str[N];
 void InitIO() {  //
   scanf("%s", str);
@@ -106,78 +106,18 @@ void SuffixArray(char* str, int n, vector<int>& p, vector<int>& c) {
   }
 }
 
-vector<int> P;  // 第几名的位置
-vector<int> C;  // 第几个元素排第几名
-
 int n;
+void Solver() {
+  n = strlen(str);
+  str[n] = '$';
+  n++;
 
-void Init() {
-  int nn = strlen(str);
-  str[nn] = '$';
-  nn++;
-  str[nn] = '\0';
-  n = nn;
-  SuffixArray(str, nn, P, C);
-}
+  vector<int> p(n);  // 排名i的位置
+  vector<int> c(n);  // 位置p的排名，多个位置相等时排名相同
+  SuffixArray(str, n, p, c);
 
-int q;
-char query[N];
-int QueryLower(int L, int R, int i) {
-  int l = L, r = R;  // 排名
-  char v = query[i];
-  // printf("lower v=%c\n", v);
-  while (l < r) {
-    int mid = (l + r) / 2;
-    int pos = P[mid];
-    char V = str[pos + i];
-    // printf("l=%d r=%d mid=%d pos=%d i=%d V=%c\n", l, r, mid, pos, i, V);
-    if (V >= v) {
-      r = mid;
-    } else if (V < v) {
-      l = mid + 1;
-    }
-  }
-  if (r >= R || str[P[r] + i] != v) return -1;
-  return r;
-}
-int QueryUpper(int L, int R, int i) {
-  int l = L, r = R;  // 排名
-  char v = query[i];
-  while (l < r) {
-    int mid = (l + r) / 2;
-    int pos = P[mid];
-    char V = str[pos + i];
-    if (V > v) {
-      r = mid;
-    } else if (V <= v) {
-      l = mid + 1;
-    }
-  }
-  return r;
-}
-int Query() {  //
-  int len = strlen(query);
-  int l = 1, r = n;  // [1,n)
-  for (int i = 0; i < len; i++) {
-    int left = QueryLower(l, r, i);
-    // printf(" i=%d l=%d r=%d left=%d\n", i, l, r, left);
-    if (left == -1) {
-      return false;
-    }
-    int right = QueryUpper(l, r, i);
-    // printf(" i=%d l=%d r=%d left=%d\n", i, l, r, right);
-    l = left;
-    r = right;
-  }
-  return r - l;
-}
-
-void Solver() {  //
-  Init();
-  scanf("%d", &q);
-  while (q--) {
-    scanf("%s", query);
-    printf("%d\n", Query());
+  for (int j = 0; j < n; j++) {
+    printf("%d%c", p[j], j + 1 == n ? '\n' : ' ');
   }
 }
 

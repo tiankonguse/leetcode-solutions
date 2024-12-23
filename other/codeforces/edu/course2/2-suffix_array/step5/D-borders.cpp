@@ -1,21 +1,29 @@
 /*
 ID: tiankonguse
-TASK: B. Counting Substrings B. 计算子串
+TASK: D. Borders  D、边界
 LANG: C++
 MAC EOF: ctrl+D
 link:
-https://codeforces.com/edu/course/2/lesson/2/3/practice/contest/269118/problem/B
-PATH: ITMO 学院：试点课程 » 后缀数组 » 步骤3 » 实践
+https://codeforces.com/edu/course/2/lesson/2/5/practice/contest/269656/problem/D
+PATH: ITMO 学院：试点课程 » 后缀数组 » 步骤5 » 实践
 submission:
-https://codeforces.com/edu/course/2/lesson/2/3/practice/contest/269118/submission/297006729
 */
-#define TASK "demo"
+#define TASK "D-borders"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
 
 using namespace std;
 typedef long long ll;
+
+void CheckUsacoTask() {
+#ifdef USACO_LOCAL_JUDGE
+  string filePath = __FILE__;
+  string fileNameEx = filePath.substr(filePath.rfind('/') + 1);
+  string fileName = fileNameEx.substr(0, fileNameEx.find("."));
+  assert(fileName == TASK TASKEX);
+#endif
+}
 
 int debug = 0;
 #define MyPrintf(...)               \
@@ -36,36 +44,40 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
-const int N = 3e5 + 10;
-char str[N];
-void InitIO() {  //
-  scanf("%s", str);
-}
-
+vector<int> cnt;
+vector<int> pos;
+vector<pair<pair<int, int>, int>> tmpNums;
 template <typename F>
 void radix_sort(vector<pair<pair<int, int>, int>>& nums, const F& Callback) {
   const int n = nums.size();
-  vector<int> cnt(n, 0);
   for (auto& x : nums) {
     cnt[Callback(x.first)]++;
   }
 
-  vector<int> pos(n, 0);  // 排名为 i 时，累计个数
+  pos[0] = 0;  // 排名为 i 时，累计个数
   for (int r = 1; r < n; r++) {
     pos[r] = pos[r - 1] + cnt[r - 1];
   }
 
-  vector<pair<pair<int, int>, int>> tmp(n);
+  for (auto& x : nums) {
+    cnt[Callback(x.first)]--;  // 使用完了，还原数组
+  }
+
   for (auto& x : nums) {
     int r = Callback(x.first);
-    tmp[pos[r]] = x;
+    tmpNums[pos[r]] = x;
     pos[r]++;
   }
-  tmp.swap(nums);
+  tmpNums.swap(nums);
 }
 
 void SuffixArray(char* str, int n, vector<int>& p, vector<int>& c) {
   vector<pair<pair<int, int>, int>> nums(n);
+
+  cnt.resize(n, 0);
+  pos.resize(n, 0);
+  tmpNums.resize(n);
+
   p.resize(n, 0);
   c.resize(n, 0);
 
@@ -103,82 +115,59 @@ void SuffixArray(char* str, int n, vector<int>& p, vector<int>& c) {
       }
       c[pos] = rank;  // 第pos个值的排名
     }
+    if (rank + 1 == n) break;  // 剪枝，已经没有重复了
   }
 }
 
-vector<int> P;  // 第几名的位置
-vector<int> C;  // 第几个元素排第几名
+void Lcp(char* str, int n, vector<int>& p, vector<int>& c, vector<int>& lcp) {
+  lcp.resize(n, 0);
+  int k = 0;
+  for (int i = 0; i < n - 1; i++) {  // 依次从最长的前缀开始处理
+    int pi = c[i];                   // s[i...n]; 的排名
+    int j = p[pi - 1];               // pi 上一名的位置
+    while (str[i + k] == str[j + k]) k++;
+    lcp[pi] = k;
+    k = max(k - 1, 0);
+  }
+}
 
+vector<int> P;    // 第几名的位置, 对应 sa
+vector<int> C;    // 第几个元素排第几名, 对应 rk
+vector<int> lcp;  // 第几名与上一名的最长前缀, 对应 height
+
+const int N = 4e5 + 10;
+char str[N];
 int n;
-
-void Init() {
-  int nn = strlen(str);
-  str[nn] = '$';
-  nn++;
-  str[nn] = '\0';
-  n = nn;
-  SuffixArray(str, nn, P, C);
+void InitIO() {
+  // #ifdef USACO_LOCAL_JUDGE
+  //   freopen(TASK ".in", "r", stdin);
+  //   freopen(TASK ".out", "w", stdout);
+  // #endif
+  scanf("%s", str);
+  n = strlen(str);
+  str[n++] = '$';
+  str[n] = '\0';
 }
-
-int q;
-char query[N];
-int QueryLower(int L, int R, int i) {
-  int l = L, r = R;  // 排名
-  char v = query[i];
-  // printf("lower v=%c\n", v);
-  while (l < r) {
-    int mid = (l + r) / 2;
-    int pos = P[mid];
-    char V = str[pos + i];
-    // printf("l=%d r=%d mid=%d pos=%d i=%d V=%c\n", l, r, mid, pos, i, V);
-    if (V >= v) {
-      r = mid;
-    } else if (V < v) {
-      l = mid + 1;
-    }
-  }
-  if (r >= R || str[P[r] + i] != v) return -1;
-  return r;
-}
-int QueryUpper(int L, int R, int i) {
-  int l = L, r = R;  // 排名
-  char v = query[i];
-  while (l < r) {
-    int mid = (l + r) / 2;
-    int pos = P[mid];
-    char V = str[pos + i];
-    if (V > v) {
-      r = mid;
-    } else if (V <= v) {
-      l = mid + 1;
-    }
-  }
-  return r;
-}
-int Query() {  //
-  int len = strlen(query);
-  int l = 1, r = n;  // [1,n)
-  for (int i = 0; i < len; i++) {
-    int left = QueryLower(l, r, i);
-    // printf(" i=%d l=%d r=%d left=%d\n", i, l, r, left);
-    if (left == -1) {
-      return false;
-    }
-    int right = QueryUpper(l, r, i);
-    // printf(" i=%d l=%d r=%d left=%d\n", i, l, r, right);
-    l = left;
-    r = right;
-  }
-  return r - l;
-}
-
 void Solver() {  //
-  Init();
-  scanf("%d", &q);
-  while (q--) {
-    scanf("%s", query);
-    printf("%d\n", Query());
+  SuffixArray(str, n, P, C);
+  Lcp(str, n, P, C, lcp);
+
+  int maxLen = 0;
+  int l = 0;
+  for (int i = 1; i < n; i++) {
+    int a = P[i - 1];
+    int b = P[i];
+    int h = lcp[i];
+    // printf("a=%d b=%d h=%d sn=%d\n", a, b, h, sn);
+    if (h <= maxLen) continue;
+    if (b < sn && a < sn) continue;
+    if (b > sn && a > sn) continue;
+    maxLen = h;
+    l = b;
   }
+  // printf("str=%s maxLen=%d l=%d\n", str, maxLen, l);
+  str[l + maxLen] = '\0';
+  printf("%s\n", str + l);
 }
 
 void ExSolver() {
@@ -196,6 +185,7 @@ void ExSolver() {
 }
 
 int main(int argc, char** argv) {
+  CheckUsacoTask();
   InitIO();
   ExSolver();
   return 0;

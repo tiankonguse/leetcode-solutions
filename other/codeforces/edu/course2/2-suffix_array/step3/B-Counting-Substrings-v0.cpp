@@ -6,8 +6,7 @@ MAC EOF: ctrl+D
 link:
 https://codeforces.com/edu/course/2/lesson/2/3/practice/contest/269118/problem/B
 PATH: ITMO 学院：试点课程 » 后缀数组 » 步骤3 » 实践
-submission:
-https://codeforces.com/edu/course/2/lesson/2/3/practice/contest/269118/submission/297006729
+submission: https://codeforces.com/edu/course/2/lesson/2/3/practice/contest/269118/submission/297006729
 */
 #define TASK "demo"
 #define TASKEX ""
@@ -42,74 +41,32 @@ void InitIO() {  //
   scanf("%s", str);
 }
 
-template <typename F>
-void radix_sort(vector<pair<pair<int, int>, int>>& nums, const F& Callback) {
-  const int n = nums.size();
-  vector<int> cnt(n, 0);
-  for (auto& x : nums) {
-    cnt[Callback(x.first)]++;
+int LogN(int n) {
+  int k = 0;
+  int v = 0;
+  while (n) {
+    v += n & 1;
+    n >>= 1;
+    k++;
   }
-
-  vector<int> pos(n, 0);  // 排名为 i 时，累计个数
-  for (int r = 1; r < n; r++) {
-    pos[r] = pos[r - 1] + cnt[r - 1];
+  if (v > 1) {
+    k++;
   }
-
-  vector<pair<pair<int, int>, int>> tmp(n);
-  for (auto& x : nums) {
-    int r = Callback(x.first);
-    tmp[pos[r]] = x;
-    pos[r]++;
-  }
-  tmp.swap(nums);
+  return k;
 }
 
-void SuffixArray(char* str, int n, vector<int>& p, vector<int>& c) {
-  vector<pair<pair<int, int>, int>> nums(n);
-  p.resize(n, 0);
-  c.resize(n, 0);
-
-  for (int k = 0; 1 << max(k - 1, 0) < n; k++) {
-    for (int j = 0; j < n; j++) {
-      pair<int, int> v;
-      if (k > 0) {
-        int leftRank = c[j];
-        int rightRank = c[(j + (1 << (k - 1))) % n];
-        v = {leftRank, rightRank};
-      } else {
-        v = {str[j], 0};  // 第一次，只需要对一个值排序
-      }
-      nums[j] = {v, j};
-    }
-    if (k == 0) {
-      sort(nums.begin(), nums.end());
-    } else {
-      radix_sort(nums, [](const std::pair<int, int>& p) { return p.second; });
-      radix_sort(nums, [](const std::pair<int, int>& p) { return p.first; });
-    }
-
-    for (int j = 0; j < n; j++) {
-      p[j] = nums[j].second;  // 排名第 j 的位置
-    }
-
-    // 最小的肯定是 $
-    auto pre = nums.front().first;
-    int rank = 0;
-    for (int j = 0; j < n; j++) {
-      auto [v, pos] = nums[j];
-      if (v != pre) {
-        pre = v;
-        rank++;
-      }
-      c[pos] = rank;  // 第pos个值的排名
-    }
-  }
-}
-
-vector<int> P;  // 第几名的位置
-vector<int> C;  // 第几个元素排第几名
-
+vector<vector<int>> bt;
 int n;
+inline pair<int, int> LeftRightRank(int i, int j) {
+  int leftRank = bt[i - 1][j];
+  int rightRank = bt[i - 1][(j + (1 << (i - 1))) % n];
+  return {leftRank, rightRank};
+}
+
+vector<int> nums2;
+vector<int> rank2;
+vector<int> nums1;  // 第几名是谁
+vector<int> rank1;  // 第几个元素排第几名
 
 void Init() {
   int nn = strlen(str);
@@ -117,7 +74,94 @@ void Init() {
   nn++;
   str[nn] = '\0';
   n = nn;
-  SuffixArray(str, nn, P, C);
+
+  int K = LogN(n);
+  bt.resize(K + 1, vector<int>(n, 0));
+
+  nums2.resize(n + 2);  // 计数排序
+  rank2.resize(n + 2);  // 计数排序
+  rank1.resize(n + 2);  // 计数排序
+  nums1.resize(n + 2);  // 计数排序
+
+  vector<int> base(256);
+  for (int j = 0; j < n; j++) {
+    base[str[j]] = 1;
+  }
+  int rank = 0;
+  for (auto& v : base) {
+    if (v == 1) {
+      v = ++rank;
+    }
+  }
+  for (int j = 0; j < n; j++) {
+    bt[0][j] = base[str[j]] - 1;
+  }
+
+  for (int i = 1; i <= K; i++) {
+    for (auto& v : nums2) v = 0;
+    int maxRightRank = 0;
+    for (int j = 0; j < n; j++) {
+      int rightRank = LeftRightRank(i, j).second + 1;
+      nums2[rightRank]++;
+      maxRightRank = max(maxRightRank, rightRank);
+    }
+    for (int r = 1; r <= maxRightRank; r++) {
+      nums2[r] += nums2[r - 1];
+    }
+
+    for (auto& v : rank2) v = 0;
+    for (int j = 0; j < n; j++) {
+      int rightRank = LeftRightRank(i, j).second;
+      rank2[nums2[rightRank]] = j;
+      nums2[rightRank]++;
+    }
+
+    for (auto& v : nums1) v = 0;
+    int maxLeftRank = 0;
+    for (int r = 0; r < n; r++) {
+      int j = rank2[r];
+      int leftRank = LeftRightRank(i, j).first + 1;
+      nums1[leftRank]++;
+      maxLeftRank = max(maxLeftRank, leftRank);
+    }
+    for (int r = 1; r <= maxLeftRank; r++) {
+      nums1[r] += nums1[r - 1];
+    }
+
+    for (auto& v : rank1) v = 0;
+    for (int r = 0; r < n; r++) {
+      int j = rank2[r];
+      int leftRank = LeftRightRank(i, j).first;
+      rank1[nums1[leftRank]] = j;
+      nums1[leftRank]++;
+    }
+
+    // 最小的肯定是 $
+    auto pre = LeftRightRank(i, rank1[0]);
+    int rank = 0;
+    for (int r = 0; r < n; r++) {
+      int j = rank1[r];
+      auto v = LeftRightRank(i, j);
+      if (v != pre) {
+        pre = v;
+        rank++;
+      }
+      bt[i][j] = rank;
+    }
+
+    // printf("i=%d\n", i);
+  }
+
+  for (int j = 0; j < n; j++) {
+    nums1[bt[K][j]] = j;
+    rank1[j] = bt[K][j];
+  }
+  // for (int j = 0; j < n; j++) {
+  //   printf("j=%d v=%c nums1=%d\n", j, str[nums1[j]], nums1[j]);
+  // }
+  // for (int j = 0; j < n; j++) {
+  //   printf("j=%d rank1=%d\n", j, rank1[j]);
+  // }
 }
 
 int q;
@@ -128,7 +172,7 @@ int QueryLower(int L, int R, int i) {
   // printf("lower v=%c\n", v);
   while (l < r) {
     int mid = (l + r) / 2;
-    int pos = P[mid];
+    int pos = nums1[mid];
     char V = str[pos + i];
     // printf("l=%d r=%d mid=%d pos=%d i=%d V=%c\n", l, r, mid, pos, i, V);
     if (V >= v) {
@@ -137,7 +181,7 @@ int QueryLower(int L, int R, int i) {
       l = mid + 1;
     }
   }
-  if (r >= R || str[P[r] + i] != v) return -1;
+  if (r >= R || str[nums1[r] + i] != v) return -1;
   return r;
 }
 int QueryUpper(int L, int R, int i) {
@@ -145,7 +189,7 @@ int QueryUpper(int L, int R, int i) {
   char v = query[i];
   while (l < r) {
     int mid = (l + r) / 2;
-    int pos = P[mid];
+    int pos = nums1[mid];
     char V = str[pos + i];
     if (V > v) {
       r = mid;
