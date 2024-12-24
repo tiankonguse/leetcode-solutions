@@ -96,11 +96,17 @@ vector<int> lcp;  // 第几名与上一名的最长前缀, 对应 height
 const int N = 2e5 + 10;
 char str[N];
 int n;
-void Solver() {  //
+void InitIO() {
+  // #ifdef USACO_LOCAL_JUDGE
+  //   freopen(TASK ".in", "r", stdin);
+  //   freopen(TASK ".out", "w", stdout);
+  // #endif
   scanf("%s", str);
   n = strlen(str);
   str[n++] = '$';
   str[n] = '\0';
+}
+void Solver() {  //
   SuffixArray(str, n, P, C);
   Lcp(str, n, P, C, lcp);
 }
