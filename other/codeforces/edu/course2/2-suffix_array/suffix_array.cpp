@@ -2,30 +2,40 @@
 
 using namespace std;
 
+vector<int> cnt;
+vector<int> pos;
+vector<pair<pair<int, int>, int>> tmpNums;
 template <typename F>
 void radix_sort(vector<pair<pair<int, int>, int>>& nums, const F& Callback) {
   const int n = nums.size();
-  vector<int> cnt(n, 0);
   for (auto& x : nums) {
     cnt[Callback(x.first)]++;
   }
 
-  vector<int> pos(n, 0);  // 排名为 i 时，累计个数
+  pos[0] = 0;  // 排名为 i 时，累计个数
   for (int r = 1; r < n; r++) {
     pos[r] = pos[r - 1] + cnt[r - 1];
   }
 
-  vector<pair<pair<int, int>, int>> tmp(n);
+  for (auto& x : nums) {
+    cnt[Callback(x.first)]--;  // 使用完了，还原数组
+  }
+
   for (auto& x : nums) {
     int r = Callback(x.first);
-    tmp[pos[r]] = x;
+    tmpNums[pos[r]] = x;
     pos[r]++;
   }
-  tmp.swap(nums);
+  tmpNums.swap(nums);
 }
 
 void SuffixArray(char* str, int n, vector<int>& p, vector<int>& c) {
   vector<pair<pair<int, int>, int>> nums(n);
+
+  cnt.resize(n, 0);
+  pos.resize(n, 0);
+  tmpNums.resize(n);
+
   p.resize(n, 0);
   c.resize(n, 0);
 
@@ -63,6 +73,7 @@ void SuffixArray(char* str, int n, vector<int>& p, vector<int>& c) {
       }
       c[pos] = rank;  // 第pos个值的排名
     }
+    if (rank + 1 == n) break;  // 剪枝，已经没有重复了
   }
 }
 
@@ -82,11 +93,13 @@ vector<int> P;    // 第几名的位置, 对应 sa
 vector<int> C;    // 第几个元素排第几名, 对应 rk
 vector<int> lcp;  // 第几名与上一名的最长前缀, 对应 height
 
+const int N = 2e5 + 10;
+char str[N];
 int n;
-void Init(char* str) {
+void Solver() {  //
+  scanf("%s", str);
   n = strlen(str);
-  str[n] = '$';
-  n++;
+  str[n++] = '$';
   str[n] = '\0';
   SuffixArray(str, n, P, C);
   Lcp(str, n, P, C, lcp);
