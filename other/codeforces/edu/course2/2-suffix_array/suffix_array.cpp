@@ -29,22 +29,22 @@ void radix_sort(vector<pair<pair<int, int>, int>>& nums, const F& Callback) {
   tmpNums.swap(nums);
 }
 
-void SuffixArray(char* str, int n, vector<int>& p, vector<int>& c) {
+void SuffixArray(char* str, int n, vector<int>& sa, vector<int>& rk) {
   vector<pair<pair<int, int>, int>> nums(n);
 
   cnt.resize(n, 0);
   pos.resize(n, 0);
   tmpNums.resize(n);
 
-  p.resize(n, 0);
-  c.resize(n, 0);
+  sa.resize(n, 0);
+  rk.resize(n, 0);
 
   for (int k = 0; 1 << max(k - 1, 0) < n; k++) {
     for (int j = 0; j < n; j++) {
       pair<int, int> v;
       if (k > 0) {
-        int leftRank = c[j];
-        int rightRank = c[(j + (1 << (k - 1))) % n];
+        int leftRank = rk[j];
+        int rightRank = rk[(j + (1 << (k - 1))) % n];
         v = {leftRank, rightRank};
       } else {
         v = {str[j], 0};  // 第一次，只需要对一个值排序
@@ -59,7 +59,7 @@ void SuffixArray(char* str, int n, vector<int>& p, vector<int>& c) {
     }
 
     for (int j = 0; j < n; j++) {
-      p[j] = nums[j].second;  // 排名第 j 的位置
+      sa[j] = nums[j].second;  // 排名第 j 的位置
     }
 
     // 最小的肯定是 $
@@ -71,29 +71,58 @@ void SuffixArray(char* str, int n, vector<int>& p, vector<int>& c) {
         pre = v;
         rank++;
       }
-      c[pos] = rank;  // 第pos个值的排名
+      rk[pos] = rank;  // 第pos个值的排名
     }
     if (rank + 1 == n) break;  // 剪枝，已经没有重复了
   }
 }
 
-void Lcp(char* str, int n, vector<int>& p, vector<int>& c, vector<int>& lcp) {
-  lcp.resize(n, 0);
+void BuildHeight(char* str, int n, vector<int>& sa, vector<int>& rk,
+                 vector<int>& height) {
+  height.resize(n, 0);
   int k = 0;
   for (int i = 0; i < n - 1; i++) {  // 依次从最长的前缀开始处理
-    int pi = c[i];                   // s[i...n]; 的排名
-    int j = p[pi - 1];               // pi 上一名的位置
+    int pi = rk[i];                  // s[i...n]; 的排名
+    int j = sa[pi - 1];              // pi 上一名的位置
     while (str[i + k] == str[j + k]) k++;
-    lcp[pi] = k;
+    height[pi] = k;
     k = max(k - 1, 0);
   }
 }
 
-vector<int> P;    // 第几名的位置, 对应 sa
-vector<int> C;    // 第几个元素排第几名, 对应 rk
-vector<int> lcp;  // 第几名与上一名的最长前缀, 对应 height
+void BuildST(vector<int>& height, vector<vector<int>>& st) {
+  int n = height.size();
+  st.resize(n, vector<int>(20, 0));
+  for (int i = 0; i < n; i++) {
+    st[i][0] = height[i];
+  }
+  for (int j = 1; (1 << j) <= n; j++) {
+    for (int i = 0; i + (1 << j) <= n; i++) {
+      st[i][j] = min(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);
+    }
+  }
+}
 
-const int N = 2e5 + 10;
+vector<int> sa;      // 第几名的位置, 对应 sa
+vector<int> rk;      // 第几个元素排第几名, 对应 rk
+vector<int> height;  // 第几名与上一名的最长前缀, 对应 height
+vector<vector<int>> st;
+inline int MaxBit(int v) { return 31 - __builtin_clz(v); }
+ll Lcp(int i, int j) {
+  const int n = st.size();
+  if (i == j) return n - i;
+  int ri = rk[i];
+  int rj = rk[j];
+  if (ri > rj) {
+    swap(ri, rj);
+  }
+  int l = ri + 1;
+  int r = rj + 1;
+  int k = MaxBit(r - l);
+  return min(st[l][k], st[r - (1 << k)][k]);
+}
+
+const int N = 4e5 + 10;
 char str[N];
 int n;
 void InitIO() {
@@ -106,7 +135,9 @@ void InitIO() {
   str[n++] = '$';
   str[n] = '\0';
 }
+
 void Solver() {  //
-  SuffixArray(str, n, P, C);
-  Lcp(str, n, P, C, lcp);
+  SuffixArray(str, n, sa, rk);
+  BuildHeight(str, n, sa, rk, height);
+  BuildST(height, st);
 }
