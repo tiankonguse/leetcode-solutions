@@ -1,15 +1,14 @@
 /*
 ID: tiankonguse
-TASK: E. Refrain  E. 克制
+TASK: F. Periodic Substring  F. 周期子串
 LANG: C++
 MAC EOF: ctrl+D
 link:
-https://codeforces.com/edu/course/2/lesson/2/5/practice/contest/269656/problem/E
+https://codeforces.com/edu/course/2/lesson/2/5/practice/contest/269656/problem/F
 PATH: ITMO 学院：试点课程 » 后缀数组 » 步骤5 » 实践
 submission:
-https://codeforces.com/edu/course/2/lesson/2/5/practice/contest/269656/submission/298309064
 */
-#define TASK "E-Refrain"
+#define TASK "F-periodic-substring"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -136,102 +135,30 @@ vector<int> P;    // 第几名的位置, 对应 sa
 vector<int> C;    // 第几个元素排第几名, 对应 rk
 vector<int> lcp;  // 第几名与上一名的最长前缀, 对应 height
 
-const int N = 3e5 + 10;
+const int N = 4e5 + 10;
 char str[N];
-int n, m;
+int n;
 void InitIO() {
   // #ifdef USACO_LOCAL_JUDGE
   //   freopen(TASK ".in", "r", stdin);
   //   freopen(TASK ".out", "w", stdout);
   // #endif
-  scanf("%d%d", &n, &m);
-  for (int i = 0; i < n; i++) {
-    int v;
-    scanf("%d", &v);
-    str[i] = 'a' + v;
-  }
+  scanf("%s", str);
+  n = strlen(str);
   str[n++] = '$';
   str[n] = '\0';
 }
+
+int 
+
 void Solver() {  //
   SuffixArray(str, n, P, C);
   Lcp(str, n, P, C, lcp);
 
-  // printf("str=%s\n", str);
-  // for (int i = 0; i < n; i++) {
-  //   printf("s=[%s] rk=%d pos=%d lcp=%d\n", str + P[i], i, P[i], lcp[i]);
-  // }
+  const int oldN = n - 1;
+  SolverEx();
 
-  ll ans = n - 1;
-  ll ansLen = n - 1;
-  ll ansNum = 1;
-  ll ansPos = 0;
-  auto UpdateAns = [&](ll tmpLen, ll tmpNum, ll tmpPos) {
-    ll tmpAns = tmpLen * tmpNum;
-    if (tmpAns > ans) {
-      ans = tmpAns;
-      ansLen = tmpLen;
-      ansNum = tmpNum;
-      ansPos = tmpPos;
-    }
-  };
 
-  vector<tuple<ll, ll, int>> sta;  // <h, num, pos>
-  sta.reserve(n);
-  sta.push_back({0, 1, n});  // 保持栈永远不为空
-  for (int i = 1; i < n; i++) {
-    int h = lcp[i];
-    int p = P[i];
-    if (h == 0) {  // 没有重叠
-      while (sta.size() >= 2) {
-        auto [h1, num1, pos1] = sta.back();
-        sta.pop_back();
-        auto [h2, num2, pos2] = sta.back();
-        sta.pop_back();
-        UpdateAns(h2, num1 + num2, pos2);
-        sta.push_back({h2, num1 + num2, pos2});  // 向前合并
-      }
-    } else {
-      ll num = 0;
-      while (get<0>(sta.back()) >= h) {
-        auto [h1, num1, pos1] = sta.back();
-        sta.pop_back();
-
-        auto [h2, num2, pos2] = sta.back();
-        sta.pop_back();
-
-        if (h2 >= h) {  // 合并到前一个
-          UpdateAns(h2, num1 + num2, pos2);
-          sta.push_back({h2, num1 + num2, pos2});  // 向前合并
-        } else {                                   // 向后合并
-          sta.push_back({h2, num2, pos2});         // 还原上一个
-          num = num1;
-          break;
-        }
-      }
-      UpdateAns(h, num + 1, p);  // 最新的加上之前的
-      sta.push_back({h, num, p});
-    }
-
-    UpdateAns(n - 1 - p, 1, p);    // p=0 时，答案应该是 n-1
-    sta.push_back({n - p, 1, p});  // 最新的完整的后缀都插入堆栈
-  }
-  while (sta.size() >= 2) {
-    auto [h1, num1, pos1] = sta.back();
-    sta.pop_back();
-    auto [h2, num2, pos2] = sta.back();
-    sta.pop_back();
-    UpdateAns(h2, num1 + num2, pos2);
-    sta.push_back({h2, num1 + num2, pos2});  // 向前合并
-  }
-
-  // cf is win, bo support %lld, should use %I64d
-  // printf("%s\n", to_string(ans).data());
-  printf("%lld\n", ans);
-  printf("%lld\n", ansLen);
-  for (ll i = 0; i < ansLen; i++) {
-    printf("%d%c", str[ansPos + i] - 'a', i + 1 == ansLen ? '\n' : ' ');
-  }
 }
 
 void ExSolver() {

@@ -9,7 +9,7 @@ PATH: ITMO 学院：试点课程 » 后缀数组 » 步骤5 » 实践
 submission:
 https://codeforces.com/edu/course/2/lesson/2/5/practice/contest/269656/submission/298309064
 */
-#define TASK "E-Refrain"
+#define TASK "E-Refrain-v1"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -176,42 +176,33 @@ void Solver() {  //
     }
   };
 
+  // 维护一个lcp单调递增栈，记录栈中记录小于当前后缀长度的最大连续区间
   vector<tuple<ll, ll, int>> sta;  // <h, num, pos>
   sta.reserve(n);
-  sta.push_back({0, 1, n});  // 保持栈永远不为空
-  for (int i = 1; i < n; i++) {
+  sta.push_back({-1, 1, n});  // 保持栈永远不为空
+  for (int i = 0; i < n; i++) {
     int h = lcp[i];
     int p = P[i];
-    if (h == 0) {  // 没有重叠
-      while (sta.size() >= 2) {
-        auto [h1, num1, pos1] = sta.back();
-        sta.pop_back();
-        auto [h2, num2, pos2] = sta.back();
-        sta.pop_back();
+
+    ll num = 0;
+    while (get<0>(sta.back()) >= h) {
+      auto [h1, num1, pos1] = sta.back();
+      sta.pop_back();
+
+      auto [h2, num2, pos2] = sta.back();
+      sta.pop_back();
+
+      if (h2 >= h) {  // 合并到前一个
         UpdateAns(h2, num1 + num2, pos2);
         sta.push_back({h2, num1 + num2, pos2});  // 向前合并
+      } else {                                   // 向后合并
+        sta.push_back({h2, num2, pos2});         // 还原上一个
+        num = num1;
+        break;
       }
-    } else {
-      ll num = 0;
-      while (get<0>(sta.back()) >= h) {
-        auto [h1, num1, pos1] = sta.back();
-        sta.pop_back();
-
-        auto [h2, num2, pos2] = sta.back();
-        sta.pop_back();
-
-        if (h2 >= h) {  // 合并到前一个
-          UpdateAns(h2, num1 + num2, pos2);
-          sta.push_back({h2, num1 + num2, pos2});  // 向前合并
-        } else {                                   // 向后合并
-          sta.push_back({h2, num2, pos2});         // 还原上一个
-          num = num1;
-          break;
-        }
-      }
-      UpdateAns(h, num + 1, p);  // 最新的加上之前的
-      sta.push_back({h, num, p});
     }
+    UpdateAns(h, num + 1, p);  // 最新的加上之前的
+    sta.push_back({h, num, p});
 
     UpdateAns(n - 1 - p, 1, p);    // p=0 时，答案应该是 n-1
     sta.push_back({n - p, 1, p});  // 最新的完整的后缀都插入堆栈
