@@ -54,12 +54,12 @@ void InitIO() {
 
 SegTree segTree;
 segTree.Init(str); // 内部会对数组进行右移，转化为 [1,n]
-segTree.Bulid();
+segTree.Build();
 segTree.Update(l, r, val); // 区间 [l,r] 都加上 val, 数据范围 [1,n]
 segTree.QueryMax/QueryMin/QuerySum 区间查询, 数据范围 [1,n]
 */
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 1e5 + 10;

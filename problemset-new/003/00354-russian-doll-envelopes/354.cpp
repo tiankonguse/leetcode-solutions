@@ -24,12 +24,12 @@ typedef long long ll;
 
 SegTree segTree;
 segTree.Init(str); // 内部会对数组进行右移，转化为 [1,n]
-segTree.Bulid();
+segTree.Build();
 segTree.Update(l, val); // 单点 l 都加上 val, 数据范围 [1,n]
 segTree.QueryMax/QueryMin/QuerySum 区间查询, 数据范围 [1,n]
 */
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 1e5 + 10;
@@ -51,14 +51,14 @@ struct SegTree {
     maxVal[rt] = max(maxVal[rt << 1], maxVal[rt << 1 | 1]);
   }
   int Num(pair<ll, ll> p) { return p.second - p.first + 1; }
-  void Bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     if (l == r) {
       maxVal[rt] = 0;
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(lson);
-    Bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt, l, r);
   }
   void Update(int L, ll add, int l = 1, int r = maxNM, int rt = 1) {
@@ -93,7 +93,7 @@ class Solution {
  public:
   int maxEnvelopes(vector<vector<int>>& envelopes) {  //
     segTree.Init(maxn);
-    segTree.Bulid();
+    segTree.Build();
     sort(envelopes.begin(), envelopes.end(), [](auto& a, auto& b) {
       if (a[0] == b[0]) {
         return a[1] > b[1];

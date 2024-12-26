@@ -123,7 +123,7 @@ struct Node {
 */
 
 typedef long long ll;
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 1e5 + 10;
@@ -146,14 +146,14 @@ struct SegTree {
     minVal[rt] = min(minVal[rt << 1], minVal[rt << 1 | 1]);
   }
 
-  void Bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     if (l == r) {
       minVal[rt] = str[l];
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(lson);
-    Bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt);
   }
   ll QueryMin(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
@@ -185,7 +185,7 @@ class Solution {
     for (int i = 1; i <= n; i++) {
       segTree.str[i] = nums[i - 1];
     }
-    segTree.Bulid();
+    segTree.Build();
 
     vector<ll> preSum(n + 2, 0), afterSum(n + 2, 0);
     vector<ll> preSum2(n + 2, 0), afterSum2(n + 2, 0);

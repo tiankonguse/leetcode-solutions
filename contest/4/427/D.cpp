@@ -23,12 +23,12 @@ typedef long long ll;
 
 SegTree segTree;
 segTree.Init(str); // 内部会对数组进行右移，转化为 [1,n]
-segTree.Bulid();
+segTree.Build();
 segTree.Update(l, val); // 单点 l 都加上 val, 数据范围 [1,n]
 segTree.QueryMax/QueryMin/QuerySum 区间查询, 数据范围 [1,n]
 */
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 2e5 + 10;
@@ -50,14 +50,14 @@ struct SegTree {
   void PushUp(int rt, int l, int r) {
     minVal[rt] = min(minVal[rt << 1], minVal[rt << 1 | 1]);
   }
-  void Bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     if (l == r) {
       minVal[rt] = {INT_MAX, INT_MAX};
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(lson);
-    Bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt, l, r);
   }
   void Update(int L, Point add, int l = 1, int r = maxNM, int rt = 1) {
@@ -148,7 +148,7 @@ class Solution {
     }
 
     segTree.Init(yn);
-    segTree.Bulid();
+    segTree.Build();
     for (int i = 0; i < yn; i++) {
       Point p = {Yarray[i].front(), i};
       segTree.Update(i + 1, p);

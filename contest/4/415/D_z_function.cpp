@@ -40,12 +40,12 @@ std::vector<int> z_function(const std::string& s) {
 
 SegTree segTree;
 segTree.Init(str); // 内部会对数组进行右移，转化为 [1,n]
-segTree.Bulid();
+segTree.Build();
 segTree.Update(l, val); // 单点 l 都加上 val, 数据范围 [1,n]
 segTree.QueryMax/QueryMin/QuerySum 区间查询, 数据范围 [1,n]
 */
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 1e5 + 10;
@@ -80,7 +80,7 @@ struct SegTree {
     sumVal[rt] = sumVal[rt << 1] + sumVal[rt << 1 | 1];
   }
   int Num(pair<ll, ll> p) { return p.second - p.first + 1; }
-  void Bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     ranges[rt] = {l, r};
     if (l == r) {
       sumVal[rt] = str[l];  // 如果 str 没有复制一份，则需要注意边界是否越界
@@ -88,8 +88,8 @@ struct SegTree {
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(lson);
-    Bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt, l, r);
   }
   void Update(int L, int add, int l = 1, int r = maxNM, int rt = 1) {
@@ -141,7 +141,7 @@ class Solution {
       }
     }
     segTree.Init(n + 2, MAXANS);
-    segTree.Bulid();
+    segTree.Build();
     segTree.Update(n + 1, -MAXANS);
     for (int i = n; i >= 1; i--) {
       if (next[i] == 0) {

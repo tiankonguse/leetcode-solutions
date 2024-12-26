@@ -89,7 +89,7 @@ struct Node {
 };
 */
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 20010;
@@ -112,15 +112,15 @@ struct SegTree {
       sign[rt] = {0, 0};
     }
   }
-  void bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     sign[rt] = {0, 0};
     Dis[rt] = r - l + 1;
     if (l == r) {
       return;
     }
     int m = (l + r) >> 1;
-    bulid(lson);
-    bulid(rson);
+    Build(lson);
+    Build(rson);
   }
   void update(int L, int R, int offset, int l = 1, int r = maxNM, int rt = 1) {
     if (L <= l && r <= R) {
@@ -160,7 +160,7 @@ int main() {
 
   maxNM = n;
 
-  segTree.bulid();
+  segTree.Build();
 
   scanf("%lld", &m);
   rep(i, m) {

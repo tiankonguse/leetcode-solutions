@@ -133,7 +133,7 @@ function<double(void)> Rand = [that = this]() { return that->dis(that->gen); };
 
 */
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 1e5 + 10;
@@ -184,7 +184,7 @@ struct SegTree {
       sign[rt] = 0;
     }
   }
-  void Bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     sign[rt] = 0;
     nums[rt] = r - l + 1;
     if (l == r) {
@@ -193,8 +193,8 @@ struct SegTree {
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(lson);
-    Bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt);
   }
   void Update(int L, int R, int add, int l = 1, int r = maxNM, int rt = 1) {
@@ -285,7 +285,7 @@ class Solution {
     threshold = threshold_;
     int n = nums.size();
     segTree.Init(n);
-    segTree.Bulid();
+    segTree.Build();
     for (int i = 1; i <= n; i++) {
       segTree.Update(i, i, nums[i - 1]);
     }

@@ -14,7 +14,7 @@ const double PI = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = max5;
@@ -46,15 +46,15 @@ struct SegTree {
       sign[rt] = 0;
     }
   }
-  void bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     sign[rt] = 0;
     if (l == r) {
       minVal[rt] = maxMal[rt] = str[l];
       return;
     }
     int m = (l + r) >> 1;
-    bulid(lson);
-    bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt);
   }
   void update(int L, int R, int add, int l = 1, int r = maxNM, int rt = 1) {
@@ -114,7 +114,7 @@ class Solution {
     for (int i = 0; i <= maxNM; i++) {
       segTree.str[i] = 0;
     }
-    segTree.bulid();
+    segTree.Build();
 
     for (int i = 0; i < n; i++) {
       int x = nums[i], y = nums[n2 - i - 1];

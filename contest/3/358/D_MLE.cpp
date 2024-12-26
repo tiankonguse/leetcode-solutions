@@ -8,7 +8,7 @@ typedef long long ll;
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 1e5 + 10;
@@ -28,7 +28,7 @@ struct SegTree {
   void PushUp(int rt) {
     maxVal[rt] = max(maxVal[rt << 1], maxVal[rt << 1 | 1]);
   }
-  void Bulid(vector<int> score, int l = 1, int r = maxNM, int rt = 1) {
+  void Build(vector<int> score, int l = 1, int r = maxNM, int rt = 1) {
     if (l == r) {
       int V = 0;
       if (l < score.size()) {
@@ -38,8 +38,8 @@ struct SegTree {
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(score, lson);
-    Bulid(score, rson);
+    Build(score, lson);
+    Build(score, rson);
     PushUp(rt);
   }
   int QueryMax(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
@@ -127,7 +127,7 @@ class Solution {
     for (int i = 1; i <= n; i++) {
       score[i] = CalScore(nums[i - 1]);
     }
-    segTree.Bulid(score);
+    segTree.Build(score);
     // for (int i = 1; i <= n; i++) {
     //   printf("i=%d score=%lld que=%lld\n", i, score[i], segTree.QueryMax(i,
     //   i));

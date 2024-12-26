@@ -46,15 +46,15 @@ class SegTree {
     }
   }
   void PushUp(int rt) { sum[rt] = operate(sum[rt << 1], sum[rt << 1 | 1]); }
-  void bulid(int l = 1, int r = -1, int rt = 1) {
+  void Build(int l = 1, int r = -1, int rt = 1) {
     if (r == -1) r = n;
     if (l == r) {
       sum[rt] = {(*ptasks)[l - 1][0], l};
       return;
     }
     int m = (l + r) >> 1;
-    bulid(lson);
-    bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt);
   }
   pair<int, int> query(int L, int R, int l = 1, int r = -1, int rt = 1) {
@@ -88,7 +88,7 @@ SegTree segTree;
 class Solution {
   bool check(int initVal, vector<vector<int>>& tasks) {
     segTree.init(tasks);
-    segTree.bulid();
+    segTree.Build();
 
     int num = tasks.size();
     while (num--) {

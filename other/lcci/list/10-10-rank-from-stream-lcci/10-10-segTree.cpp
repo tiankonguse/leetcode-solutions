@@ -89,7 +89,7 @@ struct Node {
 };
 */
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 1e5 + 10;
@@ -109,14 +109,14 @@ struct SegTree {
     valNum[rt] = valNum[rt << 1] + valNum[rt << 1 | 1];
   }
   void PushDown(int rt) {}
-  void bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     if (l == r) {
       valNum[rt] = 0;
       return;
     }
     int m = (l + r) >> 1;
-    bulid(lson);
-    bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt);
   }
   void update(int L, int R, int add, int l = 1, int r = maxNM, int rt = 1) {
@@ -153,7 +153,7 @@ class StreamRank {
  public:
   StreamRank() {
     segTree.Init(50010);
-    segTree.bulid();
+    segTree.Build();
   }
 
   void track(int x) {

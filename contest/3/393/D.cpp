@@ -7,7 +7,7 @@ typedef long long ll;
 constexpr int inf = 1 << 30;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int kMaxVal = 10e8;
@@ -29,14 +29,14 @@ struct SegTree {
     minVal[rt] = min(minVal[rt << 1], minVal[rt << 1 | 1]);
   }
   void PushDown(int rt) {}
-  void Bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     if (l == r) {
       minVal[rt] = 0;
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(lson);
-    Bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt);
   }
   void Update(int L, int R, int add, int l = 1, int r = maxNM, int rt = 1) {
@@ -119,7 +119,7 @@ class Solution {
     // printf("next 2 %d\n", __LINE__);
     for (int j = 0; j <= 1; j++) {
       seg[j].Init(n);
-      seg[j].Bulid();
+      seg[j].Build();
     }
   }
 
@@ -227,7 +227,7 @@ class Solution {
     // printf("next %d\n", __LINE__);
     for (int j = 1; j <= m; j++) {
       swap(seg_now, seg_pre);
-      // seg[seg_now].Bulid();
+      // seg[seg_now].Build();
       for (int i = 1; i <= n; i++) {
         // printf("next 0 %d\n", __LINE__);
         ll tmp = Solver(i, j);

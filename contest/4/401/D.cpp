@@ -5,7 +5,7 @@ using namespace std;
 
 typedef long long ll;
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 1e5 + 10;
@@ -25,14 +25,14 @@ struct SegTree {
   }
 
   void PushUp(int rt) { sumVal[rt] = sumVal[rt << 1] + sumVal[rt << 1 | 1]; }
-  void Bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     if (l == r) {
       sumVal[rt] = 0;
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(lson);
-    Bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt);
   }
   void Update(int L, int R, int add, int l = 1, int r = maxNM, int rt = 1) {
@@ -71,7 +71,7 @@ class Solution {
     set<int> finded, nofind;
 
     segTree.Init(N);
-    segTree.Bulid();
+    segTree.Build();
 
     int ans = 0;
 

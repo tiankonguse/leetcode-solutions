@@ -52,12 +52,12 @@ using max_queue = priority_queue<T>;
 
 SegTree segTree;
 segTree.Init(str); // 内部会对数组进行右移，转化为 [1,n]
-segTree.Bulid();
+segTree.Build();
 segTree.Update(l, val); // 单点 l 都加上 val, 数据范围 [1,n]
 segTree.QueryMax/QueryMin/QuerySum 区间查询, 数据范围 [1,n]
 */
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 1e5 + 10;
@@ -105,7 +105,7 @@ struct SegTree {
     minVal[rt] = MergeMin(minVal[rt << 1], minVal[rt << 1 | 1]);
   }
   int Num(pair<ll, ll> p) { return p.second - p.first + 1; }
-  void Bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     ranges[rt] = {l, r};
     if (l == r) {
       sumVal[rt] = str[l];  // 如果 str 没有复制一份，则需要注意边界是否越界
@@ -114,8 +114,8 @@ struct SegTree {
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(lson);
-    Bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt, l, r);
   }
   void Update(int L, ll add, int l = 1, int r = maxNM, int rt = 1) {
@@ -191,7 +191,7 @@ void InitIO() {  //
 SegTree segTree;
 void Solver() {  //
   segTree.Init(nums);
-  segTree.Bulid();
+  segTree.Build();
   while (m--) {
     int op;
     scanf("%d", &op);

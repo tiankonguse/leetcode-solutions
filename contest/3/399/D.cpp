@@ -6,7 +6,7 @@ using namespace std;
 typedef long long ll;
 
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 1e5 + 10;
@@ -55,15 +55,15 @@ struct SegTree {
     // (l+1, m-1) + (m+1, r-1)
     sumMid[rt] = max(sumMid[rt], sumMid[rt << 1] + sumLast[rt << 1 | 1]);
   }
-  void Bulid(vector<int>& nums, int l = 1, int r = maxNM, int rt = 1) {
+  void Build(vector<int>& nums, int l = 1, int r = maxNM, int rt = 1) {
     if (l == r) {
       sumVal[rt] = max(nums[l - 1], 0);
       sumFirst[rt] = sumLast[rt] = sumMid[rt] = 0;  // 只有一个，不选择就是空
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(nums, lson);
-    Bulid(nums, rson);
+    Build(nums, lson);
+    Build(nums, rson);
     PushUp(l, r, rt);
   }
   void Update(int x, int v, int l = 1, int r = maxNM, int rt = 1) {
@@ -111,7 +111,7 @@ class Solution {
   int maximumSumSubsequence(vector<int>& nums, vector<vector<int>>& queries) {
     int n = nums.size();
     segTree.Init(n);
-    segTree.Bulid(nums);
+    segTree.Build(nums);
 
     ll ans = 0;
     for (auto& v : queries) {

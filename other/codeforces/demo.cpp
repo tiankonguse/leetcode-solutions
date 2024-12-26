@@ -43,14 +43,22 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
+int n;
 void InitIO() {  //
-#ifdef USACO_LOCAL_JUDGE
-  freopen(TASK ".in", "r", stdin);
-  freopen(TASK ".out", "w", stdout);
-#endif
+  // #ifdef USACO_LOCAL_JUDGE
+  //   freopen(TASK ".in", "r", stdin);
+  //   freopen(TASK ".out", "w", stdout);
+  // #endif
+  scanf("%d", &n);
 }
 
 void Solver() {  //
+  ll sum = 0;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      sum += i * j;
+    }
+  }
 }
 
 void ExSolver() {

@@ -57,7 +57,7 @@ const int max3 = 2100, max4 = 11100, max5 = 200100, max6 = 2000100;
 
 */
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 111111;
@@ -74,14 +74,14 @@ struct SegTree {
     minVal[rt] = min(minVal[rt << 1], minVal[rt << 1 | 1]);
     SumMal[rt] = SumMal[rt << 1] + SumMal[rt << 1 | 1];
   }
-  void bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     if (l == r) {
       minVal[rt] = SumMal[rt] = str[l];
       return;
     }
     int m = (l + r) >> 1;
-    bulid(lson);
-    bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt);
   }
   LL querySum(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
@@ -167,7 +167,7 @@ class Solution {
       lineSegTree.str[i] = nums[i - 1];
     }
 
-    lineSegTree.bulid(1, n);
+    lineSegTree.Build(1, n);
 
     ll ans = 0;
 

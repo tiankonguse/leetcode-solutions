@@ -47,7 +47,7 @@ using max_queue = priority_queue<T>;
 // sem_post(&foo_done);
 
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 typedef int LL;
@@ -79,15 +79,15 @@ struct SegTree {
       sign[rt] = 0;
     }
   }
-  void bulid(int l = 1, int r = maxNM, int rt = 1) {
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
     sign[rt] = 0;
     if (l == r) {
       minVal[rt] = maxMal[rt] = str[l];
       return;
     }
     int m = (l + r) >> 1;
-    bulid(lson);
-    bulid(rson);
+    Build(lson);
+    Build(rson);
     PushUp(rt);
   }
   void update(int L, int R, int add, int l = 1, int r = maxNM, int rt = 1) {
@@ -140,7 +140,7 @@ public:
         
         SegTree lineSegTree;
         memset(lineSegTree.str, 0, sizeof(lineSegTree.str));
-        lineSegTree.bulid();
+        lineSegTree.Build();
         
         
         vector<int> ans;

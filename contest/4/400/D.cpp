@@ -5,7 +5,7 @@ using namespace std;
 
 typedef long long ll;
 
-// 1.bulid(); 2.query(a,b) 3.update(a,b)
+// 1.Build(); 2.query(a,b) 3.update(a,b)
 #define lson l, m, rt << 1
 #define rson m + 1, r, rt << 1 | 1
 const int maxn = 1e5 + 10;
@@ -25,7 +25,7 @@ struct SegTree {
   }
 
   void PushUp(int rt) { sumVal[rt] = sumVal[rt << 1] & sumVal[rt << 1 | 1]; }
-  void Bulid(vector<int>& nums, int l = 1, int r = maxNM, int rt = 1) {
+  void Build(vector<int>& nums, int l = 1, int r = maxNM, int rt = 1) {
     if (l == r) {
       if (r <= nums.size()) {
         sumVal[rt] = nums[l - 1];
@@ -35,8 +35,8 @@ struct SegTree {
       return;
     }
     int m = (l + r) >> 1;
-    Bulid(nums, lson);
-    Bulid(nums, rson);
+    Build(nums, lson);
+    Build(nums, rson);
     PushUp(rt);
   }
   ll QuerySum(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
@@ -61,7 +61,7 @@ class Solution {
   int minimumDifference(vector<int>& nums, ll k) {
     int n = nums.size();
     segTree.Init(n);
-    segTree.Bulid(nums);
+    segTree.Build(nums);
 
     ll ans = INT_MAX;
     for (int i = 1; i <= n; i++) {

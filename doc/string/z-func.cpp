@@ -17,12 +17,25 @@ z(abacaba) = [0, 0, 1, 0, 3, 0, 1]
 
 应用: 
 
--） 暴力计算 LCP ，O(n^2) 
-https://codeforces.com/edu/course/2/lesson/3/1/practice/contest/272260/problem/A
+-） Z函数练习
+O(n^2)暴力计算 https://codeforces.com/edu/course/2/lesson/3/1/practice/contest/272260/problem/A
+O(n^2)暴力计算 https://codeforces.com/edu/course/2/lesson/3/2/practice/contest/272261/problem/A
+O(n)计算 https://codeforces.com/edu/course/2/lesson/3/3/practice/contest/272263/problem/A
+Z函数构造字符串 ，贪心构造，最后算出Z函数，判断是否相等 https://codeforces.com/edu/course/2/lesson/3/2/practice/contest/272261/problem/C
+
 
 -) 不同时是前缀和后缀的子串个数
 
 https://codeforces.com/edu/course/2/lesson/3/1/practice/contest/272260/problem/B
+
+-) 周期问题
+Q: T自身无限拼接，求最短周期 
+A: 求 i + Z[i] == n 的最小 i 即可，不需要整除
+https://codeforces.com/edu/course/2/lesson/3/4/practice/contest/272262/problem/A
+
+Q: 问 s 是否是 t 的循环等价串
+A: 求 S$TT 的Z函数，判断 TT 中是否存在 S 子串。  
+https://codeforces.com/edu/course/2/lesson/3/4/practice/contest/272262/problem/B
 
 -) 通配符，问所有匹配
 构造 T + $ + S 和 RT + $ + RS,  找到所有的 TS[l] + 1 + RTS[r] >= tn 位置
@@ -32,6 +45,11 @@ https://codeforces.com/edu/course/2/lesson/3/1/practice/contest/272260/problem/C
 构造 T + $ + S， 如果 TS[i] == tn，则大于 tn 的后缀都包含 T，否则都不包含 T
 注意：小于 tn 的子串都不包含 T
 https://codeforces.com/edu/course/2/lesson/3/1/practice/contest/272260/problem/D
+
+
+- 其他
+翻倍增长的字符串，查找某个位置的值 - 根据位置二分递归
+https://codeforces.com/edu/course/2/lesson/3/2/practice/contest/272261/problem/B
 
 
 
