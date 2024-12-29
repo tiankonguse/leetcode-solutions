@@ -58,4 +58,13 @@ security find-certificate -c gdb_codesign |grep System.keychain
 确保证书没有过期
 security find-certificate -p -c gdb_codesign | openssl x509 -checkend 0
 
+
 ```
+
+## 代码格式化
+
+```bash
+# 格式名可选：LLVM, Google, Chromium, Mozilla, WebKit。
+clang-format -style=Google -dump-config > .clang-format
+```
+

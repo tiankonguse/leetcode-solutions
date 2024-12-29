@@ -1,4 +1,7 @@
 Segment with maximal sum  总和最大的段
+
+https://codeforces.com/edu/course/2/lesson/5/3
+
 Now we will consider the tasks discussed in previous lesson, but with mass changing operations.
 现在我们将考虑上一课中讨论的任务，但具有大量更改操作。
 Given an array of length 𝑛

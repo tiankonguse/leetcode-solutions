@@ -10,17 +10,17 @@ using namespace std::chrono;
 #ifdef USACO_LOCAL_JUDGE
 #define BITS_STDC " -I" PRJ_ROOT_PATH "include/ "
 #define CODE_PATh \
-  PRJ_ROOT_PATH "other/codeforces/edu/course2/4-segment-tree/step2/"
-#define CODE_DATA CODE_PATh "D-duipai-data.cpp"
-#define CODE_FORCE CODE_PATh "D-first-element-at-least-X-2-bianry.cpp"
-#define CODE_MAIN CODE_PATh "D-first-element-at-least-X-2.cpp"
+  PRJ_ROOT_PATH "other/luogu/contest/212/"
+#define CODE_DATA CODE_PATh "C-data.cpp"
+#define CODE_FORCE CODE_PATh "C-v22.cpp"
+#define CODE_MAIN CODE_PATh "C-v3.cpp"
 #else
 #define BITS_STDC " "
 #define CODE_PATh ""
 #endif
 
 int main(int argc, char** argv) {
-  system("mkdir ./tmpfile");
+  system("mkdir -p ./tmpfile");
   system("g++ " CODE_DATA " -std=c++17 " BITS_STDC " -o ./tmpfile/data.exe -O2");
   system("g++ " CODE_FORCE " -std=c++17 " BITS_STDC "  -o ./tmpfile/force.exe -O2");
   system("g++ " CODE_MAIN " -std=c++17 " BITS_STDC " -o ./tmpfile/main.exe -O2");

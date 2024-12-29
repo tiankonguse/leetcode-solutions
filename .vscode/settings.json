@@ -132,7 +132,7 @@
     "C_Cpp.default.intelliSenseMode": "macos-clang-x64",
     "C_Cpp.inlayHints.autoDeclarationTypes.enabled": true,
     "C_Cpp.inlayHints.parameterNames.suppressWhenArgumentContainsName": false,
-    "C_Cpp.clang_format_fallbackStyle": "Google",
     "editor.semanticTokenColorCustomizations": {},
-    "workbench.colorTheme": "Visual Studio 2017 Dark - C++"
+    "workbench.colorTheme": "Visual Studio 2017 Dark - C++",
+    "C_Cpp.clang_format_fallbackStyle": "Google"
 }
