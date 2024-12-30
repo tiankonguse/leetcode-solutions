@@ -5,7 +5,8 @@ LANG: C++
 MAC EOF: ctrl+D
 link: https://codeforces.com/edu/course/2/lesson/5/2/practice/contest/279653/problem/A
 PATH: ITMO 学院：试点课程 » 线段树，第 2 部分 » 步骤2 » 实践
-submission: https://codeforces.com/edu/course/2/lesson/5/2/practice/contest/279653/submission/298760496
+submission: 
+https://github.com/tiankonguse/leetcode-solutions/tree/master/other/codeforces/edu
 */
 #define TASK "A-addition-and-minimum"
 #define TASKEX ""

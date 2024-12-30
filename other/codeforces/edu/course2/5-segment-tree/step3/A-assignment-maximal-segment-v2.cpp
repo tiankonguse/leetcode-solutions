@@ -9,7 +9,7 @@ PATH: ITMO 学院：试点课程 » 线段树，第 2 部分 » 步骤3 » 实�
 submission:
 https://github.com/tiankonguse/leetcode-solutions/tree/master/other/codeforces/edu
 */
-#define TASK "A-assignment-maximal-segment"
+#define TASK "A-assignment-maximal-segment-v2"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -67,20 +67,35 @@ int maxNM;
 
 typedef long long ll;
 
+struct Node {
+  ll maxVal = 0;
+  ll preVal = 0;
+  ll sufVal = 0;
+  ll sumVal = 0;
+  Node() {}
+  void Set(ll v) {
+    sumVal = v;
+    preVal = sufVal = maxVal = max(v, 0ll);
+  }
+};
+Node operator+(const Node& a, const Node& b) {
+  Node ret;
+  ret.preVal = max(a.preVal, a.sumVal + b.preVal);
+  ret.sufVal = max(a.sufVal + b.sumVal, b.sufVal);
+  ret.sumVal = a.sumVal + b.sumVal;
+  ret.maxVal = max(a.maxVal, b.maxVal);
+  ret.maxVal = max(ret.maxVal, a.sufVal + b.preVal);
+  return ret;
+}
+
 struct SegTree {
   vector<bool> sign;
   vector<ll> signVal;
-  vector<ll> maxVal;  // 子区间的最优值，至少1个
-  vector<ll> preVal;  // 前缀最优值，至少1个
-  vector<ll> sufVal;  // 后缀最优值，至少1个
-  vector<ll> sumVal;
+  vector<Node> nodeVal;
 
   void Init(int n) {
     maxNM = n + 1;
-    maxVal.resize(maxNM << 2, 0);
-    preVal.resize(maxNM << 2, 0);
-    sufVal.resize(maxNM << 2, 0);
-    sumVal.resize(maxNM << 2, 0);
+    nodeVal.resize(maxNM << 2);
     signVal.resize(maxNM << 2, 0);
     sign.resize(maxNM << 2, 0);
   }
@@ -88,22 +103,11 @@ struct SegTree {
   void UpdateNode(int rt, int l, int r, ll v) {
     sign[rt] = 1;
     signVal[rt] = v;
-    sumVal[rt] = v * (r - l + 1);
-    preVal[rt] = max(0ll, sumVal[rt]);
-    sufVal[rt] = max(0ll, sumVal[rt]);
-    maxVal[rt] = max(0ll, sumVal[rt]);
+    nodeVal[rt].Set(v * (r - l + 1));
   }
 
   // 合并函数，按需进行合并
-  void PushUp(int rt, int l, int r) {
-    // int m = (l + r) >> 1;
-    preVal[rt] = max(preVal[rt << 1], sumVal[rt << 1] + preVal[rt << 1 | 1]);
-    sufVal[rt] = max(sufVal[rt << 1] + sumVal[rt << 1 | 1], sufVal[rt << 1 | 1]);
-    sumVal[rt] = sumVal[rt << 1] + sumVal[rt << 1 | 1];
-    maxVal[rt] = max(maxVal[rt << 1], maxVal[rt << 1 | 1]);
-    maxVal[rt] = max(maxVal[rt], max(preVal[rt], sufVal[rt]));
-    maxVal[rt] = max(maxVal[rt], sufVal[rt << 1] + preVal[rt << 1 | 1]);
-  }
+  void PushUp(int rt, int l, int r) { nodeVal[rt] = nodeVal[rt << 1] + nodeVal[rt << 1 | 1]; }
   void PushDown(int rt, int l, int r) {
     if (sign[rt]) {
       int m = (l + r) >> 1;
@@ -134,23 +138,14 @@ struct SegTree {
     if (R > m) Update(L, R, add, rson);
     PushUp(rt, l, r);
   }
-  tuple<ll, ll, ll, ll> QueryMax(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
+  const Node QueryMax(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
     if (L <= l && r <= R) {
-      return {maxVal[rt], sumVal[rt], preVal[rt], sufVal[rt]};
+      return nodeVal[rt];
     }
     PushDown(rt, l, r);
     int m = (l + r) >> 1;
     if (L <= m && m < R) {
-      auto [leftMax, leftSum, leftPre, leftSuf] = QueryMax(L, R, lson);
-      auto [rightMax, rightSum, rightPre, rightSuf] = QueryMax(L, R, rson);
-
-      ll retPre = max(leftPre, leftSum + rightPre);
-      ll retSuf = max(leftSuf + rightSum, rightSuf);
-      ll retSum = leftSum + rightSum;
-      ll retMax = max(leftMax, rightMax);
-      retMax = max(retMax, max(retPre, retSuf));
-      retMax = max(retMax, leftSuf + rightPre);
-      return {retMax, retSum, retPre, retSuf};
+      return QueryMax(L, R, lson) + QueryMax(L, R, rson);
     } else if (m < R) {
       return QueryMax(L, R, rson);
     } else {
@@ -177,7 +172,7 @@ void Solver() {  //
     ll v;
     scanf("%d%d%lld", &l, &r, &v);
     segTree.Update(l + 1, r, v);
-    printf("%lld\n", get<0>(segTree.QueryMax(1, n)));
+    printf("%lld\n", segTree.QueryMax(1, n).maxVal);
   }
 }
 
