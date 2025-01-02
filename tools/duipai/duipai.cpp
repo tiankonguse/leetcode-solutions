@@ -10,10 +10,10 @@ using namespace std::chrono;
 #ifdef USACO_LOCAL_JUDGE
 #define BITS_STDC " -I" PRJ_ROOT_PATH "include/ "
 #define CODE_PATh \
-  PRJ_ROOT_PATH "other/luogu/contest/212/"
-#define CODE_DATA CODE_PATh "C-data.cpp"
-#define CODE_FORCE CODE_PATh "C-v22.cpp"
-#define CODE_MAIN CODE_PATh "C-v3.cpp"
+  PRJ_ROOT_PATH "other/codeforces/edu/course2/5-segment-tree/step4/"
+#define CODE_DATA CODE_PATh "B-data.cpp"
+#define CODE_FORCE CODE_PATh "B-v0.cpp"
+#define CODE_MAIN CODE_PATh "B-add-arithmetic-progression-on-segment.cpp"
 #else
 #define BITS_STDC " "
 #define CODE_PATh ""
