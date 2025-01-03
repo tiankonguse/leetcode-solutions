@@ -7,7 +7,7 @@ int getval() {
   return (rand() % (100001)) * si;
 }
 
-const int N = 100;
+const int N = 100000;
 int main() {
   srand(time(NULL));
   int n = (rand() % N) + 1;

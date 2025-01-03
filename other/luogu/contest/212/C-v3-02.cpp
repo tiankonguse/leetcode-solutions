@@ -7,7 +7,7 @@ link:
 PATH:
 submission:
 */
-#define TASK "C-v3"
+#define TASK "C-v3-02"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -36,7 +36,6 @@ const ll mod = 2933256077ll;
 template <class T> using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T> using max_queue = priority_queue<T>;
 
-// 3000000
 const int N = 6e6 + 10;
 int n, m;
 char str[N];
@@ -48,13 +47,16 @@ void InitIO() {
   scanf("%d%d%s", &n, &m, str);
 }
 
-inline ll mul(ll a, ll b) {
-  //  IN32_MAX(2^31) * INT32_MAX(2^31) = 2^62 < INT64_MAX(2^63)
-  // if (a > IN32_MAX && b > IN32_MAX) {
-  //   printf("%lld\n", a * b);
-  //   abort();
-  // }
-  return a * b % mod;
+// b = b0*2^i0 + b1*2^i1 + ... + bn*2^in
+inline ll mul(ll a, ll b) {  //
+  ll ans = 0;
+  ll base = 1;
+  while (b) {
+    if (b & 1) ans = (ans + a * base) % mod;
+    base = (base << 1) % mod;
+    b >>= 1;
+  }
+  return ans;
 }
 
 ll qpow(ll x, ll v) {
@@ -86,17 +88,11 @@ void InitA(int n) {
 
   for (int i = 1; i <= n; i++) {
     A[i] = (A[i - 1] * i) % mod;
-    // if (A[i] > INT_MAX) {
-    //   printf("A[%d] > INT_MAX\n", i);
-    // }
   }
 
   // RA.resize(n + 1);
   for (int i = 0; i <= n; i++) {
     RA[i] = inv(A[i], mod);
-    // if (RA[i] > INT_MAX) {
-    //   printf("RA[%d] > INT_MAX\n", i);
-    // }
   }
 }
 
@@ -116,7 +112,6 @@ void Solver() {  //
   ll nm[2] = {0, 0};
   const ll NM[2] = {m, n};
   InitA(n + m + 1);
-  return;
   for (int i = 0; i < n + m; i++) {
     // printf("mi=%lld ni=%lld\n", nm[0], nm[1]);
     const int v0 = str[i] - '0';  // 当前值是 v0 ，使用 v1 堵住
