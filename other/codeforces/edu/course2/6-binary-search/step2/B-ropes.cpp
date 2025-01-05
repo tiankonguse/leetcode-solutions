@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: B. Ropes  B、绳索
 LANG: C++
 MAC EOF: ctrl+D
-link:
-PATH:
-submission: https://github.com/tiankonguse/leetcode-solutions/tree/master/other/codeforces/
+link: https://codeforces.com/edu/course/2/lesson/6/2/practice/contest/283932/problem/B
+PATH: ITMO Academy: pilot course » Binary Search » Step 2 » Practice
+submission: https://github.com/tiankonguse/leetcode-solutions/tree/master/other/codeforces/edu
 */
-#define TASK "demo"
+#define TASK "B-ropes"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -43,22 +43,50 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
-int n;
+ll n, k;
+vector<ll> nums;
+const ll N = 1e7;
+const ll E = 1e6;
+
 void InitIO() {  //
-  // #ifdef USACO_LOCAL_JUDGE
-  //   freopen(TASK ".in", "r", stdin);
-  //   freopen(TASK ".out", "w", stdout);
-  // #endif
-  scanf("%d", &n);
+#ifdef USACO_LOCAL_JUDGE
+  freopen("demo.in", "r", stdin);
+  freopen("demo.out", "w", stdout);
+#endif
+  scanf("%lld%lld", &n, &k);
+  nums.resize(n);
+  for (int i = 0; i < n; i++) {
+    scanf("%lld", &nums[i]);
+    nums[i] *= E;
+  }
 }
 
-void Solver() {  //
-  ll sum = 0;
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      sum += i * j;
+//  Probably, the solution is executed with error 'signed integer overflow' on the line 61
+
+bool Check(ll m) {
+  ll num = 0;
+  for (ll v : nums) {
+    num += v / m;
+    if (num >= k) return true;
+  }
+  return false;
+}
+
+double Search() {
+  ll l = 1, r = N * E;
+  while (l < r) {  // [l,r)
+    ll m = (l + r) / 2;
+    if (Check(m)) {
+      l = m + 1;
+    } else {
+      r = m;
     }
   }
+  return (r - 1) * 1.0 / E;
+}
+void Solver() {  //
+  // printf("%s\n", to_string(Search()).data());
+  printf("%lf\n", Search());
 }
 
 void ExSolver() {
@@ -68,9 +96,7 @@ void ExSolver() {
   Solver();
 #ifdef USACO_LOCAL_JUDGE
   auto t2 = std::chrono::steady_clock::now();
-  auto my =
-      std::chrono::duration_cast<std::chrono::duration<double, ratio<1, 1000>>>(
-          t2 - t1);
+  auto my = std::chrono::duration_cast<std::chrono::duration<double, ratio<1, 1000>>>(t2 - t1);
   printf("my 用时: %.0lfms\n", my.count());
 #endif
 }

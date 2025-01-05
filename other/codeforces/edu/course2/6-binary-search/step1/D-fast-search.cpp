@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: D. Fast search  D、快速搜索
 LANG: C++
 MAC EOF: ctrl+D
-link:
-PATH:
-submission: https://github.com/tiankonguse/leetcode-solutions/tree/master/other/codeforces/
+link: https://codeforces.com/edu/course/2/lesson/6/1/practice/contest/283911/problem/D
+PATH: ITMO Academy: pilot course » Binary Search » Step 1 » Practice
+submission: https://github.com/tiankonguse/leetcode-solutions/tree/master/other/codeforces/edu
 */
-#define TASK "demo"
+#define TASK "D-fast-search"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -45,19 +45,41 @@ using max_queue = priority_queue<T>;
 
 int n;
 void InitIO() {  //
-  // #ifdef USACO_LOCAL_JUDGE
-  //   freopen(TASK ".in", "r", stdin);
-  //   freopen(TASK ".out", "w", stdout);
-  // #endif
+#ifdef USACO_LOCAL_JUDGE
+  freopen("demo.in", "r", stdin);
+  freopen("demo.out", "w", stdout);
+#endif
   scanf("%d", &n);
 }
 
-void Solver() {  //
-  ll sum = 0;
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      sum += i * j;
+vector<int> nums;
+
+int Search(int v) {
+  int l = 0, r = n;
+  while (l < r) {  // [l,r)
+    int m = (l + r) / 2;
+    if (nums[m] >= v) {
+      r = m;
+    } else {
+      l = m + 1;
     }
+  }
+  return r + 1;
+}
+void Solver() {  //
+  nums.resize(n);
+  for (int i = 0; i < n; i++) {
+    scanf("%d", &nums[i]);
+  }
+  sort(nums.begin(), nums.end());
+
+  int k;
+  scanf("%d", &k);
+
+  while (k--) {
+    int l, r;
+    scanf("%d%d", &l, &r);
+    printf("%d\n", Search(r + 1) - Search(l));
   }
 }
 
@@ -68,9 +90,7 @@ void ExSolver() {
   Solver();
 #ifdef USACO_LOCAL_JUDGE
   auto t2 = std::chrono::steady_clock::now();
-  auto my =
-      std::chrono::duration_cast<std::chrono::duration<double, ratio<1, 1000>>>(
-          t2 - t1);
+  auto my = std::chrono::duration_cast<std::chrono::duration<double, ratio<1, 1000>>>(t2 - t1);
   printf("my 用时: %.0lfms\n", my.count());
 #endif
 }

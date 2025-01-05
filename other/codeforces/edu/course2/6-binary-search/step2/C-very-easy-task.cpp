@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: demo
+TASK: C. Very Easy Task  C. 非常简单的任务
 LANG: C++
 MAC EOF: ctrl+D
-link:
-PATH:
-submission: https://github.com/tiankonguse/leetcode-solutions/tree/master/other/codeforces/
+link: https://codeforces.com/edu/course/2/lesson/6/2/practice/contest/283932/problem/C
+PATH: ITMO Academy: pilot course » Binary Search » Step 2 » Practice
+submission: https://github.com/tiankonguse/leetcode-solutions/tree/master/other/codeforces/edu
 */
-#define TASK "demo"
+#define TASK "C-very-easy-task"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -43,22 +43,40 @@ using min_queue = priority_queue<T, vector<T>, greater<T>>;
 template <class T>
 using max_queue = priority_queue<T>;
 
-int n;
+ll n, x, y;
 void InitIO() {  //
-  // #ifdef USACO_LOCAL_JUDGE
-  //   freopen(TASK ".in", "r", stdin);
-  //   freopen(TASK ".out", "w", stdout);
-  // #endif
-  scanf("%d", &n);
+#ifdef USACO_LOCAL_JUDGE
+  freopen("demo.in", "r", stdin);
+  freopen("demo.out", "w", stdout);
+#endif
+  scanf("%lld%lld%lld", &n, &x, &y);
+  if (x > y) {
+    swap(x, y);
+  }
 }
 
-void Solver() {  //
-  ll sum = 0;
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      sum += i * j;
+//  Probably, the solution is executed with error 'signed integer overflow' on the line 61
+
+bool Check(ll T) {
+  ll num = 1 + (T - x) / x + (T - x) / y;
+  return num >= n;
+}
+
+ll Search() {
+  ll l = x, r = n * x;
+  while (l < r) {  // [l,r)
+    ll m = (l + r) / 2;
+    if (Check(m)) {
+      r = m;
+    } else {
+      l = m + 1;
     }
   }
+  return r;
+}
+void Solver() {  //
+  // printf("%s\n", to_string(Search()).data());
+  printf("%lld\n", Search());
 }
 
 void ExSolver() {
@@ -68,9 +86,7 @@ void ExSolver() {
   Solver();
 #ifdef USACO_LOCAL_JUDGE
   auto t2 = std::chrono::steady_clock::now();
-  auto my =
-      std::chrono::duration_cast<std::chrono::duration<double, ratio<1, 1000>>>(
-          t2 - t1);
+  auto my = std::chrono::duration_cast<std::chrono::duration<double, ratio<1, 1000>>>(t2 - t1);
   printf("my 用时: %.0lfms\n", my.count());
 #endif
 }

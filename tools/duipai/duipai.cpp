@@ -11,9 +11,11 @@ using namespace std::chrono;
 #define BITS_STDC " -I" PRJ_ROOT_PATH "include/ "
 #define CODE_PATh \
   PRJ_ROOT_PATH "other/codeforces/edu/course2/5-segment-tree/step4/"
-#define CODE_DATA CODE_PATh "B-data.cpp"
-#define CODE_FORCE CODE_PATh "B-v0.cpp"
-#define CODE_MAIN CODE_PATh "B-add-arithmetic-progression-on-segment.cpp"
+#define CODE_DATA CODE_PATh "F-data.cpp"
+// #define CODE_FORCE CODE_PATh "F.go"
+#define CODE_FORCE CODE_PATh "F-mountain-v1.cpp"
+#define CODE_MAIN CODE_PATh "F-mountain.cpp"
+// #define CODE_MAIN CODE_PATh "F-mountain-v1.cpp"
 #else
 #define BITS_STDC " "
 #define CODE_PATh ""
@@ -23,12 +25,16 @@ int main(int argc, char** argv) {
   system("mkdir -p ./tmpfile");
   system("g++ " CODE_DATA " -std=c++17 " BITS_STDC " -o ./tmpfile/data.exe -O2");
   system("g++ " CODE_FORCE " -std=c++17 " BITS_STDC "  -o ./tmpfile/force.exe -O2");
+  // system("go build  -o ./tmpfile/force.exe " CODE_FORCE);
   system("g++ " CODE_MAIN " -std=c++17 " BITS_STDC " -o ./tmpfile/main.exe -O2");
   
   for (int i = 1; i <= 1000; ++i) {
     system("./tmpfile/data.exe > ./tmpfile/data.out");
     auto t1 = steady_clock::now();
-    system("./tmpfile/force.exe < ./tmpfile/data.out > ./tmpfile/force.out");
+    system("echo > ./tmpfile/force.out"); 
+    system("echo > ./tmpfile/main.out");
+    int ret1 = system("./tmpfile/force.exe < ./tmpfile/data.out > ./tmpfile/force.out");
+    assert(ret1==0);
     auto t2 = steady_clock::now();
     system("./tmpfile/main.exe < ./tmpfile/data.out > ./tmpfile/main.out");
     auto t3 = steady_clock::now();
