@@ -24,8 +24,10 @@ void CheckUsacoTask() {
 #endif
 }
 
-template <class T> using min_queue = priority_queue<T, vector<T>, greater<T>>;
-template <class T> using max_queue = priority_queue<T>;
+template <class T>
+using min_queue = priority_queue<T, vector<T>, greater<T>>;
+template <class T>
+using max_queue = priority_queue<T>;
 
 int debug = 0;
 #define MyPrintf(...)               \
@@ -41,8 +43,10 @@ const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
-template <class T> using min_queue = priority_queue<T, vector<T>, greater<T>>;
-template <class T> using max_queue = priority_queue<T>;
+template <class T>
+using min_queue = priority_queue<T, vector<T>, greater<T>>;
+template <class T>
+using max_queue = priority_queue<T>;
 
 char readWritebuf[1000];
 inline ll FastRead() {
@@ -80,7 +84,7 @@ void InitIO() {  //
   // freopen("demo.out", "w", stdout);
 #endif
   scanf("%lld%lld", &n, &k);
-  nums.resize(n + 1);
+  nums.resize(n);
   for (int i = 0; i < n; i++) {
     scanf("%lld%lld", &nums[i].first, &nums[i].second);
   }
@@ -104,7 +108,9 @@ bool Check0(const double avg) {  //
   numsEx.clear();
   numsEx.reserve(n);
   for (auto [a, b] : nums) {
-    numsEx.push_back(a - b * avg);
+    double c = a - b * avg;
+    // printf("a=%lld b=%lld avg=%lf c=%lf\n", a, b, avg, c);
+    numsEx.push_back(c);
   }
   sort(numsEx.begin(), numsEx.end(), [](auto a, auto b) { return a > b + eps; });
   // for (int i = 0; i < n; i++) {
@@ -114,47 +120,47 @@ bool Check0(const double avg) {  //
   for (int i = 0; i < k; i++) {
     sum += numsEx[i];
   }
-  printf("sum=%lf\n", sum);
+  // printf("sum=%lf\n", sum);
   return sum >= -eps;
 }
 
-bool Check1(const double avg) {  // 连续，case1 证明非连续
-  numsEx.clear();
-  numsEx.reserve(n);
-  for (auto [a, b] : nums) {
-    numsEx.push_back(a - b * avg);
-  }
-  double sum = 0;
-  for (int i = 0; i < k - 1; i++) {
-    sum += numsEx[i];
-  }
-  for (int i = k - 1; i < n; i++) {
-    sum += numsEx[i];
-    if (sum >= -eps) {
-      return true;
-    }
-    sum -= numsEx[i - (k - 1)];
-  }
+// bool Check1(const double avg) {  // 连续，case1 证明非连续
+//   numsEx.clear();
+//   numsEx.reserve(n);
+//   for (auto [a, b] : nums) {
+//     numsEx.push_back(a - b * avg);
+//   }
+//   double sum = 0;
+//   for (int i = 0; i < k - 1; i++) {
+//     sum += numsEx[i];
+//   }
+//   for (int i = k - 1; i < n; i++) {
+//     sum += numsEx[i];
+//     if (sum >= -eps) {
+//       return true;
+//     }
+//     sum -= numsEx[i - (k - 1)];
+//   }
 
-  return false;
-}
+//   return false;
+// }
 
 double Search() {
-  printf("Search\n");
-  Check0(2.375013);
-  return 1;
+  // printf("Search\n");
+  // Check0(3.333333);
+  // return 1;
   double l = 0, r = N + 1;
   while (l + eps < r) {  // [l,r)
     auto m = (l + r) / 2;
     if (Check0(m)) {  // 是否存在一个 path, avg <= m
-      printf("ok m=%lf l=%lf r=%lf\n", m, l, r);
+      // printf("ok m=%lf l=%lf r=%lf\n", m, l, r);
       l = m + eps;
     } else {
-      printf("no m=%lf l=%lf r=%lf\n", m, l, r);
+      // printf("no m=%lf l=%lf r=%lf\n", m, l, r);
       r = m;
     }
   }
-  printf("return %lf\n", r);
+  // printf("return %lf\n", r);
   return r - eps;
 }
 void Solver() {  //
