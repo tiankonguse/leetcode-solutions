@@ -16,17 +16,16 @@ int debug = 1;
 
 typedef long long ll;
 class Solution {
- public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-    return n;
-  }
+public:
+    vector<int> assignElements(vector<int>& groups, vector<int>& elements) {
+        
+    }
 };
 
 #ifdef USACO_LOCAL_JUDGE
 
 void Test(const vector<int>& jump, const int& ans) {
-  TEST_SMP1(Solution, minJump, ans, jump);
+  // TEST_SMP1(Solution, minJump, ans, jump);
 }
 
 int main() {
