@@ -42,6 +42,7 @@ class Solution {
   ll ans = LLONG_MAX;
   vector<int> use;
   min_queue<tuple<ll, ll, ll>> que;
+  unordered_map<ll, vector<ll>> H;
 
   void InitNums() {
     int m = buf.size();
@@ -55,20 +56,27 @@ class Solution {
     for (int i = 0; i < m; i++) {
       int V = buf[i];
 
-      for (int j = 0; j < n; j++) {
-        int v = nums[j];
-        ll left = v % V;
-        if (left == 0) left = V;
-        que.push({left, v, j});
-        if (que.size() > m) {
+      if (!H.count(V)) {
+        for (int j = 0; j < n; j++) {
+          int v = nums[j];
+          ll left = v % V;
+          if (left == 0) left = V;
+          que.push({left, v, j});
+          if (que.size() > 4) {
+            que.pop();
+          }
+        }
+
+        auto& tmpUse = H[V];
+        tmpUse.reserve(que.size());
+        while (!que.empty()) {
+          auto [left, v, j] = que.top();
+          tmpUse.push_back(j);
           que.pop();
         }
       }
-
-      while (!que.empty()) {
-        auto [left, v, j] = que.top();
+      for (auto j : H[V]) {
         use[j] = 1;
-        que.pop();
       }
     }
 
@@ -160,16 +168,17 @@ class Solution {
  public:
   int minimumIncrements(vector<int>& nums_, vector<int>& target_) {
     target.swap(target_);
-    unordered_map<int, int> h;
-    for (auto v : nums_) {
-      h[v]++;
-    }
-    nums.reserve(nums_.size());
-    for (auto [k, v] : h) {
-      for (int i = 0; i < 4 && i < v; i++) {
-        nums.push_back(k);
-      }
-    }
+    // unordered_map<int, int> h;
+    // for (auto v : nums_) {
+    //   h[v]++;
+    // }
+    // nums.reserve(nums_.size());
+    // for (auto [k, v] : h) {
+    //   for (int i = 0; i < 4 && i < v; i++) {
+    //     nums.push_back(k);
+    //   }
+    // }
+    nums.swap(nums_);
     dp.resize(16 + 1, vector<ll>(target.size() + 1, LLONG_MAX / 2));
     Dfs(0);
     return ans;
