@@ -16,24 +16,21 @@ int debug = 1;
 
 typedef long long ll;
 class Solution {
-  inline int Bit(char c) { return 1 << (c - 'a'); }
-
  public:
   vector<vector<int>> supersequences(vector<string>& words) {
-    int twoVals = 0;
+    set<char> twoVals;
+    
     map<char, int> h;
     for (auto& w : words) {
       char a = w[0], b = w[1];
       h[a] = h[b] = 0;
       if (a == b) {
-        twoVals |= Bit(a);
+        twoVals.insert(a);
       }
     }
     const int charNum = h.size();
-    for (char c = 'a'; c <= 'z'; c++) {
-      if (twoVals & Bit(c)) {
-        h.erase(c);
-      }
+    for (auto c : twoVals) {
+      h.erase(c);
     }
     const int m = h.size();  // 字符个数
     string s;
@@ -47,8 +44,7 @@ class Solution {
     vector<int> inDegs(m, 0);
     for (auto& w : words) {
       char a = w[0], b = w[1];
-      if (twoVals & Bit(a)) continue;
-      if (twoVals & Bit(b)) continue;
+      if (twoVals.count(a) || twoVals.count(b)) continue;
       int ai = h[a], bi = h[b];
       g[ai].push_back(bi);
       inDegs[bi]++;
@@ -134,11 +130,8 @@ class Solution {
     for (auto mask : ansList) {
       // printf("mask=%d\n", mask);
       vector<int> oneAns(26, 0);
-
-      for (char c = 'a'; c <= 'z'; c++) {
-        if (twoVals & Bit(c)) {
-          oneAns[c - 'a'] = 2;
-        }
+      for (auto c : twoVals) {
+        oneAns[c - 'a'] = 2;
       }
       for (int i = 0; i < m; i++) {
         if (mask & (1 << i)) {
@@ -147,7 +140,7 @@ class Solution {
           oneAns[s[i] - 'a'] = 2;
         }
       }
-      ans.emplace_back(std::move(oneAns));
+      ans.push_back(oneAns);
     }
     return ans;
   }
