@@ -134,5 +134,11 @@
     "C_Cpp.inlayHints.parameterNames.suppressWhenArgumentContainsName": false,
     "editor.semanticTokenColorCustomizations": {},
     "workbench.colorTheme": "Visual Studio 2017 Dark - C++",
-    "C_Cpp.clang_format_fallbackStyle": "Google"
+    "C_Cpp.clang_format_fallbackStyle": "Google",
+    "localaipilot.standalone.ollamaCodeModel": "qwen2.5-coder:7b",
+    "localaipilot.general.inlineSuggestions": true,
+    "marscode.codeCompletionPro": {
+        "enableCodeCompletionPro": false
+    },
+    "marscode.enableInlineCommand": true
 }

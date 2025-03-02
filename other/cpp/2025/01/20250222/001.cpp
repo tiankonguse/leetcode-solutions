@@ -3,12 +3,13 @@ using namespace std;
 int main() {
   char a[1001][1001];
   char str[1001];
-  int max_ct = 0;
+  size_t max_ct = 0;
   int index = 0;
   int re[1001] = {0};
   int p = 0;
   int n;  // 字符串的长度
   while (scanf("%s", str) != EOF) {
+    
     n = strlen(str);
     strcpy(a[index++], str);
     for (int i = 0; i < n; i++) {
@@ -23,6 +24,6 @@ int main() {
       }
     }
   }
-  printf("%d\n", max_ct);
+  printf("%d\n", int(max_ct));
   return 0;
 }
