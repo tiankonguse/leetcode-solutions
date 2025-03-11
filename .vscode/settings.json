@@ -133,7 +133,7 @@
     "C_Cpp.inlayHints.autoDeclarationTypes.enabled": true,
     "C_Cpp.inlayHints.parameterNames.suppressWhenArgumentContainsName": false,
     "editor.semanticTokenColorCustomizations": {},
-    "workbench.colorTheme": "Visual Studio 2017 Dark - C++",
+    "workbench.colorTheme": "Dark",
     "C_Cpp.clang_format_fallbackStyle": "Google",
     "localaipilot.standalone.ollamaCodeModel": "qwen2.5-coder:7b",
     "localaipilot.general.inlineSuggestions": true,

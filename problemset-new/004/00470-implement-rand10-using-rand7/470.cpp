@@ -15,11 +15,23 @@ int debug = 1;
 #define MyDebug(...) fprintf(stderr, __VA_ARGS__);
 
 typedef long long ll;
+extern int rand7();
+// The rand7() API is already defined for you.
+// int rand7();
+// @return a random integer in the range 1 to 7
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-    return n;
+  int rand10() {
+    // Implement Rand10() Using Rand7()
+    int i = 0, j = 0;
+    while (true) {
+      i = rand7() - 1;
+      j = rand7() - 1;
+      int x = i * 7 + j;
+      if (x < 40) {
+        return x % 10 + 1;
+      }
+    }
   }
 };
 

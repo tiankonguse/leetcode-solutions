@@ -17,9 +17,20 @@ int debug = 1;
 typedef long long ll;
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-    return n;
+  vector<int> fairCandySwap(vector<int>& aliceSizes, vector<int>& bobSizes) {
+    ll suma = 0, sumb = 0;
+    for (auto v : aliceSizes) suma += v;
+    for (auto v : bobSizes) sumb += v;
+
+    ll sum = (suma + sumb) / 2;
+    unordered_set<int> ha = {aliceSizes.begin(), aliceSizes.end()};
+    unordered_set<int> hb = {bobSizes.begin(), bobSizes.end()};
+
+    for (auto va : ha) {
+      int vb = sum - (suma - va);
+      if (hb.count(vb)) return {va, vb};
+    }
+    return {};
   }
 };
 

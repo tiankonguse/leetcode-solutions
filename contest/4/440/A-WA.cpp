@@ -17,9 +17,25 @@ int debug = 1;
 typedef long long ll;
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-    return n;
+  int numOfUnplacedFruits(vector<int>& fruits, vector<int>& baskets) {
+    int n = fruits.size();
+    int m = baskets.size();
+    set<pair<int, int>> basketsSet;
+    for (int i = 0; i < m; i++) {
+      basketsSet.insert({baskets[i], i});
+    }
+
+    int ans = 0;
+    for (auto v : fruits) {
+      auto it = basketsSet.lower_bound({v, -1});
+      if (it != basketsSet.end()) {
+        basketsSet.erase(it);
+      } else {
+        ans++;
+      }
+    }
+
+    return ans;
   }
 };
 
