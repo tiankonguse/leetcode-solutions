@@ -1,35 +1,164 @@
 
 | ID | Title | Solutions |
 | :------: | :------: | :------: |
+| 3491 | [Phone Number Prefix](https://leetcode-cn.com/problems/phone-number-prefix/) | [题解数量（0）](/problemset-new/034/03491-phone-number-prefix/) |
+| 3482 | [Analyze Organization Hierarchy](https://leetcode-cn.com/problems/analyze-organization-hierarchy/) | [题解数量（0）](/problemset-new/034/03482-analyze-organization-hierarchy/) |
+| 3481 | [Apply Substitutions](https://leetcode-cn.com/problems/apply-substitutions/) | [题解数量（0）](/problemset-new/034/03481-apply-substitutions/) |
+| 3476 | [Maximize Profit from Task Assignment](https://leetcode-cn.com/problems/maximize-profit-from-task-assignment/) | [题解数量（0）](/problemset-new/034/03476-maximize-profit-from-task-assignment/) |
+| 3475 | [DNA Pattern Recognition](https://leetcode-cn.com/problems/dna-pattern-recognition/) | [题解数量（0）](/problemset-new/034/03475-dna-pattern-recognition/) |
+| 3466 | [Maximum Coin Collection](https://leetcode-cn.com/problems/maximum-coin-collection/) | [题解数量（0）](/problemset-new/034/03466-maximum-coin-collection/) |
+| 3465 | [Find Products with Valid Serial Numbers](https://leetcode-cn.com/problems/find-products-with-valid-serial-numbers/) | [题解数量（0）](/problemset-new/034/03465-find-products-with-valid-serial-numbers/) |
+| 3490 | [Count Beautiful Numbers](https://leetcode-cn.com/problems/count-beautiful-numbers/) | [题解数量（0）](/problemset-new/034/03490-count-beautiful-numbers/) |
+| 3483 | [Unique 3-Digit Even Numbers](https://leetcode-cn.com/problems/unique-3-digit-even-numbers/) | [题解数量（0）](/problemset-new/034/03483-unique-3-digit-even-numbers/) |
+| 3486 | [Longest Special Path II](https://leetcode-cn.com/problems/longest-special-path-ii/) | [题解数量（0）](/problemset-new/034/03486-longest-special-path-ii/) |
+| 3484 | [Design Spreadsheet](https://leetcode-cn.com/problems/design-spreadsheet/) | [题解数量（0）](/problemset-new/034/03484-design-spreadsheet/) |
+| 3460 | [Longest Common Prefix After at Most One Removal](https://leetcode-cn.com/problems/longest-common-prefix-after-at-most-one-removal/) | [题解数量（0）](/problemset-new/034/03460-longest-common-prefix-after-at-most-one-removal/) |
+| 3489 | [Zero Array Transformation IV](https://leetcode-cn.com/problems/zero-array-transformation-iv/) | [题解数量（0）](/problemset-new/034/03489-zero-array-transformation-iv/) |
+| 3451 | [Find Invalid IP Addresses](https://leetcode-cn.com/problems/find-invalid-ip-addresses/) | [题解数量（0）](/problemset-new/034/03451-find-invalid-ip-addresses/) |
+| 3479 | [Fruits Into Baskets III](https://leetcode-cn.com/problems/fruits-into-baskets-iii/) | [题解数量（0）](/problemset-new/034/03479-fruits-into-baskets-iii/) |
+| 3477 | [Fruits Into Baskets II](https://leetcode-cn.com/problems/fruits-into-baskets-ii/) | [题解数量（0）](/problemset-new/034/03477-fruits-into-baskets-ii/) |
+| 3480 | [Maximize Subarrays After Removing One Conflicting Pair](https://leetcode-cn.com/problems/maximize-subarrays-after-removing-one-conflicting-pair/) | [题解数量（0）](/problemset-new/034/03480-maximize-subarrays-after-removing-one-conflicting-pair/) |
+| 3487 | [Maximum Unique Subarray Sum After Deletion](https://leetcode-cn.com/problems/maximum-unique-subarray-sum-after-deletion/) | [题解数量（0）](/problemset-new/034/03487-maximum-unique-subarray-sum-after-deletion/) |
+| 3450 | [Maximum Students on a Single Bench](https://leetcode-cn.com/problems/maximum-students-on-a-single-bench/) | [题解数量（0）](/problemset-new/034/03450-maximum-students-on-a-single-bench/) |
+| 3472 | [Longest Palindromic Subsequence After at Most K Operations](https://leetcode-cn.com/problems/longest-palindromic-subsequence-after-at-most-k-operations/) | [题解数量（0）](/problemset-new/034/03472-longest-palindromic-subsequence-after-at-most-k-operations/) |
+| 3468 | [Find the Number of Copy Arrays](https://leetcode-cn.com/problems/find-the-number-of-copy-arrays/) | [题解数量（0）](/problemset-new/034/03468-find-the-number-of-copy-arrays/) |
+| 3485 | [Longest Common Prefix of K Strings After Removal](https://leetcode-cn.com/problems/longest-common-prefix-of-k-strings-after-removal/) | [题解数量（0）](/problemset-new/034/03485-longest-common-prefix-of-k-strings-after-removal/) |
+| 3470 | [Permutations IV](https://leetcode-cn.com/problems/permutations-iv/) | [题解数量（0）](/problemset-new/034/03470-permutations-iv/) |
+| 3436 | [Find Valid Emails](https://leetcode-cn.com/problems/find-valid-emails/) | [题解数量（0）](/problemset-new/034/03436-find-valid-emails/) |
+| 3464 | [Maximize the Distance Between Points on a Square](https://leetcode-cn.com/problems/maximize-the-distance-between-points-on-a-square/) | [题解数量（0）](/problemset-new/034/03464-maximize-the-distance-between-points-on-a-square/) |
+| 3437 | [Permutations III](https://leetcode-cn.com/problems/permutations-iii/) | [题解数量（0）](/problemset-new/034/03437-permutations-iii/) |
+| 3457 | [Eat Pizzas!](https://leetcode-cn.com/problems/eat-pizzas/) | [题解数量（0）](/problemset-new/034/03457-eat-pizzas/) |
+| 3467 | [Transform Array by Parity](https://leetcode-cn.com/problems/transform-array-by-parity/) | [题解数量（0）](/problemset-new/034/03467-transform-array-by-parity/) |
+| 3469 | [Find Minimum Cost to Remove Array Elements](https://leetcode-cn.com/problems/find-minimum-cost-to-remove-array-elements/) | [题解数量（0）](/problemset-new/034/03469-find-minimum-cost-to-remove-array-elements/) |
+| 3454 | [Separate Squares II](https://leetcode-cn.com/problems/separate-squares-ii/) | [题解数量（0）](/problemset-new/034/03454-separate-squares-ii/) |
+| 3463 | [Check If Digits Are Equal in String After Operations II](https://leetcode-cn.com/problems/check-if-digits-are-equal-in-string-after-operations-ii/) | [题解数量（0）](/problemset-new/034/03463-check-if-digits-are-equal-in-string-after-operations-ii/) |
+| 3458 | [Select K Disjoint Special Substrings](https://leetcode-cn.com/problems/select-k-disjoint-special-substrings/) | [题解数量（0）](/problemset-new/034/03458-select-k-disjoint-special-substrings/) |
+| 3474 | [Lexicographically Smallest Generated String](https://leetcode-cn.com/problems/lexicographically-smallest-generated-string/) | [题解数量（0）](/problemset-new/034/03474-lexicographically-smallest-generated-string/) |
+| 3461 | [Check If Digits Are Equal in String After Operations I](https://leetcode-cn.com/problems/check-if-digits-are-equal-in-string-after-operations-i/) | [题解数量（0）](/problemset-new/034/03461-check-if-digits-are-equal-in-string-after-operations-i/) |
+| 3421 | [Find Students Who Improved](https://leetcode-cn.com/problems/find-students-who-improved/) | [题解数量（0）](/problemset-new/034/03421-find-students-who-improved/) |
+| 3462 | [Maximum Sum With at Most K Elements](https://leetcode-cn.com/problems/maximum-sum-with-at-most-k-elements/) | [题解数量（0）](/problemset-new/034/03462-maximum-sum-with-at-most-k-elements/) |
+| 3453 | [Separate Squares I](https://leetcode-cn.com/problems/separate-squares-i/) | [题解数量（0）](/problemset-new/034/03453-separate-squares-i/) |
+| 3449 | [Maximize the Minimum Game Score](https://leetcode-cn.com/problems/maximize-the-minimum-game-score/) | [题解数量（0）](/problemset-new/034/03449-maximize-the-minimum-game-score/) |
+| 3445 | [Maximum Difference Between Even and Odd Frequency II](https://leetcode-cn.com/problems/maximum-difference-between-even-and-odd-frequency-ii/) | [题解数量（0）](/problemset-new/034/03445-maximum-difference-between-even-and-odd-frequency-ii/) |
+| 3447 | [Assign Elements to Groups with Constraints](https://leetcode-cn.com/problems/assign-elements-to-groups-with-constraints/) | [题解数量（0）](/problemset-new/034/03447-assign-elements-to-groups-with-constraints/) |
+| 3478 | [Choose K Elements With Maximum Sum](https://leetcode-cn.com/problems/choose-k-elements-with-maximum-sum/) | [题解数量（0）](/problemset-new/034/03478-choose-k-elements-with-maximum-sum/) |
+| 3431 | [Minimum Unlocked Indices to Sort Nums](https://leetcode-cn.com/problems/minimum-unlocked-indices-to-sort-nums/) | [题解数量（0）](/problemset-new/034/03431-minimum-unlocked-indices-to-sort-nums/) |
+| 3415 | [Find Products with Three Consecutive Digits](https://leetcode-cn.com/problems/find-products-with-three-consecutive-digits/) | [题解数量（0）](/problemset-new/034/03415-find-products-with-three-consecutive-digits/) |
+| 3416 | [Subsequences with a Unique Middle Mode II](https://leetcode-cn.com/problems/subsequences-with-a-unique-middle-mode-ii/) | [题解数量（0）](/problemset-new/034/03416-subsequences-with-a-unique-middle-mode-ii/) |
+| 3443 | [Maximum Manhattan Distance After K Changes](https://leetcode-cn.com/problems/maximum-manhattan-distance-after-k-changes/) | [题解数量（0）](/problemset-new/034/03443-maximum-manhattan-distance-after-k-changes/) |
+| 3442 | [Maximum Difference Between Even and Odd Frequency I](https://leetcode-cn.com/problems/maximum-difference-between-even-and-odd-frequency-i/) | [题解数量（0）](/problemset-new/034/03442-maximum-difference-between-even-and-odd-frequency-i/) |
+| 3434 | [Maximum Frequency After Subarray Operation](https://leetcode-cn.com/problems/maximum-frequency-after-subarray-operation/) | [题解数量（0）](/problemset-new/034/03434-maximum-frequency-after-subarray-operation/) |
+| 3488 | [Closest Equal Element Queries](https://leetcode-cn.com/problems/closest-equal-element-queries/) | [题解数量（0）](/problemset-new/034/03488-closest-equal-element-queries/) |
+| 3406 | [Find the Lexicographically Largest String From the Box II](https://leetcode-cn.com/problems/find-the-lexicographically-largest-string-from-the-box-ii/) | [题解数量（0）](/problemset-new/034/03406-find-the-lexicographically-largest-string-from-the-box-ii/) |
+| 3446 | [Sort Matrix by Diagonals](https://leetcode-cn.com/problems/sort-matrix-by-diagonals/) | [题解数量（0）](/problemset-new/034/03446-sort-matrix-by-diagonals/) |
+| 3423 | [Maximum Difference Between Adjacent Elements in a Circular Array](https://leetcode-cn.com/problems/maximum-difference-between-adjacent-elements-in-a-circular-array/) | [题解数量（0）](/problemset-new/034/03423-maximum-difference-between-adjacent-elements-in-a-circular-array/) |
+| 3401 | [Find Circular Gift Exchange Chains](https://leetcode-cn.com/problems/find-circular-gift-exchange-chains/) | [题解数量（0）](/problemset-new/034/03401-find-circular-gift-exchange-chains/) |
+| 3439 | [Reschedule Meetings for Maximum Free Time I](https://leetcode-cn.com/problems/reschedule-meetings-for-maximum-free-time-i/) | [题解数量（0）](/problemset-new/034/03439-reschedule-meetings-for-maximum-free-time-i/) |
+| 3440 | [Reschedule Meetings for Maximum Free Time II](https://leetcode-cn.com/problems/reschedule-meetings-for-maximum-free-time-ii/) | [题解数量（0）](/problemset-new/034/03440-reschedule-meetings-for-maximum-free-time-ii/) |
+| 3400 | [Maximum Number of Matching Indices After Right Shifts](https://leetcode-cn.com/problems/maximum-number-of-matching-indices-after-right-shifts/) | [题解数量（0）](/problemset-new/034/03400-maximum-number-of-matching-indices-after-right-shifts/) |
+| 3426 | [Manhattan Distances of All Arrangements of Pieces](https://leetcode-cn.com/problems/manhattan-distances-of-all-arrangements-of-pieces/) | [题解数量（0）](/problemset-new/034/03426-manhattan-distances-of-all-arrangements-of-pieces/) |
+| 3429 | [Paint House IV](https://leetcode-cn.com/problems/paint-house-iv/) | [题解数量（0）](/problemset-new/034/03429-paint-house-iv/) |
+| 3438 | [Find Valid Pair of Adjacent Digits in String](https://leetcode-cn.com/problems/find-valid-pair-of-adjacent-digits-in-string/) | [题解数量（0）](/problemset-new/034/03438-find-valid-pair-of-adjacent-digits-in-string/) |
+| 3391 | [Design a 3D Binary Matrix with Efficient Layer Tracking](https://leetcode-cn.com/problems/design-a-3d-binary-matrix-with-efficient-layer-tracking/) | [题解数量（0）](/problemset-new/033/03391-design-a-3d-binary-matrix-with-efficient-layer-tracking/) |
+| 3459 | [Length of Longest V-Shaped Diagonal Segment](https://leetcode-cn.com/problems/length-of-longest-v-shaped-diagonal-segment/) | [题解数量（0）](/problemset-new/034/03459-length-of-longest-v-shaped-diagonal-segment/) |
+| 3427 | [Sum of Variable Length Subarrays](https://leetcode-cn.com/problems/sum-of-variable-length-subarrays/) | [题解数量（0）](/problemset-new/034/03427-sum-of-variable-length-subarrays/) |
+| 3390 | [Longest Team Pass Streak](https://leetcode-cn.com/problems/longest-team-pass-streak/) | [题解数量（0）](/problemset-new/033/03390-longest-team-pass-streak/) |
+| 3430 | [Maximum and Minimum Sums of at Most Size K Subarrays](https://leetcode-cn.com/problems/maximum-and-minimum-sums-of-at-most-size-k-subarrays/) | [题解数量（0）](/problemset-new/034/03430-maximum-and-minimum-sums-of-at-most-size-k-subarrays/) |
+| 3452 | [Sum of Good Numbers](https://leetcode-cn.com/problems/sum-of-good-numbers/) | [题解数量（0）](/problemset-new/034/03452-sum-of-good-numbers/) |
+| 3473 | [Sum of K Subarrays With Length at Least M](https://leetcode-cn.com/problems/sum-of-k-subarrays-with-length-at-least-m/) | [题解数量（0）](/problemset-new/034/03473-sum-of-k-subarrays-with-length-at-least-m/) |
+| 3433 | [Count Mentions Per User](https://leetcode-cn.com/problems/count-mentions-per-user/) | [题解数量（0）](/problemset-new/034/03433-count-mentions-per-user/) |
+| 3419 | [Minimize the Maximum Edge Weight of Graph](https://leetcode-cn.com/problems/minimize-the-maximum-edge-weight-of-graph/) | [题解数量（0）](/problemset-new/034/03419-minimize-the-maximum-edge-weight-of-graph/) |
+| 3384 | [Team Dominance by Pass Success](https://leetcode-cn.com/problems/team-dominance-by-pass-success/) | [题解数量（0）](/problemset-new/033/03384-team-dominance-by-pass-success/) |
+| 3383 | [Minimum Runes to Add to Cast Spell](https://leetcode-cn.com/problems/minimum-runes-to-add-to-cast-spell/) | [题解数量（0）](/problemset-new/033/03383-minimum-runes-to-add-to-cast-spell/) |
+| 3409 | [Longest Subsequence With Decreasing Adjacent Difference](https://leetcode-cn.com/problems/longest-subsequence-with-decreasing-adjacent-difference/) | [题解数量（0）](/problemset-new/034/03409-longest-subsequence-with-decreasing-adjacent-difference/) |
+| 3413 | [Maximum Coins From K Consecutive Bags](https://leetcode-cn.com/problems/maximum-coins-from-k-consecutive-bags/) | [题解数量（0）](/problemset-new/034/03413-maximum-coins-from-k-consecutive-bags/) |
+| 3428 | [Maximum and Minimum Sums of at Most Size K Subsequences](https://leetcode-cn.com/problems/maximum-and-minimum-sums-of-at-most-size-k-subsequences/) | [题解数量（0）](/problemset-new/034/03428-maximum-and-minimum-sums-of-at-most-size-k-subsequences/) |
+| 3435 | [Frequencies of Shortest Supersequences](https://leetcode-cn.com/problems/frequencies-of-shortest-supersequences/) | [题解数量（0）](/problemset-new/034/03435-frequencies-of-shortest-supersequences/) |
+| 3424 | [Minimum Cost to Make Arrays Identical](https://leetcode-cn.com/problems/minimum-cost-to-make-arrays-identical/) | [题解数量（0）](/problemset-new/034/03424-minimum-cost-to-make-arrays-identical/) |
+| 3374 | [First Letter Capitalization II](https://leetcode-cn.com/problems/first-letter-capitalization-ii/) | [题解数量（0）](/problemset-new/033/03374-first-letter-capitalization-ii/) |
+| 3369 | [Design an Array Statistics Tracker](https://leetcode-cn.com/problems/design-an-array-statistics-tracker/) | [题解数量（0）](/problemset-new/033/03369-design-an-array-statistics-tracker/) |
+| 3456 | [Find Special Substring of Length K](https://leetcode-cn.com/problems/find-special-substring-of-length-k/) | [题解数量（0）](/problemset-new/034/03456-find-special-substring-of-length-k/) |
+| 3417 | [Zigzag Grid Traversal With Skip](https://leetcode-cn.com/problems/zigzag-grid-traversal-with-skip/) | [题解数量（0）](/problemset-new/034/03417-zigzag-grid-traversal-with-skip/) |
+| 3399 | [Smallest Substring With Identical Characters II](https://leetcode-cn.com/problems/smallest-substring-with-identical-characters-ii/) | [题解数量（0）](/problemset-new/033/03399-smallest-substring-with-identical-characters-ii/) |
+| 3471 | [Find the Largest Almost Missing Integer](https://leetcode-cn.com/problems/find-the-largest-almost-missing-integer/) | [题解数量（0）](/problemset-new/034/03471-find-the-largest-almost-missing-integer/) |
+| 3432 | [Count Partitions with Even Sum Difference](https://leetcode-cn.com/problems/count-partitions-with-even-sum-difference/) | [题解数量（0）](/problemset-new/034/03432-count-partitions-with-even-sum-difference/) |
+| 3368 | [First Letter Capitalization](https://leetcode-cn.com/problems/first-letter-capitalization/) | [题解数量（0）](/problemset-new/033/03368-first-letter-capitalization/) |
+| 3411 | [Maximum Subarray With Equal Products](https://leetcode-cn.com/problems/maximum-subarray-with-equal-products/) | [题解数量（0）](/problemset-new/034/03411-maximum-subarray-with-equal-products/) |
+| 3441 | [Minimum Cost Good Caption](https://leetcode-cn.com/problems/minimum-cost-good-caption/) | [题解数量（0）](/problemset-new/034/03441-minimum-cost-good-caption/) |
+| 3395 | [Subsequences with a Unique Middle Mode I](https://leetcode-cn.com/problems/subsequences-with-a-unique-middle-mode-i/) | [题解数量（0）](/problemset-new/033/03395-subsequences-with-a-unique-middle-mode-i/) |
+| 3404 | [Count Special Subsequences](https://leetcode-cn.com/problems/count-special-subsequences/) | [题解数量（0）](/problemset-new/034/03404-count-special-subsequences/) |
+| 3422 | [Minimum Operations to Make Subarray Elements Equal](https://leetcode-cn.com/problems/minimum-operations-to-make-subarray-elements-equal/) | [题解数量（0）](/problemset-new/034/03422-minimum-operations-to-make-subarray-elements-equal/) |
+| 3444 | [Minimum Increments for Target Multiples in an Array](https://leetcode-cn.com/problems/minimum-increments-for-target-multiples-in-an-array/) | [题解数量（0）](/problemset-new/034/03444-minimum-increments-for-target-multiples-in-an-array/) |
+| 3448 | [Count Substrings Divisible By Last Digit](https://leetcode-cn.com/problems/count-substrings-divisible-by-last-digit/) | [题解数量（0）](/problemset-new/034/03448-count-substrings-divisible-by-last-digit/) |
 | 3358 | [Books with NULL Ratings](https://leetcode-cn.com/problems/books-with-null-ratings/) | [题解数量（0）](/problemset-new/033/03358-books-with-null-ratings/) |
 | 3353 | [Minimum Total Operations](https://leetcode-cn.com/problems/minimum-total-operations/) | [题解数量（0）](/problemset-new/033/03353-minimum-total-operations/) |
+| 3385 | [Minimum Time to Break Locks II](https://leetcode-cn.com/problems/minimum-time-to-break-locks-ii/) | [题解数量（0）](/problemset-new/033/03385-minimum-time-to-break-locks-ii/) |
+| 3455 | [Shortest Matching Substring](https://leetcode-cn.com/problems/shortest-matching-substring/) | [题解数量（0）](/problemset-new/034/03455-shortest-matching-substring/) |
+| 3402 | [Minimum Operations to Make Columns Strictly Increasing](https://leetcode-cn.com/problems/minimum-operations-to-make-columns-strictly-increasing/) | [题解数量（0）](/problemset-new/034/03402-minimum-operations-to-make-columns-strictly-increasing/) |
+| 3398 | [Smallest Substring With Identical Characters I](https://leetcode-cn.com/problems/smallest-substring-with-identical-characters-i/) | [题解数量（0）](/problemset-new/033/03398-smallest-substring-with-identical-characters-i/) |
+| 3382 | [Maximum Area Rectangle With Point Constraints II](https://leetcode-cn.com/problems/maximum-area-rectangle-with-point-constraints-ii/) | [题解数量（0）](/problemset-new/033/03382-maximum-area-rectangle-with-point-constraints-ii/) |
+| 3410 | [Maximize Subarray Sum After Removing All Occurrences of One Element](https://leetcode-cn.com/problems/maximize-subarray-sum-after-removing-all-occurrences-of-one-element/) | [题解数量（0）](/problemset-new/034/03410-maximize-subarray-sum-after-removing-all-occurrences-of-one-element/) |
+| 3425 | [Longest Special Path](https://leetcode-cn.com/problems/longest-special-path/) | [题解数量（0）](/problemset-new/034/03425-longest-special-path/) |
+| 3388 | [Count Beautiful Splits in an Array](https://leetcode-cn.com/problems/count-beautiful-splits-in-an-array/) | [题解数量（0）](/problemset-new/033/03388-count-beautiful-splits-in-an-array/) |
+| 3392 | [Count Subarrays of Length Three With a Condition](https://leetcode-cn.com/problems/count-subarrays-of-length-three-with-a-condition/) | [题解数量（0）](/problemset-new/033/03392-count-subarrays-of-length-three-with-a-condition/) |
+| 3407 | [Substring Matching Pattern](https://leetcode-cn.com/problems/substring-matching-pattern/) | [题解数量（0）](/problemset-new/034/03407-substring-matching-pattern/) |
+| 3403 | [Find the Lexicographically Largest String From the Box I](https://leetcode-cn.com/problems/find-the-lexicographically-largest-string-from-the-box-i/) | [题解数量（0）](/problemset-new/034/03403-find-the-lexicographically-largest-string-from-the-box-i/) |
+| 3405 | [Count the Number of Arrays with K Matching Adjacent Elements](https://leetcode-cn.com/problems/count-the-number-of-arrays-with-k-matching-adjacent-elements/) | [题解数量（0）](/problemset-new/034/03405-count-the-number-of-arrays-with-k-matching-adjacent-elements/) |
+| 3380 | [Maximum Area Rectangle With Point Constraints I](https://leetcode-cn.com/problems/maximum-area-rectangle-with-point-constraints-i/) | [题解数量（0）](/problemset-new/033/03380-maximum-area-rectangle-with-point-constraints-i/) |
+| 3378 | [Count Connected Components in LCM Graph](https://leetcode-cn.com/problems/count-connected-components-in-lcm-graph/) | [题解数量（0）](/problemset-new/033/03378-count-connected-components-in-lcm-graph/) |
 | 3344 | [Maximum Sized Array](https://leetcode-cn.com/problems/maximum-sized-array/) | [题解数量（0）](/problemset-new/033/03344-maximum-sized-array/) |
+| 3408 | [Design Task Manager](https://leetcode-cn.com/problems/design-task-manager/) | [题解数量（0）](/problemset-new/034/03408-design-task-manager/) |
+| 3418 | [Maximum Amount of Money Robot Can Earn](https://leetcode-cn.com/problems/maximum-amount-of-money-robot-can-earn/) | [题解数量（0）](/problemset-new/034/03418-maximum-amount-of-money-robot-can-earn/) |
+| 3370 | [Smallest Number With All Set Bits](https://leetcode-cn.com/problems/smallest-number-with-all-set-bits/) | [题解数量（0）](/problemset-new/033/03370-smallest-number-with-all-set-bits/) |
+| 3367 | [Maximize Sum of Weights after Edge Removals](https://leetcode-cn.com/problems/maximize-sum-of-weights-after-edge-removals/) | [题解数量（0）](/problemset-new/033/03367-maximize-sum-of-weights-after-edge-removals/) |
+| 3420 | [Count Non-Decreasing Subarrays After K Operations](https://leetcode-cn.com/problems/count-non-decreasing-subarrays-after-k-operations/) | [题解数量（0）](/problemset-new/034/03420-count-non-decreasing-subarrays-after-k-operations/) |
 | 3338 | [Second Highest Salary II](https://leetcode-cn.com/problems/second-highest-salary-ii/) | [题解数量（0）](/problemset-new/033/03338-second-highest-salary-ii/) |
+| 3393 | [Count Paths With the Given XOR Value](https://leetcode-cn.com/problems/count-paths-with-the-given-xor-value/) | [题解数量（0）](/problemset-new/033/03393-count-paths-with-the-given-xor-value/) |
 | 3357 | [Minimize the Maximum Adjacent Element Difference](https://leetcode-cn.com/problems/minimize-the-maximum-adjacent-element-difference/) | [题解数量（0）](/problemset-new/033/03357-minimize-the-maximum-adjacent-element-difference/) |
+| 3394 | [Check if Grid can be Cut into Sections](https://leetcode-cn.com/problems/check-if-grid-can-be-cut-into-sections/) | [题解数量（0）](/problemset-new/033/03394-check-if-grid-can-be-cut-into-sections/) |
+| 3396 | [Minimum Number of Operations to Make Elements in Array Distinct](https://leetcode-cn.com/problems/minimum-number-of-operations-to-make-elements-in-array-distinct/) | [题解数量（0）](/problemset-new/033/03396-minimum-number-of-operations-to-make-elements-in-array-distinct/) |
+| 3377 | [Digit Operations to Make Two Integers Equal](https://leetcode-cn.com/problems/digit-operations-to-make-two-integers-equal/) | [题解数量（0）](/problemset-new/033/03377-digit-operations-to-make-two-integers-equal/) |
+| 3366 | [Minimum Array Sum](https://leetcode-cn.com/problems/minimum-array-sum/) | [题解数量（0）](/problemset-new/033/03366-minimum-array-sum/) |
+| 3381 | [Maximum Subarray Sum With Length Divisible by K](https://leetcode-cn.com/problems/maximum-subarray-sum-with-length-divisible-by-k/) | [题解数量（0）](/problemset-new/033/03381-maximum-subarray-sum-with-length-divisible-by-k/) |
+| 3359 | [Find Sorted Submatrices With Maximum Element at Most K](https://leetcode-cn.com/problems/find-sorted-submatrices-with-maximum-element-at-most-k/) | [题解数量（0）](/problemset-new/033/03359-find-sorted-submatrices-with-maximum-element-at-most-k/) |
+| 3379 | [Transformed Array](https://leetcode-cn.com/problems/transformed-array/) | [题解数量（0）](/problemset-new/033/03379-transformed-array/) |
 | 3328 | [Find Cities in Each State II](https://leetcode-cn.com/problems/find-cities-in-each-state-ii/) | [题解数量（0）](/problemset-new/033/03328-find-cities-in-each-state-ii/) |
-| 3351 | [Sum of Good Subsequences](https://leetcode-cn.com/problems/sum-of-good-subsequences/) | [题解数量（0）](/problemset-new/033/03351-sum-of-good-subsequences/) |
+| 3376 | [Minimum Time to Break Locks I](https://leetcode-cn.com/problems/minimum-time-to-break-locks-i/) | [题解数量（0）](/problemset-new/033/03376-minimum-time-to-break-locks-i/) |
+| 3363 | [Find the Maximum Number of Fruits Collected](https://leetcode-cn.com/problems/find-the-maximum-number-of-fruits-collected/) | [题解数量（0）](/problemset-new/033/03363-find-the-maximum-number-of-fruits-collected/) |
+| 3362 | [Zero Array Transformation III](https://leetcode-cn.com/problems/zero-array-transformation-iii/) | [题解数量（0）](/problemset-new/033/03362-zero-array-transformation-iii/) |
+| 3351 | [Sum of Good Subsequences](https://leetcode-cn.com/problems/sum-of-good-subsequences/) | [题解数量（5）](/problemset-new/033/03351-sum-of-good-subsequences/) |
+| 3373 | [Maximize the Number of Target Nodes After Connecting Trees II](https://leetcode-cn.com/problems/maximize-the-number-of-target-nodes-after-connecting-trees-ii/) | [题解数量（0）](/problemset-new/033/03373-maximize-the-number-of-target-nodes-after-connecting-trees-ii/) |
+| 3364 | [Minimum Positive Sum Subarray](https://leetcode-cn.com/problems/minimum-positive-sum-subarray/) | [题解数量（0）](/problemset-new/033/03364-minimum-positive-sum-subarray/) |
 | 3356 | [Zero Array Transformation II](https://leetcode-cn.com/problems/zero-array-transformation-ii/) | [题解数量（0）](/problemset-new/033/03356-zero-array-transformation-ii/) |
 | 3322 | [Premier League Table Ranking III](https://leetcode-cn.com/problems/premier-league-table-ranking-iii/) | [题解数量（0）](/problemset-new/033/03322-premier-league-table-ranking-iii/) |
 | 3347 | [Maximum Frequency of an Element After Performing Operations II](https://leetcode-cn.com/problems/maximum-frequency-of-an-element-after-performing-operations-ii/) | [题解数量（0）](/problemset-new/033/03347-maximum-frequency-of-an-element-after-performing-operations-ii/) |
 | 3355 | [Zero Array Transformation I](https://leetcode-cn.com/problems/zero-array-transformation-i/) | [题解数量（0）](/problemset-new/033/03355-zero-array-transformation-i/) |
+| 3389 | [Minimum Operations to Make Character Frequencies Equal](https://leetcode-cn.com/problems/minimum-operations-to-make-character-frequencies-equal/) | [题解数量（0）](/problemset-new/033/03389-minimum-operations-to-make-character-frequencies-equal/) |
 | 3343 | [Count Number of Balanced Permutations](https://leetcode-cn.com/problems/count-number-of-balanced-permutations/) | [题解数量（0）](/problemset-new/033/03343-count-number-of-balanced-permutations/) |
 | 3340 | [Check Balanced String](https://leetcode-cn.com/problems/check-balanced-string/) | [题解数量（0）](/problemset-new/033/03340-check-balanced-string/) |
 | 3348 | [Smallest Divisible Digit Product II](https://leetcode-cn.com/problems/smallest-divisible-digit-product-ii/) | [题解数量（0）](/problemset-new/033/03348-smallest-divisible-digit-product-ii/) |
+| 3412 | [Find Mirror Score of a String](https://leetcode-cn.com/problems/find-mirror-score-of-a-string/) | [题解数量（0）](/problemset-new/034/03412-find-mirror-score-of-a-string/) |
+| 3372 | [Maximize the Number of Target Nodes After Connecting Trees I](https://leetcode-cn.com/problems/maximize-the-number-of-target-nodes-after-connecting-trees-i/) | [题解数量（0）](/problemset-new/033/03372-maximize-the-number-of-target-nodes-after-connecting-trees-i/) |
+| 3386 | [Button with Longest Push Time](https://leetcode-cn.com/problems/button-with-longest-push-time/) | [题解数量（0）](/problemset-new/033/03386-button-with-longest-push-time/) |
 | 3352 | [Count K-Reducible Numbers Less Than N](https://leetcode-cn.com/problems/count-k-reducible-numbers-less-than-n/) | [题解数量（0）](/problemset-new/033/03352-count-k-reducible-numbers-less-than-n/) |
 | 3337 | [Total Characters in String After Transformations II](https://leetcode-cn.com/problems/total-characters-in-string-after-transformations-ii/) | [题解数量（0）](/problemset-new/033/03337-total-characters-in-string-after-transformations-ii/) |
 | 3335 | [Total Characters in String After Transformations I](https://leetcode-cn.com/problems/total-characters-in-string-after-transformations-i/) | [题解数量（0）](/problemset-new/033/03335-total-characters-in-string-after-transformations-i/) |
 | 3342 | [Find Minimum Time to Reach Last Room II](https://leetcode-cn.com/problems/find-minimum-time-to-reach-last-room-ii/) | [题解数量（0）](/problemset-new/033/03342-find-minimum-time-to-reach-last-room-ii/) |
 | 3341 | [Find Minimum Time to Reach Last Room I](https://leetcode-cn.com/problems/find-minimum-time-to-reach-last-room-i/) | [题解数量（0）](/problemset-new/033/03341-find-minimum-time-to-reach-last-room-i/) |
 | 3345 | [Smallest Divisible Digit Product I](https://leetcode-cn.com/problems/smallest-divisible-digit-product-i/) | [题解数量（0）](/problemset-new/033/03345-smallest-divisible-digit-product-i/) |
+| 3360 | [Stone Removal Game](https://leetcode-cn.com/problems/stone-removal-game/) | [题解数量（0）](/problemset-new/033/03360-stone-removal-game/) |
 | 3308 | [Find Top Performing Driver](https://leetcode-cn.com/problems/find-top-performing-driver/) | [题解数量（0）](/problemset-new/033/03308-find-top-performing-driver/) |
 | 3299 | [Sum of Consecutive Subsequences](https://leetcode-cn.com/problems/sum-of-consecutive-subsequences/) | [题解数量（0）](/problemset-new/032/03299-sum-of-consecutive-subsequences/) |
 | 3346 | [Maximum Frequency of an Element After Performing Operations I](https://leetcode-cn.com/problems/maximum-frequency-of-an-element-after-performing-operations-i/) | [题解数量（0）](/problemset-new/033/03346-maximum-frequency-of-an-element-after-performing-operations-i/) |
+| 3375 | [Minimum Operations to Make Array Values Equal to K](https://leetcode-cn.com/problems/minimum-operations-to-make-array-values-equal-to-k/) | [题解数量（0）](/problemset-new/033/03375-minimum-operations-to-make-array-values-equal-to-k/) |
+| 3397 | [Maximum Number of Distinct Elements After Operations](https://leetcode-cn.com/problems/maximum-number-of-distinct-elements-after-operations/) | [题解数量（0）](/problemset-new/033/03397-maximum-number-of-distinct-elements-after-operations/) |
 | 3350 | [Adjacent Increasing Subarrays Detection II](https://leetcode-cn.com/problems/adjacent-increasing-subarrays-detection-ii/) | [题解数量（0）](/problemset-new/033/03350-adjacent-increasing-subarrays-detection-ii/) |
 | 3333 | [Find the Original Typed String II](https://leetcode-cn.com/problems/find-the-original-typed-string-ii/) | [题解数量（0）](/problemset-new/033/03333-find-the-original-typed-string-ii/) |
 | 3330 | [Find the Original Typed String I](https://leetcode-cn.com/problems/find-the-original-typed-string-i/) | [题解数量（0）](/problemset-new/033/03330-find-the-original-typed-string-i/) |
 | 3354 | [Make Array Elements Equal to Zero](https://leetcode-cn.com/problems/make-array-elements-equal-to-zero/) | [题解数量（0）](/problemset-new/033/03354-make-array-elements-equal-to-zero/) |
 | 3294 | [Convert Doubly Linked List to Array II](https://leetcode-cn.com/problems/convert-doubly-linked-list-to-array-ii/) | [题解数量（0）](/problemset-new/032/03294-convert-doubly-linked-list-to-array-ii/) |
 | 3339 | [Find the Number of K-Even Arrays](https://leetcode-cn.com/problems/find-the-number-of-k-even-arrays/) | [题解数量（0）](/problemset-new/033/03339-find-the-number-of-k-even-arrays/) |
+| 3387 | [Maximize Amount After Two Days of Conversions](https://leetcode-cn.com/problems/maximize-amount-after-two-days-of-conversions/) | [题解数量（0）](/problemset-new/033/03387-maximize-amount-after-two-days-of-conversions/) |
 | 3349 | [Adjacent Increasing Subarrays Detection I](https://leetcode-cn.com/problems/adjacent-increasing-subarrays-detection-i/) | [题解数量（0）](/problemset-new/033/03349-adjacent-increasing-subarrays-detection-i/) |
 | 3315 | [Construct the Minimum Bitwise Array II](https://leetcode-cn.com/problems/construct-the-minimum-bitwise-array-ii/) | [题解数量（0）](/problemset-new/033/03315-construct-the-minimum-bitwise-array-ii/) |
 | 3318 | [Find X-Sum of All K-Long Subarrays I](https://leetcode-cn.com/problems/find-x-sum-of-all-k-long-subarrays-i/) | [题解数量（0）](/problemset-new/033/03318-find-x-sum-of-all-k-long-subarrays-i/) |
@@ -43,8 +172,11 @@
 | 3284 | [Sum of Consecutive Subarrays](https://leetcode-cn.com/problems/sum-of-consecutive-subarrays/) | [题解数量（0）](/problemset-new/032/03284-sum-of-consecutive-subarrays/) |
 | 3307 | [Find the K-th Character in String Game II](https://leetcode-cn.com/problems/find-the-k-th-character-in-string-game-ii/) | [题解数量（0）](/problemset-new/033/03307-find-the-k-th-character-in-string-game-ii/) |
 | 3304 | [Find the K-th Character in String Game I](https://leetcode-cn.com/problems/find-the-k-th-character-in-string-game-i/) | [题解数量（0）](/problemset-new/033/03304-find-the-k-th-character-in-string-game-i/) |
+| 3365 | [Rearrange K Substrings to Form Target String](https://leetcode-cn.com/problems/rearrange-k-substrings-to-form-target-string/) | [题解数量（0）](/problemset-new/033/03365-rearrange-k-substrings-to-form-target-string/) |
+| 3371 | [Identify the Largest Outlier in an Array](https://leetcode-cn.com/problems/identify-the-largest-outlier-in-an-array/) | [题解数量（0）](/problemset-new/033/03371-identify-the-largest-outlier-in-an-array/) |
 | 3334 | [Find the Maximum Factor Score of Array](https://leetcode-cn.com/problems/find-the-maximum-factor-score-of-array/) | [题解数量（0）](/problemset-new/033/03334-find-the-maximum-factor-score-of-array/) |
 | 3321 | [Find X-Sum of All K-Long Subarrays II](https://leetcode-cn.com/problems/find-x-sum-of-all-k-long-subarrays-ii/) | [题解数量（0）](/problemset-new/033/03321-find-x-sum-of-all-k-long-subarrays-ii/) |
+| 3361 | [Shift Distance Between Two Strings](https://leetcode-cn.com/problems/shift-distance-between-two-strings/) | [题解数量（0）](/problemset-new/033/03361-shift-distance-between-two-strings/) |
 | 3279 | [Maximum Total Area Occupied by Pistons](https://leetcode-cn.com/problems/maximum-total-area-occupied-by-pistons/) | [题解数量（0）](/problemset-new/032/03279-maximum-total-area-occupied-by-pistons/) |
 | 3278 | [Find Candidates for Data Scientist Position II](https://leetcode-cn.com/problems/find-candidates-for-data-scientist-position-ii/) | [题解数量（0）](/problemset-new/032/03278-find-candidates-for-data-scientist-position-ii/) |
 | 3320 | [Count The Number of Winning Sequences](https://leetcode-cn.com/problems/count-the-number-of-winning-sequences/) | [题解数量（0）](/problemset-new/033/03320-count-the-number-of-winning-sequences/) |
@@ -73,6 +205,7 @@
 | 3323 | [Minimize Connected Groups by Inserting Interval](https://leetcode-cn.com/problems/minimize-connected-groups-by-inserting-interval/) | [题解数量（0）](/problemset-new/033/03323-minimize-connected-groups-by-inserting-interval/) |
 | 3252 | [Premier League Table Ranking II](https://leetcode-cn.com/problems/premier-league-table-ranking-ii/) | [题解数量（0）](/problemset-new/032/03252-premier-league-table-ranking-ii/) |
 | 3276 | [Select Cells in Grid With Maximum Score](https://leetcode-cn.com/problems/select-cells-in-grid-with-maximum-score/) | [题解数量（0）](/problemset-new/032/03276-select-cells-in-grid-with-maximum-score/) |
+| 3414 | [Maximum Score of Non-overlapping Intervals](https://leetcode-cn.com/problems/maximum-score-of-non-overlapping-intervals/) | [题解数量（0）](/problemset-new/034/03414-maximum-score-of-non-overlapping-intervals/) |
 | 3310 | [Remove Methods From Project](https://leetcode-cn.com/problems/remove-methods-from-project/) | [题解数量（0）](/problemset-new/033/03310-remove-methods-from-project/) |
 | 3283 | [Maximum Number of Moves to Kill All Pawns](https://leetcode-cn.com/problems/maximum-number-of-moves-to-kill-all-pawns/) | [题解数量（0）](/problemset-new/032/03283-maximum-number-of-moves-to-kill-all-pawns/) |
 | 3291 | [Minimum Number of Valid Strings to Form Target I](https://leetcode-cn.com/problems/minimum-number-of-valid-strings-to-form-target-i/) | [题解数量（0）](/problemset-new/032/03291-minimum-number-of-valid-strings-to-form-target-i/) |
@@ -990,7 +1123,7 @@
 | 2382 | [Maximum Segment Sum After Removals](https://leetcode-cn.com/problems/maximum-segment-sum-after-removals/) | [题解数量（0）](/problemset-new/023/02382-maximum-segment-sum-after-removals/) |
 | 2381 | [Shifting Letters II](https://leetcode-cn.com/problems/shifting-letters-ii/) | [题解数量（0）](/problemset-new/023/02381-shifting-letters-ii/) |
 | 2380 | [Time Needed to Rearrange a Binary String](https://leetcode-cn.com/problems/time-needed-to-rearrange-a-binary-string/) | [题解数量（0）](/problemset-new/023/02380-time-needed-to-rearrange-a-binary-string/) |
-| 2379 | [Minimum Recolors to Get K Consecutive Black Blocks](https://leetcode-cn.com/problems/minimum-recolors-to-get-k-consecutive-black-blocks/) | [题解数量（1）](/problemset-new/023/02379-minimum-recolors-to-get-k-consecutive-black-blocks/) |
+| 2379 | [Minimum Recolors to Get K Consecutive Black Blocks](https://leetcode-cn.com/problems/minimum-recolors-to-get-k-consecutive-black-blocks/) | [题解数量（2）](/problemset-new/023/02379-minimum-recolors-to-get-k-consecutive-black-blocks/) |
 | 2386 | [Find the K-Sum of an Array](https://leetcode-cn.com/problems/find-the-k-sum-of-an-array/) | [题解数量（0）](/problemset-new/023/02386-find-the-k-sum-of-an-array/) |
 | 2385 | [Amount of Time for Binary Tree to Be Infected](https://leetcode-cn.com/problems/amount-of-time-for-binary-tree-to-be-infected/) | [题解数量（0）](/problemset-new/023/02385-amount-of-time-for-binary-tree-to-be-infected/) |
 | 2383 | [Minimum Hours of Training to Win a Competition](https://leetcode-cn.com/problems/minimum-hours-of-training-to-win-a-competition/) | [题解数量（0）](/problemset-new/023/02383-minimum-hours-of-training-to-win-a-competition/) |
@@ -1238,7 +1371,7 @@
 | 2072 | [The Winner University](https://leetcode-cn.com/problems/the-winner-university/) | [题解数量（0）](/problemset-new/020/02072-the-winner-university/) |
 | 2092 | [Find All People With Secret](https://leetcode-cn.com/problems/find-all-people-with-secret/) | [题解数量（0）](/problemset-new/020/02092-find-all-people-with-secret/) |
 | 2091 | [Removing Minimum and Maximum From Array](https://leetcode-cn.com/problems/removing-minimum-and-maximum-from-array/) | [题解数量（0）](/problemset-new/020/02091-removing-minimum-and-maximum-from-array/) |
-| 2090 | [K Radius Subarray Averages](https://leetcode-cn.com/problems/k-radius-subarray-averages/) | [题解数量（0）](/problemset-new/020/02090-k-radius-subarray-averages/) |
+| 2090 | [K Radius Subarray Averages](https://leetcode-cn.com/problems/k-radius-subarray-averages/) | [题解数量（2）](/problemset-new/020/02090-k-radius-subarray-averages/) |
 | 2089 | [Find Target Indices After Sorting Array](https://leetcode-cn.com/problems/find-target-indices-after-sorting-array/) | [题解数量（0）](/problemset-new/020/02089-find-target-indices-after-sorting-array/) |
 | 2067 | [Number of Equal Count Substrings](https://leetcode-cn.com/problems/number-of-equal-count-substrings/) | [题解数量（0）](/problemset-new/020/02067-number-of-equal-count-substrings/) |
 | 2066 | [Account Balance](https://leetcode-cn.com/problems/account-balance/) | [题解数量（0）](/problemset-new/020/02066-account-balance/) |
@@ -1847,7 +1980,7 @@
 | 1475 | [Final Prices With a Special Discount in a Shop](https://leetcode-cn.com/problems/final-prices-with-a-special-discount-in-a-shop/) | [题解数量（1）](/problemset-new/014/01475-final-prices-with-a-special-discount-in-a-shop/) |
 | 1458 | [Max Dot Product of Two Subsequences](https://leetcode-cn.com/problems/max-dot-product-of-two-subsequences/) | [题解数量（1）](/problemset-new/014/01458-max-dot-product-of-two-subsequences/) |
 | 1457 | [Pseudo-Palindromic Paths in a Binary Tree](https://leetcode-cn.com/problems/pseudo-palindromic-paths-in-a-binary-tree/) | [题解数量（1）](/problemset-new/014/01457-pseudo-palindromic-paths-in-a-binary-tree/) |
-| 1456 | [Maximum Number of Vowels in a Substring of Given Length](https://leetcode-cn.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/) | [题解数量（1）](/problemset-new/014/01456-maximum-number-of-vowels-in-a-substring-of-given-length/) |
+| 1456 | [Maximum Number of Vowels in a Substring of Given Length](https://leetcode-cn.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/) | [题解数量（2）](/problemset-new/014/01456-maximum-number-of-vowels-in-a-substring-of-given-length/) |
 | 1455 | [Check If a Word Occurs As a Prefix of Any Word in a Sentence](https://leetcode-cn.com/problems/check-if-a-word-occurs-as-a-prefix-of-any-word-in-a-sentence/) | [题解数量（1）](/problemset-new/014/01455-check-if-a-word-occurs-as-a-prefix-of-any-word-in-a-sentence/) |
 | 1440 | [Evaluate Boolean Expression](https://leetcode-cn.com/problems/evaluate-boolean-expression/) | [题解数量（0）](/problemset-new/014/01440-evaluate-boolean-expression/) |
 | 1435 | [Create a Session Bar Chart](https://leetcode-cn.com/problems/create-a-session-bar-chart/) | [题解数量（0）](/problemset-new/014/01435-create-a-session-bar-chart/) |
@@ -1966,7 +2099,7 @@
 | 1323 | [Maximum 69 Number](https://leetcode-cn.com/problems/maximum-69-number/) | [题解数量（0）](/problemset-new/013/01323-maximum-69-number/) |
 | 1345 | [Jump Game IV](https://leetcode-cn.com/problems/jump-game-iv/) | [题解数量（1）](/problemset-new/013/01345-jump-game-iv/) |
 | 1344 | [Angle Between Hands of a Clock](https://leetcode-cn.com/problems/angle-between-hands-of-a-clock/) | [题解数量（1）](/problemset-new/013/01344-angle-between-hands-of-a-clock/) |
-| 1343 | [Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold](https://leetcode-cn.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/) | [题解数量（1）](/problemset-new/013/01343-number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/) |
+| 1343 | [Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold](https://leetcode-cn.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/) | [题解数量（2）](/problemset-new/013/01343-number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/) |
 | 1342 | [Number of Steps to Reduce a Number to Zero](https://leetcode-cn.com/problems/number-of-steps-to-reduce-a-number-to-zero/) | [题解数量（1）](/problemset-new/013/01342-number-of-steps-to-reduce-a-number-to-zero/) |
 | 1320 | [Minimum Distance to Type a Word Using Two Fingers](https://leetcode-cn.com/problems/minimum-distance-to-type-a-word-using-two-fingers/) | [题解数量（0）](/problemset-new/013/01320-minimum-distance-to-type-a-word-using-two-fingers/) |
 | 1319 | [Number of Operations to Make Network Connected](https://leetcode-cn.com/problems/number-of-operations-to-make-network-connected/) | [题解数量（0）](/problemset-new/013/01319-number-of-operations-to-make-network-connected/) |
@@ -2453,7 +2586,7 @@
 | 907 | [Sum of Subarray Minimums](https://leetcode-cn.com/problems/sum-of-subarray-minimums/) | [题解数量（0）](/problemset-new/009/00907-sum-of-subarray-minimums/) |
 | 906 | [Super Palindromes](https://leetcode-cn.com/problems/super-palindromes/) | [题解数量（0）](/problemset-new/009/00906-super-palindromes/) |
 | 905 | [Sort Array By Parity](https://leetcode-cn.com/problems/sort-array-by-parity/) | [题解数量（1）](/problemset-new/009/00905-sort-array-by-parity/) |
-| 904 | [Fruit Into Baskets](https://leetcode-cn.com/problems/fruit-into-baskets/) | [题解数量（0）](/problemset-new/009/00904-fruit-into-baskets/) |
+| 904 | [Fruit Into Baskets](https://leetcode-cn.com/problems/fruit-into-baskets/) | [题解数量（1）](/problemset-new/009/00904-fruit-into-baskets/) |
 | 903 | [Valid Permutations for DI Sequence](https://leetcode-cn.com/problems/valid-permutations-for-di-sequence/) | [题解数量（3）](/problemset-new/009/00903-valid-permutations-for-di-sequence/) |
 | 902 | [Numbers At Most N Given Digit Set](https://leetcode-cn.com/problems/numbers-at-most-n-given-digit-set/) | [题解数量（2）](/problemset-new/009/00902-numbers-at-most-n-given-digit-set/) |
 | 901 | [Online Stock Span](https://leetcode-cn.com/problems/online-stock-span/) | [题解数量（1）](/problemset-new/009/00901-online-stock-span/) |
@@ -2469,11 +2602,11 @@
 | 891 | [Sum of Subsequence Widths](https://leetcode-cn.com/problems/sum-of-subsequence-widths/) | [题解数量（1）](/problemset-new/008/00891-sum-of-subsequence-widths/) |
 | 890 | [Find and Replace Pattern](https://leetcode-cn.com/problems/find-and-replace-pattern/) | [题解数量（2）](/problemset-new/008/00890-find-and-replace-pattern/) |
 | 889 | [Construct Binary Tree from Preorder and Postorder Traversal](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-postorder-traversal/) | [题解数量（0）](/problemset-new/008/00889-construct-binary-tree-from-preorder-and-postorder-traversal/) |
-| 888 | [Fair Candy Swap](https://leetcode-cn.com/problems/fair-candy-swap/) | [题解数量（0）](/problemset-new/008/00888-fair-candy-swap/) |
+| 888 | [Fair Candy Swap](https://leetcode-cn.com/problems/fair-candy-swap/) | [题解数量（2）](/problemset-new/008/00888-fair-candy-swap/) |
 | 887 | [Super Egg Drop](https://leetcode-cn.com/problems/super-egg-drop/) | [题解数量（1）](/problemset-new/008/00887-super-egg-drop/) |
 | 886 | [Possible Bipartition](https://leetcode-cn.com/problems/possible-bipartition/) | [题解数量（0）](/problemset-new/008/00886-possible-bipartition/) |
 | 885 | [Spiral Matrix III](https://leetcode-cn.com/problems/spiral-matrix-iii/) | [题解数量（0）](/problemset-new/008/00885-spiral-matrix-iii/) |
-| 884 | [Uncommon Words from Two Sentences](https://leetcode-cn.com/problems/uncommon-words-from-two-sentences/) | [题解数量（0）](/problemset-new/008/00884-uncommon-words-from-two-sentences/) |
+| 884 | [Uncommon Words from Two Sentences](https://leetcode-cn.com/problems/uncommon-words-from-two-sentences/) | [题解数量（1）](/problemset-new/008/00884-uncommon-words-from-two-sentences/) |
 | 883 | [Projection Area of 3D Shapes](https://leetcode-cn.com/problems/projection-area-of-3d-shapes/) | [题解数量（1）](/problemset-new/008/00883-projection-area-of-3d-shapes/) |
 | 882 | [Reachable Nodes In Subdivided Graph](https://leetcode-cn.com/problems/reachable-nodes-in-subdivided-graph/) | [题解数量（0）](/problemset-new/008/00882-reachable-nodes-in-subdivided-graph/) |
 | 881 | [Boats to Save People](https://leetcode-cn.com/problems/boats-to-save-people/) | [题解数量（0）](/problemset-new/008/00881-boats-to-save-people/) |
@@ -2489,13 +2622,13 @@
 | 875 | [Koko Eating Bananas](https://leetcode-cn.com/problems/koko-eating-bananas/) | [题解数量（1）](/problemset-new/008/00875-koko-eating-bananas/) |
 | 874 | [Walking Robot Simulation](https://leetcode-cn.com/problems/walking-robot-simulation/) | [题解数量（0）](/problemset-new/008/00874-walking-robot-simulation/) |
 | 873 | [Length of Longest Fibonacci Subsequence](https://leetcode-cn.com/problems/length-of-longest-fibonacci-subsequence/) | [题解数量（1）](/problemset-new/008/00873-length-of-longest-fibonacci-subsequence/) |
-| 872 | [Leaf-Similar Trees](https://leetcode-cn.com/problems/leaf-similar-trees/) | [题解数量（0）](/problemset-new/008/00872-leaf-similar-trees/) |
-| 470 | [Implement Rand10() Using Rand7()](https://leetcode-cn.com/problems/implement-rand10-using-rand7/) | [题解数量（0）](/problemset-new/004/00470-implement-rand10-using-rand7/) |
+| 872 | [Leaf-Similar Trees](https://leetcode-cn.com/problems/leaf-similar-trees/) | [题解数量（1）](/problemset-new/008/00872-leaf-similar-trees/) |
+| 470 | [Implement Rand10() Using Rand7()](https://leetcode-cn.com/problems/implement-rand10-using-rand7/) | [题解数量（1）](/problemset-new/004/00470-implement-rand10-using-rand7/) |
 | 871 | [Minimum Number of Refueling Stops](https://leetcode-cn.com/problems/minimum-number-of-refueling-stops/) | [题解数量（2）](/problemset-new/008/00871-minimum-number-of-refueling-stops/) |
 | 870 | [Advantage Shuffle](https://leetcode-cn.com/problems/advantage-shuffle/) | [题解数量（0）](/problemset-new/008/00870-advantage-shuffle/) |
 | 869 | [Reordered Power of 2](https://leetcode-cn.com/problems/reordered-power-of-2/) | [题解数量（0）](/problemset-new/008/00869-reordered-power-of-2/) |
 | 868 | [Binary Gap](https://leetcode-cn.com/problems/binary-gap/) | [题解数量（1）](/problemset-new/008/00868-binary-gap/) |
-| 867 | [Transpose Matrix](https://leetcode-cn.com/problems/transpose-matrix/) | [题解数量（0）](/problemset-new/008/00867-transpose-matrix/) |
+| 867 | [Transpose Matrix](https://leetcode-cn.com/problems/transpose-matrix/) | [题解数量（1）](/problemset-new/008/00867-transpose-matrix/) |
 | 866 | [Prime Palindrome](https://leetcode-cn.com/problems/prime-palindrome/) | [题解数量（0）](/problemset-new/008/00866-prime-palindrome/) |
 | 865 | [Smallest Subtree with all the Deepest Nodes](https://leetcode-cn.com/problems/smallest-subtree-with-all-the-deepest-nodes/) | [题解数量（0）](/problemset-new/008/00865-smallest-subtree-with-all-the-deepest-nodes/) |
 | 864 | [Shortest Path to Get All Keys](https://leetcode-cn.com/problems/shortest-path-to-get-all-keys/) | [题解数量（2）](/problemset-new/008/00864-shortest-path-to-get-all-keys/) |
@@ -2732,7 +2865,7 @@
 | 646 | [Maximum Length of Pair Chain](https://leetcode-cn.com/problems/maximum-length-of-pair-chain/) | [题解数量（1）](/problemset-new/006/00646-maximum-length-of-pair-chain/) |
 | 645 | [Set Mismatch](https://leetcode-cn.com/problems/set-mismatch/) | [题解数量（1）](/problemset-new/006/00645-set-mismatch/) |
 | 644 | [Maximum Average Subarray II](https://leetcode-cn.com/problems/maximum-average-subarray-ii/) | [题解数量（0）](/problemset-new/006/00644-maximum-average-subarray-ii/) |
-| 643 | [Maximum Average Subarray I](https://leetcode-cn.com/problems/maximum-average-subarray-i/) | [题解数量（1）](/problemset-new/006/00643-maximum-average-subarray-i/) |
+| 643 | [Maximum Average Subarray I](https://leetcode-cn.com/problems/maximum-average-subarray-i/) | [题解数量（2）](/problemset-new/006/00643-maximum-average-subarray-i/) |
 | 642 | [Design Search Autocomplete System](https://leetcode-cn.com/problems/design-search-autocomplete-system/) | [题解数量（0）](/problemset-new/006/00642-design-search-autocomplete-system/) |
 | 640 | [Solve the Equation](https://leetcode-cn.com/problems/solve-the-equation/) | [题解数量（1）](/problemset-new/006/00640-solve-the-equation/) |
 | 639 | [Decode Ways II](https://leetcode-cn.com/problems/decode-ways-ii/) | [题解数量（1）](/problemset-new/006/00639-decode-ways-ii/) |
@@ -2865,7 +2998,7 @@
 | 506 | [Relative Ranks](https://leetcode-cn.com/problems/relative-ranks/) | [题解数量（1）](/problemset-new/005/00506-relative-ranks/) |
 | 505 | [The Maze II](https://leetcode-cn.com/problems/the-maze-ii/) | [题解数量（0）](/problemset-new/005/00505-the-maze-ii/) |
 | 504 | [Base 7](https://leetcode-cn.com/problems/base-7/) | [题解数量（1）](/problemset-new/005/00504-base-7/) |
-| 503 | [Next Greater Element II](https://leetcode-cn.com/problems/next-greater-element-ii/) | [题解数量（0）](/problemset-new/005/00503-next-greater-element-ii/) |
+| 503 | [Next Greater Element II](https://leetcode-cn.com/problems/next-greater-element-ii/) | [题解数量（1）](/problemset-new/005/00503-next-greater-element-ii/) |
 | 502 | [IPO](https://leetcode-cn.com/problems/ipo/) | [题解数量（0）](/problemset-new/005/00502-ipo/) |
 | 501 | [Find Mode in Binary Search Tree](https://leetcode-cn.com/problems/find-mode-in-binary-search-tree/) | [题解数量（1）](/problemset-new/005/00501-find-mode-in-binary-search-tree/) |
 | 500 | [Keyboard Row](https://leetcode-cn.com/problems/keyboard-row/) | [题解数量（1）](/problemset-new/005/00500-keyboard-row/) |
@@ -2930,7 +3063,7 @@
 | 438 | [Find All Anagrams in a String](https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/) | [题解数量（1）](/problemset-new/004/00438-find-all-anagrams-in-a-string/) |
 | 437 | [Path Sum III](https://leetcode-cn.com/problems/path-sum-iii/) | [题解数量（1）](/problemset-new/004/00437-path-sum-iii/) |
 | 436 | [Find Right Interval](https://leetcode-cn.com/problems/find-right-interval/) | [题解数量（1）](/problemset-new/004/00436-find-right-interval/) |
-| 435 | [Non-overlapping Intervals](https://leetcode-cn.com/problems/non-overlapping-intervals/) | [题解数量（0）](/problemset-new/004/00435-non-overlapping-intervals/) |
+| 435 | [Non-overlapping Intervals](https://leetcode-cn.com/problems/non-overlapping-intervals/) | [题解数量（1）](/problemset-new/004/00435-non-overlapping-intervals/) |
 | 434 | [Number of Segments in a String](https://leetcode-cn.com/problems/number-of-segments-in-a-string/) | [题解数量（1）](/problemset-new/004/00434-number-of-segments-in-a-string/) |
 | 433 | [Minimum Genetic Mutation](https://leetcode-cn.com/problems/minimum-genetic-mutation/) | [题解数量（1）](/problemset-new/004/00433-minimum-genetic-mutation/) |
 | 432 | [All O`one Data Structure](https://leetcode-cn.com/problems/all-oone-data-structure/) | [题解数量（2）](/problemset-new/004/00432-all-oone-data-structure/) |
@@ -2962,11 +3095,11 @@
 | 400 | [Nth Digit](https://leetcode-cn.com/problems/nth-digit/) | [题解数量（1）](/problemset-new/004/00400-nth-digit/) |
 | 399 | [Evaluate Division](https://leetcode-cn.com/problems/evaluate-division/) | [题解数量（1）](/problemset-new/003/00399-evaluate-division/) |
 | 398 | [Random Pick Index](https://leetcode-cn.com/problems/random-pick-index/) | [题解数量（1）](/problemset-new/003/00398-random-pick-index/) |
-| 397 | [Integer Replacement](https://leetcode-cn.com/problems/integer-replacement/) | [题解数量（0）](/problemset-new/003/00397-integer-replacement/) |
+| 397 | [Integer Replacement](https://leetcode-cn.com/problems/integer-replacement/) | [题解数量（1）](/problemset-new/003/00397-integer-replacement/) |
 | 396 | [Rotate Function](https://leetcode-cn.com/problems/rotate-function/) | [题解数量（1）](/problemset-new/003/00396-rotate-function/) |
 | 395 | [Longest Substring with At Least K Repeating Characters](https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/) | [题解数量（1）](/problemset-new/003/00395-longest-substring-with-at-least-k-repeating-characters/) |
 | 394 | [Decode String](https://leetcode-cn.com/problems/decode-string/) | [题解数量（2）](/problemset-new/003/00394-decode-string/) |
-| 393 | [UTF-8 Validation](https://leetcode-cn.com/problems/utf-8-validation/) | [题解数量（0）](/problemset-new/003/00393-utf-8-validation/) |
+| 393 | [UTF-8 Validation](https://leetcode-cn.com/problems/utf-8-validation/) | [题解数量（1）](/problemset-new/003/00393-utf-8-validation/) |
 | 392 | [Is Subsequence](https://leetcode-cn.com/problems/is-subsequence/) | [题解数量（1）](/problemset-new/003/00392-is-subsequence/) |
 | 391 | [Perfect Rectangle](https://leetcode-cn.com/problems/perfect-rectangle/) | [题解数量（0）](/problemset-new/003/00391-perfect-rectangle/) |
 | 390 | [Elimination Game](https://leetcode-cn.com/problems/elimination-game/) | [题解数量（0）](/problemset-new/003/00390-elimination-game/) |
@@ -2977,17 +3110,17 @@
 | 385 | [Mini Parser](https://leetcode-cn.com/problems/mini-parser/) | [题解数量（1）](/problemset-new/003/00385-mini-parser/) |
 | 384 | [Shuffle an Array](https://leetcode-cn.com/problems/shuffle-an-array/) | [题解数量（1）](/problemset-new/003/00384-shuffle-an-array/) |
 | 383 | [Ransom Note](https://leetcode-cn.com/problems/ransom-note/) | [题解数量（1）](/problemset-new/003/00383-ransom-note/) |
-| 382 | [Linked List Random Node](https://leetcode-cn.com/problems/linked-list-random-node/) | [题解数量（0）](/problemset-new/003/00382-linked-list-random-node/) |
+| 382 | [Linked List Random Node](https://leetcode-cn.com/problems/linked-list-random-node/) | [题解数量（2）](/problemset-new/003/00382-linked-list-random-node/) |
 | 381 | [Insert Delete GetRandom O(1) - Duplicates allowed](https://leetcode-cn.com/problems/insert-delete-getrandom-o1-duplicates-allowed/) | [题解数量（0）](/problemset-new/003/00381-insert-delete-getrandom-o1-duplicates-allowed/) |
 | 380 | [Insert Delete GetRandom O(1)](https://leetcode-cn.com/problems/insert-delete-getrandom-o1/) | [题解数量（2）](/problemset-new/003/00380-insert-delete-getrandom-o1/) |
 | 379 | [Design Phone Directory](https://leetcode-cn.com/problems/design-phone-directory/) | [题解数量（0）](/problemset-new/003/00379-design-phone-directory/) |
 | 378 | [Kth Smallest Element in a Sorted Matrix](https://leetcode-cn.com/problems/kth-smallest-element-in-a-sorted-matrix/) | [题解数量（1）](/problemset-new/003/00378-kth-smallest-element-in-a-sorted-matrix/) |
 | 377 | [Combination Sum IV](https://leetcode-cn.com/problems/combination-sum-iv/) | [题解数量（1）](/problemset-new/003/00377-combination-sum-iv/) |
 | 376 | [Wiggle Subsequence](https://leetcode-cn.com/problems/wiggle-subsequence/) | [题解数量（2）](/problemset-new/003/00376-wiggle-subsequence/) |
-| 375 | [Guess Number Higher or Lower II](https://leetcode-cn.com/problems/guess-number-higher-or-lower-ii/) | [题解数量（1）](/problemset-new/003/00375-guess-number-higher-or-lower-ii/) |
+| 375 | [Guess Number Higher or Lower II](https://leetcode-cn.com/problems/guess-number-higher-or-lower-ii/) | [题解数量（2）](/problemset-new/003/00375-guess-number-higher-or-lower-ii/) |
 | 374 | [Guess Number Higher or Lower](https://leetcode-cn.com/problems/guess-number-higher-or-lower/) | [题解数量（3）](/problemset-new/003/00374-guess-number-higher-or-lower/) |
 | 373 | [Find K Pairs with Smallest Sums](https://leetcode-cn.com/problems/find-k-pairs-with-smallest-sums/) | [题解数量（2）](/problemset-new/003/00373-find-k-pairs-with-smallest-sums/) |
-| 372 | [Super Pow](https://leetcode-cn.com/problems/super-pow/) | [题解数量（0）](/problemset-new/003/00372-super-pow/) |
+| 372 | [Super Pow](https://leetcode-cn.com/problems/super-pow/) | [题解数量（1）](/problemset-new/003/00372-super-pow/) |
 | 371 | [Sum of Two Integers](https://leetcode-cn.com/problems/sum-of-two-integers/) | [题解数量（1）](/problemset-new/003/00371-sum-of-two-integers/) |
 | 370 | [Range Addition](https://leetcode-cn.com/problems/range-addition/) | [题解数量（0）](/problemset-new/003/00370-range-addition/) |
 | 369 | [Plus One Linked List](https://leetcode-cn.com/problems/plus-one-linked-list/) | [题解数量（0）](/problemset-new/003/00369-plus-one-linked-list/) |
@@ -3004,8 +3137,8 @@
 | 358 | [Rearrange String k Distance Apart](https://leetcode-cn.com/problems/rearrange-string-k-distance-apart/) | [题解数量（0）](/problemset-new/003/00358-rearrange-string-k-distance-apart/) |
 | 357 | [Count Numbers with Unique Digits](https://leetcode-cn.com/problems/count-numbers-with-unique-digits/) | [题解数量（1）](/problemset-new/003/00357-count-numbers-with-unique-digits/) |
 | 356 | [Line Reflection](https://leetcode-cn.com/problems/line-reflection/) | [题解数量（1）](/problemset-new/003/00356-line-reflection/) |
-| 355 | [Design Twitter](https://leetcode-cn.com/problems/design-twitter/) | [题解数量（0）](/problemset-new/003/00355-design-twitter/) |
-| 354 | [Russian Doll Envelopes](https://leetcode-cn.com/problems/russian-doll-envelopes/) | [题解数量（0）](/problemset-new/003/00354-russian-doll-envelopes/) |
+| 355 | [Design Twitter](https://leetcode-cn.com/problems/design-twitter/) | [题解数量（1）](/problemset-new/003/00355-design-twitter/) |
+| 354 | [Russian Doll Envelopes](https://leetcode-cn.com/problems/russian-doll-envelopes/) | [题解数量（2）](/problemset-new/003/00354-russian-doll-envelopes/) |
 | 353 | [Design Snake Game](https://leetcode-cn.com/problems/design-snake-game/) | [题解数量（0）](/problemset-new/003/00353-design-snake-game/) |
 | 352 | [Data Stream as Disjoint Intervals](https://leetcode-cn.com/problems/data-stream-as-disjoint-intervals/) | [题解数量（1）](/problemset-new/003/00352-data-stream-as-disjoint-intervals/) |
 | 351 | [Android Unlock Patterns](https://leetcode-cn.com/problems/android-unlock-patterns/) | [题解数量（0）](/problemset-new/003/00351-android-unlock-patterns/) |
