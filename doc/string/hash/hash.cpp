@@ -15,7 +15,7 @@ ll H(int l, int r) {
   return (h[r] - pre + mod1e7) % mod1e7;
 }
 
-ll hash(const char* str, int l, int r) {
+ll Hash(const char* str, int l, int r) {
   ll pre = 0;
   for (int i = l; i < r; i++) {
     pre = (pre * BASE + (str[i] - 'a' + 1)) % mod1e7;
