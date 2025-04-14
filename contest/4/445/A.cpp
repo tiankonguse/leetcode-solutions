@@ -15,9 +15,16 @@ int debug = 1;
 typedef long long ll;
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-    return n;
+  int findClosest(int x, int y, int z) {
+    int a = abs(x - z);
+    int b = abs(y - z);
+    if (a < b) {
+      return 1;
+    } else if (a > b) {
+      return 2;
+    } else {
+      return 0;
+    }
   }
 };
 
