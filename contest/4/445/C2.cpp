@@ -30,6 +30,16 @@ ll C(int n, int m) {
   m = min(m, n - m);
   ll res = 1;
   for (int i = 1; i <= m; ++i) {
+    res = res * (n - m + i) / i;
+    if (res >= kMaxK) return kMaxK;
+  }
+  return res;
+}
+
+ll C2(int n, int m) {
+  m = min(m, n - m);
+  ll res = 1;
+  for (int i = 1; i <= m; ++i) {
     res = res * (n - i + 1) / i;
     if (res >= kMaxK) return kMaxK;
   }
