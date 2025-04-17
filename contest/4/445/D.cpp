@@ -15,18 +15,18 @@ int debug = 1;
 typedef long long ll;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 class Solution {
+  bool IsZero(const string& s) {
+    for (auto c : s) {
+      if (c != '0') {
+        return false;
+      }
+    }
+    return true;
+  };
   // 从 10 进制转化为 B 进制， B 范围 [2, 10]
   // 由于会越界，需要使用 int238 来计算
   string TransToB(string& s, int b) {
     string res = "";
-    auto IsZero = [](const string& s) {
-      for (auto c : s) {
-        if (c != '0') {
-          return false;
-        }
-      }
-      return true;
-    };
     while (!IsZero(s)) {
       string quotient;
       int pre = 0;
@@ -38,7 +38,6 @@ class Solution {
       res.push_back('0' + pre);
       s.swap(quotient);
     }
-
     while (res.size() >= 2 && res.back() == '0') {
       res.pop_back();
     }
@@ -132,7 +131,6 @@ int main() {
   string r = "28";
   int b = 8;
   Test(l, r, b, 3);
-
 
   l = "2";
   r = "7";

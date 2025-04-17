@@ -6,7 +6,6 @@ factorial = [1] * MAX
 for i in range(1, MAX):
     factorial[i] = factorial[i - 1] * i
 
-@lru_cache(maxsize=None)
 def count_permutations(freq_tuple):
     total = sum(freq_tuple)
     res = factorial[total]

@@ -75,14 +75,11 @@ class Solution {
     for (int i = 0; i < nn; i++) {
       for (auto &[ch, count] : freq) {
         if (count == 0) continue;
-
         count--;
         n--;
-        // ll permutations = total * count / n;  // 剩余字符的排列数;
         ll permutations = CC(n);  // 剩余字符的排列数;
         if (k <= permutations) {
           halfAns.push_back(ch);
-          // total = permutations;  // 更新排列数
           break;
         } else {
           count++;
