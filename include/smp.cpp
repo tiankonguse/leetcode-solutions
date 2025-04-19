@@ -15,9 +15,8 @@ int debug = 1;
 typedef long long ll;
 class Solution {
  public:
-  int minJump(vector<int>& jump) {
-    int n = jump.size();
-    return n;
+  int minJump(vector<int>& jump) {  //
+    return accumulate(jump.begin(), jump.end(), 0);
   }
 };
 
@@ -28,7 +27,7 @@ class Solution {
 // }
 
 int main() {
-  // Test({1, 2, 3}, 3);
+  // Test({1, 2, 3}, 6);
   return 0;
 }
 
