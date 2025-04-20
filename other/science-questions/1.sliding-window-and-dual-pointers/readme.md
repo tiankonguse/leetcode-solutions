@@ -91,18 +91,18 @@ return ans;
 ```cpp
 int l = 0, r = 0;
 int ans = 0;
-auto updateRight = [&](int v) {  };
-auto updateLeft = [&](int v) { };
-auto shouldMoveLeft = [&](int rv) -> bool { return false; };
+auto updateAdd = [&](auto& v) {  };
+auto updateDel = [&](auto& v) { };
+auto shouldMove = [&](auto& lv, auto& rv) -> bool { return false; };
 while (r < n) {
-    int rv = nums[r];
+  auto& rv = nums[r];
   r++;
-  updateRight(rv); // 第一步：移动右指针
+  updateAdd(rv); // 第一步：移动右指针
 
-  while (shouldMoveLeft(rv)) { // 第二步：移动左指针
-    int lv = nums[l];
+  while (shouldMove(nums[l], rv)) { // 第二步：移动左指针
+    auto& lv = nums[l];
     l++;
-    updateLeft(lv);
+    updateDel(lv);
   }
 
   ans = max(ans, r - l); // 第三步：更新答案
@@ -131,8 +131,8 @@ return ans;
 - [X] 2516. 每种字符至少取 K 个 1948
 - [X] 2831. 找出最长等值子数组 1976
 - [X] 2271. 毯子覆盖的最多白色砖块数 2022
-- [ ] 2106. 摘水果 2062
-- [ ] 2555. 两个线段获得的最多奖品 2081
+- [X] 2106. 摘水果 2062
+- [X] 2555. 两个线段获得的最多奖品 2081
 - [ ] 2009. 使数组连续的最少操作数 2084
 - [ ] 1610. 可见点的最大数目 2147
 - [ ] 2781. 最长合法子字符串的长度 2204
