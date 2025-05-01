@@ -53,7 +53,12 @@ fineName="../link-new-mac.md"
 
 echo  "" > $fineName
 
-data=$(curl -s "https://leetcode.com/api/problems/all/" -m 3)
+import requests
+
+def get_problems():
+    url = "https://leetcode.com/api/problems/all/"
+    response = requests.get(url, timeout=3)
+    return response.json()
 
 echo "| ID | Title | Solutions |" >> $fineName
 echo "| :------: | :------: | :------: |" >> $fineName
