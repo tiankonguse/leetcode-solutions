@@ -1,5 +1,6 @@
 # coding: utf-8
 # get https://leetcode.com/api/problems/all/
+# POST /graphql/noj-go/  参赛信息
 
 import requests
 import os

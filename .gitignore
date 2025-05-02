@@ -20,7 +20,7 @@
 *.out
 *.in
 
-
+.local.txt
 .DS_Store
 
 
