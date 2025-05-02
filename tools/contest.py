@@ -83,7 +83,7 @@ def generate_contest_table():
     min_id = min(contest_ids) if contest_ids else 0
     max_id = max(contest_ids) if contest_ids else 0
     
-    colNum = 15
+    colNum = 10
     # 修正min_id为10的倍数，确保第一列是个位数为0的比赛
     min_id = (min_id // colNum) * colNum
     
