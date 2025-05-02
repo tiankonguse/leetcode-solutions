@@ -83,20 +83,21 @@ def generate_contest_table():
     min_id = min(contest_ids) if contest_ids else 0
     max_id = max(contest_ids) if contest_ids else 0
     
+    colNum = 15
     # 修正min_id为10的倍数，确保第一列是个位数为0的比赛
-    min_id = (min_id // 10) * 10
+    min_id = (min_id // colNum) * colNum
     
     # 写入markdown文件
     with open("../contest.md", "w") as f:
         print("写入表头")
-        f.write("| " + " | ".join(str(i) for i in range(10)) + " |\n")
-        f.write("|" + " :---: |" * 10 + "\n")
+        f.write("| " + " | ".join(str(i) for i in range(colNum)) + " |\n")
+        f.write("|" + " :---: |" * colNum + "\n")
         
         print("生成表格内容")
-        for start_id in range(min_id, max_id + 1, 10):
+        for start_id in range(min_id, max_id + 1, colNum):
             row_data = []
             row_empty = True
-            for col in range(10):
+            for col in range(colNum):
                 contest_id = start_id + col
                 hundred = contest_id // 100
                 contest_path = f"../contest/{hundred}/{contest_id:03d}"
