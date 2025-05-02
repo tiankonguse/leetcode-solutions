@@ -79,10 +79,14 @@ def generate_contest_table():
     contest_ids.sort()
     
     print("开始生成表格数据")
+    # 生成表格数据
     min_id = min(contest_ids) if contest_ids else 0
     max_id = max(contest_ids) if contest_ids else 0
     
-    print("开始写入markdown文件")
+    # 修正min_id为10的倍数，确保第一列是个位数为0的比赛
+    min_id = (min_id // 10) * 10
+    
+    # 写入markdown文件
     with open("../contest.md", "w") as f:
         print("写入表头")
         f.write("| " + " | ".join(str(i) for i in range(10)) + " |\n")
