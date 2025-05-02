@@ -5,10 +5,30 @@
 
 
 1. 所有题目的格式，按5位的题号，每100个一组放在[problemset-new](./problemset-new)下。 例如 123 题，5位就是 00123，放在 001 目录下。  
+```
+├── 000
+│   ├── 00001-two-sum
+│   │   ├── 1-map.cpp
+│   │   ├── 1-tiankonguse.cpp
+│   │   ├── 1-two-point.cpp
+│   │   ├── 1.cpp
+│   │   ├── Alliswell-two-sum.cpp
+│   │   ├── abner-two-sum.cpp
+│   │   ├── ctimbai-two-sum.cpp
+│   │   ├── readme.md
+│   │   ├── snoopy-two-sum.java
+│   │   ├── tiankongever-two-sum.cpp
+│   │   ├── tiankonguse-two-sum.cpp
+│   │   ├── two-sum-smp.cpp
+│   │   └── two-sum.cpp
+│   ├── 00002-add-two-numbers
+│   │   ├── 2.cpp
+│   │   ├── add-two-numbers-new.cpp
+│   │   ├── add-two-numbers.cc
+```
 2. 每个目录或文件后面会有一段话，那是最后一题提交时的描述，大家可以忽略那个。  
 3. [link-new.md](link-new.md) 索引目前是自动生成，所有题都可以通过这个索引快速到达。  
 4. 请不要删除不是自己的文件！
-5. [category.md](category.md)是对题目的分类，大家可以按分类来学习算法和数据结构。
 
 
 ## 项目结构
