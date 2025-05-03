@@ -37,3 +37,24 @@ arr 按 升序 排列
 ## Python
 
 [marvelous.py](./marvelous.py)
+
+```mermaid
+flowchart TD
+    A[Start parameters] --> B[Find initial position p]
+    B --> C{p == n?}
+    C -->|Yes| D[Adjust p to last index]
+    C -->|No| E{Compare neighbors}
+    E --> F[Set window boundaries]
+    F --> G{Window size < k?}
+    G -->|No| H[Return result]
+    G -->|Yes| I{Expand direction}
+    I -->|Left edge reached| J[Expand right]
+    I -->|Right edge reached| K[Expand left]
+    I -->|Compare distances| L{Left closer?}
+    L -->|Yes| M[Expand left]
+    L -->|No| N[Expand right]
+    M --> G
+    N --> G
+    J --> G
+    K --> G
+```
