@@ -123,7 +123,8 @@
         "execution": "cpp",
         "text_encoding": "cpp",
         "generator": "cpp",
-        "print": "cpp"
+        "print": "cpp",
+        "climits": "cpp"
     },
     "code-runner.runInTerminal": true,
     "C_Cpp.autocompleteAddParentheses": true,
