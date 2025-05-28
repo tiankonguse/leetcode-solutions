@@ -141,5 +141,8 @@
     "marscode.codeCompletionPro": {
         "enableCodeCompletionPro": false
     },
-    "marscode.enableInlineCommand": true
+    "marscode.enableInlineCommand": true,
+    "files.watcherExclude": {
+        "**/target": true
+    }
 }
