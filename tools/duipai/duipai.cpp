@@ -10,10 +10,10 @@ using namespace std::chrono;
 #ifdef USACO_LOCAL_JUDGE
 #define BITS_STDC " -I" PRJ_ROOT_PATH "include/ "
 #define CODE_PATh \
-  PRJ_ROOT_PATH "other/cpp/2025/05/20250515/"
-#define CODE_DATA CODE_PATh "data-poj-3368.cpp"
-#define CODE_FORCE CODE_PATh "poj-3368-force.cpp"
-#define CODE_MAIN CODE_PATh "poj-3368-main.cpp"
+  PRJ_ROOT_PATH "other/CSP-J/2024/D-chain/"
+#define CODE_DATA CODE_PATh "data.cpp"
+#define CODE_FORCE CODE_PATh "chain-50p.cpp"
+#define CODE_MAIN CODE_PATh "chain.cpp"
 #else
 #define BITS_STDC " "
 #define CODE_PATh ""

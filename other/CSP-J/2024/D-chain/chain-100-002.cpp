@@ -4,7 +4,7 @@ TASK: chain
 LANG: C++
 CONTEST: CSP-J 2024
 OJ: https://www.luogu.com.cn/problem/P11230?contestId=209924
-https://www.luogu.com.cn/record/219619138
+https://www.luogu.com.cn/record/219585585
 */
 #define TASK "chain"
 
@@ -30,11 +30,11 @@ int maxOffset = 0;
 int valFlag[2 * N];  // 上一轮接龙时，记录每个值结尾的有哪些人，-1 代表有多个人，否则是人的编号
 
 // 这里方法很多，例如线段树、权值线段树、树状数组、递减标记法、左加右减标记法
-// 这里采用递减标记法
+// 这里采用左加右减标记法
 int posflag[2 * N];
 inline void Update(int R, int pi, int left, int right) {  // [left, right]
-  int K = right - left + 1;
-  posflag[left] = max(posflag[left], K);
+  posflag[left]++;
+  posflag[right + 1]--;
 }
 
 vector<tuple<int, int, int, int>> queries(N);  // <r, s, i, ans> // 记录第 i 查询的轮次 r 和值 s 的答案 ans
@@ -45,7 +45,7 @@ void Merge(int R) {
   memset(valFlag, -1, sizeof(valFlag));
   for (int offset = 0; offset < maxOffset; offset++) {
     auto [i, S] = nums[offset];
-    nowVal = max(nowVal - 1, posflag[offset]);
+    nowVal += posflag[offset];
     posflag[offset] = 0;  // 清空标记数组
     if (nowVal > 0) {
       if (valFlag[S] == -1) {
@@ -57,6 +57,7 @@ void Merge(int R) {
       }
     }
   }
+  posflag[maxOffset] = 0;  // 最后一个置空
   while (queryIndex < q) {
     auto& [r, S, i, ans] = queries[queryIndex];
     if (r != R) break;  // 如果查询的轮次大于当前轮次，直接跳过

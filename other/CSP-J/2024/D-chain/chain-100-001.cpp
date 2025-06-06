@@ -4,7 +4,7 @@ TASK: chain
 LANG: C++
 CONTEST: CSP-J 2024
 OJ: https://www.luogu.com.cn/problem/P11230?contestId=209924
-https://www.luogu.com.cn/record/219619138
+https://www.luogu.com.cn/record/219585585
 */
 #define TASK "chain"
 
@@ -22,19 +22,19 @@ void InitIO() {
 
 const int N = 1e5 + 10;
 int n, k, q;
-pair<int, int> nums[2 * N];
-pair<int, int> ranges[N];  // 计算每个人的数字在所有数字里面的范围，[piLeft, piRight)
+vector<pair<int, int>> nums(2 * N);
+vector<pair<int, int>> ranges(N);  // 计算每个人的数字在所有数字里面的范围，[piLeft, piRight)
 int maxR;
 int maxOffset = 0;
 
-int valFlag[2 * N];  // 上一轮接龙时，记录每个值结尾的有哪些人，-1 代表有多个人，否则是人的编号
+vector<int> preFlag(2 * N, -1);  // 上一轮接龙时，记录每个值结尾的有哪些人，-1 代表有多个人，否则是人的编号
 
 // 这里方法很多，例如线段树、权值线段树、树状数组、递减标记法、左加右减标记法
-// 这里采用递减标记法
-int posflag[2 * N];
-inline void Update(int R, int pi, int left, int right) {  // [left, right]
-  int K = right - left + 1;
-  posflag[left] = max(posflag[left], K);
+// 这里采用左加右减标记法
+vector<int> flags(2 * N, 0);
+inline void Update(int r, int pi, int left, int right) {  // [left, right]
+  flags[left]++;
+  flags[right + 1]--;
 }
 
 vector<tuple<int, int, int, int>> queries(N);  // <r, s, i, ans> // 记录第 i 查询的轮次 r 和值 s 的答案 ans
@@ -42,25 +42,26 @@ int queryIndex = 0;                            // 查询的索引
 int maxS = 1;
 void Merge(int R) {
   int nowVal = 0;
-  memset(valFlag, -1, sizeof(valFlag));
+  fill(preFlag.begin(), preFlag.end(), -1);  // 初始化 preFlag
   for (int offset = 0; offset < maxOffset; offset++) {
     auto [i, S] = nums[offset];
-    nowVal = max(nowVal - 1, posflag[offset]);
-    posflag[offset] = 0;  // 清空标记数组
+    nowVal += flags[offset];
+    flags[offset] = 0;  // 清空标记数组
     if (nowVal > 0) {
-      if (valFlag[S] == -1) {
-        valFlag[S] = i;  // 记录这个值可以结尾
+      if (preFlag[S] == -1) {
+        preFlag[S] = i;  // 记录这个值可以结尾
       } else {
-        if (valFlag[S] != i) {  // 如果已经有了，说明有多个人接龙到这个值
-          valFlag[S] = -2;      // 标记为多个人
+        if (preFlag[S] != i) {  // 如果已经有了，说明有多个人接龙到这个值
+          preFlag[S] = -2;      // 标记为多个人
         }
       }
     }
   }
+  flags[maxOffset] = 0;  // 最后一个置空
   while (queryIndex < q) {
     auto& [r, S, i, ans] = queries[queryIndex];
     if (r != R) break;  // 如果查询的轮次大于当前轮次，直接跳过
-    if (valFlag[S] != -1) {
+    if (preFlag[S] != -1) {
       ans = 1;
     }
     queryIndex++;
@@ -99,14 +100,15 @@ void Solver() {  //
       }
     }
     sort(queries.begin(), queries.begin() + q);  // 按照轮次 r 排序
-    memset(valFlag, -1, sizeof(valFlag));
-    valFlag[1] = -2;                   // 初始状态，1 号值可以开始接龙
-    for (int r = 1; r <= maxR; r++) {  // 进行 R 轮游戏
+
+    fill(preFlag.begin(), preFlag.end(), -1);  // 初始化 preFlag
+    preFlag[1] = -2;                           // 初始状态，1 号值可以开始接龙
+    for (int r = 1; r <= maxR; r++) {          // 进行 R 轮游戏
       for (int offset = 0; offset < maxOffset; offset++) {
         auto [pi, S] = nums[offset];
-        const auto [piLeft, piRight] = ranges[pi];           // [piLeft, piRight)
-        if (pi == valFlag[S] || valFlag[S] == -1) continue;  // 不能接自己的
-        if (offset + 1 == piRight) continue;                 // 不能接到最后一个
+        const auto [piLeft, piRight] = ranges[pi];  // [piLeft, piRight)
+        if (pi == preFlag[S] || preFlag[S] == -1) continue;             // 不能接自己的
+        if (offset + 1 == piRight) continue;        // 不能接到最后一个
         int left = offset + 1;
         int right = min(offset + k - 1, piRight - 1);  // 下一个值
         Update(r, pi, left, right);                    // 第 r 轮，第 pi 个人，从 left 到 right 接龙的结束位置
