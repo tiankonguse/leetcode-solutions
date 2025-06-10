@@ -20,19 +20,17 @@ void InitIO() {
 }
 
 char str[1010][1010];
-int tick[1010][1010];
 int dir[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 
 ll ans = 0;
-void Add(int x, int y, int T) {
-  if (tick[x][y] != T) {
-    tick[x][y] = T;
+void Add(int x, int y) {
+  if (str[x][y] == '.') {
+    str[x][y] = 'Y';
     ans++;
   }
 }
 void Solver() {  //
   ll t;
-  memset(tick, 0, sizeof(tick));
   scanf("%lld", &t);
   for (ll T = 1; T <= t; T++) {
     ll n, m, k;
@@ -43,17 +41,17 @@ void Solver() {  //
     for (int i = 1; i <= n; i++) {
       scanf("%s", &str[i][1]);
     }
-    Add(x, y, T);
+    Add(x, y);
     while (k--) {
       int X = x + dir[d][0];
       int Y = y + dir[d][1];
-      if (X < 1 || X > n || Y < 1 || Y > m || str[X][Y] != '.') {
+      if (X < 1 || X > n || Y < 1 || Y > m || str[X][Y] == 'x') {
         d = (d + 1) % 4;
       } else {
         x = X;
         y = Y;
       }
-      Add(x, y, T);
+      Add(x, y);
     }
     printf("%lld\n", ans);
   }

@@ -24,25 +24,19 @@ vector<ll> nums;
 void Solver() {  //
   scanf("%lld", &n);
   nums.resize(n, 0);
-  multiset<ll> H;
   for (int i = 0; i < n; i++) {
     scanf("%lld", &nums[i]);
-    H.insert(nums[i]);
   }
   sort(nums.begin(), nums.end());
 
-  ll ans = n;
-  for (int i = n - 1; i >= 0; i--) {
-    ll v = nums[i];
-    auto it = H.lower_bound(v);
-    if (it == H.begin()) {
-      continue;  // 没有更小值，无法删除
+  int l = 0, r = 1;
+  while (r < n) {
+    if (nums[r] > nums[l]) {
+      l++;
     }
-    it--;
-    H.erase(it);
-    ans--;
+    r++;
   }
-  printf("%lld\n", ans);
+  printf("%lld\n", r - l);
 }
 
 int main() {
