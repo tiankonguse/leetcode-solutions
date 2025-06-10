@@ -4,6 +4,8 @@ TASK: uqe
 LANG: C++
 CONTEST: CSP-J 2023
 OJ: https://qoj.ac/contest/1427/problem/7811
+https://www.luogu.com.cn/problem/P9750
+https://www.luogu.com.cn/record/220072984
 */
 #define TASK "uqe"
 
@@ -25,7 +27,7 @@ void InitIO() {
 // 朴素 GCD/gcd 算法，复杂度 Log(n))
 ll Gcd(ll x, ll y) {
   if (!x || !y) return x ? x : y;
-  for (ll t; t = x % y; x = y, y = t);
+  for (ll t; (t = x % y); x = y, y = t);
   return y;
 }
 
@@ -99,7 +101,7 @@ void RealSolver() {
   } else if (p == 1 && q > 1) {
     printf("sqrt(%lld)/%lld\n", d, q);
   } else {
-    printf("%d*sqrt(%lld)/%lld\n", p, d, q);
+    printf("%lld*sqrt(%lld)/%lld\n", p, d, q);
   }
 }
 void Solver() {  //

@@ -5,7 +5,7 @@ LANG: C++
 MAC EOF: ctrl+D
 link: https://www.luogu.com.cn/problem/P11234?contestId=209925
 PATH: P11234 [CSP-S 2024] 擂台游戏
-submission:
+submission: 修改为 fastIO 之前，备份
 */
 #define TASK "arena"
 #define TASKEX ""
@@ -56,40 +56,12 @@ using max_queue = priority_queue<T>;
 void InitIO() {
 //
 #ifdef USACO_LOCAL_JUDGE
-#define TASKNO "5"
+#define TASKNO "4"
   freopen(TASK TASKNO ".in", "r", stdin);
   freopen(TASK TASKNO ".out", "w", stdout);
 #endif
 }
-ll rd() {
-  ll x = 0, w = 1;
-  char ch = 0;
-  while (ch < '0' || ch > '9') {
-    if (ch == '-') w = -1;
-    ch = getchar();
-  }
-  while (ch >= '0' && ch <= '9') {
-    x = x * 10 + (ch - '0');
-    ch = getchar();
-  }
-  return x * w;
-}
-void readLine(char* p) {
-  *p = getchar();
-  while (*p != '\n') {
-    p++;
-    *p = getchar();
-  }
-  *p = '\0';
-}
-void readNChar(char* p, int n) {
-  for (int i = 0; i < n; i++) {
-    *p = getchar();
-    p++;
-  }
-  *p = '\0';
-  getchar(); // skip \n
-}
+
 const int N = 1e5 + 10;
 int n, m;
 int K;                  // 2^K >= n，K 为最小的满足条件的值
@@ -114,9 +86,7 @@ inline int UpPow(int x) {
 }
 
 void Input() {
-  n = rd();
-  m = rd();
-  // scanf("%d%d", &n, &m);
+  scanf("%d%d", &n, &m);
   K = UpPow(n);
   dataOffset = 1 << K;
   MyPrintf("K=%d 1<<K=%d\n", K, dataOffset);
@@ -124,14 +94,12 @@ void Input() {
     A[j] = {0, i};  // 默认全部设置为0
   }
   for (int i = 1, j = dataOffset; i <= n; i++, j++) {
-    AA[i] = rd();
-    // scanf("%lld", &AA[i]);
+    scanf("%lld", &AA[i]);
     A[j] = {AA[i], i};
   }
   //   MyPrintf("\n", K);
   for (int i = 1; i <= m; i++) {
-    C[i] = rd();
-    // scanf("%lld", &C[i]);
+    scanf("%lld", &C[i]);
     H[C[i]] = 0;
   }
   mm = 0;
@@ -144,10 +112,9 @@ void Input() {
     C[i] = H[C[i]];
   }
   for (int k = K - 1, offset = dataOffset; k >= 0; k--) {
+    scanf("%s", str);
     const int step = 1 << k;
     offset -= step;
-    // scanf("%s", str);
-    readNChar(str, step);
     // MyPrintf(" step=%d offset=%d\n", k, step, offset);
     for (int j = 0; j < step; j++) {
       flag[offset + j] = str[j] - '0';  // 将字符转换为数字
@@ -328,12 +295,11 @@ ll Query(int c) {
 void Solver() {  //
   Input();
 
-  int t = rd();
-  // scanf("%d", &t);
+  int t;
+  scanf("%d", &t);
   while (t--) {
     for (int i = 0; i < 4; i++) {
-      X[i] = rd();
-      // scanf("%lld", &X[i]);
+      scanf("%lld", &X[i]);
     }
     Reinit();
     ll ans = 0;

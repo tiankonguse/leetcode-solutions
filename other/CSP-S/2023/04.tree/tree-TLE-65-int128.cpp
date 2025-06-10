@@ -7,7 +7,7 @@ CONTEST: CSP-S 2023
 qoj: https://qoj.ac/contest/1428/problem/7816
 luogu: https://www.luogu.com.cn/problem/P9755
 */
-#define TASK "tree"
+#define TASK "tree3"
 
 #include <bits/stdc++.h>
 
@@ -22,11 +22,10 @@ ll debug = 0;
   } while (0)
 
 void InitIO() {
-#ifdef USACO_LOCAL_JUDGE
-#define TASKNO "4"
-  freopen(TASK TASKNO ".in", "r", stdin);
-  freopen(TASK TASKNO ".out", "w", stdout);
-#endif
+  // #ifndef USACO_LOCAL_JUDGE
+  // freopen(TASK ".in", "r", stdin);
+  // freopen(TASK ".out", "w", stdout);
+  // #endif
 }
 ll rd() {
   ll x = 0, w = 1;
@@ -47,8 +46,6 @@ vector<vector<ll>> g;
 ll n;
 
 vector<ll> lastDay;
-vector<ll> topologyOrder;
-vector<ll> father;
 
 /*
 h=max(b+xc,1)
@@ -104,36 +101,26 @@ ll Cal(const ll i, const ll d) {  //
   return r - 1;
 }
 
-// bool Dfs(const ll u, const ll maxDay, const ll pre = -1) {
-//   lastDay[u] = Cal(u, maxDay);
-//   if (lastDay[u] < 1) {
-//     return false;
-//   }
-//   for (auto v : g[u]) {
-//     if (v == pre) continue;
-//     if (!Dfs(v, maxDay, u)) {
-//       return false;
-//     }
-//     lastDay[u] = min(lastDay[u], lastDay[v] - 1);
-//     if (lastDay[u] < 1) {
-//       return false;
-//     }
-//   }
-//   return true;
-// }
-bool Check(ll maxDay) {
-  for (int i = 0; i < n; i++) {
-    lastDay[i] = Cal(i, maxDay);
-    if (lastDay[i] < 1) {
+bool Dfs(const ll u, const ll maxDay, const ll pre = -1) {
+  lastDay[u] = Cal(u, maxDay);
+  if (lastDay[u] < 1) {
+    return false;
+  }
+  for (auto v : g[u]) {
+    if (v == pre) continue;
+    if (!Dfs(v, maxDay, u)) {
+      return false;
+    }
+    lastDay[u] = min(lastDay[u], lastDay[v] - 1);
+    if (lastDay[u] < 1) {
       return false;
     }
   }
-  for (int i = 0; i < n; i++) {
-    if (lastDay[i] < 1) return false;
-    int pre = father[i];
-    if (pre != -1) {
-      lastDay[pre] = min(lastDay[pre], lastDay[i] - 1);
-    }
+  return true;
+}
+bool Check(ll maxDay) {
+  if (!Dfs(0, maxDay)) {
+    return false;
   }
   sort(lastDay.begin(), lastDay.end());
   for (ll i = 1; i <= n; i++) {
@@ -143,21 +130,10 @@ bool Check(ll maxDay) {
   }
   return true;
 }
-void Dfs(int u, int pre) {
-  for (auto v : g[u]) {
-    if (v == pre) continue;
-    Dfs(v, u);
-  }
-  father[u] = pre;
-  topologyOrder.push_back(u);
-}
 void Solver() {  //
-  // scanf("%lld", &n);
-  n = rd();
+  scanf("%lld", &n);
   points.reserve(n);
   lastDay.resize(n);
-  father.resize(n);
-  topologyOrder.reserve(n);
   g.resize(n);
   for (ll i = 0; i < n; i++) {
     ll a, b, c;
@@ -176,7 +152,6 @@ void Solver() {  //
     g[u].push_back(v);
     g[v].push_back(u);
   }
-  Dfs(0, -1);
 
   ll l = 1, r = 10e9 + 1;
   while (l < r) {  //[l,r)

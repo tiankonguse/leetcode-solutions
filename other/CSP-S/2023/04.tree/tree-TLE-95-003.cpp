@@ -49,6 +49,7 @@ ll n;
 vector<ll> lastDay;
 vector<ll> topologyOrder;
 vector<ll> father;
+vector<ll> height;
 
 /*
 h=max(b+xc,1)
@@ -64,8 +65,8 @@ b - 1 >= -cx
 inline bool FixRangeSum(const ll i, const ll x0, const ll xn, ll A) {
   const auto [a, b, c] = points[i];
   const int128 down = xn - x0 + 1;
-  const int128 low = min(x0 * c + b, xn * c + b);
-  const int128 high = max(x0 * c + b, xn * c + b);
+  const int128 low = x0 * c + b;
+  const int128 high = xn * c + b;
   return (high + low) * down / 2 >= A;
 }
 bool CheckRangeSum(const ll i, const ll x0, const ll xn) {
@@ -89,7 +90,11 @@ bool CheckRangeSum(const ll i, const ll x0, const ll xn) {
 }
 ll Cal(const ll i, const ll d) {  //
   // const auto [a, b, c] = points[i];
-  ll l = 1, r = d + 1;
+
+  ll l = height[i], r = d + 1;
+  if (!CheckRangeSum(i, l, d)) {
+    return -1;  // 整个区间不存在答案
+  }
   while (l < r) {                // [l, r)
     const ll mid = (l + r) / 2;  // sum(mid, d)
     if (CheckRangeSum(i, mid, d)) {
@@ -98,7 +103,7 @@ ll Cal(const ll i, const ll d) {  //
       r = mid;
     }
   }
-  if (r == 1) {  // 不满足要求
+  if (r < height[i]) {  // 不满足要求
     return -1;
   }
   return r - 1;
@@ -124,12 +129,12 @@ ll Cal(const ll i, const ll d) {  //
 bool Check(ll maxDay) {
   for (int i = 0; i < n; i++) {
     lastDay[i] = Cal(i, maxDay);
-    if (lastDay[i] < 1) {
+    if (lastDay[i] < height[i]) {
       return false;
     }
   }
   for (int i = 0; i < n; i++) {
-    if (lastDay[i] < 1) return false;
+    if (lastDay[i] < height[i]) return false;
     int pre = father[i];
     if (pre != -1) {
       lastDay[pre] = min(lastDay[pre], lastDay[i] - 1);
@@ -143,11 +148,14 @@ bool Check(ll maxDay) {
   }
   return true;
 }
-void Dfs(int u, int pre) {
+
+int maxHeight = 1;
+void Dfs(int u, int pre, int h) {
   for (auto v : g[u]) {
     if (v == pre) continue;
-    Dfs(v, u);
+    Dfs(v, u, h + 1);
   }
+  height[u] = h;
   father[u] = pre;
   topologyOrder.push_back(u);
 }
@@ -156,6 +164,7 @@ void Solver() {  //
   n = rd();
   points.reserve(n);
   lastDay.resize(n);
+  height.resize(n);
   father.resize(n);
   topologyOrder.reserve(n);
   g.resize(n);
@@ -176,9 +185,9 @@ void Solver() {  //
     g[u].push_back(v);
     g[v].push_back(u);
   }
-  Dfs(0, -1);
+  Dfs(0, -1, 1);
 
-  ll l = 1, r = 10e9 + 1;
+  ll l = n, r = 10e9 + 1;
   while (l < r) {  //[l,r)
     ll mid = (l + r) / 2;
     if (Check(mid)) {

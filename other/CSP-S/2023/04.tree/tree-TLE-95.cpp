@@ -49,6 +49,7 @@ ll n;
 vector<ll> lastDay;
 vector<ll> topologyOrder;
 vector<ll> father;
+vector<ll> height;
 
 /*
 h=max(b+xc,1)
@@ -146,6 +147,7 @@ bool Check(ll maxDay) {
 void Dfs(int u, int pre) {
   for (auto v : g[u]) {
     if (v == pre) continue;
+    height[v] = height[u] + 1;
     Dfs(v, u);
   }
   father[u] = pre;
@@ -156,6 +158,7 @@ void Solver() {  //
   n = rd();
   points.reserve(n);
   lastDay.resize(n);
+  height.resize(n);
   father.resize(n);
   topologyOrder.reserve(n);
   g.resize(n);
@@ -176,6 +179,7 @@ void Solver() {  //
     g[u].push_back(v);
     g[v].push_back(u);
   }
+  height[0] = 1;
   Dfs(0, -1);
 
   ll l = 1, r = 10e9 + 1;

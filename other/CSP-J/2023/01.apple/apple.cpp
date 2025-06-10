@@ -4,6 +4,8 @@ TASK: apple
 LANG: C++
 CONTEST: CSP-J 2023
 OJ: https://qoj.ac/contest/1427/problem/7809
+https://www.luogu.com.cn/problem/P9748
+https://www.luogu.com.cn/record/220072779
 */
 #define TASK "apple"
 

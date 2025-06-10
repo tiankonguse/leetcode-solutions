@@ -13,7 +13,6 @@ luogu: https://www.luogu.com.cn/problem/P9755
 
 using namespace std;
 typedef long long ll;
-using int128 = __int128;
 
 ll debug = 0;
 #define myprintf(...)                        \
@@ -26,19 +25,6 @@ void InitIO() {
   // freopen(TASK ".in", "r", stdin);
   // freopen(TASK ".out", "w", stdout);
   // #endif
-}
-ll rd() {
-  ll x = 0, w = 1;
-  char ch = 0;
-  while (ch < '0' || ch > '9') {
-    if (ch == '-') w = -1;
-    ch = getchar();
-  }
-  while (ch >= '0' && ch <= '9') {
-    x = x * 10 + (ch - '0');
-    ch = getchar();
-  }
-  return x * w;
 }
 
 vector<tuple<ll, ll, ll>> points;
@@ -58,12 +44,23 @@ b - 1 >= -cx
 (b - 1) / (-c) >= x
 
 */
-inline bool FixRangeSum(const ll i, const ll x0, const ll xn, ll A) {
+bool FixRangeSum(const ll i, const ll x0, const ll xn, ll A) {
   const auto [a, b, c] = points[i];
-  const int128 down = xn - x0 + 1;
-  const int128 low = min(x0 * c + b, xn * c + b);
-  const int128 high = max(x0 * c + b, xn * c + b);
-  return (high + low) * down / 2 >= A;
+  const ll down = xn - x0 + 1;
+  const ll low = min(x0 * c + b, xn * c + b);
+  const ll high = max(x0 * c + b, xn * c + b);
+  if (i == 0) {
+    // printf(
+    //     "fix: i[%lld] x0[%lld] xn[%lld] A[%lld] down[%lld] low[%lld] "
+    //     "high[%lld] A/down[%lld]\n",
+    //     i, x0, xn, A, down, low, high, A / down);
+  }
+  if (A / down < low) {  //
+    return true;
+  }
+  A -= low * down;
+
+  return (high - low) * down / 2 >= A;
 }
 bool CheckRangeSum(const ll i, const ll x0, const ll xn) {
   const auto [a, b, c] = points[i];
@@ -73,6 +70,9 @@ bool CheckRangeSum(const ll i, const ll x0, const ll xn) {
   }
   // c < 0
   const ll one = (b - 1) / (-c);
+  if (i == 58099) {
+    myprintf("i[%lld] one[%lld]\n", i, one);
+  }
   if (x0 > one) {  // 全是 1
     return xn - x0 + 1 >= A;
   } else if (xn <= one) {  // 斜线
@@ -85,7 +85,8 @@ bool CheckRangeSum(const ll i, const ll x0, const ll xn) {
   }
 }
 ll Cal(const ll i, const ll d) {  //
-  const auto [a, b, c] = points[i];
+  // [1, x] [x, d]
+  // const auto [a, b, c] = points[i];
   ll l = 1, r = d + 1;
   while (l < r) {                // [l, r)
     const ll mid = (l + r) / 2;  // sum(mid, d)
@@ -96,6 +97,8 @@ ll Cal(const ll i, const ll d) {  //
     }
   }
   if (r == 1) {  // 不满足要求
+    // myprintf("Cal: i[%lld] a[%lld] b[%lld] c[%lld] d[%lld]\n", i, a, b, c,
+    // d);
     return -1;
   }
   return r - 1;
@@ -104,6 +107,7 @@ ll Cal(const ll i, const ll d) {  //
 bool Dfs(const ll u, const ll maxDay, const ll pre = -1) {
   lastDay[u] = Cal(u, maxDay);
   if (lastDay[u] < 1) {
+    // myprintf("Dfs u[%lld] lastDay[%lld]\n", u, lastDay[u]);
     return false;
   }
   for (auto v : g[u]) {
@@ -113,6 +117,8 @@ bool Dfs(const ll u, const ll maxDay, const ll pre = -1) {
     }
     lastDay[u] = min(lastDay[u], lastDay[v] - 1);
     if (lastDay[u] < 1) {
+      // myprintf("Dfs pre: u[%lld] lastDay[%lld] v[%lld] lastDay[%lld]\n", u,
+      //          lastDay[u], v, lastDay[v]);
       return false;
     }
   }
@@ -120,11 +126,13 @@ bool Dfs(const ll u, const ll maxDay, const ll pre = -1) {
 }
 bool Check(ll maxDay) {
   if (!Dfs(0, maxDay)) {
+    // myprintf("dfs err: maxDay[%lld]\n", maxDay);
     return false;
   }
   sort(lastDay.begin(), lastDay.end());
   for (ll i = 1; i <= n; i++) {
     if (lastDay[i - 1] < i) {
+      // myprintf("sort err: i[%lld] > lastDay[%lld]\n", i, lastDay[i - 1]);
       return false;
     }
   }
@@ -137,17 +145,12 @@ void Solver() {  //
   g.resize(n);
   for (ll i = 0; i < n; i++) {
     ll a, b, c;
-    a = rd();
-    b = rd();
-    c = rd();
-    // scanf("%lld%lld%lld", &a, &b, &c);
+    scanf("%lld%lld%lld", &a, &b, &c);
     points.push_back({a, b, c});
   }
   for (ll i = 1; i < n; i++) {
     ll u, v;
-    u = rd();
-    v = rd();
-    // scanf("%lld%lld", &u, &v);
+    scanf("%lld%lld", &u, &v);
     u--, v--;
     g[u].push_back(v);
     g[v].push_back(u);

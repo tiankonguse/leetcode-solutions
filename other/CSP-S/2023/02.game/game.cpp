@@ -4,6 +4,7 @@ TASK: game
 LANG: C++
 CONTEST: CSP-S 2023
 OJ: https://qoj.ac/problem/7814
+https://www.luogu.com.cn/problem/P9753
 */
 #define TASK "game"
 

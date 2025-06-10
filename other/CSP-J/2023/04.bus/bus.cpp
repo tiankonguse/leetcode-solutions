@@ -3,6 +3,8 @@ ID: tiankonguse
 TASK: bus
 LANG: C++
 OJ: https://qoj.ac/submission/601150
+https://www.luogu.com.cn/problem/P9751
+https://www.luogu.com.cn/record/220073059
 */
 #define TASK "bus"
 

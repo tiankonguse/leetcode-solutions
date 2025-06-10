@@ -5,6 +5,8 @@ TASK: lock
 LANG: C++
 CONTEST: CSP-S 2023
 OJ: https://qoj.ac/problem/7813
+https://www.luogu.com.cn/problem/P9752
+https://www.luogu.com.cn/record/220073328
 */
 #define TASK "lock"
 
