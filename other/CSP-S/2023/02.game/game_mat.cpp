@@ -20,10 +20,11 @@ const int N = 2000010;
 const int M = 26;
 char str[N];
 void InitIO() {
-  // #ifndef USACO_LOCAL_JUDGE
-  //   freopen(TASK ".in", "r", stdin);
-  //   freopen(TASK ".out", "w", stdout);
-  // #endif
+#ifdef USACO_LOCAL_JUDGE
+#define TASKNO "4"
+  freopen(TASK TASKNO ".in", "r", stdin);
+  freopen(TASK TASKNO ".out", "w", stdout);
+#endif
 }
 
 mt19937 rnd(time(0));

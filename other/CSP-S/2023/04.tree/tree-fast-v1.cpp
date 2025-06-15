@@ -240,11 +240,7 @@ inline ll CalFast(const ll i, const ll maxDay) {
 bool Check(ll maxDay) {
   // 第一步，计算每棵树最晚在哪天种植
   for (ll i = 0; i < n; i++) {
-    // auto [a, b, c] = points[i];
-    // ll acRet = Cal(i, maxDay);
     ll fastRet = CalFast(i, maxDay);
-    // assert(acRet == fastRet);
-    // MyPrintf("a=%lld b=%lld c=%lld\n", a, b, c);
     lastDay[i] = fastRet;
     if (lastDay[i] == -1) {
       return false;

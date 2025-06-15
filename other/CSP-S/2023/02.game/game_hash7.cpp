@@ -65,7 +65,8 @@ void Solver() {
       pre7 = (pre7 + v * qpow(BASE, k, mod1e7)) % mod1e7;
       pre9 = (pre9 + v * qpow(BASE, k, mod1e9)) % mod1e9;
     }
-    ll pre = pre7 * mod1e9 + pre9;
+    // printf("i=%d add+%lld\n", i, h[pre]);
+    ll pre = pre7;
     ans += h[pre];
     h[pre]++;
   }
