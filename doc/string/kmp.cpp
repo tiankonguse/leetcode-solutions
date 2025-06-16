@@ -1,3 +1,4 @@
+// next[i] 前缀 [0,j] 的最长公共前后缀的长度
 vector<int> next;
 void get_next(const char *pat) {
     for(int i=1,k; pat[i]; ++i) {
