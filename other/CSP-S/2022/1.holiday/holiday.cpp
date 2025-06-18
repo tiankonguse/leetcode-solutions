@@ -45,17 +45,18 @@ using max_queue = priority_queue<T>;
 
 void InitIO() {  //
 #ifdef USACO_LOCAL_JUDGE
-#define TASKNO ""
+#define TASKNO "3"
   freopen(TASK TASKNO ".in", "r", stdin);
   freopen(TASK TASKNO ".out", "w", stdout);
 #endif
 }
 
 int n, m, k;
-vector<vector<int>> g;            // 原始图
-vector<vector<pair<ll, int>>> G;  // k 步可达图
-vector<int> goOne;                // 是否可以到达顶点 1
-vector<int> scores;               // 每个点的分数
+vector<vector<int>> g;             // 原始图
+vector<vector<pair<ll, int>>> G;   // k 步可达图
+vector<vector<pair<ll, int>>> GG;  // k 步可达图起点
+vector<int> goOne;                 // 是否可以到达顶点 1
+vector<ll> scores;                 // 每个点的分数
 
 void Input() {
   scanf("%d%d%d", &n, &m, &k);
@@ -63,7 +64,7 @@ void Input() {
   scores.resize(n + 1);
   scores[1] = 0;
   for (int i = 2; i <= n; i++) {
-    scanf("%d", &scores[i]);
+    scanf("%lld", &scores[i]);
   }
   for (int i = 0; i < m; i++) {
     int u, v;
@@ -79,31 +80,67 @@ void BuildG() {
   vector<int> vis(n + 1, 0);
   G.resize(n + 1);
   goOne.resize(n + 1, 0);
+  GG.resize(n + 1);
   for (int i = 1; i <= n; i++) {  // 以每个点为起点
     while (!que.empty()) que.pop();
-    fill(vis.begin(), vis.end(), 0);
+    fill(vis.begin(), vis.end(), -1);
     que.push(i);
-    vis[i] = 1;
+    vis[i] = 0;
     while (!que.empty()) {
       int u = que.front();
       que.pop();
       for (int v : g[u]) {
-        if (vis[v]) continue;
+        if (vis[v] != -1) continue;
+        vis[v] = vis[u] + 1;
+        if (vis[v] > k + 1) continue;
         if (v == 1) {
           goOne[i] = 1;
         }
-        vis[v] = 1;
         G[i].push_back({scores[v], v});
         que.push(v);
       }
     }
-    sort(G[i].begin(), G[i].end());
+    sort(G[i].begin(), G[i].end(), greater<>());
+    // printf("i=%d size=%d", i, int(G[i].size()));
+    // for (auto [c, v] : G[i]) {
+    //   printf("(%lld,%d) ", c, v);
+    // }
+    // printf("\n");
+  }
+  for (int i = 2; i <= n; i++) {  // 以每个点为起点
+    for (auto [c, v] : G[i]) {
+      if (goOne[v] == 1) {
+        GG[i].push_back({c, v});
+      }
+    }
   }
 }
 
 void Solver() {  //
   Input();
   BuildG();
+  // 家 -> 景点 A -> 景点 B -> 景点 C -> 景点 D -> 家
+  // 枚举 {景点 B,景点 C}
+  ll ans = 0;
+  for (int B = 2; B <= n; B++) {
+    for (auto [score, C] : G[B]) {
+      if (C == 1) continue;
+      for (int i = 0; i < GG[B].size() && i < 2; i++) {  // 最多枚举前两个
+        int A = GG[B][i].second;
+        if (A == B || A == C) continue;
+        for (int j = 0; j < GG[C].size() && j < 2; j++) {
+          int D = GG[C][j].second;
+          if (D == A || D == B || D == C) continue;
+          ll tmp = scores[A] + scores[B] + scores[C] + scores[D];
+          if (tmp > ans) {
+            ans = tmp;
+            // MyPrintf("ans = %lld, A = %d, B = %d, C = %d, D = %d\n", ans, A, B, C, D);
+          }
+        }
+      }
+    }
+  }
+  printf("%lld\n", ans);
 }
 
 void ExSolver() {
