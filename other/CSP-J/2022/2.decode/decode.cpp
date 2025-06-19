@@ -29,9 +29,9 @@ void InitIO() {
 
 ll n, d, e;
 ll q, p;
-bool Check() {                     //
-  const int128 m = n - e * d + 2;  // p + q >= 2
-  if (m < 2) return false;
+bool Check() {
+  const int128 m = n - e * d + 2;
+  if (m < 2) return false;  // 无解
   // 最大值 k = m/2
   int128 l = 1, r = m / 2;
   while (l < r) {
