@@ -26,7 +26,7 @@ void CheckUsacoTask() {
 }
 #ifdef USACO_LOCAL_JUDGE
 int debug_log = 0;
-int debug_assert = 1;
+int debug_assert = 0;
 #define MyPrintf(...)                   \
   do {                                  \
     if (debug_log) printf(__VA_ARGS__); \
