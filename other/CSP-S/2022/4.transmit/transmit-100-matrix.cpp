@@ -141,7 +141,7 @@ void DfsRMQ(const int u) {
 }
 
 void DfsInit(int u, int fa) {
-  minChild[u] = costs[fa]; // 注意事项：最小的儿子实际为最小的相邻边，故父节点也需要考虑在内
+  minChild[u] = costs[fa];
   for (int v : G[u]) {
     if (v == fa) continue;
     g[u].push_back(v);

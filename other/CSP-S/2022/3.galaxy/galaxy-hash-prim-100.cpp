@@ -9,7 +9,7 @@ submission: https://www.luogu.com.cn/record/221090559
 评测分数: 60
 */
 #define TASK "galaxy"
-#define TASKEX ""
+#define TASKEX "-hash-prim-100"
 
 #include <bits/stdc++.h>
 
@@ -57,7 +57,7 @@ using max_queue = priority_queue<T>;
 void InitIO() {  //
 #ifdef USACO_LOCAL_JUDGE
 // 2: 45
-#define TASKNO "3"
+#define TASKNO "4"
   freopen(TASK TASKNO ".in", "r", stdin);
   freopen(TASK TASKNO ".out", "w", stdout);
 #endif
@@ -73,7 +73,7 @@ int prm[M];
 1e6 4.316983346365776
 1e7 4.539375767702223
 */
-int getprm() {
+int getprm(int maxK) {
   // O(n log log n)
   int e = (int)(sqrt(0.0 + N) + 1), k = 0, i;
   memset(is, 1, sizeof(is));
@@ -83,11 +83,15 @@ int getprm() {
   for (i = 3; i < e; i += 2) {
     if (is[i]) {
       prm[k++] = i;
+      if (k > maxK) return k;
       for (int s = i + i, j = i * i; j < N; j += s) is[j] = 0;
     }
   }
   for (; i < N; i += 2)
-    if (is[i]) prm[k++] = i;
+    if (is[i]) {
+      prm[k++] = i;
+      if (k > maxK) return k;
+    }
   // printf("%d lastPrm=%d\n", k, prm[k-1]);
   return k;
 }
@@ -173,11 +177,11 @@ P2 p2;
 int n, m, q;
 
 void Solver() {  //
-  getprm();
-
   srand(time(NULL));
   int u, v;
   scanf("%d%d", &n, &m);
+  getprm(n + 2);
+
   p2.Init(n);
   // p1.Init(n);
   for (int i = 0; i < m; i++) {

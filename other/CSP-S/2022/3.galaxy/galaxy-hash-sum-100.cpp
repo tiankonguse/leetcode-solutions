@@ -57,55 +57,11 @@ using max_queue = priority_queue<T>;
 void InitIO() {  //
 #ifdef USACO_LOCAL_JUDGE
 // 2: 45
-#define TASKNO "3"
+#define TASKNO "4"
   freopen(TASK TASKNO ".in", "r", stdin);
   freopen(TASK TASKNO ".out", "w", stdout);
 #endif
 }
-
-const int N = 10000000;
-const int M = 664679;
-bool is[N];
-int prm[M];
-/*
-1e4 3.732020845644619
-1e5 4.053948940531981
-1e6 4.316983346365776
-1e7 4.539375767702223
-*/
-int getprm() {
-  // O(n log log n)
-  int e = (int)(sqrt(0.0 + N) + 1), k = 0, i;
-  memset(is, 1, sizeof(is));
-  prm[k++] = 2;
-  is[0] = is[1] = 0;
-  for (i = 4; i < N; i += 2) is[i] = 0;
-  for (i = 3; i < e; i += 2) {
-    if (is[i]) {
-      prm[k++] = i;
-      for (int s = i + i, j = i * i; j < N; j += s) is[j] = 0;
-    }
-  }
-  for (; i < N; i += 2)
-    if (is[i]) prm[k++] = i;
-  // printf("%d lastPrm=%d\n", k, prm[k-1]);
-  return k;
-}
-
-ll qpow(ll x, ll v, ll mod) {
-  x = x % mod;
-  ll y = 1;
-  while (v) {
-    if (v & 1) y = y * x % mod;
-    x = x * x % mod;
-    v >>= 1;
-  }
-  return y;
-}
-ll inv(ll x, ll mod) { return qpow(x, mod - 2, mod); }
-
-ll HashAdd(ll a, ll b) { return (a * b) % mod; }
-ll HashDel(ll a, ll b) { return (a * inv(b, mod)) % mod; }
 
 struct P2 {
   int n;
@@ -115,47 +71,46 @@ struct P2 {
   vector<ll> inDegSumBase;  // 每个顶点入度的顶点和, 原始数据，不会修改
   vector<int> inDeg;        // 每个顶点入度的个数, 最准确的，实时更新
   int edgeNum = 0;          // 有效边的个数, 最准确的，实时更新
-  ll allScore = 1;
-  ll allScoreBase = 1;
+  ll allScore = 0;
+  ll allScoreBase = 0;
 
   void AddEdge(int u, int v) {
     MyPrintf("AddEdge %d %d\n", u, v);
     inDeg[v]++;
     edgeNum++;
-    inDegSum[v] = HashAdd(inDegSum[v], scores[u]);
-    allScore = HashAdd(allScore, scores[u]);
+    inDegSum[v] += scores[u];
+    allScore += scores[u];
   }
 
   void DelEdge(int u, int v) {
     MyPrintf("DelEdge %d %d\n", u, v);
     inDeg[v]--;
     edgeNum--;
-    inDegSum[v] = HashDel(inDegSum[v], scores[u]);
-    allScore = HashDel(allScore, scores[u]);
+    inDegSum[v] -= scores[u];
+    allScore -= scores[u];
   }
   void DelAllInEdge(int v) {
     edgeNum -= inDeg[v];
     inDeg[v] = 0;
-    allScore = HashDel(allScore, inDegSum[v]);
+    allScore -= inDegSum[v];
     inDegSum[v] = 0;
   }
   void AddAllInEdge(int v) {
     edgeNum += inDegBase[v] - inDeg[v];
     inDeg[v] = inDegBase[v];
-    allScore = HashAdd(allScore, HashDel(inDegSumBase[v], inDegSum[v]));
+    allScore += inDegSumBase[v] - inDegSum[v];
     inDegSum[v] = inDegSumBase[v];
   }
 
   void Init(int n) {
     this->n = n;
     scores.resize(n + 1);
-    allScoreBase = 1;
     for (int i = 1; i <= n; i++) {
-      scores[i] = prm[i];
-      allScoreBase = HashAdd(allScoreBase, scores[i]);
+      scores[i] = uint32_t(rand());
+      allScoreBase += scores[i];
     }
-    inDegSum.resize(n + 1, 1);
-    inDegSumBase.resize(n + 1, 1);
+    inDegSum.resize(n + 1, 0);
+    inDegSumBase.resize(n + 1, 0);
     inDeg.resize(n + 1, 0);
     inDegBase.resize(n + 1, 0);
   }
@@ -163,9 +118,9 @@ struct P2 {
     inDeg[v]++;
     edgeNum++;
     inDegBase[v]++;
-    inDegSum[v] = HashAdd(inDegSum[v], scores[u]);
-    inDegSumBase[v] = HashAdd(inDegSumBase[v], scores[u]);
-    allScore = HashAdd(allScore, scores[u]);
+    inDegSum[v] += scores[u];
+    inDegSumBase[v] += scores[u];
+    allScore += scores[u];
   }
 };
 
@@ -173,7 +128,6 @@ P2 p2;
 int n, m, q;
 
 void Solver() {  //
-  getprm();
 
   srand(time(NULL));
   int u, v;

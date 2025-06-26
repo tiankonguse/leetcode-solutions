@@ -125,10 +125,10 @@ void Solver() {  //
   for (int B = 2; B <= n; B++) {
     for (auto [score, C] : G[B]) {
       if (C == 1) continue;
-      for (int i = 0; i < GG[B].size() && i < 2; i++) {  // 最多枚举前两个
+      for (int i = 0; i < GG[B].size() && i < 3; i++) {  // 最多枚举前两个
         int A = GG[B][i].second;
         if (A == B || A == C) continue;
-        for (int j = 0; j < GG[C].size() && j < 2; j++) {
+        for (int j = 0; j < GG[C].size() && j < 3; j++) {
           int D = GG[C][j].second;
           if (D == A || D == B || D == C) continue;
           ll tmp = scores[A] + scores[B] + scores[C] + scores[D];

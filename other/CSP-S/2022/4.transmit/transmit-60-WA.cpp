@@ -6,7 +6,7 @@ MAC EOF: ctrl+D
 link: https://www.luogu.com.cn/problem/P8820
 PATH: P8820 [CSP-S 2022] 数据传输
 submission: https://www.luogu.com.cn/record/221304194
-评测分数: 56
+评测分数:
 */
 #define TASK "transmit"
 #define TASKEX ""
@@ -63,13 +63,13 @@ void InitIO() {  //
 #endif
 }
 
-enum { K_L_2 = 0, K_L_1, K_0, K_R_1, K_R_2, K_MAX };
+enum { K_L_2 = 0, K_L_1, K_0, K_R_1, K_R_2, K_SON, K_MAX };
 const int maxn = 200015;
 const int maxn_log = 20;  // 17.6096765414
 vector<int> g[maxn];      // 有向树
-ll f[maxn][maxn_log][K_MAX], dep[maxn];
+ll f[maxn][maxn_log][K_MAX], dep[maxn], minChild[maxn], minChildIndex[maxn];
 ll F[maxn][maxn_log][K_MAX];  // 区间最小路径和
-ll preSum[maxn] = {0};
+ll costSum[maxn] = {0};
 vector<int> G[maxn];  // 无向树
 ll costs[maxn] = {0};
 int n, Q, k;
@@ -107,23 +107,49 @@ void DfsRMQ(const int u) {
       }
     } else if (k == 3) {
       // v -> fa
-      F[v][0][K_L_2] = 0;                      // 非法
-      F[v][0][K_L_1] = 0;                      // 自己
-      F[v][0][K_0] = costs[f[v][0][K_0]];      // 一层父节点，一步到位
-      F[v][0][K_R_1] = costs[f[v][0][K_R_1]];  // 二层父节点，一步到位
-      F[v][0][K_R_2] = costs[f[v][0][K_R_2]];  // 三层父节点，一步到位
+      F[v][0][K_L_2] = 0;                       // 非法
+      F[v][0][K_L_1] = 0;                       // 自己
+      F[v][0][K_0] = costs[f[v][0][K_0]];       // 一层父节点，一步到位
+      F[v][0][K_R_1] = costs[f[v][0][K_R_1]];   // 二层父节点，一步到位
+      F[v][0][K_R_2] = costs[f[v][0][K_R_2]];   // 三层父节点，一步到位
+      F[v][0][K_SON] = minChild[f[v][0][K_0]];  // 一层父亲的儿子，一步到位
 
-      F[v][1][K_L_2] = 0;                      // 自己
-      F[v][1][K_L_1] = costs[f[v][1][K_L_1]];  // 一层父节点，一步到位
-      F[v][1][K_0] = costs[f[v][1][K_0]];      // 二层父节点，一步到位
-      F[v][1][K_R_1] = costs[f[v][1][K_R_1]];  // 三层父节点，一步到位
-      F[v][1][K_R_2] = costs[f[v][1][K_R_2]] + min({F[v][1][K_L_1], F[v][1][K_0], F[v][1][K_R_1]});
+      F[v][1][K_L_2] = 0;                       // 自己
+      F[v][1][K_L_1] = costs[f[v][1][K_L_1]];   // 一层父节点，一步到位
+      F[v][1][K_0] = costs[f[v][1][K_0]];       // 二层父节点，一步到位
+      F[v][1][K_R_1] = costs[f[v][1][K_R_1]];   // 三层父节点，一步到位
+      F[v][1][K_SON] = minChild[f[v][1][K_0]];  // 二层父亲的儿子，一步到位
+      F[v][1][K_R_2] = costs[f[v][1][K_R_2]] + min({
+                                                   F[v][1][K_L_1],  // 一层父节点
+                                                   F[v][1][K_0],    // 二层父节点
+                                                   F[v][1][K_R_1],  // 三层父节点
+                                                   F[v][1][K_SON]   // 二层父亲的儿子
+                                               });                  // 四层父节点
 
       F[v][2][K_L_2] = F[v][1][K_0];    // 二层父节点,一步到位
       F[v][2][K_L_1] = F[v][1][K_R_1];  // 三层父节点,一步到位
       F[v][2][K_0] = F[v][1][K_R_2];    // 四层父节点， 2^2 = 2^1+2
-      F[v][2][K_R_1] = costs[f[v][2][K_R_1]] + min({F[v][2][K_0], F[v][2][K_L_1], F[v][2][K_L_2]});  // 五层父节点
-      F[v][2][K_R_2] = costs[f[v][2][K_R_2]] + min({F[v][2][K_L_1], F[v][2][K_0], F[v][2][K_R_1]});  // 六层父节点
+      F[v][2][K_SON] = minChild[f[v][2][K_0]] + min({
+                                                    F[v][2][K_0],              // 四层父节点
+                                                    F[v][2][K_L_1],            // 三层父节点
+                                                    F[v][2][K_L_2],            // 两层父节点
+                                                    F[f[v][1][K_0]][0][K_SON]  // 三层父节点的最小儿子
+                                                });
+      F[v][2][K_R_1] = costs[f[v][2][K_R_1]] + min({
+                                                   F[v][2][K_0],               // 四层父节点
+                                                   F[v][2][K_SON],             // 四层父节点的最小儿子
+                                                   F[v][2][K_L_1],             // 三层父节点
+                                                   F[f[v][1][K_0]][0][K_SON],  // 三层父节点的最小儿子
+                                                   F[v][2][K_L_2],             // 两层父节点
+                                               });
+
+      F[v][2][K_R_2] = costs[f[v][2][K_R_2]] + min({
+                                                   F[v][2][K_R_1],             // 五层父节点
+                                                   F[f[v][2][K_0]][0][K_SON],  // 五层父节点的最小儿子
+                                                   F[v][2][K_0],               // 四层父节点
+                                                   F[v][2][K_SON],             // 四层父节点的最小儿子
+                                                   F[v][2][K_L_1],             // 三层父节点
+                                               });
 
       // v->fa->fa
       for (int i = 3; i < maxn_log; i++) {
@@ -136,30 +162,47 @@ void DfsRMQ(const int u) {
         int fa_r_1 = f[v][i - 1][K_R_1];
         int fa_r_2 = f[fa_r_1][0][K_0];
 
-        F[v][i][K_0] = min({
-            F[v][i - 1][K_0] + F[fa_0][i - 1][K_0],        //
-            F[v][i - 1][K_L_1] + F[fa_l_1][i - 1][K_R_1],  //
-            F[v][i - 1][K_R_1] + F[fa_r_1][i - 1][K_L_1]   //
-        });
-        F[v][i][K_L_1] = min({
-            F[v][i - 1][K_0] + F[fa_0][i - 1][K_L_1],     //
-            F[v][i - 1][K_L_1] + F[fa_l_1][i - 1][K_0],   //
-            F[v][i - 1][K_R_1] + F[fa_r_1][i - 1][K_L_2]  //
-        });
         F[v][i][K_L_2] = min({
             F[v][i - 1][K_0] + F[fa_0][i - 1][K_L_2],      //
+            F[v][i - 1][K_SON] + F[fa_l_1][i - 1][K_L_1],  //
             F[v][i - 1][K_L_1] + F[fa_l_1][i - 1][K_L_1],  //
             F[v][i - 1][K_L_2] + F[fa_l_2][i - 1][K_0]     //
         });
+        F[v][i][K_L_1] = min({
+            F[v][i - 1][K_0] + F[fa_0][i - 1][K_L_1],     //
+            F[v][i - 1][K_SON] + F[fa_l_1][i - 1][K_0],   //
+            F[v][i - 1][K_L_1] + F[fa_l_1][i - 1][K_0],   //
+            F[v][i - 1][K_R_1] + F[fa_r_1][i - 1][K_L_2]  //
+        });
+        F[v][i][K_0] = min({
+            F[v][i - 1][K_0] + F[fa_0][i - 1][K_0],        //
+            F[v][i - 1][K_SON] + F[fa_l_1][i - 1][K_R_1],  //
+            F[v][i - 1][K_L_1] + F[fa_l_1][i - 1][K_R_1],  //
+            F[v][i - 1][K_R_1] + F[fa_r_1][i - 1][K_L_1],  //
+        });
+        F[v][i][K_SON] = min({
+            F[v][i][K_L_2] + costs[f[v][i][K_0]],
+            F[v][i][K_L_1] + costs[f[v][i][K_0]],
+            F[v][i][K_0] + costs[f[v][i][K_0]],
+            F[v][i - 1][K_L_1] + F[fa_l_1][i - 1][K_SON] + costs[f[v][i][K_0]],
+            F[v][i - 1][K_SON] + F[fa_l_1][i - 1][K_SON] + costs[f[v][i][K_0]],
+            F[v][i - 1][K_0] + F[fa_0][i - 1][K_SON],
+        });
+
         F[v][i][K_R_1] = min({
-            F[v][i - 1][K_0] + F[fa_0][i - 1][K_R_1],     //
-            F[v][i - 1][K_R_1] + F[fa_r_1][i - 1][K_0],   //
-            F[v][i - 1][K_L_1] + F[fa_l_1][i - 1][K_R_2]  //
+            F[v][i - 1][K_0] + F[fa_0][i - 1][K_R_1],      //
+            F[v][i - 1][K_SON] + F[fa_l_1][i - 1][K_R_2],  //
+            F[v][i - 1][K_L_1] + F[fa_l_1][i - 1][K_R_2],  //
+            F[v][i - 1][K_R_1] + F[fa_r_1][i - 1][K_0],    //
         });
         F[v][i][K_R_2] = min({
             F[v][i - 1][K_0] + F[fa_0][i - 1][K_R_2],      //
             F[v][i - 1][K_R_1] + F[fa_r_1][i - 1][K_R_1],  //
-            F[v][i - 1][K_R_2] + F[fa_r_2][i - 1][K_0]     //
+            F[v][i - 1][K_R_2] + F[fa_r_2][i - 1][K_0],    //
+            F[v][i][K_R_1] + costs[f[v][i][K_R_2]],        // 一层父节点
+            F[v][i][K_0] + costs[f[v][i][K_R_2]],          // 二层父节点
+            F[v][i][K_L_1] + costs[f[v][i][K_R_2]],        // 三层父节点
+            F[v][i][K_SON] + costs[f[v][i][K_R_2]],        // 三层父节点
         });
       }
     }
@@ -168,10 +211,16 @@ void DfsRMQ(const int u) {
 }
 
 void DfsInit(int u, int fa) {
+  minChild[u] = 1e10;
+  minChildIndex[u] = -1;
   for (int v : G[u]) {
     if (v == fa) continue;
     g[u].push_back(v);
     DfsInit(v, u);
+    if (minChild[u] > costs[v]) {
+      minChild[u] = costs[v];
+      minChildIndex[u] = v;
+    }
   }
 }
 
@@ -187,10 +236,10 @@ int PreKthAncestor(int u, int k) {
 }
 void DfsCost(int u) {
   for (int v : g[u]) {
-    preSum[v] = preSum[u] + costs[v];
+    costSum[v] = costSum[u] + costs[v];
     for (int i = 1; i <= k; i++) {
       // f(v) = min(f(u), f(fa(u)), f(fa(fa(u))), ...) + costs[v] 选择前 k 个祖先的最小值
-      preSum[v] = min(preSum[v], preSum[PreKthAncestor(v, i)] + costs[v]);
+      costSum[v] = min(costSum[v], costSum[PreKthAncestor(v, i)] + costs[v]);
     }
     DfsCost(v);
   }
@@ -201,11 +250,13 @@ void Init() {
   DfsInit(1 + kHead, -1);
   for (int i = 0; i <= kHead; i++) {
     g[i].push_back(i + 1);
+    minChild[i] = costs[i + 1];
+    minChildIndex[i] = i + 1;
   }
   memset(f, 0, sizeof f);
   memset(F, 0, sizeof F);
   DfsRMQ(0);
-  memset(preSum, 0, sizeof preSum);
+  memset(costSum, 0, sizeof costSum);
   DfsCost(0);
 }
 
@@ -233,7 +284,7 @@ int PathDepSum(int u, int v) {
 }
 ll PathCostSum(int u, int v) {
   int lca = Lca(u, v);
-  return preSum[u] + preSum[v] - 2 * preSum[lca] + costs[lca];
+  return costSum[u] + costSum[v] - 2 * costSum[lca] + costs[lca];
 }
 
 void Check2() {
@@ -312,9 +363,14 @@ ll PathCostPreKth3(const int U, int k) {
   ll ans_l_2 = 0;
   ll ans_l_1 = 0;
   ll ans_0 = 0;
+  ll ans_son = 0;
+  ll ans_r_1 = 0;
+  ll ans_r_2 = 0;
   int u_0 = U;
   int u_l_1 = U;
   int u_l_2 = U;
+  int u_r_1 = U;
+  int u_r_2 = U;
   int firstFlag = true;
   for (int i = maxn_log - 1; k && i >= 0; i--) {
     if (k == 1) {
@@ -323,28 +379,76 @@ ll PathCostPreKth3(const int U, int k) {
       if (firstFlag) {
         firstFlag = false;
         ans_0 = F[U][i][K_0];
+        ans_son = F[U][i][K_SON];
         ans_l_1 = F[U][i][K_L_1];
         ans_l_2 = F[U][i][K_L_2];
+        ans_r_1 = F[U][i][K_R_1];
+        ans_r_2 = F[U][i][K_R_2];
         u_0 = f[U][i][K_0];
         u_l_1 = f[U][i][K_L_1];
         u_l_2 = f[U][i][K_L_2];
+        u_r_1 = f[U][i][K_R_1];
+        u_r_2 = f[U][i][K_R_2];
         k = k ^ (1 << i);
       } else {
-        ll tmp_ans_l_2 = min({ans_l_2 + F[u_l_2][i][K_0],    //
-                              ans_l_1 + F[u_l_1][i][K_L_1],  //
-                              ans_0 + F[u_0][i][K_L_2]});
-        ll tmp_ans_l_1 = min({ans_l_1 + F[u_l_1][i][K_0],  //
-                              ans_0 + F[u_0][i][K_L_1],    //
-                              ans_l_2 + F[u_l_2][i][K_R_1]});
-        ll tmp_ans_0 = min({ans_0 + F[u_0][i][K_0],        //
-                            ans_l_1 + F[u_l_1][i][K_R_1],  //
-                            ans_l_2 + F[u_l_2][i][K_R_2]});
+        ll tmp_ans_l_2 = min({
+            ans_l_2 + F[u_l_2][i][K_0],    //
+            ans_l_1 + F[u_l_1][i][K_L_1],  //
+            ans_son + F[u_l_1][i][K_L_1],  //
+            ans_0 + F[u_0][i][K_L_2],
+        });
+        ll tmp_ans_l_1 = min({
+            ans_l_2 + F[u_l_2][i][K_R_1],  //
+            ans_l_1 + F[u_l_1][i][K_0],    //
+            ans_son + F[u_l_1][i][K_0],    //
+            ans_0 + F[u_0][i][K_L_1],      //
+            ans_r_1 + F[u_r_1][i][K_L_2],  //
+        });
+        ll tmp_ans_0 = min({
+            ans_l_2 + F[u_l_2][i][K_R_2],  //
+            ans_l_1 + F[u_l_1][i][K_R_1],  //
+            ans_son + F[u_l_1][i][K_R_1],  //
+            ans_0 + F[u_0][i][K_0],        //
+            ans_r_1 + F[u_r_1][i][K_L_1],  //
+            ans_r_2 + F[u_r_2][i][K_L_2],  //
+        });
+        ll tmp_ans_son = min({
+            ans_0 + F[u_0][i][K_SON],                //
+            tmp_ans_0 + minChild[f[u_0][i][K_0]],    //
+            tmp_ans_l_1 + minChild[f[u_0][i][K_0]],  //
+            tmp_ans_l_2 + minChild[f[u_0][i][K_0]],  //
+        });
+        ll tmp_ans_r_1 = min({
+            ans_l_1 + F[u_l_1][i][K_R_2],           //
+            ans_son + F[u_l_1][i][K_R_2],           //
+            ans_0 + F[u_0][i][K_R_1],               //
+            ans_r_1 + F[u_r_1][i][K_0],             //
+            ans_r_2 + F[u_r_2][i][K_L_1],           //
+            tmp_ans_0 + costs[f[u_0][i][K_R_1]],    //
+            tmp_ans_l_1 + costs[f[u_0][i][K_R_1]],  //
+            tmp_ans_son + costs[f[u_0][i][K_R_1]],  //
+            tmp_ans_l_2 + costs[f[u_0][i][K_R_1]],  //
+        });
+        ll tmp_ans_r_2 = min({
+            ans_0 + F[u_0][i][K_R_2],               //
+            ans_r_1 + F[u_r_1][i][K_R_1],           //
+            ans_r_2 + F[u_r_2][i][K_0],             //
+            tmp_ans_r_1 + costs[f[u_0][i][K_R_2]],  //
+            tmp_ans_0 + costs[f[u_0][i][K_R_2]],    //
+            tmp_ans_l_1 + costs[f[u_0][i][K_R_2]],  //
+            tmp_ans_son + costs[f[u_0][i][K_R_2]],  //
+        });
         ans_l_2 = tmp_ans_l_2;
         ans_l_1 = tmp_ans_l_1;
         ans_0 = tmp_ans_0;
+        ans_son = tmp_ans_son;
+        ans_r_1 = tmp_ans_r_1;
+        ans_r_2 = tmp_ans_r_2;
         u_0 = f[u_0][i][K_0];
         u_l_1 = f[u_l_1][i][K_0];
         u_l_2 = f[u_l_2][i][K_0];
+        u_r_1 = f[u_r_1][i][K_0];
+        u_r_2 = f[u_r_2][i][K_0];
         k = k ^ (1 << i);
       }
     }
@@ -386,6 +490,26 @@ ll PathCostSum3(int u, int v) {
     return costs[u] + costs[v];  // 一步到位
   }
   ll ans = PathCostPreKth3(u, dep[u] - dep[lca]) + PathCostPreKth3(v, dep[v] - dep[lca]) - costs[lca];
+  if(v == 1){
+    ll tmp = PathCostPreKth3(u, dep[u] - dep[lca]);
+  }
+  if (dep_v > 1) {
+    int c = minChildIndex[lca];
+    ll tmp = PathCostSum3(u, c) - costs[u] + PathCostSum3(c, v) - costs[v] - costs[c];
+    ans = min(ans, tmp);
+  }
+  if (dep_v > 2) {
+    int cp = PreKthAncestor(v, dep_v - 1);
+    int c = minChildIndex[cp];
+    ll tmp = PathCostSum3(u, c) - costs[u] + PathCostSum3(c, v) - costs[v] - costs[c];
+    ans = min(ans, tmp);
+  }
+  if (dep_u > 2) {
+    int cp = PreKthAncestor(u, dep_u - 1);
+    int c = minChildIndex[cp];
+    ll tmp = PathCostSum3(u, c) - costs[u] + PathCostSum3(c, v) - costs[v] - costs[c];
+    ans = min(ans, tmp);
+  }
   for (int i = 1; i <= 2 && i <= dep_u; i++) {
     for (int j = 1; j <= 2 && j <= dep_v; j++) {
       if (i + j > 3) continue;
