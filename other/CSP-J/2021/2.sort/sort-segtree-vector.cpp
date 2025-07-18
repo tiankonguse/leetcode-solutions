@@ -90,52 +90,137 @@ const int kMaxVal = 10e8;
 int maxNM;
 
 typedef long long ll;
+struct SegTree {
+  vector<ll> sumVal;
+
+  void Init(int n, const ll default_val = 0) {
+    maxNM = n + 1;
+    sumVal.resize(maxNM << 2);
+  }
+
+  // 合并函数，按需进行合并
+  void PushUp(int rt, int l, int r) { sumVal[rt] = sumVal[rt << 1] + sumVal[rt << 1 | 1]; }
+  void Build(int l = 1, int r = maxNM, int rt = 1) {
+    if (l == r) {
+      sumVal[rt] = 0;  // 如果 str 没有复制一份，则需要注意边界是否越界
+      return;
+    }
+    int m = (l + r) >> 1;
+    Build(l, m, rt << 1);
+    Build(m + 1, r, rt << 1 | 1);
+    PushUp(rt, l, r);
+  }
+  void Update(int L, ll add, int l = 1, int r = maxNM, int rt = 1) {
+    if (L == l && r == L) {
+      sumVal[rt] += add;
+      return;
+    }
+    int m = (l + r) >> 1;
+    if (L <= m) Update(L, add, l, m, rt << 1);
+    if (L > m) Update(L, add, m + 1, r, rt << 1 | 1);
+    PushUp(rt, l, r);
+  }
+  ll QuerySum(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
+    if (L <= l && r <= R) {
+      return sumVal[rt];
+    }
+    int m = (l + r) >> 1;
+    ll ret = 0;
+    if (L <= m) {
+      ret += QuerySum(L, R, l, m, rt << 1);
+    }
+    if (m < R) {
+      ret += QuerySum(L, R, m + 1, r, rt << 1 | 1);
+    }
+    return ret;
+  }
+};
+
+SegTree segTree;
 vector<int> nums;
-vector<pair<int, int>> exNums;
+vector<int> exNums;
+vector<tuple<int, int, int>> ops;  // {op, x, v}
+
+const ll W = 1e4;
+ll Hash(ll v, ll i) { return v * W + i; }
+unordered_map<ll, int> hashMap;  // {hash, index}
+vector<vector<int>> indexMap;    // {index, pos}
 
 void Solver() {  //
   int n, Q;
   nums.clear();
   exNums.clear();
+  ops.clear();
+  indexMap.clear();
 
   scanf("%d%d", &n, &Q);
   nums.resize(n + 1);
   exNums.reserve(n + Q + 1);
   for (int i = 1; i <= n; i++) {
     scanf("%d", &nums[i]);
-    exNums.push_back({nums[i], i});
+    exNums.push_back(nums[i]);
   }
-  sort(exNums.begin(), exNums.end());
 
-  auto removePos = [](int v, int x) {
-    pair<int, int> p = {v, x};
-    auto it = lower_bound(exNums.begin(), exNums.end(), p);
-    exNums.erase(it);
-  };
-  auto addPos = [](int v, int x) {
-    pair<int, int> p = {v, x};
-    auto it = lower_bound(exNums.begin(), exNums.end(), p);
-    exNums.insert(it, p);
-  };
-  auto searchPos = [](int v, int x) -> int {
-    pair<int, int> p = {v, x};
-    auto it = lower_bound(exNums.begin(), exNums.end(), p);
-    return it - exNums.begin() + 1;  // 如果是第一个，
-  };
-  while (Q--) {
+  ops.reserve(Q);
+  for (int i = 0; i < Q; i++) {
     int op, x, v = 0;
     scanf("%d%d", &op, &x);
     if (op == 1) {
       scanf("%d", &v);
-      const int V = nums[x];
-      removePos(V, x);
-      addPos(v, x);
-      nums[x] = v;
+      exNums.push_back(v);
+    }
+    ops.push_back({op, x, v});
+  }
 
+  sort(exNums.begin(), exNums.end());
+  exNums.erase(unique(exNums.begin(), exNums.end()), exNums.end());
+  int m = exNums.size();
+  indexMap.resize(m + 1);
+  for (int i = 1; i <= m; i++) {
+    auto v = exNums[i - 1];
+    hashMap[v] = i;
+  }
+
+  segTree.Init(m + 1, 0);
+  segTree.Build();
+  for (int x = 1; x <= n; x++) {
+    int v = nums[x];
+    int p = hashMap[v];
+    segTree.Update(p, 1);
+    indexMap[p].push_back(x);
+  }
+  auto removePos = [](int p, int x) {
+    auto& vec = indexMap[p];
+    auto it = lower_bound(vec.begin(), vec.end(), x);
+    vec.erase(it);
+  };
+  auto addPos = [](int p, int x) {
+    auto& vec = indexMap[p];
+    auto it = lower_bound(vec.begin(), vec.end(), x);
+    vec.insert(it, x);
+  };
+  auto searchPos = [](int p, int x) -> int {
+    auto& vec = indexMap[p];
+    auto it = lower_bound(vec.begin(), vec.end(), x);
+    return it - vec.begin() + 1; // 如果是第一个，
+  };
+  for (auto [op, x, v] : ops) {
+    if (op == 1) {
+      int oldP = hashMap[nums[x]];
+      removePos(oldP, x);
+      segTree.Update(oldP, -1);
+
+      int newP = hashMap[v];
+      segTree.Update(newP, 1);
+      addPos(newP, x);
+      nums[x] = v;  // 更新原数组
     } else {
-      v = nums[x];
-      int ans = searchPos(v, x);
-
+      int p = hashMap[nums[x]];
+      int ans = 0;
+      if (p > 1) {
+        ans = segTree.QuerySum(1, p - 1);
+      }
+      ans += searchPos(p, x);
       printf("%d\n", ans);
     }
   }

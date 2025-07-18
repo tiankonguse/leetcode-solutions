@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: candy
+TASK: network
 LANG: C++
 MAC EOF: ctrl+D
-link: https://www.luogu.com.cn/problem/P7909
-PATH: P7909 [CSP-J 2021] 分糖果
+link:  https://www.luogu.com.cn/problem/P7911
+PATH:  P7911 [CSP-J 2021] 网络连接
 submission:
 */
-#define TASK "candy"
+#define TASK "network"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -56,9 +56,9 @@ using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
 #ifdef USACO_LOCAL_JUDGE
-#define USACO_TASK_FILE 3
+#define USACO_TASK_FILE 4
 #define TASKNO 1
-#ifndef USACO_TASK_FILE 
+#ifndef USACO_TASK_FILE
   fileIndex = TASKNO;
 #endif
   string fileInName = string(TASK) + to_string(fileIndex) + ".in";
@@ -68,32 +68,71 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-ll Solver(ll n, ll L, ll R) {  //
-  ll LR = R - L + 1;
-  if (LR >= n) {  // 可选的数量大于等于n，可以得到任何余数，返回最大余数
-    return n - 1;
-  }
+char name[30], address[300];
+unordered_map<string, int> mp;
 
-  ll ln = L % n;
-  ll rn = R % n;
-  if (ln <= rn) {  // 递增，说明余数递增
-    return rn;
-  } else {
-    return n - 1;  // 否则，余数超过最大值后从0重新开始
+bool SkipNum(const char*& p, const int maxVal) {
+  if (!(*p >= '0' && *p <= '9')) {
+    return false; // 至少一个数字
   }
+  if (*p == '0' && *(p + 1) >= '0' && *(p + 1) <= '9') {
+    return false; // 不允许有前导零
+  }
+  int num = 0;
+  while (*p >= '0' && *p <= '9') {
+    num = num * 10 + *p - '0';
+    if (num > maxVal) {
+      return false;
+    }
+    p++;
+  }
+  return true;
 }
-
-ll Solver2(ll n, ll L, ll R) {  //
-  if (L / n < R / n) {          // 可选的数量大于等于n，可以得到任何余数，返回最大余数
-    return n - 1;
+bool SkipChar(const char*& p, const char c) {
+  if (*p != c) {
+    return false;
   }
-  return R % n;
+  p++;
+  return true;
 }
-
+bool Check(const char* p) {
+  if (!SkipNum(p, 255)) return false;
+  if (!SkipChar(p, '.')) return false;
+  if (!SkipNum(p, 255)) return false;
+  if (!SkipChar(p, '.')) return false;
+  if (!SkipNum(p, 255)) return false;
+  if (!SkipChar(p, '.')) return false;
+  if (!SkipNum(p, 255)) return false;
+  if (!SkipChar(p, ':')) return false;
+  if (!SkipNum(p, 65535)) return false;
+  if (*p != '\0') return false;
+  return true;
+}
 void Solver() {  //
-  ll n, L, R;
-  scanf("%lld%lld%lld", &n, &L, &R);
-  printf("%lld\n", Solver2(n, L, R));
+  mp.clear();
+  int n;
+  scanf("%d", &n);
+  for (int i = 1; i <= n; i++) {
+    scanf("%s%s", name, address);
+    if (name[0] == 'S') {
+      if (!Check(address)) {
+        printf("ERR\n");
+      } else if (mp.count(address)) {
+        printf("FAIL\n");
+      } else {
+        printf("OK\n");
+        mp[address] = i;
+      }
+    } else {
+      if (!Check(address)) {
+        printf("ERR\n");
+      } else if (!mp.count(address)) {
+        printf("FAIL\n");
+      } else {
+        printf("%d\n", mp[address]);
+      }
+    }
+  }
 }
 
 void ExSolver() {

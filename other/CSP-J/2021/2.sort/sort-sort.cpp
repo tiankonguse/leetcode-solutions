@@ -1,14 +1,14 @@
 /*
 ID: tiankonguse
-TASK: candy
+TASK: sort
 LANG: C++
 MAC EOF: ctrl+D
-link: https://www.luogu.com.cn/problem/P7909
-PATH: P7909 [CSP-J 2021] 分糖果
+link:  https://www.luogu.com.cn/problem/P7910
+PATH:  P7910 [CSP-J 2021] 插入排序
 submission:
 */
-#define TASK "candy"
-#define TASKEX ""
+#define TASK "sort"
+#define TASKEX "-sort"
 
 #include <bits/stdc++.h>
 
@@ -56,9 +56,9 @@ using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
 #ifdef USACO_LOCAL_JUDGE
-#define USACO_TASK_FILE 3
+#define USACO_TASK_FILE 4
 #define TASKNO 1
-#ifndef USACO_TASK_FILE 
+#ifndef USACO_TASK_FILE
   fileIndex = TASKNO;
 #endif
   string fileInName = string(TASK) + to_string(fileIndex) + ".in";
@@ -68,32 +68,76 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-ll Solver(ll n, ll L, ll R) {  //
-  ll LR = R - L + 1;
-  if (LR >= n) {  // 可选的数量大于等于n，可以得到任何余数，返回最大余数
-    return n - 1;
-  }
+/*
+线段树：单点更新，区间查询
+特征：不需要延迟标记与PushDown，log(N)的更新时间复杂度
 
-  ll ln = L % n;
-  ll rn = R % n;
-  if (ln <= rn) {  // 递增，说明余数递增
-    return rn;
-  } else {
-    return n - 1;  // 否则，余数超过最大值后从0重新开始
-  }
-}
+输入数组： vector<int> str; [0, n-1]
 
-ll Solver2(ll n, ll L, ll R) {  //
-  if (L / n < R / n) {          // 可选的数量大于等于n，可以得到任何余数，返回最大余数
-    return n - 1;
-  }
-  return R % n;
-}
+SegTree segTree;
+segTree.Init(str); // 内部会对数组进行右移，转化为 [1,n]
+segTree.Build();
+segTree.Update(l, val); // 单点 l 都加上 val, 数据范围 [1,n]
+segTree.QueryMax/QueryMin/QuerySum 区间查询, 数据范围 [1,n]
+*/
+
+// 1.Build(); 2.query(a,b) 3.update(a,b)
+#define lson l, m, rt << 1
+#define rson m + 1, r, rt << 1 | 1
+const int maxn = 1e5 + 10;
+const int kMaxVal = 10e8;
+
+int maxNM;
+
+typedef long long ll;
+vector<int> nums;
+vector<pair<int, int>> exNums;
+bool isSorted = true;
 
 void Solver() {  //
-  ll n, L, R;
-  scanf("%lld%lld%lld", &n, &L, &R);
-  printf("%lld\n", Solver2(n, L, R));
+  int n, Q;
+  nums.clear();
+  exNums.clear();
+
+  scanf("%d%d", &n, &Q);
+  nums.resize(n + 1);
+  exNums.reserve(n + 1);
+  for (int i = 1; i <= n; i++) {
+    scanf("%d", &nums[i]);
+    exNums.push_back({nums[i], i});
+  }
+  sort(exNums.begin(), exNums.end());
+
+  auto removePos = [](int v, int x) { isSorted = false; };
+  auto addPos = [](int v, int x) { isSorted = false; };
+  auto searchPos = [&n](int v, int x) -> int {
+    if (!isSorted) {
+      exNums.clear();
+      for (int i = 1; i <= n; i++) {
+        exNums.push_back({nums[i], i});
+      }
+      sort(exNums.begin(), exNums.end());
+    }
+    pair<int, int> p = {v, x};
+    auto it = lower_bound(exNums.begin(), exNums.end(), p);
+    return it - exNums.begin() + 1;  // 如果是第一个，
+  };
+  while (Q--) {
+    int op, x, v = 0;
+    scanf("%d%d", &op, &x);
+    if (op == 1) {
+      scanf("%d", &v);
+      const int V = nums[x];
+      removePos(V, x);
+      addPos(v, x);
+      nums[x] = v;
+
+    } else {
+      v = nums[x];
+      int ans = searchPos(v, x);
+      printf("%d\n", ans);
+    }
+  }
 }
 
 void ExSolver() {
