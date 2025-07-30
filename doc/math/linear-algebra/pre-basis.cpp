@@ -6,14 +6,14 @@ https://www.cnblogs.com/bianchengmao/p/16713133.html
 #include <bits/stdc++.h>
 typedef long long ll;
 
-class LinearBasis {
+class PrefixLinearBasis {
   static constexpr int K = 32;
-  vector<vector<ll>> basis;
-  vector<vector<ll>> pos;
-  int num = 0;
+  vector<vector<ll>> basis;  // 前缀线性基
+  vector<vector<ll>> pos;    // 最后一个修改i这个位置的数
+  int num = 0;               // 线性基中元素个数
 
  public:
-  LinearBasis() {}
+  PrefixLinearBasis() {}
   void Init(int n) {  //
     basis.resize(n + 1, vector<ll>(K, 0));
     pos.resize(n + 1, vector<ll>(K, 0));
@@ -46,5 +46,20 @@ class LinearBasis {
         }
       }
     }
+  }
+  int QueryMax(int l, int r) {  // 查询[l,r]中的最大值
+    int res = 0;
+    for (int i = K - 1; i >= 0; i--) {
+      if (pos[r][i] < l) continue;
+      if ((res ^ basis[r][i]) > res) res ^= basis[r][i];
+    }
+    return res;
+  }
+  int QueryMin(int l, int r) {  // 查询[l,r]中的最小值
+    for (int i = 0; i < K; i++) {
+      if (pos[r][i] < l) continue;
+      if (basis[r][i]) return basis[r][i];
+    }
+    return 0;
   }
 };

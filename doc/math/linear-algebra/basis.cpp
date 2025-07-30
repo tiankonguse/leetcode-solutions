@@ -33,6 +33,19 @@ https://www.cnblogs.com/bianchengmao/p/16713133.html
 2. 求一个数表示成某数集子集异或和的方案数；
 3. 求某数集子集的最大/最小/第 k 大/第 k 小异或和；
 4. 求一个数在某数集子集异或和中的排名。
+
+
+题目：
+彩灯（洛谷-P3857）(线性基中元素个数)：
+元素（HYSBZ-2460）(添加线性基+贪心)：
+同题：元素（洛谷-P4570）：
+幸运数字（洛谷-P3292）(最大异或和+LCA)：
+Operation（HDU-6579）(前缀线性基)：
+Ivan and Burgers（CF-1100F）(前缀线性基)：
+leetcode-3630,周赛460-P4, 线性基最大异或值 https://leetcode.cn/problems/partition-array-for-maximum-xor-and-and/description/
+P4151 [WC2011] 最大XOR和路径 https://www.luogu.com.cn/problem/P4151
+
+
 */
 
 #include <bits/stdc++.h>

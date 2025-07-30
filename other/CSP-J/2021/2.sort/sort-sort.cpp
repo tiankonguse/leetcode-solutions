@@ -112,9 +112,9 @@ void Solver() {  //
   auto addPos = [](int v, int x) { isSorted = false; };
   auto searchPos = [&n](int v, int x) -> int {
     if (!isSorted) {
-      exNums.clear();
+      isSorted = true;
       for (int i = 1; i <= n; i++) {
-        exNums.push_back({nums[i], i});
+        exNums[i - 1] = {nums[i], i};
       }
       sort(exNums.begin(), exNums.end());
     }

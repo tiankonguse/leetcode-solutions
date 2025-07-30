@@ -56,9 +56,9 @@ using max_queue = priority_queue<T>;
 
 void InitIO() {  //
 #ifdef USACO_LOCAL_JUDGE
-// #define TASKNO "4"
-//   freopen(TASK TASKNO ".in", "r", stdin);
-//   freopen(TASK TASKNO ".out", "w", stdout);
+#define TASKNO "3"
+  freopen(TASK TASKNO ".in", "r", stdin);
+  freopen(TASK TASKNO ".out", "w", stdout);
 #endif
 }
 int n, k;
@@ -78,27 +78,33 @@ bool IsAllStar(int l, int r) { return preStarts[r] - preStarts[l - 1] == r - l +
 
 ll Dfs(int l, int r);  // [l,r]；
 
-ll DfsLeft(int l, int r) {
+ll DfsLeft(const int l, const int r) {
   if (l > r) return 0;
   ll& ret = dpLeft[l][r];
   if (ret != -1) return ret;
   if (r - l + 1 < 3) return ret = 0;
   if (!IsStart(l)) return ret = 0;
-  // case: *A
-  // case: **A
-  ret = (Dfs(l + 1, r) + DfsLeft(l + 1, r)) % mod;
+  // 至少1个，至多 k 个
+  ret = 0;
+  const int leftStartNum = min(sufStarts[l], k);
+  for (int i = 1; i <= leftStartNum && l + i <= r; i++) {
+    ret = (ret + Dfs(l + i, r)) % mod;
+  }
   return ret;
 }
 
-ll DfsRight(int l, int r) {
+ll DfsRight(const int l, const int r) {
   if (l > r) return 0;
   ll& ret = dpRight[l][r];
   if (ret != -1) return ret;
   if (r - l + 1 < 3) return ret = 0;
   if (!IsStart(r)) return ret = 0;
-  // case: A*
-  // case: A**
-  ret = (Dfs(l, r - 1) + DfsRight(l, r - 1)) % mod;
+  // 至少1个，至多 k 个
+  ret = 0;
+  const int rightStartNum = min(preStarts[r], k);
+  for (int i = 1; i <= rightStartNum && l <= r - i; i++) {
+    ret = (ret + Dfs(l, r - i)) % mod;
+  }
   return ret;
 }
 
@@ -141,6 +147,7 @@ ll Dfs(const int l, const int r) {  // [l,r]
   if (l == r) return ret = 0;
   if (!MatchLeftBracket(l)) return ret = 0;
   if (!MatchRightBracket(r)) return ret = 0;
+  if (l + 1 == r) return ret = 1;
 
   ret = 0;
   // case: (...)
@@ -153,8 +160,8 @@ ll Dfs(const int l, const int r) {  // [l,r]
   }
   // case: A*B
   // bad case: AB*C, A*BC, AB*CD
-  for (int i = l + 2; i + 1 <= r; i++) {
-    ret = (ret + DfsBracket(l, i - 1) * DfsLeft(i, r) % mod) % mod;
+  for (int i = l + 1; i + 1 <= r; i++) {
+    ret = (ret + DfsBracket(l, i) * DfsLeft(i + 1, r) % mod) % mod;
   }
 
   return ret;
