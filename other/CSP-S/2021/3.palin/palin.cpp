@@ -118,56 +118,67 @@ bool Check(int l, int r) {  // (l, r)
   return p[mid] >= (len + 1) / 2;
 }
 
-bool Check(int p1, int p2, int p3, int p4, int num) {  // (p1,p2), (p3,p4)
-  const tuple<int, int, int, int> tup = make_tuple(p1, p2, p3, p4);
-  if (H.count(tup)) {
-    return false;
-  }
+bool Check(const int p1, const int p2, const int p3, const int p4, int num) {  // (p1,p2), (p3,p4)
+  // const tuple<int, int, int, int> tup = make_tuple(p1, p2, p3, p4);
+  // if (H.count(tup)) {
+  //   return false;
+  // }
   if (num == n) {  // 找到一组答案
     return true;
   }
-  // 只有一段时，必须是回文串
-  if (p1 + 1 == p2 && !Check(p3, p4)) {
-    H.insert(tup);
-    return false;
-  }
-  if (p3 + 1 == p4 && !Check(p1, p2)) {
-    H.insert(tup);
-    return false;
-  }
+  // // 只有一段时，必须是回文串
+  // if (p1 + 1 == p2 && !Check(p3, p4)) {
+  //   H.insert(tup);
+  //   return false;
+  // }
+  // if (p3 + 1 == p4 && !Check(p1, p2)) {
+  //   H.insert(tup);
+  //   return false;
+  // }
 
   // 尝试选择左端点
-  if (p1 + 1 < p2) {
+  if (p1 + 1 < p2 && p2 - 1 > p1 + 1 && nums[p1 + 1] == nums[p2 - 1]) {
     ans.push_back('L');
-    p1++;
-    if (p2 - 1 > p1 && nums[p1] == nums[p2 - 1] && Check(p1, p2 - 1, p3, p4, num + 1)) {
+    if (Check(p1 + 1, p2 - 1, p3, p4, num + 1)) {
       ans.push_back('L');
       return true;
+    } else {
+      ans.pop_back();
+      return false;
     }
-    if (p3 + 1 < p4 && nums[p1] == nums[p3 + 1] && Check(p1, p2, p3 + 1, p4, num + 1)) {
+  }
+  if (p1 + 1 < p2 && p3 + 1 < p4 && nums[p1 + 1] == nums[p3 + 1]) {
+    ans.push_back('L');
+    if (Check(p1 + 1, p2, p3 + 1, p4, num + 1)) {
       ans.push_back('R');
       return true;
+    } else {
+      ans.pop_back();
+      return false;
     }
-    ans.pop_back();
-    p1--;
   }
   // 尝试选择右端点
-  if (p3 + 1 < p4) {
+  if (p3 + 1 < p4 && p2 - 1 > p1 && nums[p2 - 1] == nums[p4 - 1]) {
     ans.push_back('R');
-    p4--;
-    if (p2 - 1 > p1 && nums[p2 - 1] == nums[p4] && Check(p1, p2 - 1, p3, p4, num + 1)) {
+    if (Check(p1, p2 - 1, p3, p4 - 1, num + 1)) {
       ans.push_back('L');
       return true;
+    } else {
+      ans.pop_back();
+      return false;
     }
-    if (p3 + 1 < p4 && nums[p3 + 1] == nums[p4] && Check(p1, p2, p3 + 1, p4, num + 1)) {
+  }
+  if (p3 + 1 < p4 && p3 + 1 < p4 - 1 && nums[p3 + 1] == nums[p4 - 1]) {
+    ans.push_back('R');
+    if (Check(p1, p2, p3 + 1, p4 - 1, num + 1)) {
       ans.push_back('R');
       return true;
+    } else {
+      ans.pop_back();
+      return false;
     }
-    ans.pop_back();
-    p4++;
   }
 
-  H.insert(tup);
   return false;
 }
 
@@ -175,23 +186,21 @@ bool Check() {  //
   int p1 = -1, p4 = n2, p2, p3;
   // 尝试左端点
   ans.push_back('L');
-  p1++;
-  p2 = p3 = indexs[nums[p1]].back();  // 选择左边的，另一个值在右边
-  if (Check(p1, p2, p3, p4, 1)) {
+  p2 = p3 = indexs[nums[p1 + 1]].back();  // 选择左边的，另一个值在右边
+  if (Check(p1 + 1, p2, p3, p4, 1)) {
     ans.push_back('L');
     return true;
   }
   ans.pop_back();
-  p1--;
 
   // 尝试右端点
   ans.push_back('R');
-  p4--;
-  p2 = p3 = indexs[nums[p4]].front();  // 选择右边的，另一个值在左边
-  if (Check(p1, p2, p3, p4, 1)) {
+  p2 = p3 = indexs[nums[p4 - 1]].front();  // 选择右边的，另一个值在左边
+  if (Check(p1, p2, p3, p4 - 1, 1)) {
     ans.push_back('L');
     return true;
   }
+  ans.pop_back();
   return false;
 }
 
@@ -200,8 +209,8 @@ void Solver() {  //
   indexs.resize(max6);
   nums.resize(max6);
   ans.reserve(max6);
-  ss.resize(max6);
-  p.resize(max6);
+  // ss.resize(max6);
+  // p.resize(max6);
   while (t--) {
     scanf("%d", &n);
     for (int i = 0; i < n; i++) {
@@ -213,7 +222,7 @@ void Solver() {  //
       nums[i]--;
       indexs[nums[i]].push_back(i);
     }
-    Manacher(n2, nums, ss, p);
+    // Manacher(n2, nums, ss, p);
     ans.clear();
     ans.reserve(n2);
     H.clear();
