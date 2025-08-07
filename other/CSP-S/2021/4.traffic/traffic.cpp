@@ -77,6 +77,7 @@ void InitBoard() {
 
 vector<tuple<ll, ll, ll, ll, int>> points;  // <kP, x, y, gP, color>
 vector<int> kPoints;
+vector<int> kPointToIndex;  // kP -> index
 vector<vector<pair<int, ll>>> g;
 vector<vector<ll>> dis;                  // dis[i][j] 表示 i 到 j 的最短距离
 unordered_map<int, int> gPointTokPoint;  // gP -> kP
@@ -107,47 +108,47 @@ void BuildGraph(const int k) {
 }
 
 vector<pair<int, int>> preColors;
-void SolverMinPath(const int kP1) {
-  const int gp1 = get<3>(points[kP1]);
+void SolverMinPath(const int kIndex) {
+  const int gp1 = get<3>(points[kIndex]);
   // 计算 gp1 到其他点的最短路径
   vector<ll> vis(g.size(), INFL);
   min_queue<pair<ll, int>> q;
-  auto Add = [&](int p, ll cost) {
-    if (vis[p] < cost) return;
-    vis[p] = cost;
-    q.push({cost, p});
+  auto Add = [&](int gP, ll cost) {
+    if (vis[gP] < cost) return;
+    vis[gP] = cost;
+    q.push({cost, gP});
   };
   Add(gp1, 0);
   while (!q.empty()) {
-    const auto [cost, p] = q.top();
+    const auto [SCost, SgP] = q.top();
     q.pop();
-    if (vis[p] < cost) continue;
-    if (gPointTokPoint.count(p)) {  // 找到一个 kp 最短路
-      const int kP2 = gPointTokPoint[p];
-      dis[kP1][kP2] = min(dis[kP1][kP2], cost);
+    if (vis[SgP] < SCost) continue;
+    if (gPointTokPoint.count(SgP)) {  // 找到一个 kp 最短路
+      const int SkP = gPointTokPoint[SgP];
+      const int SkIndex = kPointToIndex[SkP];
+      dis[kIndex][SkIndex] = min(dis[kIndex][SkIndex], SCost);
     }
-    for (const auto [to, c] : g[p]) {
-      Add(to, cost + c);
+    for (const auto [TgP, TCost] : g[SgP]) {
+      Add(TgP, SCost + TCost);
     }
   }
 }
 
-pair<int, int> allColor;
-
 vector<vector<ll>> dp;
-
-pair<int, int> GetColor(int a, int b){
-    if(a < b){
-
-    }else{
-        
-    }
+int K;
+pair<int, int> GetColor(int a, int b) {  // (a,b]
+  if (a > b) {
+    b += K;  // 环形
+  }
+  return {preColors[b + 1].first - preColors[a + 1].first, preColors[b + 1].second - preColors[a + 1].second};
 }
-ll Dfs(int a, int b){
+ll Dfs(int a, int b) {  // (a,b]
   ll& ret = dp[a][b];
-  if(ret != -1) return ret;
+  if (ret != -1) return ret;
   ret = 0;
+  if (a == b) return ret = 0;
   auto colorNum = GetColor(a, b);
+  if (colorNum.first == 0 || colorNum.second == 0) return ret = 0;  // 相同颜色，不需要继续拆分
 
   return ret;
 }
@@ -158,9 +159,9 @@ ll Solver(const int k) {
 
   // 环形 DP 求最优值
   // 第一步，计算 k 个 kp 点的前缀颜色个数
-  preColors.resize(k + 1, {0, 0});
-  for (int i = 1; i <= k; i++) {
-    const auto [kP, x, y, gP, color] = points[i - 1];
+  preColors.resize(k * 2 + 1, {0, 0});
+  for (int i = 1; i <= k * 2; i++) {
+    const auto [kP, x, y, gP, color] = points[(i - 1) % k];
     preColors[i] = preColors[i - 1];
     if (color == 0) {
       preColors[i].first++;
@@ -168,9 +169,9 @@ ll Solver(const int k) {
       preColors[i].second++;
     }
   }
-  allColor = preColors.back();
-  if (allColor.first == 0 || allColor.second == 0) return 0;  // 都是相同颜色
+  if (preColors.back().first == 0 || preColors.back().second == 0) return 0;  // 都是相同颜色
 
+  gPointTokPoint.clear();
   for (const auto [kP, x, y, gP, color] : points) {
     gPointTokPoint[gP] = kP;
   }
@@ -211,11 +212,14 @@ void Solver() {  //
     InitBoard();
     int k;
     scanf("%d", &k);
+    K = k;
     points.resize(k);
-    for (int i = 0; i < k; i++) {
+    kPointToIndex.resize(n * 2 + m * 2 + 1, 0);
+    for (int i = 1; i <= k; i++) {
       ll x, p, color;  // 第 p 个点，边权是 x，颜色是 color
       scanf("%lld%lld%lld", &x, &p, &color);
       const ll kP = p;
+      kPointToIndex[kP] = i;
       if (p <= m) {
         const int X = 0;
         const int Y = p;
