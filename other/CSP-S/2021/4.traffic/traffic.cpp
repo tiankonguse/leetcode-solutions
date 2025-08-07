@@ -79,9 +79,10 @@ vector<tuple<ll, ll, ll, ll, int>> points;  // <kP, x, y, gP, color>
 vector<int> kPoints;
 vector<int> kPointToIndex;  // kP -> index
 vector<vector<pair<int, ll>>> g;
-vector<vector<ll>> dis;                  // dis[i][j] 表示 i 到 j 的最短距离
+vector<vector<ll>> indexDis;             // dis[i][j] 表示 i 到 j 的最短距离
 unordered_map<int, int> gPointTokPoint;  // gP -> kP
-void BuildGraph(const int k) {
+void BuildGraph() {
+  const int k = points.size();
   // 顺时针构图
   g.clear();
   g.resize((n + 1) * (m + 1));
@@ -107,7 +108,6 @@ void BuildGraph(const int k) {
   }
 }
 
-vector<pair<int, int>> preColors;
 void SolverMinPath(const int kIndex) {
   const int gp1 = get<3>(points[kIndex]);
   // 计算 gp1 到其他点的最短路径
@@ -126,7 +126,7 @@ void SolverMinPath(const int kIndex) {
     if (gPointTokPoint.count(SgP)) {  // 找到一个 kp 最短路
       const int SkP = gPointTokPoint[SgP];
       const int SkIndex = kPointToIndex[SkP];
-      dis[kIndex][SkIndex] = min(dis[kIndex][SkIndex], SCost);
+      indexDis[kIndex][SkIndex] = min(indexDis[kIndex][SkIndex], SCost);
     }
     for (const auto [TgP, TCost] : g[SgP]) {
       Add(TgP, SCost + TCost);
@@ -136,12 +136,6 @@ void SolverMinPath(const int kIndex) {
 
 vector<vector<ll>> dp;
 int K;
-pair<int, int> GetColor(int a, int b) {  // (a,b]
-  if (a > b) {
-    b += K;  // 环形
-  }
-  return {preColors[b + 1].first - preColors[a + 1].first, preColors[b + 1].second - preColors[a + 1].second};
-}
 ll Dfs(int a, int b) {  // (a,b]
   ll& ret = dp[a][b];
   if (ret != -1) return ret;
@@ -153,30 +147,43 @@ ll Dfs(int a, int b) {  // (a,b]
   return ret;
 }
 
-ll Solver(const int k) {
-  if (k == 1) return 0;
+ll SolverEx() {
   sort(points.begin(), points.end());
 
-  // 环形 DP 求最优值
-  // 第一步，计算 k 个 kp 点的前缀颜色个数
-  preColors.resize(k * 2 + 1, {0, 0});
-  for (int i = 1; i <= k * 2; i++) {
-    const auto [kP, x, y, gP, color] = points[(i - 1) % k];
-    preColors[i] = preColors[i - 1];
-    if (color == 0) {
-      preColors[i].first++;
+  // 第一步：预处理，合并相邻的相同颜色，保留最后一个
+  vector<tuple<ll, ll, ll, ll, int>> newPoints;
+  int k = points.size();
+  newPoints.reserve(k);
+  for (int i = 0; i < k; i++) {
+    const auto [kP, x, y, gP, color] = points[i];
+    if (newPoints.empty() || get<4>(newPoints.back()) != color) {
+      newPoints.emplace_back(kP, x, y, gP, color);
     } else {
-      preColors[i].second++;
+      newPoints.back() = {kP, x, y, gP, color};
     }
   }
-  if (preColors.back().first == 0 || preColors.back().second == 0) return 0;  // 都是相同颜色
+  // 环形数组，最后一个和第一个相同颜色，合并
+  if (newPoints.size() >= 2 && get<4>(newPoints.back()) == get<4>(newPoints.front())) {
+    newPoints.pop_back();  // 删除最后一个
+  }
+  points.swap(newPoints);
+  K = k = points.size();
+  if (k == 1) return 0;  // 合并后只有一个点
+
+  kPointToIndex.clear();
+  kPointToIndex.resize(n * 2 + m * 2 + 1, 0);
+  for (int i = 1; i <= k; i++) {
+    const auto [kP, x, y, gP, color] = points[i - 1];
+    kPointToIndex[kP] = i;  // 从 1 开始
+  }
 
   gPointTokPoint.clear();
   for (const auto [kP, x, y, gP, color] : points) {
     gPointTokPoint[gP] = kP;
   }
-  BuildGraph(k);
-  dis.resize(k, vector<ll>(k, INFL));
+  BuildGraph();
+  indexDis.clear();
+  indexDis.resize(k, vector<ll>(k, INFL));
   for (int i = 0; i < k; i++) {
     SolverMinPath(i);
   }
@@ -186,9 +193,8 @@ ll Solver(const int k) {
   dp.resize(k, vector<ll>(k, -1));
   ll ans = INFL;
   for (int a = 0; a < k; a++) {
-    for (int b = 0; b < k; b++) {
-      if (a == b) continue;
-      ans = min(ans, dis[a][b] + Dfs(a, b) + Dfs(b, a));
+    for (int b = a + 1; b < k; b += 2) {  // 奇数点只能连偶数点
+      ans = min(ans, indexDis[a][b] + Dfs(a, b) + Dfs(b, a));
     }
   }
   return ans;
@@ -212,14 +218,11 @@ void Solver() {  //
     InitBoard();
     int k;
     scanf("%d", &k);
-    K = k;
     points.resize(k);
-    kPointToIndex.resize(n * 2 + m * 2 + 1, 0);
     for (int i = 1; i <= k; i++) {
       ll x, p, color;  // 第 p 个点，边权是 x，颜色是 color
       scanf("%lld%lld%lld", &x, &p, &color);
       const ll kP = p;
-      kPointToIndex[kP] = i;
       if (p <= m) {
         const int X = 0;
         const int Y = p;
@@ -246,7 +249,7 @@ void Solver() {  //
         points[i] = {kP, X, Y, gP, color};
       }
     }
-    printf("%lld\n", Solver(k));
+    printf("%lld\n", SolverEx());
   }
 }
 
