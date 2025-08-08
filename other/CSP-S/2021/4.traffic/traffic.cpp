@@ -25,7 +25,7 @@ void CheckUsacoTask() {
 }
 
 #ifdef USACO_LOCAL_JUDGE
-int debug_log = 0;
+int debug_log = 1;
 int debug_assert = 1;
 #define MyPrintf(...)                   \
   do {                                  \
@@ -63,15 +63,41 @@ void InitIO() {  //
 }
 
 int n, m, t;
-vector<vector<pair<ll, ll>>> vg;  // 竖线 vg[n][m]
-vector<vector<pair<ll, ll>>> hg;  // 横线 hg[n][m]
-
+vector<vector<pair<ll, ll>>> vg;         // 竖线 vg[n][m]
+vector<vector<pair<ll, ll>>> hg;         // 横线 hg[n][m]
+vector<tuple<int, int, int>> kIndexPos;  // kP -> (x, y, gP)
 void InitBoard() {
   for (int j = 0; j <= m + 1; j++) {
     vg[0][j] = vg[n][j] = {0, -1};
   }
   for (int i = 0; i <= n + 1; i++) {
     hg[i][0] = hg[i][m] = {0, -1};
+  }
+  kIndexPos.resize(n * 2 + m * 2 + 1);
+  int kIndex = 1;
+  for (int i = 1; i <= m; i++) {  // leftTop -> rightTop
+    const int x = 0;
+    const int y = i;
+    const int gP = x * (m + 2) + y;
+    kIndexPos[kIndex++] = {x, y, gP};
+  }
+  for (int i = 1; i <= n; i++) {  // rightTop -> rightBottom
+    const int x = i;
+    const int y = m;
+    const int gP = x * (m + 1) + y;
+    kIndexPos[kIndex++] = {x, y, gP};
+  }
+  for (int i = m; i >= 1; i--) {  // rightBottom -> leftBottom
+    const int x = n;
+    const int y = i;
+    const int gP = x * (m + 1) + y - 1;  // 顺时针，归属前一列
+    kIndexPos[kIndex++] = {x, y, gP};
+  }
+  for (int i = n; i >= 1; i--) {  // leftBottom -> leftTop
+    const int x = i;
+    const int y = 0;
+    const int gP = (x - 1) * (m + 1) + y;  // 顺时针，所以归属上一行
+    kIndexPos[kIndex++] = {x, y, gP};
   }
 }
 
@@ -82,7 +108,6 @@ vector<vector<pair<int, ll>>> g;
 vector<vector<ll>> indexDis;             // dis[i][j] 表示 i 到 j 的最短距离
 unordered_map<int, int> gPointTokPoint;  // gP -> kP
 void BuildGraph() {
-  const int k = points.size();
   // 顺时针构图
   g.clear();
   g.resize((n + 1) * (m + 1));
@@ -128,7 +153,7 @@ void SolverMinPath(const int kIndex) {
       const int SkIndex = kPointToIndex[SkP];
       indexDis[kIndex][SkIndex] = min(indexDis[kIndex][SkIndex], SCost);
     }
-    for (const auto [TgP, TCost] : g[SgP]) {
+    for (const auto& [TgP, TCost] : g[SgP]) {
       Add(TgP, SCost + TCost);
     }
   }
@@ -139,11 +164,16 @@ int K;
 ll Dfs(int a, int b) {  // (a,b]
   ll& ret = dp[a][b];
   if (ret != -1) return ret;
-  ret = 0;
-  if (a == b) return ret = 0;
-  auto colorNum = GetColor(a, b);
-  if (colorNum.first == 0 || colorNum.second == 0) return ret = 0;  // 相同颜色，不需要继续拆分
+  if (a == b || a == b + 1 || a + 1 == b) return ret = 0;  // 相同颜色，不需要继续拆分
 
+  ret = INFL;
+  if (a > b) {
+    b += K;  // 环形，保证 a < b
+  }
+  a++;                                   // a 已经被分割在外面
+  for (int i = a + 1; i <= b; i += 2) {  // 枚举分割点
+    ret = min(ret, indexDis[a % K][i % K] + Dfs(a % K, i % K) + Dfs(i % K, b % K));
+  }
   return ret;
 }
 
@@ -166,6 +196,7 @@ ll SolverEx() {
   if (newPoints.size() >= 2 && get<4>(newPoints.back()) == get<4>(newPoints.front())) {
     newPoints.pop_back();  // 删除最后一个
   }
+  MyPrintf("合并后点数: %d\n", (int)newPoints.size());
   points.swap(newPoints);
   K = k = points.size();
   if (k == 1) return 0;  // 合并后只有一个点
@@ -178,7 +209,7 @@ ll SolverEx() {
   }
 
   gPointTokPoint.clear();
-  for (const auto [kP, x, y, gP, color] : points) {
+  for (const auto& [kP, x, y, gP, color] : points) {
     gPointTokPoint[gP] = kP;
   }
   BuildGraph();
@@ -202,51 +233,38 @@ ll SolverEx() {
 
 void Solver() {  //
   scanf("%d%d%d", &n, &m, &t);
+  MyPrintf("n=%d, m=%d, t=%d\n", n, m, t);
   vg.resize(n + 2, vector<pair<ll, ll>>(m + 2, {0, -1}));
   for (int i = 1; i < n; i++) {
     for (int j = 1; j <= m; j++) {
-      scanf("%lld", &vg[i][j].first);
+      scanf("%lld", &vg[i][j].first); // (i,j)->(i+1,j)
     }
   }
-  hg.resize(m + 2, vector<pair<ll, ll>>(n + 2, {0, -1}));
+  hg.resize(n + 2, vector<pair<ll, ll>>(m + 2, {0, -1}));
   for (int i = 1; i <= n; i++) {
     for (int j = 1; j < m; j++) {
       scanf("%lld", &hg[i][j].first);
     }
   }
   while (t--) {
-    InitBoard();
+    InitBoard(); // 清空 vg 和 hg 的边缘
     int k;
     scanf("%d", &k);
     points.resize(k);
     for (int i = 1; i <= k; i++) {
       ll x, p, color;  // 第 p 个点，边权是 x，颜色是 color
       scanf("%lld%lld%lld", &x, &p, &color);
-      const ll kP = p;
+      const int kP = p;
+      const auto [X, Y, gP] = kIndexPos[kP];
+      points[i] = {kP, X, Y, gP, color};
       if (p <= m) {
-        const int X = 0;
-        const int Y = p;
-        const int gP = X * (m + 1) + Y;
         vg[X][Y] = {x, color};
-        points[i] = {kP, X, Y, gP, color};
       } else if (p <= n + m) {
-        const int X = p - m;
-        const int Y = m;
-        const int gP = X * (m + 1) + Y;
         hg[X][Y] = {x, color};
-        points[i] = {kP, X, Y, gP, color};
       } else if (p <= m + n + m) {
-        const int X = n;
-        const int Y = m - (p - (m + n)) + 1;
-        const int gP = X * (m + 1) + Y - 1;  // 顺时针，归属前一列
         vg[X][Y] = {x, color};
-        points[i] = {kP, X, Y, gP, color};
       } else {
-        const int X = n - (p - (m + n + m)) + 1;
-        const int Y = 0;
-        const int gP = (X - 1) * (m + 1) + Y;  // 顺时针，所以归属上一行
         hg[X][Y] = {x, color};
-        points[i] = {kP, X, Y, gP, color};
       }
     }
     printf("%lld\n", SolverEx());
