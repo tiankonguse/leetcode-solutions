@@ -17,30 +17,35 @@ class Solution {
  public:
   bool isTrionic(vector<int>& nums) {
     int n = nums.size();
-    int p = -1, q = -1;
+
+    // 第一步：计算出有序性的分割线
+    vector<int> nodes;
+    nodes.reserve(n);
+    int dir = 0;  // 0: 未知, 1: 上升, -1: 下降
+    nodes.push_back(0);
     for (int i = 1; i < n; i++) {
+      int newDir = 0;
       if (nums[i - 1] < nums[i]) {
-        p = i;
-        continue;
+        newDir = 1;
+      } else if (nums[i - 1] > nums[i]) {
+        newDir = -1;
       }
-      break;
-    }
-    if (p == -1 || p == n - 1) return false;
-    for (int i = p + 1; i < n; i++) {
-      if (nums[i - 1] > nums[i]) {
-        q = i;
-        continue;
+
+      if (dir != 0 && dir == newDir) {
+        nodes.pop_back();
       }
-      break;
+
+      nodes.push_back(i);  // 相等的情况,当做分割线
+      dir = newDir;
     }
-    if (q == -1 || q == n - 1) return false;
-    for (int i = q + 1; i < n; i++) {
-      if (nums[i - 1] < nums[i]) {
-        continue;
-      }
-      return false;
-    }
-    return true;
+
+    const int m = nodes.size();
+    if (m != 4) return false;
+    const int l = nodes[0];
+    const int p = nodes[1];  // 上升的结束点
+    const int q = nodes[2];  // 下降的结束点
+    const int r = nodes[3];  // 上升的结束点
+    return nums[l] < nums[p] && nums[p] > nums[q] && nums[q] < nums[r];
   }
 };
 

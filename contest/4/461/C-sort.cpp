@@ -17,7 +17,6 @@ class Solution {
  public:
   int minTime(const string& s, const vector<int>& order, const int k) {
     int n = s.size();
-    int l = 0, r = n;
     vector<int> S;
     S.resize(n);
     auto Check = [&](const int mid) -> bool {
@@ -41,6 +40,7 @@ class Solution {
       }
       return false;
     };
+    int l = 0, r = n;
     while (l < r) {
       int mid = (l + r) / 2;
       if (Check(mid)) {

@@ -15,30 +15,13 @@ int debug = 1;
 typedef long long ll;
 class Solution {
  public:
-  int minTime(const string& s, const vector<int>& order, const int k) {
-    const int n = s.size();
-    ll ans = 0;
-    set<int> S;
-    for (int t = 0; t < n; t++) {
-      const int i = order[t];
-      auto it = S.lower_bound(i);  // 不存在相等值
-      ll w = n - i;
-      if (it != S.end()) {
-        w = *it - i;
+  vector<vector<int>> reverseSubmatrix(vector<vector<int>>& grid, int x, int y, int k) {
+    for (int j = y; j < y + k; j++) {
+      for (int i0 = x, i1 = x + k - 1; i0 < i1; i0++, i1--) {
+        swap(grid[i0][j], grid[i1][j]);
       }
-      ll h = i + 1;
-      if (it != S.begin()) {
-        --it;
-        h = i - *it;
-      }
-      ans += w * h;
-      if (ans >= k) {
-        return t;
-      }
-      S.insert(i);
     }
-  
-    return -1;
+    return grid;
   }
 };
 

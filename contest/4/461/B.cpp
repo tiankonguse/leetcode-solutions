@@ -39,7 +39,6 @@ class Solution {
         }
       }
     }
-
     return dp[n - 1];
   }
 };
