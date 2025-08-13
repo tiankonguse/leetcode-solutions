@@ -16,17 +16,13 @@ typedef long long ll;
 class Solution {
  public:
   int sortPermutation(vector<int>& nums) {
-    int ans = -1;
+    int ans = ~0;
     for (int i = 0; i < nums.size(); i++) {
       if (nums[i] != i) {
-        if (ans == -1) {
-          ans = i;
-        } else {
-          ans = ans & i;
-        }
+        ans = ans & i;
       }
     }
-    if (ans == -1) ans = 0;
+    if (ans == ~0) ans = 0;
     return ans;
   }
 };
