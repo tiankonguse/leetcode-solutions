@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "palin"
-#define TASKEX ""
+#define TASKEX "-92"
 
 #include <bits/stdc++.h>
 
@@ -56,7 +56,7 @@ using max_queue = priority_queue<T>;
 
 void InitIO() {  //
 #ifdef USACO_LOCAL_JUDGE
-#define TASKNO "2"
+#define TASKNO "3"
   freopen(TASK TASKNO ".in", "r", stdin);
   freopen(TASK TASKNO ".out", "w", stdout);
 #endif
