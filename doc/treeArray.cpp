@@ -25,7 +25,7 @@ class TreeArray {
   }
 
  private:
-  int Lowbit(int x) { return x & -x; }
+  inline int Lowbit(int x) { return x & -x; }
   vector<ll> c;
   int n;
 };
