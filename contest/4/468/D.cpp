@@ -228,7 +228,6 @@ class Solution {
       ll nowVal = l - 1;
       ll nowNum = Check(nowVal, __LONG_LONG_MAX__);
       topK.push_back({nowVal, nowNum - sum});
-      MyPrintf("nowVal=%lld, nowNum=%lld sum=%lld add=%lld\n", nowVal, nowNum, sum, nowNum - sum);
       sum = nowNum;
     }
 

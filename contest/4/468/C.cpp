@@ -51,6 +51,13 @@ class Solution {
       vis[v] = step;
     };
     Add(start, 1);
+    auto CalNextVal = [&](int v, int l, int mid, int r) {
+      const int lm = mid - l, lr = r - mid;
+      const int lowVal = v % base[mid] / base[l];
+      const int highVal = v % base[r] / base[mid];
+      const int newVal = v - lowVal * base[l] - highVal * base[mid] + lowVal * base[l + lr] + highVal * base[l];
+      return newVal;
+    };
     while (!que.empty()) {
       const int v = que.front();
       que.pop();
@@ -58,15 +65,7 @@ class Solution {
       for (int l = 0; l < n; l++) {  // [l, mid) [mid, r)
         for (int mid = l + 1; mid < n; mid++) {
           for (int r = mid + 1; r <= n; r++) {
-            const int lm = mid - l, lr = r - mid;
-            const int lowVal = v % base[mid] / base[l];
-            const int highVal = v % base[r] / base[mid];
-            const int newVal = v - lowVal * base[l] - highVal * base[mid] + lowVal * base[l + lr] + highVal * base[l];
-            if (newVal > base[6]) {
-              MyPrintf("newVal=%d l=%d mid=%d r=%d, [l,mid)=%d [mid,r)=%d\n", newVal, l, mid, r, mid - l, r - mid);
-              MyPrintf("base[l]=%d base[mid]=%d base[r]=%d\n", base[l], base[mid], base[r]);
-              MyPrintf("lowVal=%d highVal=%d\n", lowVal, highVal);
-            }
+            const int newVal = CalNextVal(v, l, mid, r);
             Add(newVal, step + 1);
             if (newVal == target) {
               return step;
