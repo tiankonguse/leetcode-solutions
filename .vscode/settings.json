@@ -126,7 +126,15 @@
         "print": "cpp",
         "climits": "cpp",
         "__availability": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "cassert": "cpp",
+        "ccomplex": "cpp",
+        "cerrno": "cpp",
+        "cfloat": "cpp",
+        "ciso646": "cpp",
+        "cstdalign": "cpp",
+        "cstdbool": "cpp",
+        "ctgmath": "cpp"
     },
     "code-runner.runInTerminal": true,
     "C_Cpp.autocompleteAddParentheses": true,
