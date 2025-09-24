@@ -106,7 +106,7 @@ tuple<ll, ll, ll> GetMin() {
   return {val, idx, ii};
 }
 
-bool Check() {  // 最小值是否被吃
+bool StartGame() {  // 最小值是否被吃
   int leftNum = que[0].size() + que[1].size();
   if (leftNum <= 1) return false;
   if (leftNum == 2) return true;  // 被吃
@@ -118,7 +118,7 @@ bool Check() {  // 最小值是否被吃
   }
   que[secondMinType].push_front({secondMinVal, secondMinIdx});
   que[1].push_front({maxVal - minVal, maxIdx});
-  return !Check();
+  return !StartGame();
 }
 
 ll SolverEx() {
@@ -146,7 +146,7 @@ ll SolverEx() {
   if (que[0].size() + que[1].size() == 2) {
     ans++;
   } else {  // 可能不吃
-    if (Check()) {
+    if (StartGame()) {
       ans++;
     }
   }

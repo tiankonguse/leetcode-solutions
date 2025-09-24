@@ -74,7 +74,7 @@ vector<ll> A;
 vector<ll> T;
 vector<ll> P;
 vector<ll> V;
-vector<ll> mul;
+vector<ll> innerMul;
 vector<ll> inDeg;
 vector<vector<ll>> G;
 int n, m, q;
@@ -89,7 +89,7 @@ void Input() {
   T.resize(m + 1);
   P.resize(m + 1);
   V.resize(m + 1);
-  mul.resize(m + 1, 1);
+  innerMul.resize(m + 1, 1);
   G.resize(m + 1);
   inDeg.resize(m + 1);
   for (int i = 1; i <= m; i++) {
@@ -98,7 +98,7 @@ void Input() {
       scanf("%lld%lld", &P[i], &V[i]);
     } else if (T[i] == 2) {
       scanf("%lld", &V[i]);
-      mul[i] = V[i];
+      innerMul[i] = V[i];
     } else {
       int q;
       scanf("%d", &q);
@@ -147,21 +147,21 @@ void CalNodeMul() {  // 计算每个节点自身的累计乘积
   for (int i = m; i >= 0; i--) {
     const int u = orderedIndex[i];
     for (const auto v : G[u]) {
-      mul[u] = (mul[u] * mul[v]) % mod9;
+      innerMul[u] = (innerMul[u] * innerMul[v]) % mod9;
     }
   }
 }
 
-vector<ll> nodeCount;  // 计算每个节点后续的乘积
+vector<ll> afterMul;  // 计算每个节点后续的乘积
 void calNodeCount() {
-  nodeCount.resize(m + 1);
-  nodeCount[0] = 1;
+  afterMul.resize(m + 1);
+  afterMul[0] = 1;
   for (int i = 0; i <= m; i++) {
     const int u = orderedIndex[i];
-    ll cnt = nodeCount[u];  // 处理到 u, 说明所有依赖 u 的节点都处理完了
+    ll cnt = afterMul[u];  // 处理到 u, 说明所有依赖 u 的节点都处理完了
     for (const auto v : G[u]) {
-      nodeCount[v] = (nodeCount[v] + cnt) % mod9;
-      cnt = (cnt * mul[v]) % mod9;
+      afterMul[v] = (afterMul[v] + cnt) % mod9;
+      cnt = (cnt * innerMul[v]) % mod9;
     }
   }
 }
@@ -172,12 +172,12 @@ void Solver() {  //
   CalNodeMul();
   calNodeCount();
   for (int i = 1; i <= n; i++) {
-    A[i] = A[i] * mul[0] % mod9;
+    A[i] = A[i] * innerMul[0] % mod9;
   }
   for (int i = 1; i <= m; i++) {
     if (P[i]) {  // 操作1，需要进行累加
       const int u = P[i];
-      A[u] = (A[u] + V[i] * nodeCount[i]) % mod9;
+      A[u] = (A[u] + V[i] * afterMul[i]) % mod9;
     }
   }
   for (int i = 1; i <= n; i++) {
