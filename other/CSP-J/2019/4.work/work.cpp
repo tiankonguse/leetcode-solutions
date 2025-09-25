@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: souvenir
+TASK: work
 LANG: C++
 MAC EOF: ctrl+D
-link:  https://www.luogu.com.cn/problem/P5662
-PATH:  P5662 [CSP-J2019] 纪念品
+link:  https://www.luogu.com.cn/problem/P5663
+PATH:   P5663 [CSP-J2019] 加工零件
 submission:
 */
-#define TASK "souvenir"
+#define TASK "work"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -72,42 +72,46 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-const int N = 1e4 + 10;
-int dp[N];
-vector<pair<int, int>> packs;
-void InitPack(int w) { packs.clear(); }
-void AddPack(int w, int val) { packs.push_back({w, val}); }
-int SolvePack(int W) {
-  memset(dp, 0, sizeof(int) * (W + 1));
-  for (auto& [w, val] : packs) {
-    for (int j = w; j <= W; j++) {
-      dp[j] = max(dp[j], dp[j - w] + val);
-    }
-  }
-  return dp[W];
-}
-
-int nums[2][111];
 void Solver() {  //
-  packs.reserve(101);
-  int T, n, m;
-  scanf("%d%d%d", &T, &n, &m);
-  for (int i = 0; i < n; i++) {
-    scanf("%d", &nums[0][i]);
+  int n, m, q;
+  scanf("%d%d%d", &n, &m, &q);
+  vector<vector<int>> g(n);
+  while (m--) {
+    int u, v;
+    scanf("%d%d", &u, &v);
+    u--;
+    v--;
+    g[u].push_back(v);
+    g[v].push_back(u);
   }
-  for (int t = 1; t < T; t++) {
-    const int now = t % 2, pre = (t - 1) % 2;
-    InitPack(m);
-    for (int i = 0; i < n; i++) {
-      scanf("%d", &nums[now][i]);
-      const int x = nums[pre][i], y = nums[now][i];
-      if (x < y) {
-        AddPack(x, y - x);
-      }
+
+  // 求 0 的单源最短路
+  vector<vector<int>> dis(2, vector<int>(n, -1));
+  queue<pair<int, int>> que;
+  auto Add = [&](int v, int flag, int step) {
+    if (dis[flag][v] != -1) return;
+    dis[flag][v] = step;
+    que.push({flag, v});
+  };
+  Add(0, 0, 0);
+  while (!que.empty()) {
+    const auto [flag, u] = que.front();
+    que.pop();
+    const int nextStep = dis[flag][u] + 1;
+    for (auto v : g[u]) {
+      Add(v, 1 - flag, nextStep);
     }
-    m += SolvePack(m);
   }
-  printf("%d\n", m);
+  auto Check = [&](int v, int step) -> bool {
+    int flag = step % 2;
+    return dis[flag][v] != -1 && dis[flag][v] <= step;
+  };
+  while (q--) {
+    ll A, L;
+    scanf("%lld%lld", &A, &L);
+    A--;
+    printf("%s\n", Check(A, L) ? "Yes" : "No");
+  }
 }
 
 #ifdef USACO_LOCAL_JUDGE
@@ -156,9 +160,9 @@ int main(int argc, char** argv) {
     string fileOut = string(TASK) + to_string(fileIndex) + ".out";
     string cmd = string("diff -w " + fileAns + " " + fileOut);
     if (system(cmd.c_str())) {
-      printf("case %d: Wrong answer, cost %.0lfms cmd=%s\n", i, costTime, cmd.c_str());
+      printf("case %d: Wrong answer, cost %.0lfms\n", i, costTime);
     } else {
-      printf("case %d: Accepted, cost %.0lfms cmd=%s\n", i, costTime, cmd.c_str());
+      printf("case %d: Accepted, cost %.0lfms\n", i, costTime);
     }
   }
 #endif
