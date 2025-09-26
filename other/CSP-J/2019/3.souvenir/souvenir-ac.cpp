@@ -74,32 +74,40 @@ void InitIO(int fileIndex) {  //
 
 const int N = 1e4 + 10;
 int dp[N];
+vector<pair<int, int>> packs;
+void InitPack(int w) { packs.clear(); }
+void AddPack(int w, int val) { packs.push_back({w, val}); }
+int SolvePack(int W) {
+  memset(dp, 0, sizeof(int) * (W + 1));
+  for (auto& [w, val] : packs) {
+    for (int j = w; j <= W; j++) {
+      dp[j] = max(dp[j], dp[j - w] + val);
+    }
+  }
+  return dp[W];
+}
 
 int nums[2][111];
 void Solver() {  //
+  packs.reserve(101);
   int T, n, m;
   scanf("%d%d%d", &T, &n, &m);
   for (int i = 0; i < n; i++) {
     scanf("%d", &nums[0][i]);
   }
-
-  int W = m;
   for (int t = 1; t < T; t++) {
     const int now = t % 2, pre = (t - 1) % 2;
-    memset(dp, 0, sizeof(int) * (W + 1));
+    InitPack(m);
     for (int i = 0; i < n; i++) {
       scanf("%d", &nums[now][i]);
-      const int x = nums[pre][i], y = nums[now][i];  // 双Buf 滚动数组
+      const int x = nums[pre][i], y = nums[now][i];
       if (x < y) {
-        const int w = x, val = y - x;
-        for (int j = w; j <= W; j++) {  // 完全背包
-          dp[j] = max(dp[j], dp[j - w] + val);
-        }
+        AddPack(x, y - x);
       }
     }
-    W += dp[W];
+    m += SolvePack(m);
   }
-  printf("%d\n", W);
+  printf("%d\n", m);
 }
 
 #ifdef USACO_LOCAL_JUDGE
