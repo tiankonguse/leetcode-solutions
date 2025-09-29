@@ -20,7 +20,7 @@
                 "-std=c++17",
                 "-Wall",
                 "-Wno-unused-const-variable",
-                // "-Werror"
+                "-Wl,--stack=26843545"
             ],
             "options": {
                 "cwd": "${fileDirname}"
@@ -123,6 +123,8 @@
                 "${workspaceFolder}/tmp/tmp.exe",
                 "-std=c++20",
                 "-Wall",
+                // "-Wl,--stack=26843545",
+                "-Wstack-usage=2684354500",
                 "-Werror"
             ],
             "options": {

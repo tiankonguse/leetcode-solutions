@@ -134,7 +134,8 @@
         "ciso646": "cpp",
         "cstdalign": "cpp",
         "cstdbool": "cpp",
-        "ctgmath": "cpp"
+        "ctgmath": "cpp",
+        "__memory": "cpp"
     },
     "code-runner.runInTerminal": true,
     "C_Cpp.autocompleteAddParentheses": true,
