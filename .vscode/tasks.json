@@ -20,7 +20,7 @@
                 "-std=c++17",
                 "-Wall",
                 "-Wno-unused-const-variable",
-                "-Wl,--stack=26843545"
+                // "-Wl,--stack=26843545"
             ],
             "options": {
                 "cwd": "${fileDirname}"
