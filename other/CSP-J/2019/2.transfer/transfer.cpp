@@ -98,9 +98,9 @@ typedef long long ll;
 struct SegTree {
   vector<pair<ll, int>> minVal;  // 记录最值的位置
   vector<pair<ll, int>> maxVal;  // 记录最值的位置
-  vector<ll> sumVal;
-  vector<pair<ll, ll>> ranges;
-  vector<ll> str;
+  vector<ll> sumVal;             // 记录区间和
+  vector<pair<ll, ll>> ranges;   // 储存二叉树节点对应的区间
+  vector<ll> str;                // 原始数组的值
 
   void Init(int n, const ll default_val = 0) {
     maxNM = n + 1;
@@ -255,8 +255,9 @@ void ExSolver() {
 }
 
 #ifdef USACO_TASK_FILE
-#include <cstdio>
 #include <unistd.h>
+
+#include <cstdio>
 #endif
 int main(int argc, char** argv) {
   CheckUsacoTask();
