@@ -20,24 +20,30 @@ class Solution {
     vector<pair<char, int>> nums;
     nums.reserve(n);
     for (auto c : s) {
+      // 更新计数栈
       if (nums.empty() || nums.back().first != c) {
         nums.emplace_back(c, 1);
       } else {
         nums.back().second++;
       }
-      int sz = nums.size();
-      if (sz >= 2 && nums.back().first == ')' && nums.back().second == k && nums[sz - 2].second >= k) {
-        nums.pop_back();
-        nums[sz - 2].second -= k;
-        if (nums[sz - 2].second == 0) {
+      // 尝试匹配
+      const int sz = nums.size();
+      if (sz >= 2) {
+        auto [rightC, rightCount] = nums[sz - 1];
+        auto [leftC, leftCount] = nums[sz - 2];
+        if (rightC == ')' && leftC == '(' && rightCount == k && leftCount >= k) {
           nums.pop_back();
+          nums.pop_back();
+          if (leftCount > k) {
+            nums.emplace_back(leftC, leftCount - k);
+          }
         }
       }
     }
     string ans;
     ans.reserve(n);
-    for (auto& p : nums) {
-      ans.append(p.second, p.first);
+    for (auto [c, count] : nums) {
+      ans.append(count, c);
     }
     return ans;
   }

@@ -32,7 +32,7 @@ void Solver() {  //
   sort(nums.begin(), nums.end());
 
   ll ans = n;
-  for (int i = n - 1; i >= 0; i--) {
+  for (int i = 0; i < n; i++) {
     ll v = nums[i];
     auto it = H.lower_bound(v);
     if (it == H.begin()) {
