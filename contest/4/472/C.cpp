@@ -20,24 +20,18 @@ class Solution {
   string target;
 
   bool Dfs(int i) {
-    if (i == n) {
-      return false;  // 说明全部相等
-    }
-    char c = target[i];
+    if (i == n) return false;  // 说明全部相等
+    const char c = target[i];
     if (H.count(c)) {
       H[c]--;
       if (H[c] == 0) H.erase(c);
       ans.push_back(c);
-      if (Dfs(i + 1)) {
-        return true;
-      }
+      if (Dfs(i + 1)) return true;
       H[c]++;
       ans.pop_back();
     }
     auto it = H.upper_bound(c);
-    if (it == H.end()) {
-      return false;
-    }
+    if (it == H.end()) return false;
     ans.push_back(it->first);
     H[it->first]--;
     if (H[it->first] == 0) H.erase(it->first);
