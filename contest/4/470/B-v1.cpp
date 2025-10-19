@@ -16,19 +16,19 @@ typedef long long ll;
 class Solution {
  public:
   int longestSubsequence(vector<int>& nums) {
+    int n = nums.size();
     ll sum = 0;
     ll num = 0;
     for (ll v : nums) {
       sum ^= v;
       if (v != 0) {
-        num = 1;
+        num++;
       }
     }
-    int n = nums.size();
     if (sum != 0) {
       return n;
     }
-    if (num == 1) {
+    if (num > 0) {
       return n - 1;
     }
     return 0;
