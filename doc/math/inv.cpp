@@ -1,5 +1,7 @@
+#include <bits/stdc++.h>
+typedef long long ll;
 
-
+// 快速幂
 ll qpow(ll x, ll v, ll mod) {
   x = x % mod;
   ll y = 1;
@@ -10,9 +12,13 @@ ll qpow(ll x, ll v, ll mod) {
   }
   return y;
 }
+
+// 模逆元，mod 必须为质数
 ll inv(ll x, ll mod) { return qpow(x, mod - 2, mod); }
 
 /*
+计算排列组合
+
 A(n,r)=n(n-1)…(n-r+1)
 A(n,r)=n!/(n-r)!
 C(n,r)=A(n,r)/r!

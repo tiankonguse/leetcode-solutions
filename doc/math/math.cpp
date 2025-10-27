@@ -1,5 +1,5 @@
-#include "base.h"
-
+#include <bits/stdc++.h>
+typedef long long ll;
 // GCD 相关算法
 
 // 推论1：有俩个数p,q,且gcd(q,p)=1,则最大无法表示成px+qy（x>=0,y>=0)的数是pq-q-p.
@@ -7,9 +7,24 @@
 // 朴素 GCD/gcd 算法，复杂度 Log(n))
 ll Gcd(ll x, ll y) {
   if (!x || !y) return x ? x : y;
-  for (ll t; t = x % y; x = y, y = t)
-    ;
+  for (ll t; t = x % y; x = y, y = t);
   return y;
+}
+
+// 辗转相除法
+// 复杂度 O(log(min(a,b)))
+ll gcd(ll a, ll b) {
+  while (a != 0) {
+    ll tmp = a;
+    a = b % a;
+    b = tmp;
+  }
+  return b;
+}
+
+// 推荐先除后乘，尽量避免溢出
+ll lcm(ll a, ll b) {  //
+  return a / gcd(a, b) * b;
 }
 
 // 浮点数 GCD
@@ -66,6 +81,5 @@ ll PowMod(ll a, ll b, ll c) {
   }
   return res;
 }
-
 
 int main() { return 0; }
