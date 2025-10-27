@@ -75,38 +75,35 @@ void InitIO(int fileIndex) {  //
 void Solver() {  //
   int n, m, q;
   scanf("%d%d%d", &n, &m, &q);
-  vector<vector<int>> g(n);
+  vector<vector<pair<int, ll>>> g(n);
   while (m--) {
     int u, v;
-    scanf("%d%d", &u, &v);
+    ll w;
+    scanf("%d%d%lld", &u, &v, &w);
     u--;
     v--;
-    g[u].push_back(v);
-    g[v].push_back(u);
+    g[u].push_back({v, w});
+    g[v].push_back({u, w});
   }
 
   // 求 0 的单源最短路
-  vector<vector<int>> dis(2, vector<int>(n, -1));
-  queue<pair<int, int>> que;
-  auto Add = [&](int v, int flag, int step) {
-    if (dis[flag][v] != -1) return;
+  vector<vector<int>> dis(2, vector<int>(n, INT64_MAX));
+  min_queue<pair<ll, int>> que;
+  auto Add = [&](int v, ll step) {
+    int flag = step % 2;
+    if (dis[flag][v] <= step) return;
     dis[flag][v] = step;
-    que.push({flag, v});
+    que.push({step, v});
   };
-  Add(0, 0, 0);
+  Add(0, 0);
   while (!que.empty()) {
-    const auto [flag, u] = que.front();
+    const auto [uw, u] = que.top();
     que.pop();
-    const int nextStep = dis[flag][u] + 1;
-    const int nextFlag = (flag + 1) % 2;
-    for (auto v : g[u]) {
-      Add(v, nextFlag, nextStep);
+    for (auto [vw, v] : g[u]) {
+      Add(v, uw + vw);
     }
   }
-  auto Check = [&](int v, int step) -> bool {
-    int flag = step % 2;
-    return dis[flag][v] != -1 && dis[flag][v] <= step;
-  };
+  auto Check = [&](int v, int step) -> bool { return dis[v] != INT64_MAX && dis[v] <= step; };
   while (q--) {
     ll A, L;
     scanf("%lld%lld", &A, &L);

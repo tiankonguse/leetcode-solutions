@@ -86,27 +86,23 @@ void Solver() {  //
   }
 
   // 求 0 的单源最短路
-  vector<vector<int>> dis(2, vector<int>(n, -1));
+  vector<int> dis(n, -1);
   queue<pair<int, int>> que;
-  auto Add = [&](int v, int flag, int step) {
-    if (dis[flag][v] != -1) return;
-    dis[flag][v] = step;
-    que.push({flag, v});
+  auto Add = [&](int v, int step) {
+    if (dis[v] != -1) return;
+    dis[v] = step;
+    que.push({v, step});
   };
-  Add(0, 0, 0);
+  Add(0, 0);
   while (!que.empty()) {
-    const auto [flag, u] = que.front();
+    const auto [u, step] = que.front();
     que.pop();
-    const int nextStep = dis[flag][u] + 1;
-    const int nextFlag = (flag + 1) % 2;
+    const int nextStep = step + 1;
     for (auto v : g[u]) {
-      Add(v, nextFlag, nextStep);
+      Add(v, nextStep);
     }
   }
-  auto Check = [&](int v, int step) -> bool {
-    int flag = step % 2;
-    return dis[flag][v] != -1 && dis[flag][v] <= step;
-  };
+  auto Check = [&](int v, int step) -> bool { return dis[v] != -1 && dis[v] <= step; };
   while (q--) {
     ll A, L;
     scanf("%lld%lld", &A, &L);
