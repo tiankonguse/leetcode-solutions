@@ -45,3 +45,5 @@ ll C(ll n, ll r, ll mod) {
   ll Anr = A[n] * RA[n - r] % mod;
   return Anr * RA[r] % mod;
 }
+
+ll P(ll n, ll r, ll mod) { return A[n] * RA[n - r] % mod; }
