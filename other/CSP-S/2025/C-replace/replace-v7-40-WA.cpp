@@ -97,6 +97,8 @@ namespace TRIE {
 
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 6000010, max7 = 20000010;
 struct Node {
+  int endFlag = 0;  // 是否是结束标示符
+  int num = 0;
   int next[26];
 };
 Node nodes[max6];
@@ -112,6 +114,8 @@ class Trie {
   int root_index = 0;
   void Clear(int root) {
     Node& node = nodes[root];
+    node.endFlag = false;
+    node.num = 0;
     memset(node.next, -1, sizeof(node.next));
   }
 
@@ -126,34 +130,40 @@ class Trie {
   /** Initialize your data structure here. */
   Trie() { Init(); }
 
-  void Init() { root_index = Add(); }
+  void Init() {
+    root_index = index;
+    Add();
+  }
 
   /** Inserts a word into the trie. */
-  int Insert(const char* word) {
+  int Insert(const string& word) {
     int root = root_index;
-    while (*word) {
-      int v = *word - 'a';
+    for (auto c : word) {
+      int v = c - 'a';
       if (nodes[root].next[v] == -1) {
         nodes[root].next[v] = Add();
       }
+      nodes[root].num++;
       root = nodes[root].next[v];
-      word++;
     }
+    nodes[root].num++;
+    nodes[root].endFlag++;
     return root;
   }
 
   /** Returns if the word is in the trie. */
-  void Search(const char* word, int queryIndex) {
+  bool Search(const string& word, int queryIndex) {
     int root = root_index;
     queryFlag[root] = queryIndex;
-    while (*word) {
-      int v = *word - 'a';
+    for (auto c : word) {
+      int v = c - 'a';
       int p = nodes[root].next[v];
-      if (p == -1) return;
+      if (p == -1 && nodes[p].num > 0) return false;
       root = p;
       queryFlag[root] = queryIndex;
-      word++;
     }
+
+    return nodes[root].endFlag == 1;
   }
 };
 };  // namespace TRIE
@@ -161,8 +171,7 @@ class Trie {
 const int MAXN = 6e6 + 6;
 int n, q;
 char s1[MAXN], s2[MAXN];
-char S1[MAXN], S2[MAXN];
-int S1Len = 0, S2Len = 0;
+string S1, S2;
 
 struct GroupInfo {
   TRIE::Trie trie1;
@@ -173,22 +182,24 @@ struct GroupInfo {
 unordered_map<ll, GroupInfo> ACIndex;
 
 ll MergeS1S2(int len) {
+  S1.reserve(len);
+  S2.reserve(len);
+  S1.clear();
+  S2.clear();
   int leftLen = 0, rightLen = len - 1;  // [leftLen, rightLen] 是不同的区间
-  S1Len = 0, S2Len = 0;
   while (leftLen < len && s1[leftLen] == s2[leftLen]) {
-    S1[S1Len++] = s1[leftLen++];
+    S1.push_back(s1[leftLen]);
+    leftLen++;
   }
-  S1[S1Len] = '\0';
   while (rightLen >= 0 && s1[rightLen] == s2[rightLen]) {
-    S2[S2Len++] = s1[rightLen--];
+    S2.push_back(s1[rightLen]);
+    rightLen--;
   }
-  S2[S2Len] = '\0';
 
   ll h = HASH::Hash(s1, leftLen, rightLen + 1);
   h = HASH::Hash(h, ' ');
   h = HASH::Hash(h, s2, leftLen, rightLen + 1);
-  std::reverse(S1, S1 + S1Len);
-  std::reverse(S2, S2 + S2Len);
+  std::reverse(S1.begin(), S1.end());
   return h;
 }
 
@@ -200,6 +211,7 @@ void Solver() {  //
     int len = strlen(s1);
     ll h = MergeS1S2(len);
     if (ACIndex.count(h) == 0) {
+      ACIndex[h];
       auto& groupInfo = ACIndex[h];
       groupInfo.trie1.Init();
       groupInfo.trie2.Init();

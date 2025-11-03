@@ -129,30 +129,28 @@ class Trie {
   void Init() { root_index = Add(); }
 
   /** Inserts a word into the trie. */
-  int Insert(const char* word) {
+  int Insert(const string& word) {
     int root = root_index;
-    while (*word) {
-      int v = *word - 'a';
+    for (auto c : word) {
+      int v = c - 'a';
       if (nodes[root].next[v] == -1) {
         nodes[root].next[v] = Add();
       }
       root = nodes[root].next[v];
-      word++;
     }
     return root;
   }
 
   /** Returns if the word is in the trie. */
-  void Search(const char* word, int queryIndex) {
+  void Search(const string& word, int queryIndex) {
     int root = root_index;
     queryFlag[root] = queryIndex;
-    while (*word) {
-      int v = *word - 'a';
+    for (auto c : word) {
+      int v = c - 'a';
       int p = nodes[root].next[v];
       if (p == -1) return;
       root = p;
       queryFlag[root] = queryIndex;
-      word++;
     }
   }
 };
@@ -161,8 +159,7 @@ class Trie {
 const int MAXN = 6e6 + 6;
 int n, q;
 char s1[MAXN], s2[MAXN];
-char S1[MAXN], S2[MAXN];
-int S1Len = 0, S2Len = 0;
+string S1, S2;
 
 struct GroupInfo {
   TRIE::Trie trie1;
@@ -173,22 +170,25 @@ struct GroupInfo {
 unordered_map<ll, GroupInfo> ACIndex;
 
 ll MergeS1S2(int len) {
+  S1.reserve(len);
+  S2.reserve(len);
+  S1.clear();
+  S2.clear();
   int leftLen = 0, rightLen = len - 1;  // [leftLen, rightLen] 是不同的区间
-  S1Len = 0, S2Len = 0;
   while (leftLen < len && s1[leftLen] == s2[leftLen]) {
-    S1[S1Len++] = s1[leftLen++];
+    S1.push_back(s1[leftLen]);
+    leftLen++;
   }
-  S1[S1Len] = '\0';
   while (rightLen >= 0 && s1[rightLen] == s2[rightLen]) {
-    S2[S2Len++] = s1[rightLen--];
+    S2.push_back(s1[rightLen]);
+    rightLen--;
   }
-  S2[S2Len] = '\0';
 
   ll h = HASH::Hash(s1, leftLen, rightLen + 1);
   h = HASH::Hash(h, ' ');
   h = HASH::Hash(h, s2, leftLen, rightLen + 1);
-  std::reverse(S1, S1 + S1Len);
-  std::reverse(S2, S2 + S2Len);
+  std::reverse(S1.begin(), S1.end());
+  std::reverse(S2.begin(), S2.end());
   return h;
 }
 
