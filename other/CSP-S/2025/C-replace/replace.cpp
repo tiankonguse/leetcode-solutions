@@ -168,6 +168,7 @@ struct GroupInfo {
   TRIE::Trie trie1;
   TRIE::Trie trie2;
   vector<pair<int, int>> patterns;  // 存储该组的所有模式串对应的终止结点
+  unordered_map<int, unordered_set<int>> patternMap;
 };
 
 unordered_map<ll, GroupInfo> ACIndex;
