@@ -137,7 +137,7 @@ ll Solver(int m) {
         }
 
         // 下个人想要挂掉，忍耐度 C[i] 需要小于等于 j,  即在忍耐度为 [0, j] 之间选择1个人。
-        // 目前已经选择了 i-k 个人，可选择的只有 Ranges(0,j)-(i-k)
+        // 目前已经选择了 i-k 个人，可选择的只有 Ranges(0,j) - (i-k)
         // 还需要枚举 k 个忍耐度大于 j 的人中，有多少个忍耐度等于 j+1
         const ll allLessEqual = Ranges(0, j);
         const ll chosenLessEqual = i - k;
