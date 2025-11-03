@@ -1,13 +1,14 @@
 /*
 ID: tiankonguse
-TASK: employ
+TASK: road
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
+ides: 暴力枚举所有乡村的选择方案，合并所有边，排序，最后求最小生成树， 80 分
 */
-#define TASK "employ"
+#define TASK "road"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -50,7 +51,7 @@ constexpr ll INFL = 1LL << 60;
 constexpr ll MOD = 1000000007;
 
 const double pi = acos(-1.0), eps = 1e-7;
-// const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
 template <class T>
@@ -75,75 +76,136 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-const ll mod = 998244353;
+class Dsu {
+  vector<int> fa, score;
 
-struct mint {
-  const ll mod = 998244353;
-  ll x;
-  mint(ll x = 0) : x(x) {}
-  mint operator+(const ll& b) const { return mint((x + b) % mod); }
-  mint operator+(const mint& b) const { return mint((x + b.x) % mod); }
-  mint& operator+=(const ll& b) { return (x = (x + b) % mod), *this; }
-  mint& operator+=(const mint& b) { return (x = (x + b.x) % mod), *this; }
-  mint operator*(const ll& b) const { return mint((x * b) % mod); }
-  mint operator*(const mint& b) const { return mint((x * b.x) % mod); }
-  mint& operator*=(const ll& b) { return (x = (x * b) % mod), *this; }
-  mint& operator*=(const mint& b) { return (x = (x * b.x) % mod), *this; }
-  mint& operator=(const mint& b) { return (x = b.x), *this; }
-  mint& operator=(const ll& b) { return (x = b), *this; }
-};
-
-int n, m;
-char S[555];
-vector<int> C;
-vector<int> SC;                   // SC 后缀和
-vector<vector<vector<mint>>> dp;  // 前 i 个人，j 个挂，挂的里面忍耐度大于 j 的有 k 个
-
-ll Ranges(int l, int r) {
-  if (l > n) return 0;
-  if (r > n) r = n;
-  return SC[l] - SC[r + 1];
-}
-void Solver() {  //
-  scanf("%d%d", &n, &m);
-  scanf("%s", S + 1);
-  C.resize(n + 2, 0);
-  SC.resize(n + 2, 0);
-  for (int i = 1; i <= n; i++) {
-    int c;
-    scanf("%d", &c);
-    C[c]++;
+ public:
+  void Init(int n) {
+    fa.resize(n);
+    score.resize(n);
+    for (int i = 0; i < n; i++) {
+      fa[i] = i, score[i] = 0;
+    }
   }
-  for (int i = n; i >= 0; i--) {
-    SC[i] = SC[i + 1] + C[i];
+
+  int Find(int x) {
+    if (fa[x] != x) {
+      fa[x] = Find(fa[x]);
+    }
+    return fa[x];
   }
-  dp.resize(n + 1, vector<vector<mint>>(n + 1, vector<mint>(n + 1)));
-  dp[0][0][0] = 1;
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j <= i; j++) {
-      for (int k = 0; k <= j; k++) {
-        if (S[i + 1] == '1') {
-          // 下个人不挂，忍耐度 C[i] 需要大于 j, 即在忍耐度为 [j+1, n] 之间选择1个人
-          dp[i + 1][j][k + 1] += dp[i][j][k] * Ranges(j + 1, n);
-          // 下个人挂，忍耐度 C[i] 需要需要小于等于 j,  即在忍耐度为 [0, j] 之间选择1个人
-          // 枚举 k 个忍耐度大于 j 的人中，有多少个忍耐度等于 j+1
-          for (int t = 0; t <= min(k, C[j + 1]); t++) {
-            dp[i + 1][j + 1][k - t] += dp[i][j][k] * Ranges(0, j);
-          }
-        } else {  // S[i+1]=0, 下个人不管如何选择，必挂
-          // 选择
+
+  // Union，也成为了 Merge
+  void Union(int x, int y) {
+    x = Find(x);
+    y = Find(y);
+    if (x != y) {
+      if (score[x] > score[y]) {
+        fa[y] = x;
+      } else {
+        fa[x] = y;
+        if (score[x] == score[y]) {
+          ++score[y];
         }
       }
     }
   }
+  void AddScore(int x) {
+    x = Find(x);
+    score[x]++;
+  }
 
-  mint ans = 0;
-  for (int j = 0; j <= n - m; j++) {
-    for (int k = 0; k <= j; k++) {
-      ans += dp[n][j][k];
+  int GetScore(int x) {
+    x = Find(x);
+    return score[x];
+  }
+};
+
+int n, m, k;
+vector<tuple<ll, int, int>> baseEdges;
+vector<tuple<ll, int, int>> selectEdges;
+vector<tuple<ll, int, int>> townSelectEdges;
+vector<ll> townCosts;
+vector<vector<ll>> townEdgeCosts;
+Dsu dsu;
+
+void Input() {
+  scanf("%d%d%d", &n, &m, &k);
+  baseEdges.reserve(m);
+  for (int i = 0; i < m; i++) {
+    int u, v;
+    ll w;
+    scanf("%d%d%lld", &u, &v, &w);
+    u--, v--;
+    baseEdges.push_back({w, u, v});
+  }
+  townCosts.resize(k);
+  townEdgeCosts.resize(k, vector<ll>(n, 0));
+  for (int i = 0; i < k; i++) {
+    scanf("%lld", &townCosts[i]);
+    for (int j = 0; j < n; j++) {
+      scanf("%lld", &townEdgeCosts[i][j]);
     }
   }
-  printf("%lld\n", ans.x);
+}
+
+ll ans = 0;
+ll MinimumSpanningTree(int selectNum, ll cost, vector<tuple<ll, int, int>>& townSelectEdges) {
+  dsu.Init(n + k);
+  int blockNum = selectNum + n;
+  for (auto [w, u, v] : townSelectEdges) {
+    if (dsu.Find(u) != dsu.Find(v)) {
+      blockNum--;
+      dsu.Union(u, v);
+      cost += w;
+    }
+    // if (cost >= ans || blockNum == 1) {
+    //   return cost;
+    // }
+  }
+  return cost;
+}
+
+void Solver() {  //
+  Input();
+
+  // 第一步：求原生最小生成树
+  sort(baseEdges.begin(), baseEdges.end());
+  dsu.Init(n + k);
+  selectEdges.reserve(n - 1);
+  ans = 0;
+  for (auto [w, u, v] : baseEdges) {
+    if (dsu.Find(u) != dsu.Find(v)) {
+      dsu.Union(u, v);
+      ans += w;
+      selectEdges.push_back({w, u, v});
+    }
+  }
+
+  townSelectEdges.reserve(k * n);
+  const int MASK = (1 << k) - 1;
+  for (int sub = MASK; sub; sub = (sub - 1) & MASK) {
+    townSelectEdges = selectEdges;
+    ll subCost = 0;
+    int selectNum = 0;
+    for (int i = 0; i < k; i++) {
+      if ((sub >> i) & 1) {
+        selectNum++;
+        // 选择第 i 个乡村
+        subCost += townCosts[i];
+        for (int j = 0; j < n; j++) {
+          ll w = townEdgeCosts[i][j];
+          int u = n + i;
+          int v = j;
+          townSelectEdges.push_back({w, u, v});
+        }
+      }
+    }
+    sort(townSelectEdges.begin(), townSelectEdges.end());
+    ll totalCost = MinimumSpanningTree(selectNum, subCost, townSelectEdges);
+    ans = min(ans, totalCost);
+  }
+  printf("%lld\n", ans);
 }
 
 #ifdef USACO_LOCAL_JUDGE

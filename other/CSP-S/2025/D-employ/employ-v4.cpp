@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "employ"
-#define TASKEX ""
+#define TASKEX "-v4"
 
 #include <bits/stdc++.h>
 
@@ -50,7 +50,7 @@ constexpr ll INFL = 1LL << 60;
 constexpr ll MOD = 1000000007;
 
 const double pi = acos(-1.0), eps = 1e-7;
-// const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
 template <class T>
@@ -75,8 +75,14 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-const ll mod = 998244353;
+int n, m;
+char S[555];
+vector<int> C;
+vector<int> P;  // 排列，标记是否选择
 
+ll ans = 0;
+
+namespace DP_ALL_S1 {
 struct mint {
   const ll mod = 998244353;
   ll x;
@@ -91,47 +97,54 @@ struct mint {
   mint& operator*=(const mint& b) { return (x = (x * b.x) % mod), *this; }
   mint& operator=(const mint& b) { return (x = b.x), *this; }
   mint& operator=(const ll& b) { return (x = b), *this; }
+  bool operator==(const ll& b) const { return x == b; }
+  bool operator==(const mint& b) const { return x == b.x; }
 };
 
-int n, m;
-char S[555];
-vector<int> C;
+vector<int> bucket;               // SC 后缀和
 vector<int> SC;                   // SC 后缀和
-vector<vector<vector<mint>>> dp;  // 前 i 个人，j 个挂，挂的里面忍耐度大于 j 的有 k 个
+vector<vector<vector<mint>>> dp;  // 前 i 个人，挂了j个，其中前 i 个人中忍耐度大于 j 的有 k 个
 
 ll Ranges(int l, int r) {
   if (l > n) return 0;
   if (r > n) r = n;
   return SC[l] - SC[r + 1];
 }
-void Solver() {  //
-  scanf("%d%d", &n, &m);
-  scanf("%s", S + 1);
-  C.resize(n + 2, 0);
-  SC.resize(n + 2, 0);
+
+ll Solver(int m) {
+  bucket.clear();
+  bucket.resize(n + 2, 0);
   for (int i = 1; i <= n; i++) {
-    int c;
-    scanf("%d", &c);
-    C[c]++;
+    bucket[C[i]]++;
   }
+  SC.resize(n + 2, 0);
   for (int i = n; i >= 0; i--) {
-    SC[i] = SC[i + 1] + C[i];
+    SC[i] = SC[i + 1] + bucket[i];
   }
-  dp.resize(n + 1, vector<vector<mint>>(n + 1, vector<mint>(n + 1)));
+  dp.clear();
+  dp.resize(n + 1, vector<vector<mint>>(n + 1, vector<mint>(n + 1, 0)));
   dp[0][0][0] = 1;
   for (int i = 0; i < n; i++) {
-    for (int j = 0; j <= i; j++) {
-      for (int k = 0; k <= j; k++) {
-        if (S[i + 1] == '1') {
-          // 下个人不挂，忍耐度 C[i] 需要大于 j, 即在忍耐度为 [j+1, n] 之间选择1个人
-          dp[i + 1][j][k + 1] += dp[i][j][k] * Ranges(j + 1, n);
-          // 下个人挂，忍耐度 C[i] 需要需要小于等于 j,  即在忍耐度为 [0, j] 之间选择1个人
-          // 枚举 k 个忍耐度大于 j 的人中，有多少个忍耐度等于 j+1
-          for (int t = 0; t <= min(k, C[j + 1]); t++) {
-            dp[i + 1][j + 1][k - t] += dp[i][j][k] * Ranges(0, j);
+    for (int j = 0; j <= i; j++) {    // j = [0, i]
+      for (int k = 0; k <= i; k++) {  // k = [0, i]
+        assert(S[i + 1] == '1');
+        if (dp[i][j][k] == 0) continue;
+        // 下个人想要不挂，忍耐度 C[i] 需要大于 j, 即在忍耐度为 [j+1, n] 之间选择1个人
+        // 目前已经选择了 k 个人，可选择的只有 Ranges(j+1,n) - k
+        const ll allGreater = Ranges(j + 1, n);
+        if (allGreater >= k) {
+          dp[i + 1][j][k + 1] += dp[i][j][k] * (allGreater - k);
+        }
+
+        // 下个人想要挂掉，忍耐度 C[i] 需要小于等于 j,  即在忍耐度为 [0, j] 之间选择1个人。
+        // 目前已经选择了 i-k 个人，可选择的只有 Ranges(0,j)-(i-k)
+        // 还需要枚举 k 个忍耐度大于 j 的人中，有多少个忍耐度等于 j+1
+        const ll allLessEqual = Ranges(0, j);
+        const ll chosenLessEqual = i - k;
+        if (allLessEqual >= chosenLessEqual) {
+          for (int t = 0; t <= min(k, bucket[j + 1]); t++) {
+            dp[i + 1][j + 1][k - t] += dp[i][j][k] * (allLessEqual - chosenLessEqual);
           }
-        } else {  // S[i+1]=0, 下个人不管如何选择，必挂
-          // 选择
         }
       }
     }
@@ -139,11 +152,33 @@ void Solver() {  //
 
   mint ans = 0;
   for (int j = 0; j <= n - m; j++) {
-    for (int k = 0; k <= j; k++) {
+    for (int k = 0; k <= n; k++) {
       ans += dp[n][j][k];
     }
   }
-  printf("%lld\n", ans.x);
+  return ans.x;
+}
+
+/*
+3 2
+111
+1 0 2
+
+*/
+
+};  // namespace DP_ALL_S1
+
+void Solver() {  //
+  scanf("%d%d", &n, &m);
+  scanf("%s", S + 1);
+  C.resize(n + 1, 0);
+  for (int i = 1; i <= n; i++) {
+    scanf("%d", &C[i]);
+  }
+  // 特殊性质 A: 对于所有 i，均有 s[i]=1。
+  for (int i = 0; i <= n; i++) {
+    printf("m=%d, ans = %lld\n", i, DP_ALL_S1::Solver(i));
+  }
 }
 
 #ifdef USACO_LOCAL_JUDGE

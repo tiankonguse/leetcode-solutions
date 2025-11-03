@@ -9,14 +9,14 @@ using namespace std::chrono;
 
 #ifdef USACO_LOCAL_JUDGE
 #define BITS_STDC " -I" PRJ_ROOT_PATH "include/ "
-#define CODE_PATh \
-  PRJ_ROOT_PATH "other/CSP-J/2024/D-chain/"
-#define CODE_DATA CODE_PATh "data.cpp"
-#define CODE_FORCE CODE_PATh "chain-50p.cpp"
-#define CODE_MAIN CODE_PATh "chain.cpp"
+#define CODE_PATH \
+  PRJ_ROOT_PATH "other/CSP-S/2025/D-employ/"
+#define CODE_DATA CODE_PATH "data.cpp"
+#define CODE_FORCE CODE_PATH "employ-v1-8.cpp.cpp"
+#define CODE_MAIN CODE_PATH "employ-v4.cpp"
 #else
 #define BITS_STDC " "
-#define CODE_PATh ""
+#define CODE_PATH ""
 #endif
 
 int main(int argc, char** argv) {

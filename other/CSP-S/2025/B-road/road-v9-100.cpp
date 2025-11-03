@@ -1,14 +1,14 @@
 /*
 ID: tiankonguse
-TASK: club
+TASK: road
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
-分析：反悔贪心，100 分
+ides: 暴力枚举所有乡村的选择方案，合并所有边，排序，最后求最小生成树， 80 分
 */
-#define TASK "club"
+#define TASK "road"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -63,7 +63,7 @@ void InitIO(int fileIndex) {  //
 // #define LOCAL_IO 1
 #ifdef USACO_LOCAL_JUDGE
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 1
+#define USACO_TASK_FILE 0
 #define TASKNO 1
 #ifndef USACO_TASK_FILE
   fileIndex = TASKNO;
@@ -76,47 +76,140 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n;
-vector<pair<ll, ll>> g[3];
-void Solver() {  //
-  int t;
-  scanf("%d", &t);
-  while (t--) {
-    scanf("%d", &n);
-    for (int i = 0; i < 3; i++) {
-      g[i].clear();
-      g[i].reserve(n);
-    }
-    ll ans = 0;
+class Dsu {
+  vector<int> fa, score;
+
+ public:
+  void Init(int n) {
+    fa.resize(n);
+    score.resize(n);
     for (int i = 0; i < n; i++) {
-      ll a1, a2, a3;
-      scanf("%lld%lld%lld", &a1, &a2, &a3);
-      if (a1 >= a2 && a1 >= a3) {
-        ans += a1;
-        g[0].push_back({a1, max(a2, a3)});
-      } else if (a2 >= a1 && a2 >= a3) {
-        ans += a2;
-        g[1].push_back({a2, max(a1, a3)});
-      } else {
-        ans += a3;
-        g[2].push_back({a3, max(a1, a2)});
-      }
+      fa[i] = i, score[i] = 0;
     }
-    for (int i = 0; i < 3; i++) {
-      int sz = g[i].size();
-      if (sz > n / 2) {  // 最多 n/2 个，需要把多出来的替换为次大值
-        sort(g[i].begin(), g[i].end(), [](pair<ll, ll>& a, pair<ll, ll>& b) {  //
-          return a.first - a.second > b.first - b.second;
-        });
-        for (int j = n / 2; j < sz; j++) {
-          ans -= g[i][j].first;
-          ans += g[i][j].second;
-        }
-        break;
-      }
-    }
-    printf("%lld\n", ans);
   }
+
+  int Find(int x) {
+    if (fa[x] != x) {
+      fa[x] = Find(fa[x]);
+    }
+    return fa[x];
+  }
+
+  // Union，也成为了 Merge
+  void Union(int x, int y) {
+    x = Find(x);
+    y = Find(y);
+    if (x != y) {
+      if (score[x] > score[y]) {
+        fa[y] = x;
+      } else {
+        fa[x] = y;
+        if (score[x] == score[y]) {
+          ++score[y];
+        }
+      }
+    }
+  }
+  void AddScore(int x) {
+    x = Find(x);
+    score[x]++;
+  }
+
+  int GetScore(int x) {
+    x = Find(x);
+    return score[x];
+  }
+};
+
+int n, m, k;
+vector<tuple<ll, int, int>> baseEdges;
+vector<tuple<ll, int, int>> selectEdges;
+vector<tuple<ll, int, int>> townSelectEdges;
+vector<ll> townCosts;
+vector<vector<ll>> townEdgeCosts;
+Dsu dsu;
+ll maxEdge = 0;
+
+void Input() {
+  scanf("%d%d%d", &n, &m, &k);
+  baseEdges.reserve(m);
+  for (int i = 0; i < m; i++) {
+    int u, v;
+    ll w;
+    scanf("%d%d%lld", &u, &v, &w);
+    u--, v--;
+    baseEdges.push_back({w, u, v});
+  }
+  townCosts.resize(k);
+  townEdgeCosts.resize(k, vector<ll>(n, 0));
+  for (int i = 0; i < k; i++) {
+    scanf("%lld", &townCosts[i]);
+    for (int j = 0; j < n; j++) {
+      scanf("%lld", &townEdgeCosts[i][j]);
+    }
+  }
+}
+
+ll ans = 0;
+ll MinimumSpanningTree(int selectNum, ll cost, vector<tuple<ll, int, int>>& townSelectEdges) {
+  dsu.Init(n + k);
+  int blockNum = selectNum + n;
+  for (auto [w, u, v] : townSelectEdges) {
+    if (dsu.Find(u) != dsu.Find(v)) {
+      blockNum--;
+      dsu.Union(u, v);
+      cost += w;
+    }
+    // if (cost >= ans || blockNum == 1) {
+    //   return cost;
+    // }
+  }
+  return cost;
+}
+
+void Solver() {  //
+  Input();
+
+  // 第一步：求原生最小生成树
+  sort(baseEdges.begin(), baseEdges.end());
+  dsu.Init(n + k);
+  selectEdges.reserve(n - 1);
+  ans = 0;
+  for (auto [w, u, v] : baseEdges) {
+    if (dsu.Find(u) != dsu.Find(v)) {
+      dsu.Union(u, v);
+      ans += w;
+      selectEdges.push_back({w, u, v});
+      maxEdge = max(maxEdge, w);
+    }
+  }
+
+  townSelectEdges.reserve(k * n);
+  const int MASK = (1 << k) - 1;
+  for (int sub = MASK; sub; sub = (sub - 1) & MASK) {
+    townSelectEdges = selectEdges;
+    ll subCost = 0;
+    int selectNum = 0;
+    for (int i = 0; i < k; i++) {
+      if ((sub >> i) & 1) {
+        selectNum++;
+        // 选择第 i 个乡村
+        subCost += townCosts[i];
+        for (int j = 0; j < n; j++) {
+          ll w = townEdgeCosts[i][j];
+          int u = n + i;
+          int v = j;
+          if (w <= maxEdge) {
+            townSelectEdges.push_back({w, u, v});
+          }
+        }
+      }
+    }
+    sort(townSelectEdges.begin(), townSelectEdges.end());
+    ll totalCost = MinimumSpanningTree(selectNum, subCost, townSelectEdges);
+    ans = min(ans, totalCost);
+  }
+  printf("%lld\n", ans);
 }
 
 #ifdef USACO_LOCAL_JUDGE

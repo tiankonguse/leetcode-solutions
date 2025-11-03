@@ -9,7 +9,7 @@ submission:
 注：暴力排列组合，得 8 分
 */
 #define TASK "employ"
-#define TASKEX ""
+#define TASKEX "-v1-8"
 
 #include <bits/stdc++.h>
 

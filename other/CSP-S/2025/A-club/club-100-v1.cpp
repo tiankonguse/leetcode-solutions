@@ -1,13 +1,14 @@
 /*
 ID: tiankonguse
-TASK: employ
+TASK: club
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
+分析：反悔贪心，100 分
 */
-#define TASK "employ"
+#define TASK "club"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -50,7 +51,7 @@ constexpr ll INFL = 1LL << 60;
 constexpr ll MOD = 1000000007;
 
 const double pi = acos(-1.0), eps = 1e-7;
-// const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
 template <class T>
@@ -62,7 +63,7 @@ void InitIO(int fileIndex) {  //
 // #define LOCAL_IO 1
 #ifdef USACO_LOCAL_JUDGE
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 0
+#define USACO_TASK_FILE 1
 #define TASKNO 1
 #ifndef USACO_TASK_FILE
   fileIndex = TASKNO;
@@ -75,75 +76,44 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-const ll mod = 998244353;
-
-struct mint {
-  const ll mod = 998244353;
-  ll x;
-  mint(ll x = 0) : x(x) {}
-  mint operator+(const ll& b) const { return mint((x + b) % mod); }
-  mint operator+(const mint& b) const { return mint((x + b.x) % mod); }
-  mint& operator+=(const ll& b) { return (x = (x + b) % mod), *this; }
-  mint& operator+=(const mint& b) { return (x = (x + b.x) % mod), *this; }
-  mint operator*(const ll& b) const { return mint((x * b) % mod); }
-  mint operator*(const mint& b) const { return mint((x * b.x) % mod); }
-  mint& operator*=(const ll& b) { return (x = (x * b) % mod), *this; }
-  mint& operator*=(const mint& b) { return (x = (x * b.x) % mod), *this; }
-  mint& operator=(const mint& b) { return (x = b.x), *this; }
-  mint& operator=(const ll& b) { return (x = b), *this; }
-};
-
-int n, m;
-char S[555];
-vector<int> C;
-vector<int> SC;                   // SC 后缀和
-vector<vector<vector<mint>>> dp;  // 前 i 个人，j 个挂，挂的里面忍耐度大于 j 的有 k 个
-
-ll Ranges(int l, int r) {
-  if (l > n) return 0;
-  if (r > n) r = n;
-  return SC[l] - SC[r + 1];
-}
+int n;
+vector<ll> g[3];
 void Solver() {  //
-  scanf("%d%d", &n, &m);
-  scanf("%s", S + 1);
-  C.resize(n + 2, 0);
-  SC.resize(n + 2, 0);
-  for (int i = 1; i <= n; i++) {
-    int c;
-    scanf("%d", &c);
-    C[c]++;
-  }
-  for (int i = n; i >= 0; i--) {
-    SC[i] = SC[i + 1] + C[i];
-  }
-  dp.resize(n + 1, vector<vector<mint>>(n + 1, vector<mint>(n + 1)));
-  dp[0][0][0] = 1;
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j <= i; j++) {
-      for (int k = 0; k <= j; k++) {
-        if (S[i + 1] == '1') {
-          // 下个人不挂，忍耐度 C[i] 需要大于 j, 即在忍耐度为 [j+1, n] 之间选择1个人
-          dp[i + 1][j][k + 1] += dp[i][j][k] * Ranges(j + 1, n);
-          // 下个人挂，忍耐度 C[i] 需要需要小于等于 j,  即在忍耐度为 [0, j] 之间选择1个人
-          // 枚举 k 个忍耐度大于 j 的人中，有多少个忍耐度等于 j+1
-          for (int t = 0; t <= min(k, C[j + 1]); t++) {
-            dp[i + 1][j + 1][k - t] += dp[i][j][k] * Ranges(0, j);
-          }
-        } else {  // S[i+1]=0, 下个人不管如何选择，必挂
-          // 选择
-        }
+  int t;
+  scanf("%d", &t);
+  while (t--) {
+    scanf("%d", &n);
+    for (int i = 0; i < 3; i++) {
+      g[i].clear();
+      g[i].reserve(n);
+    }
+    ll ans = 0;
+    for (int i = 0; i < n; i++) {
+      ll a1, a2, a3;
+      scanf("%lld%lld%lld", &a1, &a2, &a3);
+      if (a1 >= a2 && a1 >= a3) {
+        ans += a1;
+        g[0].push_back(a1 - max(a2, a3));
+      } else if (a2 >= a1 && a2 >= a3) {
+        ans += a2;
+        g[1].push_back(a2 - max(a1, a3));
+      } else {
+        ans += a3;
+        g[2].push_back(a3 - max(a1, a2));
       }
     }
-  }
-
-  mint ans = 0;
-  for (int j = 0; j <= n - m; j++) {
-    for (int k = 0; k <= j; k++) {
-      ans += dp[n][j][k];
+    for (int i = 0; i < 3; i++) {
+      int sz = g[i].size();
+      if (sz > n / 2) {  // 最多 n/2 个，需要把多出来的替换为次大值
+        sort(g[i].begin(), g[i].end());
+        for (int j = 0; j < sz - n / 2; j++) {
+          ans -= g[i][j];
+        }
+        break;
+      }
     }
+    printf("%lld\n", ans);
   }
-  printf("%lld\n", ans.x);
 }
 
 #ifdef USACO_LOCAL_JUDGE
