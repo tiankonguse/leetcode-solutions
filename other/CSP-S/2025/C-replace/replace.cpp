@@ -100,16 +100,18 @@ struct Node {
   int next[26];
 };
 Node nodes[max6];
-int queryFlag[max6];
+int in[max6], out[max6];
 int index = 0;
 
 void Init() {
-  index = 0;
-  memset(queryFlag, 0, sizeof(queryFlag));
+  index = 1;  // 不使用节点 0
+  memset(in, 0, sizeof(in));
+  memset(out, 0, sizeof(out));
 }
 
-class Trie {
+struct Trie {
   int root_index = 0;
+  int dfs_index = 0;
   void Clear(int root) {
     Node& node = nodes[root];
     memset(node.next, -1, sizeof(node.next));
@@ -141,37 +143,71 @@ class Trie {
     }
     return root;
   }
-
-  /** Returns if the word is in the trie. */
-  void Search(const char* word, int queryIndex) {
-    int root = root_index;
-    queryFlag[root] = queryIndex;
-    while (*word) {
-      int v = *word - 'a';
-      int p = nodes[root].next[v];
-      if (p == -1) return;
-      root = p;
-      queryFlag[root] = queryIndex;
-      word++;
+  void Dfs() { Dfs(root_index); }
+  void Dfs(int u) {
+    if (u == -1) return;
+    in[u] = ++dfs_index;
+    for (int i = 0; i < 26; i++) {
+      if (nodes[u].next[i] != -1) {
+        Dfs(nodes[u].next[i]);
+      }
     }
+    out[u] = dfs_index;
   }
 };
 };  // namespace TRIE
+
+namespace FENWICK {
+class TreeArray {
+ public:
+  void Init(int n_) {
+    n = n_;
+    c.resize(n + 100, 0);
+    fill_n(c.data(), n + 100, 0);
+  }
+
+  ll Query(int x) {
+    ll s = 0;
+    while (x > 0) {
+      s += c[x];
+      x -= Lowbit(x);
+    }
+    return s;
+  }
+
+  ll Query(int l, int r) { return Query(r) - Query(l - 1); }
+
+  void Add(int x, ll v) {
+    while (x <= n) {
+      c[x] += v;
+      x += Lowbit(x);
+    }
+  }
+
+ private:
+  inline int Lowbit(int x) { return x & -x; }
+  vector<ll> c;
+  int n;
+};
+};  // namespace FENWICK
 
 const int MAXN = 6e6 + 6;
 int n, q;
 char s1[MAXN], s2[MAXN];
 char S1[MAXN], S2[MAXN];
 int S1Len = 0, S2Len = 0;
-
+FENWICK::TreeArray fenwick;
 struct GroupInfo {
   TRIE::Trie trie1;
   TRIE::Trie trie2;
-  vector<pair<int, int>> patterns;  // 存储该组的所有模式串对应的终止结点
-  unordered_map<int, unordered_set<int>> patternMap;
+  vector<pair<int, int>> patterns;      // 存储该组的所有模式串对应的终止结点
+  vector<tuple<int, int, int>> querys;  // 存储该组的所有查询串对应的终止结点
 };
 
-unordered_map<ll, GroupInfo> ACIndex;
+unordered_map<ll, GroupInfo> groupIndex;
+vector<tuple<int, int, int>> diffArray[MAXN];
+vector<pair<int, int>> queryArray[MAXN];
+ll ans[MAXN];
 
 ll MergeS1S2(int len) {
   int leftLen = 0, rightLen = len - 1;  // [leftLen, rightLen] 是不同的区间
@@ -193,6 +229,37 @@ ll MergeS1S2(int len) {
   return h;
 }
 
+void Solver(GroupInfo& groupInfo) {  //
+  groupInfo.trie1.Dfs();
+  groupInfo.trie2.Dfs();
+  // printf("trie1 size=%d, trie2 size=%d\n", groupInfo.trie1.dfs_index, groupInfo.trie2.dfs_index);
+  fenwick.Init(groupInfo.trie2.dfs_index + 3);
+  for (int i = 1; i <= groupInfo.trie1.dfs_index; i++) {
+    diffArray[i].clear();
+    queryArray[i].clear();
+  }
+  for (auto [u1, u2] : groupInfo.patterns) {
+    const int L1 = TRIE::in[u1], R1 = TRIE::out[u1];
+    const int L2 = TRIE::in[u2], R2 = TRIE::out[u2];
+    diffArray[L1].push_back({L2, R2, 1});
+    diffArray[R1 + 1].push_back({L2, R2, -1});
+  }
+  for (auto& [qidx, u1, u2] : groupInfo.querys) {
+    const int L1 = TRIE::in[u1];
+    const int L2 = TRIE::in[u2];
+    queryArray[L1].push_back({L2, qidx});
+  }
+  for (int i = 1; i <= groupInfo.trie1.dfs_index; i++) {
+    for (auto& [L2, R2, val] : diffArray[i]) {
+      fenwick.Add(R2 + 1, -val);
+      fenwick.Add(L2, val);
+    }
+    for (auto& [L2, qidx] : queryArray[i]) {
+      ans[qidx] = fenwick.Query(L2);
+    }
+  }
+}
+
 void Solver() {  //
   TRIE::Init();
   scanf("%d%d", &n, &q);
@@ -200,42 +267,47 @@ void Solver() {  //
     scanf("%s%s", s1, s2);
     int len = strlen(s1);
     ll h = MergeS1S2(len);
-    if (ACIndex.count(h) == 0) {
-      auto& groupInfo = ACIndex[h];
+    if (groupIndex.count(h) == 0) {
+      auto& groupInfo = groupIndex[h];
       groupInfo.trie1.Init();
       groupInfo.trie2.Init();
     }
     // 插入字典表 Trie
-    auto& groupInfo = ACIndex[h];
+    auto& groupInfo = groupIndex[h];
     int node1 = groupInfo.trie1.Insert(S1);
     int node2 = groupInfo.trie2.Insert(S2);
+    // printf("insert pattern (%s, %s) into group h=%lld at nodes (%d, %d)\n", S1, S2, h, node1, node2);
     groupInfo.patterns.push_back({node1, node2});
   }
 
+  memset(ans, 0, sizeof(ans[0]) * q);
+
   // q 个询问
-  while (q--) {
+  for (int i = 0; i < q; i++) {
     scanf("%s%s", s1, s2);
     int len1 = strlen(s1);
     int len2 = strlen(s2);
-    if (len1 != len2) {
-      printf("0\n");  // 长度不同，直接输出 0
+    if (len1 != len2) {  // 长度不同，直接输出 0
       continue;
     }
     ll h = MergeS1S2(len1);
-    if (ACIndex.count(h) == 0) {
-      printf("0\n");  // 不存在该模式串，直接输出 0
+    if (groupIndex.count(h) == 0) {  // 不存在该模式串，直接输出 0
       continue;
     }
-    auto& groupInfo = ACIndex[h];
-    groupInfo.trie1.Search(S1, q + 1);
-    groupInfo.trie2.Search(S2, q + 1);
-    ll res = 0;
-    for (auto [node1, node2] : groupInfo.patterns) {
-      if (TRIE::queryFlag[node1] == q + 1 && TRIE::queryFlag[node2] == q + 1) {
-        res++;
-      }
-    }
-    printf("%lld\n", res);
+    auto& groupInfo = groupIndex[h];
+    int node1 = groupInfo.trie1.Insert(S1);
+    int node2 = groupInfo.trie2.Insert(S2);
+    // printf("insert query (%s, %s) into group h=%lld at nodes (%d, %d)\n", S1, S2, h, node1, node2);
+    groupInfo.querys.push_back({i, node1, node2});
+  }
+  // printf("in finish, start solving...\n");
+  for (auto [h, groupInfo] : groupIndex) {
+    // printf("solving group h=%lld ...\n", h);
+    Solver(groupInfo);
+  }
+  // printf("solving finish, start output...\n");
+  for (int i = 0; i < q; i++) {
+    printf("%lld\n", ans[i]);
   }
 }
 
