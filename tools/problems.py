@@ -1,6 +1,7 @@
 # coding: utf-8
 # get https://leetcode.com/api/problems/all/
 # POST /graphql/noj-go/  参赛信息
+# python3 -m venv leetcode-solutions && source leetcode-solutions/bin/activate
 
 import requests
 import os
@@ -44,6 +45,8 @@ def generate_markdown(output_file="link-new.md"):
         question_title_slug = stat.get('question__title_slug')
         question_title = stat.get('question__title')
         
+        difficulty = problem.get('difficulty', {}).get('level')
+        
         # Skip if any required field is missing
         if not all([frontend_question_id, question_title_slug, question_title]):
             continue
@@ -59,6 +62,16 @@ def generate_markdown(output_file="link-new.md"):
         if not os.path.exists(problem_dir):
             os.makedirs(problem_dir)
             print(f"create {problem_dir}")
+            
+        # Create readme file if not exists
+        readme_path = os.path.join(problem_dir, "readme.md")
+        if not os.path.exists(readme_path):
+            with open(readme_path, 'w') as f:
+                f.write(f"# {question_title}\n\n")
+                f.write(f"**题目编号：** {frontend_question_id}\n\n")
+                f.write(f"**难度：** {'简单' if difficulty == 1 else '中等' if difficulty == 2 else '困难' if difficulty == 3 else '未知'}\n\n")
+                f.write(f"[题目链接](https://leetcode-cn.com/problems/{question_title_slug}/)\n")
+            print(f"create {readme_path}")
         
         # Count solution files
         ac_num = len([f for f in os.listdir(problem_dir) if f != "readme.md"])

@@ -1,13 +1,13 @@
 {
     "data": {
         "userContestRanking": {
-            "attendedContestsCount": 190,
-            "rating": 2224.3644712133273,
-            "globalRanking": 5610,
-            "localRanking": 2304,
-            "globalTotalParticipants": 692682,
-            "localTotalParticipants": 144195,
-            "topPercentage": 1.58
+            "attendedContestsCount": 208,
+            "rating": 2356.740526400677,
+            "globalRanking": 3042,
+            "localRanking": 1303,
+            "globalTotalParticipants": 802178,
+            "localTotalParticipants": 149523,
+            "topPercentage": 0.86
         },
         "userContestRankingHistory": [
             {
@@ -7288,6 +7288,552 @@
                     "title": "第 447 场周赛",
                     "titleCn": "第 447 场周赛",
                     "startTime": 1745721000
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "UP",
+                "finishTimeInSeconds": 1746330620,
+                "rating": 2248.694,
+                "score": 13,
+                "ranking": 66,
+                "contest": {
+                    "title": "第 448 场周赛",
+                    "titleCn": "第 448 场周赛",
+                    "startTime": 1746325800
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 156 场双周赛",
+                    "titleCn": "第 156 场双周赛",
+                    "startTime": 1746887400
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 449 场周赛",
+                    "titleCn": "第 449 场周赛",
+                    "startTime": 1746930600
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "UP",
+                "finishTimeInSeconds": 1747539936,
+                "rating": 2286.564,
+                "score": 19,
+                "ranking": 56,
+                "contest": {
+                    "title": "第 450 场周赛",
+                    "titleCn": "第 450 场周赛",
+                    "startTime": 1747535400
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 157 场双周赛",
+                    "titleCn": "第 157 场双周赛",
+                    "startTime": 1748097000
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "DOWN",
+                "finishTimeInSeconds": 1748141216,
+                "rating": 2257.55,
+                "score": 7,
+                "ranking": 344,
+                "contest": {
+                    "title": "第 451 场周赛",
+                    "titleCn": "第 451 场周赛",
+                    "startTime": 1748140200
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "DOWN",
+                "finishTimeInSeconds": 1748746013,
+                "rating": 2230.123,
+                "score": 8,
+                "ranking": 180,
+                "contest": {
+                    "title": "第 452 场周赛",
+                    "titleCn": "第 452 场周赛",
+                    "startTime": 1748745000
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 158 场双周赛",
+                    "titleCn": "第 158 场双周赛",
+                    "startTime": 1749306600
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "UP",
+                "finishTimeInSeconds": 1749355178,
+                "rating": 2265.067,
+                "score": 19,
+                "ranking": 65,
+                "contest": {
+                    "title": "第 453 场周赛",
+                    "titleCn": "第 453 场周赛",
+                    "startTime": 1749349800
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "DOWN",
+                "finishTimeInSeconds": 1749958303,
+                "rating": 2238.235,
+                "score": 12,
+                "ranking": 340,
+                "contest": {
+                    "title": "第 454 场周赛",
+                    "titleCn": "第 454 场周赛",
+                    "startTime": 1749954600
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 159 场双周赛",
+                    "titleCn": "第 159 场双周赛",
+                    "startTime": 1750516200
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "UP",
+                "finishTimeInSeconds": 1750562281,
+                "rating": 2244.878,
+                "score": 13,
+                "ranking": 155,
+                "contest": {
+                    "title": "第 455 场周赛",
+                    "titleCn": "第 455 场周赛",
+                    "startTime": 1750559400
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 456 场周赛",
+                    "titleCn": "第 456 场周赛",
+                    "startTime": 1751164200
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 160 场双周赛",
+                    "titleCn": "第 160 场双周赛",
+                    "startTime": 1751725800
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 457 场周赛",
+                    "titleCn": "第 457 场周赛",
+                    "startTime": 1751769000
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "UP",
+                "finishTimeInSeconds": 1752379321,
+                "rating": 2280.711,
+                "score": 20,
+                "ranking": 75,
+                "contest": {
+                    "title": "第 458 场周赛",
+                    "titleCn": "第 458 场周赛",
+                    "startTime": 1752373800
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 161 场双周赛",
+                    "titleCn": "第 161 场双周赛",
+                    "startTime": 1752935400
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "DOWN",
+                "finishTimeInSeconds": 1752982843,
+                "rating": 2271.066,
+                "score": 13,
+                "ranking": 212,
+                "contest": {
+                    "title": "第 459 场周赛",
+                    "titleCn": "第 459 场周赛",
+                    "startTime": 1752978600
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "UP",
+                "finishTimeInSeconds": 1753586203,
+                "rating": 2296.262,
+                "score": 14,
+                "ranking": 62,
+                "contest": {
+                    "title": "第 460 场周赛",
+                    "titleCn": "第 460 场周赛",
+                    "startTime": 1753583400
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 162 场双周赛",
+                    "titleCn": "第 162 场双周赛",
+                    "startTime": 1754145000
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 461 场周赛",
+                    "titleCn": "第 461 场周赛",
+                    "startTime": 1754188200
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "UP",
+                "finishTimeInSeconds": 1754795732,
+                "rating": 2300.287,
+                "score": 13,
+                "ranking": 135,
+                "contest": {
+                    "title": "第 462 场周赛",
+                    "titleCn": "第 462 场周赛",
+                    "startTime": 1754793000
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 163 场双周赛",
+                    "titleCn": "第 163 场双周赛",
+                    "startTime": 1755354600
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "UP",
+                "finishTimeInSeconds": 1755402577,
+                "rating": 2329.511,
+                "score": 21,
+                "ranking": 63,
+                "contest": {
+                    "title": "第 463 场周赛",
+                    "titleCn": "第 463 场周赛",
+                    "startTime": 1755397800
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "DOWN",
+                "finishTimeInSeconds": 1756007696,
+                "rating": 2319.91,
+                "score": 12,
+                "ranking": 161,
+                "contest": {
+                    "title": "第 464 场周赛",
+                    "titleCn": "第 464 场周赛",
+                    "startTime": 1756002600
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 164 场双周赛",
+                    "titleCn": "第 164 场双周赛",
+                    "startTime": 1756564200
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 465 场周赛",
+                    "titleCn": "第 465 场周赛",
+                    "startTime": 1756607400
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "DOWN",
+                "finishTimeInSeconds": 1757217298,
+                "rating": 2319.783,
+                "score": 18,
+                "ranking": 132,
+                "contest": {
+                    "title": "第 466 场周赛",
+                    "titleCn": "第 466 场周赛",
+                    "startTime": 1757212200
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 165 场双周赛",
+                    "titleCn": "第 165 场双周赛",
+                    "startTime": 1757773800
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "UP",
+                "finishTimeInSeconds": 1757819202,
+                "rating": 2350.153,
+                "score": 17,
+                "ranking": 56,
+                "contest": {
+                    "title": "第 467 场周赛",
+                    "titleCn": "第 467 场周赛",
+                    "startTime": 1757817000
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 468 场周赛",
+                    "titleCn": "第 468 场周赛",
+                    "startTime": 1758421800
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 166 场双周赛",
+                    "titleCn": "第 166 场双周赛",
+                    "startTime": 1758983400
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 469 场周赛",
+                    "titleCn": "第 469 场周赛",
+                    "startTime": 1759026600
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 470 场周赛",
+                    "titleCn": "第 470 场周赛",
+                    "startTime": 1759631400
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 167 场双周赛",
+                    "titleCn": "第 167 场双周赛",
+                    "startTime": 1760193000
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "DOWN",
+                "finishTimeInSeconds": 1760241674,
+                "rating": 2325.059,
+                "score": 12,
+                "ranking": 264,
+                "contest": {
+                    "title": "第 471 场周赛",
+                    "titleCn": "第 471 场周赛",
+                    "startTime": 1760236200
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "UP",
+                "finishTimeInSeconds": 1760842546,
+                "rating": 2341.936,
+                "score": 12,
+                "ranking": 75,
+                "contest": {
+                    "title": "第 472 场周赛",
+                    "titleCn": "第 472 场周赛",
+                    "startTime": 1760841000
+                }
+            },
+            {
+                "attended": false,
+                "totalProblems": 4,
+                "trendingDirection": null,
+                "finishTimeInSeconds": 0,
+                "rating": 0,
+                "score": 0,
+                "ranking": 0,
+                "contest": {
+                    "title": "第 168 场双周赛",
+                    "titleCn": "第 168 场双周赛",
+                    "startTime": 1761402600
+                }
+            },
+            {
+                "attended": true,
+                "totalProblems": 4,
+                "trendingDirection": "UP",
+                "finishTimeInSeconds": 1761448994,
+                "rating": 2356.741,
+                "score": 18,
+                "ranking": 101,
+                "contest": {
+                    "title": "第 473 场周赛",
+                    "titleCn": "第 473 场周赛",
+                    "startTime": 1761445800
                 }
             }
         ]

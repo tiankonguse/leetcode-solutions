@@ -100,13 +100,10 @@ struct Node {
   int next[26];
 };
 Node nodes[max6];
-int in[max6], out[max6];
-int index = 0;
+int index = 1;
 
 void Init() {
   index = 1;  // 不使用节点 0
-  memset(in, 0, sizeof(in));
-  memset(out, 0, sizeof(out));
 }
 
 struct Trie {
@@ -129,7 +126,6 @@ struct Trie {
   Trie() { Init(); }
 
   void Init() { root_index = Add(); }
-
   /** Inserts a word into the trie. */
   int Insert(const char* word) {
     int root = root_index;
@@ -142,17 +138,6 @@ struct Trie {
       word++;
     }
     return root;
-  }
-  void Dfs() { Dfs(root_index); }
-  void Dfs(int u) {
-    if (u == -1) return;
-    in[u] = ++dfs_index;
-    for (int i = 0; i < 26; i++) {
-      if (nodes[u].next[i] != -1) {
-        Dfs(nodes[u].next[i]);
-      }
-    }
-    out[u] = dfs_index;
   }
 };
 };  // namespace TRIE
@@ -193,22 +178,69 @@ class TreeArray {
 
 const int MAXN = 6e6 + 6;
 int n, q;
-char s1[MAXN], s2[MAXN];
-char S1[MAXN], S2[MAXN];
-int S1Len = 0, S2Len = 0;
-FENWICK::TreeArray fenwick;
 struct GroupInfo {
   TRIE::Trie trie1;
   TRIE::Trie trie2;
-  vector<pair<int, int>> patterns;      // 存储该组的所有模式串对应的终止结点
-  vector<tuple<int, int, int>> querys;  // 存储该组的所有查询串对应的终止结点
 };
 
-unordered_map<ll, GroupInfo> groupIndex;
-vector<tuple<int, int, int>> diffArray[MAXN];
-vector<pair<int, int>> queryArray[MAXN];
 ll ans[MAXN];
 
+namespace TreeDiff {
+
+vector<int> pattern_ids[max6];
+vector<pair<int, int>> querys[max6];
+FENWICK::TreeArray fenwick;
+
+void bind(int u, int v) { pattern_ids[u].push_back(v); }
+void bind(int u, int v, int idx) { querys[u].push_back({v, idx}); }
+
+int in[max6], out[max6];
+void Dfs2(int u, int& dfs_index) {
+  if (u == -1) return;
+  in[u] = ++dfs_index;
+  for (int i = 0; i < 26; i++) {
+    if (TRIE::nodes[u].next[i] != -1) {
+      Dfs2(TRIE::nodes[u].next[i], dfs_index);
+    }
+  }
+  out[u] = dfs_index;
+}
+
+void Dfs1(int u) {
+  if (u == -1) return;
+  for (auto v : pattern_ids[u]) {
+    const int L2 = in[v], R2 = out[v];
+    fenwick.Add(R2 + 1, -1);
+    fenwick.Add(L2, 1);
+  }
+  for (auto [v, qidx] : querys[u]) {
+    const int L2 = in[v];
+    ans[qidx] = fenwick.Query(L2);  // 求前缀和
+  }
+  for (int i = 0; i < 26; i++) {
+    if (TRIE::nodes[u].next[i] != -1) {
+      Dfs1(TRIE::nodes[u].next[i]);
+    }
+  }
+  for (auto v : pattern_ids[u]) {
+    const int L2 = in[v], R2 = out[v];
+    fenwick.Add(L2, -1);
+    fenwick.Add(R2 + 1, 1);
+  }
+}
+
+void Solver(GroupInfo& groupInfo) {  //
+  Dfs2(groupInfo.trie2.root_index, groupInfo.trie2.dfs_index);
+  fenwick.Init(groupInfo.trie2.dfs_index + 3);
+  Dfs1(groupInfo.trie1.root_index);
+}
+
+};  // namespace TreeDiff
+
+char s1[MAXN], s2[MAXN];  // 输入的原字符串 s1=ABC, s2=ADC
+char S1[MAXN], S2[MAXN];  // 提取出的相同前后缀 S1= R(A), S2=C
+int S1Len = 0, S2Len = 0;
+// h : hash(B) + ' ' + hash(D)
 ll MergeS1S2(int len) {
   int leftLen = 0, rightLen = len - 1;  // [leftLen, rightLen] 是不同的区间
   S1Len = 0, S2Len = 0;
@@ -229,37 +261,7 @@ ll MergeS1S2(int len) {
   return h;
 }
 
-void Solver(GroupInfo& groupInfo) {  //
-  groupInfo.trie1.Dfs();
-  groupInfo.trie2.Dfs();
-  // printf("trie1 size=%d, trie2 size=%d\n", groupInfo.trie1.dfs_index, groupInfo.trie2.dfs_index);
-  fenwick.Init(groupInfo.trie2.dfs_index + 3);
-  for (int i = 1; i <= groupInfo.trie1.dfs_index; i++) {
-    diffArray[i].clear();
-    queryArray[i].clear();
-  }
-  for (auto [u1, u2] : groupInfo.patterns) {
-    const int L1 = TRIE::in[u1], R1 = TRIE::out[u1];
-    const int L2 = TRIE::in[u2], R2 = TRIE::out[u2];
-    diffArray[L1].push_back({L2, R2, 1});
-    diffArray[R1 + 1].push_back({L2, R2, -1});
-  }
-  for (auto& [qidx, u1, u2] : groupInfo.querys) {
-    const int L1 = TRIE::in[u1];
-    const int L2 = TRIE::in[u2];
-    queryArray[L1].push_back({L2, qidx});
-  }
-  for (int i = 1; i <= groupInfo.trie1.dfs_index; i++) {
-    for (auto& [L2, R2, val] : diffArray[i]) {
-      fenwick.Add(R2 + 1, -val);
-      fenwick.Add(L2, val);
-    }
-    for (auto& [L2, qidx] : queryArray[i]) {
-      ans[qidx] = fenwick.Query(L2);
-    }
-  }
-}
-
+unordered_map<ll, GroupInfo> groupIndex;
 void Solver() {  //
   TRIE::Init();
   scanf("%d%d", &n, &q);
@@ -274,10 +276,9 @@ void Solver() {  //
     }
     // 插入字典表 Trie
     auto& groupInfo = groupIndex[h];
-    int node1 = groupInfo.trie1.Insert(S1);
-    int node2 = groupInfo.trie2.Insert(S2);
-    // printf("insert pattern (%s, %s) into group h=%lld at nodes (%d, %d)\n", S1, S2, h, node1, node2);
-    groupInfo.patterns.push_back({node1, node2});
+    int u1 = groupInfo.trie1.Insert(S1);
+    int u2 = groupInfo.trie2.Insert(S2);
+    TreeDiff::bind(u1, u2); // 邻接表，所有的 (u1,?) 二元组，都存在 u1 节点上
   }
 
   memset(ans, 0, sizeof(ans[0]) * q);
@@ -295,17 +296,13 @@ void Solver() {  //
       continue;
     }
     auto& groupInfo = groupIndex[h];
-    int node1 = groupInfo.trie1.Insert(S1);
-    int node2 = groupInfo.trie2.Insert(S2);
-    // printf("insert query (%s, %s) into group h=%lld at nodes (%d, %d)\n", S1, S2, h, node1, node2);
-    groupInfo.querys.push_back({i, node1, node2});
+    int u1 = groupInfo.trie1.Insert(S1);
+    int u2 = groupInfo.trie2.Insert(S2);
+    TreeDiff::bind(u1, u2, i); // 邻接表，所有的 (u1,?) 二元组，都存在 u1 节点上，由于还要更新答案，记录答案的位置
   }
-  // printf("in finish, start solving...\n");
   for (auto [h, groupInfo] : groupIndex) {
-    // printf("solving group h=%lld ...\n", h);
-    Solver(groupInfo);
+    TreeDiff::Solver(groupInfo);
   }
-  // printf("solving finish, start output...\n");
   for (int i = 0; i < q; i++) {
     printf("%lld\n", ans[i]);
   }

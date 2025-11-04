@@ -15,6 +15,14 @@
 如果如果一行的10场比赛都没参加，则该行不显示。
 
 
+
+remote-contest.json 是从首页抓取的。
+首页地址：https://leetcode.cn/u/tiankonguse/
+包地址：https://leetcode.cn/graphql/noj-go/
+
+
+
+
 """
 
 # 在文件顶部添加json导入
