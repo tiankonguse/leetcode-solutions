@@ -82,7 +82,11 @@ struct trie {
   void dfs(int u) {
     if (!u) return;
     L[u] = ++ti;
-    for (int i = 0; i < 26; i++) dfs(ch[u][i]);
+    for (int i = 0; i < 26; i++) {
+      if (ch[u].count(i)) {
+        dfs(ch[u][i]);
+      }
+    }
     R[u] = ti;
   }
 } T1, T2;
@@ -126,10 +130,15 @@ void solve(vector<pair<string, string>> &S, vector<node> &T) {
   Tree.init(T2.ti);
   vector<vector<array<int, 3>>> vec;
   vec.resize(T1.ti + 3);
-  for (int i = 0; i < S.size(); i++)
-    vec[T1.L[posS[i].first]].push_back({T2.L[posS[i].second], T2.R[posS[i].second], 1}),
-        vec[T1.R[posS[i].first] + 1].push_back({T2.L[posS[i].second], T2.R[posS[i].second], -1});
-  for (int i = 0; i < T.size(); i++) vec[T1.L[posT[i].first]].push_back({T2.L[posT[i].second], -1, T[i].idx});
+  for (int i = 0; i < S.size(); i++) {
+    int u1 = posS[i].first, u2 = posS[i].second;
+    vec[T1.L[u1]].push_back({T2.L[u2], T2.R[u2], 1});
+    vec[T1.R[u1] + 1].push_back({T2.L[u2], T2.R[u2], -1});
+  }
+  for (int i = 0; i < T.size(); i++) {
+    int u1 = posT[i].first, u2 = posT[i].second;
+    vec[T1.L[u1]].push_back({T2.L[u2], -1, T[i].idx});
+  }
   for (int i = 1; i <= T1.ti; i++) {
     for (auto &e : vec[i]) {
       if (e[1] != -1) {
