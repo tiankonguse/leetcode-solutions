@@ -13,16 +13,26 @@ int debug = 1;
   } while (0)
 
 typedef long long ll;
+
+typedef long long ll;
 class Solution {
  public:
-  int numPairsDivisibleBy60(vector<int>& time) {
-    vector<int> modCount(60, 0);
+  int countBeautifulPairs(const vector<int>& nums) {
+    int n = nums.size();
+    vector<int> cnt(10, 0);
     int ans = 0;
-    for (int t : time) {
-      int mod = t % 60;
-      int complement = (60 - mod) % 60;
-      ans += modCount[complement];
-      modCount[mod]++;
+    for (auto v : nums) {
+      int first = 0, last = v % 10;
+      while (v) {
+        first = v % 10;
+        v /= 10;
+      }
+      for (int i = 1; i <= 9; i++) {
+        if (gcd(i, last) == 1) {
+          ans += cnt[i];
+        }
+      }
+      cnt[first]++;
     }
     return ans;
   }

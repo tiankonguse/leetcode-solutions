@@ -13,16 +13,20 @@ int debug = 1;
   } while (0)
 
 typedef long long ll;
+
+typedef long long ll;
 class Solution {
  public:
-  int numPairsDivisibleBy60(vector<int>& time) {
-    vector<int> modCount(60, 0);
+  int similarPairs(vector<string>& words) {
+    unordered_map<int, int> m;
     int ans = 0;
-    for (int t : time) {
-      int mod = t % 60;
-      int complement = (60 - mod) % 60;
-      ans += modCount[complement];
-      modCount[mod]++;
+    for (auto& w : words) {
+      int bit = 0;
+      for (auto v : w) {
+        bit = bit | (1 << (v - 'a'));
+      }
+      ans += m[bit];
+      m[bit]++;
     }
     return ans;
   }

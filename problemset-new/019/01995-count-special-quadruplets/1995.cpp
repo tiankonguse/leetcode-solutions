@@ -15,14 +15,24 @@ int debug = 1;
 typedef long long ll;
 class Solution {
  public:
-  int numPairsDivisibleBy60(vector<int>& time) {
-    vector<int> modCount(60, 0);
+  int countQuadruplets(vector<int>& nums) {
+    int n = nums.size();
     int ans = 0;
-    for (int t : time) {
-      int mod = t % 60;
-      int complement = (60 - mod) % 60;
-      ans += modCount[complement];
-      modCount[mod]++;
+    map<int, vector<int>> m;
+    for (int i = 0; i < n; i++) {
+      m[nums[i]].push_back(i);
+    }
+
+    for (int i = 0; i < n; i++) {
+      for (int j = i + 1; j < n; j++) {
+        for (int k = j + 1; k < n; k++) {
+          int sum = nums[i] + nums[j] + nums[k];
+          if (m.count(sum) == 0) continue;
+          auto& vec = m[sum];
+          auto it = upper_bound(vec.begin(), vec.end(), k);
+          ans += vec.end() - it;
+        }
+      }
     }
     return ans;
   }

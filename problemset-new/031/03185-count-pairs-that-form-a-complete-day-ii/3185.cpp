@@ -15,14 +15,13 @@ int debug = 1;
 typedef long long ll;
 class Solution {
  public:
-  int numPairsDivisibleBy60(vector<int>& time) {
-    vector<int> modCount(60, 0);
-    int ans = 0;
-    for (int t : time) {
-      int mod = t % 60;
-      int complement = (60 - mod) % 60;
-      ans += modCount[complement];
-      modCount[mod]++;
+  long long countCompleteDayPairs(vector<int>& hours) {
+    ll ans = 0;
+    vector<ll> cnt(24, 0);
+    for (int h : hours) {
+      h = h % 24;
+      ans += cnt[(24 - h) % 24];
+      cnt[h]++;
     }
     return ans;
   }
