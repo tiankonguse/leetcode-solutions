@@ -206,31 +206,27 @@ void Dfs2(int u, int& dfs_index) {
   out[u] = dfs_index;
 }
 
-void updateC(int u, int val) {
+void Dfs1(int u) {
+  if (u == -1) return;
   for (auto v : pattern_ids[u]) {
     const int L2 = in[v], R2 = out[v];
-    fenwick.Add(R2 + 1, -val);
-    fenwick.Add(L2, val);
+    fenwick.Add(R2 + 1, -1);
+    fenwick.Add(L2, 1);
   }
-}
-
-void QueryCC(int u) {
   for (auto [v, qidx] : querys[u]) {
     const int L2 = in[v];
     ans[qidx] = fenwick.Query(L2);  // 求前缀和
   }
-}
-
-void Dfs1(int u) {
-  if (u == -1) return;
-  updateC(u, 1);
-  QueryCC(u);
   for (int i = 0; i < 26; i++) {
     if (TRIE::nodes[u].next[i] != -1) {
       Dfs1(TRIE::nodes[u].next[i]);
     }
   }
-  updateC(u, -1);
+  for (auto v : pattern_ids[u]) {
+    const int L2 = in[v], R2 = out[v];
+    fenwick.Add(L2, -1);
+    fenwick.Add(R2 + 1, 1);
+  }
 }
 
 void Solver(GroupInfo& groupInfo) {  //
@@ -282,7 +278,7 @@ void Solver() {  //
     auto& groupInfo = groupIndex[h];
     int u1 = groupInfo.trie1.Insert(S1);
     int u2 = groupInfo.trie2.Insert(S2);
-    TreeDiff::bind(u1, u2);  // 邻接表，所有的 (u1,?) 二元组，都存在 u1 节点上
+    TreeDiff::bind(u1, u2); // 邻接表，所有的 (u1,?) 二元组，都存在 u1 节点上
   }
 
   memset(ans, 0, sizeof(ans[0]) * q);
@@ -302,7 +298,7 @@ void Solver() {  //
     auto& groupInfo = groupIndex[h];
     int u1 = groupInfo.trie1.Insert(S1);
     int u2 = groupInfo.trie2.Insert(S2);
-    TreeDiff::bind(u1, u2, i);  // 邻接表，所有的 (u1,?) 二元组，都存在 u1 节点上，由于还要更新答案，记录答案的位置
+    TreeDiff::bind(u1, u2, i); // 邻接表，所有的 (u1,?) 二元组，都存在 u1 节点上，由于还要更新答案，记录答案的位置
   }
   for (auto [h, groupInfo] : groupIndex) {
     TreeDiff::Solver(groupInfo);

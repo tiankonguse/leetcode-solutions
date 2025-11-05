@@ -6,7 +6,7 @@ MAC EOF: ctrl+D
 link:
 PATH:
 submission:
-注： 标准的 AC 自动机模板，支持多个 AC 自动机同时工作
+注： 标准的 Trie 结合 dfs 序、树上扫描线、树状数组解决二维查询问题。  
 */
 #define TASK "replace"
 #define TASKEX ""
