@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "employ"
-#define TASKEX "-v4"
+#define TASKEX ""
 
 #include <bits/stdc++.h>
 
@@ -50,7 +50,7 @@ constexpr ll INFL = 1LL << 60;
 constexpr ll MOD = 1000000007;
 
 const double pi = acos(-1.0), eps = 1e-7;
-const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+// const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
 template <class T>
@@ -75,16 +75,23 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n, m;
-char S[555];
-vector<int> C;
-vector<int> P;  // 排列，标记是否选择
+const ll mod = 998244353;
 
-ll ans = 0;
+// 快速幂
+ll qpow(ll x, ll v, ll mod) {
+  x = x % mod;
+  ll y = 1;
+  while (v) {
+    if (v & 1) y = y * x % mod;
+    x = x * x % mod;
+    v >>= 1;
+  }
+  return y;
+}
 
-namespace DP_ALL_S1 {
+// 模逆元，mod 必须为质数
+ll inv(ll x, ll mod) { return qpow(x, mod - 2, mod); }
 struct mint {
-  const ll mod = 998244353;
   ll x;
   mint(ll x = 0) : x(x) {}
   mint operator+(const ll& b) const { return mint((x + b) % mod); }
@@ -97,53 +104,70 @@ struct mint {
   mint& operator*=(const mint& b) { return (x = (x * b.x) % mod), *this; }
   mint& operator=(const mint& b) { return (x = b.x), *this; }
   mint& operator=(const ll& b) { return (x = b), *this; }
-  bool operator==(const ll& b) const { return x == b; }
-  bool operator==(const mint& b) const { return x == b.x; }
+  mint operator~() const { return mint(qpow(x, mod - 2, mod)); }
 };
 
-vector<int> bucket;               // SC 后缀和
-vector<int> SC;                   // SC 后缀和
-vector<vector<vector<mint>>> dp;  // 前 i 个人，挂了j个，其中前 i 个人中忍耐度大于 j 的有 k 个
+const int N = 555;
+mint fac[N], ifac[N];
+mint A(int n, int m) { return n < m ? 0 : fac[n] * ifac[n - m]; }
+mint C(int n, int m) { return n < m ? 0 : fac[n] * ifac[m] * ifac[n - m]; }
 
-ll Ranges(int l, int r) {
-  if (l > n) return 0;
-  if (r > n) r = n;
-  return SC[l] - SC[r + 1];
+void Init() {
+  fac[0] = ifac[0] = 1;
+  for (int i = 1; i < N; i++) {
+    fac[i] = fac[i - 1] * i;
+    ifac[i] = ~fac[i];
+  }
 }
 
-ll Solver(int m) {
-  bucket.clear();
-  bucket.resize(n + 2, 0);
+int n, m;
+char S[N];
+vector<int> c;
+vector<int> pre;                  //  S 的前缀和
+vector<vector<vector<mint>>> dp;  // 前 i 个人，j 个挂，其中 c 大于 j 的有 k 个
+// 定义：只有 j 变化时，才计算排列数。
+// dp[n][x][k] 代表 前 n 个人，挂 x 个，挂的里面 c 大于 x 的有 k 个。 对于这个 k 个人，顺序不影响答案，所以有 k!
+// 种排列方式。
+
+void Solver() {  //
+  Init();
+  scanf("%d%d", &n, &m);
+  scanf("%s", S + 1);
+  c.resize(n + 2, 0);
   for (int i = 1; i <= n; i++) {
-    bucket[C[i]]++;
+    int v;
+    scanf("%d", &v);
+    c[v]++;
   }
-  SC.resize(n + 2, 0);
-  for (int i = n; i >= 0; i--) {
-    SC[i] = SC[i + 1] + bucket[i];
+  pre.resize(n + 2, 0);
+  pre[0] = c[0];
+  for (int i = 1; i <= n; i++) {
+    pre[i] = pre[i - 1] + c[i];
   }
-  dp.clear();
-  dp.resize(n + 1, vector<vector<mint>>(n + 1, vector<mint>(n + 1, 0)));
+  dp.resize(n + 1, vector<vector<mint>>(n + 1, vector<mint>(n + 1)));
   dp[0][0][0] = 1;
   for (int i = 0; i < n; i++) {
-    for (int j = 0; j <= i; j++) {    // j = [0, i]
-      for (int k = 0; k <= i; k++) {  // k = [0, i]
-        assert(S[i + 1] == '1');
-        if (dp[i][j][k] == 0) continue;
-        // 下个人想要不挂，忍耐度 C[i] 需要大于 j, 即在忍耐度为 [j+1, n] 之间选择1个人
-        // 目前已经选择了 k 个人，可选择的只有 Ranges(j+1,n) - k
-        const ll allGreater = Ranges(j + 1, n);
-        if (allGreater >= k) {
-          dp[i + 1][j][k + 1] += dp[i][j][k] * (allGreater - k);
-        }
-
-        // 下个人想要挂掉，忍耐度 C[i] 需要小于等于 j,  即在忍耐度为 [0, j] 之间选择1个人。
-        // 目前已经选择了 i-k 个人，可选择的只有 Ranges(0,j) - (i-k)
-        // 还需要枚举 k 个忍耐度大于 j 的人中，有多少个忍耐度等于 j+1
-        const ll allLessEqual = Ranges(0, j);
-        const ll chosenLessEqual = i - k;
-        if (allLessEqual >= chosenLessEqual) {
-          for (int t = 0; t <= min(k, bucket[j + 1]); t++) {
-            dp[i + 1][j + 1][k - t] += dp[i][j][k] * (allLessEqual - chosenLessEqual);
+    for (int j = 0; j <= i; j++) {
+      for (int k = 0; k <= i; k++) {
+        if (S[i + 1] == '1') {
+          // 下个人不挂，忍耐度 C[i] 需要大于 j。j 不变，所以不需要计算排列数
+          dp[i + 1][j][k + 1] += dp[i][j][k];
+          // 下个人挂，忍耐度 C[i] 需要小于等于 j,  即在忍耐度为 [0, j] 之间选择1个人
+          // 枚举 k 个忍耐度大于 j 的人中，有多少个忍耐度等于 j+1
+          if (pre[j] >= i - k) {
+            for (int t = 0; t <= min(k, c[j + 1]); t++) {  // 选择 t 个忍耐度等于 j+1 的人
+              dp[i + 1][j + 1][k - t] += dp[i][j][k] * (pre[j] - (i - k)) * C(c[j + 1], t) * A(k, t);
+            }
+          }
+        } else {  // S[i+1]=0, 下个人不管如何选择，必挂
+          // 必挂，j 需要加 1
+          for (int t = 0; t <= min(c[j + 1], k); t++) {  // 枚举之前 k 个人中，有多少个忍耐度等于 j+1
+            // 情况1：选择 <= j+1 的人，此时 k 变为 k - t
+            if (pre[j + 1] >= i - k + t) {
+              dp[i + 1][j + 1][k - t] += dp[i][j][k] * (pre[j + 1] - (i - k + t)) * C(c[j + 1], t) * A(k, t);
+            }
+            // 情况2：选择 > j+1 的人，此时 k 变为 k - t + 1
+            dp[i + 1][j + 1][k - t + 1] += dp[i][j][k] * C(c[j + 1], t) * A(k, t);
           }
         }
       }
@@ -151,34 +175,11 @@ ll Solver(int m) {
   }
 
   mint ans = 0;
-  for (int j = 0; j <= n - m; j++) {
-    for (int k = 0; k <= n; k++) {
-      ans += dp[n][j][k];
-    }
+  for (int j = 0; j <= n - m; j++) {  //  挂 j 个人，大于等于 j 的人数是 n - pre[j]
+    int k = n - pre[j];
+    ans += dp[n][j][k] * fac[k];
   }
-  return ans.x;
-}
-
-/*
-3 2
-111
-1 0 2
-
-*/
-
-};  // namespace DP_ALL_S1
-
-void Solver() {  //
-  scanf("%d%d", &n, &m);
-  scanf("%s", S + 1);
-  C.resize(n + 1, 0);
-  for (int i = 1; i <= n; i++) {
-    scanf("%d", &C[i]);
-  }
-  // 特殊性质 A: 对于所有 i，均有 s[i]=1。
-  for (int i = 0; i <= n; i++) {
-    printf("m=%d, ans = %lld\n", i, DP_ALL_S1::Solver(i));
-  }
+  printf("%lld\n", ans.x);
 }
 
 #ifdef USACO_LOCAL_JUDGE

@@ -1,14 +1,14 @@
 /*
 ID: tiankonguse
-TASK: employ
+TASK: road
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
-注：暴力排列组合，得 8 分
+ides: 暴力枚举所有乡村的选择方案，合并所有边，排序，最后求最小生成树， 80 分
 */
-#define TASK "employ"
+#define TASK "road"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -76,45 +76,136 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n, m;
-char S[555];
-vector<int> C;
+class Dsu {
+  vector<int> fa, score;
 
-ll ans = 0;
-
-vector<int> P;            // 排列，标记是否选择
-ll Dfs(int p, int cnt) {  // cnt 代表之前已经选择了 cnt 个员工
-  if (p == n + 1) {
-    return cnt >= m ? 1 : 0;
-  }
-
-  ll ret = 0;
-  const int c = (p - 1) - cnt;    // 前 p-1 天未被选择的员工数量
-  for (int i = 1; i <= n; i++) {  // 第 p 天选择一个员工
-    if (P[i] == 0) {              // 员工 i 未被选择，尝试选择
-      P[i] = 1;                   // 选择员工 i
-      if (S[p] == '1' && c < C[i]) {
-        ret += Dfs(p + 1, cnt + 1);
-      } else {
-        ret += Dfs(p + 1, cnt);
-      }
-      P[i] = 0;  // 回溯，取消选择员工 i
+ public:
+  void Init(int n) {
+    fa.resize(n);
+    score.resize(n);
+    for (int i = 0; i < n; i++) {
+      fa[i] = i, score[i] = 0;
     }
   }
-  return ret;
+
+  int Find(int x) {
+    if (fa[x] != x) {
+      fa[x] = Find(fa[x]);
+    }
+    return fa[x];
+  }
+
+  // Union，也成为了 Merge
+  void Union(int x, int y) {
+    x = Find(x);
+    y = Find(y);
+    if (x != y) {
+      if (score[x] > score[y]) {
+        fa[y] = x;
+      } else {
+        fa[x] = y;
+        if (score[x] == score[y]) {
+          ++score[y];
+        }
+      }
+    }
+  }
+  void AddScore(int x) {
+    x = Find(x);
+    score[x]++;
+  }
+
+  int GetScore(int x) {
+    x = Find(x);
+    return score[x];
+  }
+};
+
+int n, m, k;
+vector<tuple<ll, int, int>> baseEdges;
+vector<tuple<ll, int, int>> selectEdges;
+vector<tuple<ll, int, int>> townSelectEdges;
+vector<ll> townCosts;
+vector<vector<ll>> townEdgeCosts;
+Dsu dsu;
+
+void Input() {
+  scanf("%d%d%d", &n, &m, &k);
+  baseEdges.reserve(m);
+  for (int i = 0; i < m; i++) {
+    int u, v;
+    ll w;
+    scanf("%d%d%lld", &u, &v, &w);
+    u--, v--;
+    baseEdges.push_back({w, u, v});
+  }
+  townCosts.resize(k);
+  townEdgeCosts.resize(k, vector<ll>(n, 0));
+  for (int i = 0; i < k; i++) {
+    scanf("%lld", &townCosts[i]);
+    for (int j = 0; j < n; j++) {
+      scanf("%lld", &townEdgeCosts[i][j]);
+    }
+  }
+}
+
+ll ans = 0;
+ll MinimumSpanningTree(int selectNum, ll cost, vector<tuple<ll, int, int>>& townSelectEdges) {
+  dsu.Init(n + k);
+  int blockNum = selectNum + n;
+  for (auto [w, u, v] : townSelectEdges) {
+    if (dsu.Find(u) != dsu.Find(v)) {
+      blockNum--;
+      dsu.Union(u, v);
+      cost += w;
+    }
+    if (cost >= ans || blockNum == 1) {
+      return cost;
+    }
+  }
+  return cost;
 }
 
 void Solver() {  //
-  scanf("%d%d", &n, &m);
-  scanf("%s", S + 1);
-  C.resize(n + 1);
-  for (int i = 1; i <= n; i++) {
-    scanf("%d", &C[i]);
-  }
-  sort(C.begin() + 1, C.end());
-  P.resize(n + 1, 0);
+  Input();
+
+  // 第一步：求原生最小生成树
+  sort(baseEdges.begin(), baseEdges.end());
+  dsu.Init(n + k);
+  selectEdges.reserve(n - 1);
   ans = 0;
-  printf("%lld\n", Dfs(1, 0));
+  for (auto [w, u, v] : baseEdges) {
+    if (dsu.Find(u) != dsu.Find(v)) {
+      dsu.Union(u, v);
+      ans += w;
+      selectEdges.push_back({w, u, v});
+    }
+  }
+
+  townSelectEdges.reserve(k * n);
+  const int MASK = (1 << k) - 1;
+  for (int sub = MASK; sub; sub = (sub - 1) & MASK) {
+    townSelectEdges = selectEdges;
+    ll subCost = 0;
+    int selectNum = 0;
+    for (int i = 0; i < k; i++) {
+      if ((sub >> i) & 1) {
+        selectNum++;
+        // 选择第 i 个乡村
+        subCost += townCosts[i];
+        for (int j = 0; j < n; j++) {
+          ll w = townEdgeCosts[i][j];
+          int u = n + i;
+          int v = j;
+          townSelectEdges.push_back({w, u, v});
+        }
+      }
+    }
+    sort(townSelectEdges.begin(), townSelectEdges.end());
+    ll totalCost = MinimumSpanningTree(selectNum, subCost, townSelectEdges);
+    ans = min(ans, totalCost);
+  }
+  printf("%lld\n", ans);
 }
 
 #ifdef USACO_LOCAL_JUDGE

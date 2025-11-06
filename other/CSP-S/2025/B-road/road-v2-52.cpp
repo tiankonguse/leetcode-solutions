@@ -9,7 +9,7 @@ submission:
 ides: 暴力枚举所有乡村的选择方案，合并所有边，排序，最后求最小生成树， 80 分
 */
 #define TASK "road"
-#define TASKEX ""
+#define TASKEX "-v2"
 
 #include <bits/stdc++.h>
 
@@ -128,7 +128,7 @@ vector<tuple<ll, int, int>> townSelectEdges;
 vector<ll> townCosts;
 vector<vector<ll>> townEdgeCosts;
 Dsu dsu;
-ll maxEdge = 0;
+int hasAllZeroCAndA = 0;
 
 void Input() {
   scanf("%d%d%d", &n, &m, &k);
@@ -142,21 +142,26 @@ void Input() {
   }
   townCosts.resize(k);
   townEdgeCosts.resize(k, vector<ll>(n, 0));
+  ll sum = 0;
   for (int i = 0; i < k; i++) {
     scanf("%lld", &townCosts[i]);
+    sum += townCosts[i];
     for (int j = 0; j < n; j++) {
       scanf("%lld", &townEdgeCosts[i][j]);
     }
+  }
+  if (sum == 0) {
+    hasAllZeroCAndA++;
   }
 }
 
 ll ans = 0;
 ll MinimumSpanningTree(int selectNum, ll cost, vector<tuple<ll, int, int>>& townSelectEdges) {
   dsu.Init(n + k);
-  int blockNum = selectNum + n;
+  // int blockNum = selectNum + n;
   for (auto [w, u, v] : townSelectEdges) {
     if (dsu.Find(u) != dsu.Find(v)) {
-      blockNum--;
+      // blockNum--;
       dsu.Union(u, v);
       cost += w;
     }
@@ -169,25 +174,38 @@ ll MinimumSpanningTree(int selectNum, ll cost, vector<tuple<ll, int, int>>& town
 
 void Solver() {  //
   Input();
+  if (hasAllZeroCAndA) {
+    baseEdges.reserve(m + k * n);
+    for (int x = 0; x < k; x++) {
+      for (int y = 0; y < n; y++) {
+        for (int z = 0; z < n; z++) {
+          baseEdges.push_back({townEdgeCosts[x][y] + townEdgeCosts[x][z], y, z});
+        }
+      }
+    }
+  }
 
   // 第一步：求原生最小生成树
   sort(baseEdges.begin(), baseEdges.end());
   dsu.Init(n + k);
-  selectEdges.reserve(n - 1);
+  selectEdges.reserve(n + k - 1);
   ans = 0;
   for (auto [w, u, v] : baseEdges) {
     if (dsu.Find(u) != dsu.Find(v)) {
       dsu.Union(u, v);
       ans += w;
       selectEdges.push_back({w, u, v});
-      maxEdge = max(maxEdge, w);
     }
+  }
+  if (hasAllZeroCAndA) {
+    printf("%lld\n", ans);
+    return;
   }
 
   townSelectEdges.reserve(k * n);
   const int MASK = (1 << k) - 1;
   for (int sub = MASK; sub; sub = (sub - 1) & MASK) {
-    townSelectEdges = selectEdges;
+    townSelectEdges = baseEdges;
     ll subCost = 0;
     int selectNum = 0;
     for (int i = 0; i < k; i++) {
@@ -199,9 +217,7 @@ void Solver() {  //
           ll w = townEdgeCosts[i][j];
           int u = n + i;
           int v = j;
-          if (w <= maxEdge) {
-            townSelectEdges.push_back({w, u, v});
-          }
+          townSelectEdges.push_back({w, u, v});
         }
       }
     }

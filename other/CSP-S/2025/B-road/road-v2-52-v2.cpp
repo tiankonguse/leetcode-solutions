@@ -6,11 +6,10 @@ MAC EOF: ctrl+D
 link:
 PATH:
 submission:
-优化1: 如果一个边原先不在原最小生成树上，那么枚举乡村时，这个边也不可能在新的最小生成树上。
-优化2： 记录原最小生成树的最大边权值maxEdge，枚举乡村时，只考虑边权值小于等于maxEdge的边。
+ides: 暴力枚举所有乡村的选择方案，合并所有边，排序，最后求最小生成树， 80 分
 */
 #define TASK "road"
-#define TASKEX ""
+#define TASKEX "-v2"
 
 #include <bits/stdc++.h>
 
@@ -54,6 +53,11 @@ constexpr ll MOD = 1000000007;
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
+
+template <class T>
+using min_queue = priority_queue<T, vector<T>, greater<T>>;
+template <class T>
+using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
 // #define LOCAL_IO 1
@@ -117,14 +121,17 @@ class Dsu {
   }
 };
 
-int n, m, K;
+int n, m, k;
 vector<tuple<ll, int, int>> baseEdges;
+vector<tuple<ll, int, int>> selectEdges;
+vector<tuple<ll, int, int>> townSelectEdges;
 vector<ll> townCosts;
-vector<vector<tuple<ll, int, int>>> townEdgeCosts;
+vector<vector<ll>> townEdgeCosts;
 Dsu dsu;
+int hasAllZeroCAndA = 0;
 
 void Input() {
-  scanf("%d%d%d", &n, &m, &K);
+  scanf("%d%d%d", &n, &m, &k);
   baseEdges.reserve(m);
   for (int i = 0; i < m; i++) {
     int u, v;
@@ -133,49 +140,32 @@ void Input() {
     u--, v--;
     baseEdges.push_back({w, u, v});
   }
-  townCosts.resize(K);
-  townEdgeCosts.resize(K + 1, vector<tuple<ll, int, int>>(n));
-  for (int k = 0; k < K; k++) {
-    scanf("%lld", &townCosts[k]);
+  townCosts.resize(k);
+  townEdgeCosts.resize(k, vector<ll>(n, 0));
+  ll sum = 0;
+  for (int i = 0; i < k; i++) {
+    scanf("%lld", &townCosts[i]);
+    sum += townCosts[i];
     for (int j = 0; j < n; j++) {
-      ll w;
-      scanf("%lld", &w);
-      townEdgeCosts[k][j] = {w, n + k, j};
+      scanf("%lld", &townEdgeCosts[i][j]);
     }
-    sort(townEdgeCosts[k].begin(), townEdgeCosts[k].end());
+  }
+  if (sum == 0) {
+    hasAllZeroCAndA++;
   }
 }
 
-template <class T>
-using min_queue = priority_queue<T, vector<T>, greater<T>>;
-template <class T>
-using max_queue = priority_queue<T>;
-
-min_queue<tuple<ll, int, int>> que;
 ll ans = 0;
-ll maxEdge = 0;
-
-tuple<ll, int, int> PopQue() {
-  const auto [w, k, index] = que.top();
-  que.pop();
-  int edgesSize = townEdgeCosts[k].size();
-  if (index + 1 < edgesSize) {
-    que.push({get<0>(townEdgeCosts[k][index + 1]), k, index + 1});
-  }
-  return townEdgeCosts[k][index];
-}
-
-ll MinimumSpanningTree(ll cost) {
-  dsu.Init(n + K);
-  int groupNum = n + K;
-  while (!que.empty()) {
-    auto [w, u, v] = PopQue();
+ll MinimumSpanningTree(int selectNum, ll cost, vector<tuple<ll, int, int>>& townSelectEdges) {
+  dsu.Init(n + k);
+  int blockNum = selectNum + n;
+  for (auto [w, u, v] : townSelectEdges) {
     if (dsu.Find(u) != dsu.Find(v)) {
-      groupNum--;
+      blockNum--;
       dsu.Union(u, v);
       cost += w;
     }
-    if (cost >= ans || groupNum == 1) {
+    if (cost >= ans || blockNum == 1) {
       return cost;
     }
   }
@@ -184,32 +174,57 @@ ll MinimumSpanningTree(ll cost) {
 
 void Solver() {  //
   Input();
+  if (hasAllZeroCAndA) {
+    baseEdges.reserve(m + k * n);
+    for (int y = 0; y < n; y++) {
+      for (int z = 0; z < n; z++) {
+        ll minCost = townEdgeCosts[0][y] + townEdgeCosts[0][z];
+        for (int x = 0; x < k; x++) {
+          minCost = min(minCost, townEdgeCosts[x][y] + townEdgeCosts[x][z]);
+        }
+        baseEdges.push_back({minCost, y, z});
+      }
+    }
+  }
 
   // 第一步：求原生最小生成树
   sort(baseEdges.begin(), baseEdges.end());
-  dsu.Init(n + K);
+  dsu.Init(n + k);
+  selectEdges.reserve(n + k - 1);
   ans = 0;
   for (auto [w, u, v] : baseEdges) {
     if (dsu.Find(u) != dsu.Find(v)) {
       dsu.Union(u, v);
       ans += w;
-      townEdgeCosts[K].push_back({w, u, v});  // 天生有序
-      maxEdge = max(maxEdge, w);
+      selectEdges.push_back({w, u, v});
     }
   }
+  if (hasAllZeroCAndA) {
+    printf("%lld\n", ans);
+    return;
+  }
 
-  const int MASK = (1 << K) - 1;
+  townSelectEdges.reserve(k * n);
+  const int MASK = (1 << k) - 1;
   for (int sub = MASK; sub; sub = (sub - 1) & MASK) {
+    townSelectEdges = baseEdges;
     ll subCost = 0;
-    while (!que.empty()) que.pop();
-    que.push({get<0>(townEdgeCosts[K][0]), K, 0});  // 原图当做第 K 个乡镇
-    for (int k = 0; k < K; k++) {
-      if ((sub >> k) & 1) {
-        subCost += townCosts[k];  // 选择第 k 个乡村
-        que.push({get<0>(townEdgeCosts[k][0]), k, 0});
+    int selectNum = 0;
+    for (int i = 0; i < k; i++) {
+      if ((sub >> i) & 1) {
+        selectNum++;
+        // 选择第 i 个乡村
+        subCost += townCosts[i];
+        for (int j = 0; j < n; j++) {
+          ll w = townEdgeCosts[i][j];
+          int u = n + i;
+          int v = j;
+          townSelectEdges.push_back({w, u, v});
+        }
       }
     }
-    ll totalCost = MinimumSpanningTree(subCost);
+    sort(townSelectEdges.begin(), townSelectEdges.end());
+    ll totalCost = MinimumSpanningTree(selectNum, subCost, townSelectEdges);
     ans = min(ans, totalCost);
   }
   printf("%lld\n", ans);
