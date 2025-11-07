@@ -1,14 +1,14 @@
 /*
 ID: tiankonguse
-TASK: polygon
+TASK: seat
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "polygon"
-#define TASKEX ""
+#define TASK "seat"
+#define TASKEX "-v4-100"
 
 #include <bits/stdc++.h>
 
@@ -50,7 +50,7 @@ constexpr ll INFL = 1LL << 60;
 constexpr ll MOD = 1000000007;
 
 const double pi = acos(-1.0), eps = 1e-7;
-// const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
 template <class T>
@@ -59,7 +59,7 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
-// #define LOCAL_IO 1
+#define LOCAL_IO 1
 #ifdef USACO_LOCAL_JUDGE
 #ifdef LOCAL_IO
 #define USACO_TASK_FILE 20
@@ -75,44 +75,50 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-ll n;
-vector<ll> a;
-const ll modV = 998244353;
-void Solver() {  //
-  scanf("%lld", &n);
-  a.resize(n);
-  ll maxV = 0;  // 特殊标记，大于 5000 的都当做 maxV 处理
-  for (int i = 0; i < n; i++) {
-    scanf("%lld", &a[i]);
-    maxV = max(maxV, a[i]);
-  }
-  maxV = maxV + 1;
-  sort(a.begin(), a.end());
-  ll ans = 0;
-  vector<ll> dp(maxV + 1, 0);     // 子集和为 dp[i] 的方案数
-  dp[0] = 1;                      // 空集
-  for (int i = 1; i <= n; i++) {  // a[i] 作为最大边
-    const ll v = a[i - 1];
-    // 第 i 条边作为最大边，前面的边的子集和 大于 V 的个数
-    for (int V = v + 1; V <= maxV; V++) {
-      ans = (ans + dp[V]) % modV;
-    }
-    // 第 i 条边加入子集
-    for (int V = maxV; V >= 0; V--) {
-      const ll sum = V + v;
-      if (sum >= maxV) {
-        dp[maxV] = (dp[maxV] + dp[V]) % modV;
-      } else {
-        dp[sum] = (dp[sum] + dp[V]) % modV;
+int n, m;
+vector<int> a;
+
+int g[12][12];
+void S() {
+  int index = n * m - 1;  // 逆序遍历
+  for (int col = 1; col <= m; col++) {
+    if (col % 2 == 1) {  // 从上到下
+      for (int row = 1; row <= n; row++) {
+        g[row][col] = a[index--];
+      }
+    } else {  // 从下到上
+      for (int row = n; row >= 1; row--) {
+        g[row][col] = a[index--];
       }
     }
   }
-  printf("%lld\n", ans);
 }
-/*
-5
-1 2 3 4 5
-*/
+void FindX(int x) {
+  // 找x的位置
+  for (int row = 1; row <= n; row++) {
+    for (int col = 1; col <= m; col++) {
+      if (g[row][col] == x) {
+        printf("%d %d\n", col, row);
+        return;
+      }
+    }
+  }
+}
+
+void Solver() {  //
+  scanf("%d%d", &n, &m);
+  a.clear();
+  a.resize(n * m);
+  for (int i = 0; i < n * m; i++) {
+    scanf("%d", &a[i]);
+  }
+
+  const int x = a[0];
+  sort(a.begin(), a.end());
+  S();  // 模拟S形排列
+  FindX(x);
+  return;
+}
 
 #ifdef USACO_LOCAL_JUDGE
 double costTime = 0;
@@ -154,6 +160,7 @@ int main(int argc, char** argv) {
   dup2(stdout_fd, STDOUT_FILENO);
   close(stdout_fd);
   stdout = fdopen(STDOUT_FILENO, "w");
+  int AC = 0;
   for (int i = 1; i <= USACO_TASK_FILE; i++) {
     int fileIndex = i;
     string fileAns = string(TASK) + to_string(fileIndex) + ".ans";
@@ -162,9 +169,11 @@ int main(int argc, char** argv) {
     if (system(cmd.c_str())) {
       printf("case %d: Wrong answer, cost %.0lfms\n", i, costTime);
     } else {
+      AC++;
       printf("case %d: Accepted, cost %.0lfms\n", i, costTime);
     }
   }
+  printf("Total: %d / %d, 得分： %d\n", AC, USACO_TASK_FILE, AC * (100 / USACO_TASK_FILE));
 #endif
   return 0;
 }

@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "polygon"
-#define TASKEX ""
+#define TASKEX "-v3-100"
 
 #include <bits/stdc++.h>
 
@@ -59,10 +59,10 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
-// #define LOCAL_IO 1
+#define LOCAL_IO 1
 #ifdef USACO_LOCAL_JUDGE
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 20
+#define USACO_TASK_FILE 25
 #define TASKNO 1
 #ifndef USACO_TASK_FILE
   fileIndex = TASKNO;
@@ -86,6 +86,7 @@ void Solver() {  //
     scanf("%lld", &a[i]);
     maxV = max(maxV, a[i]);
   }
+
   maxV = maxV + 1;
   sort(a.begin(), a.end());
   ll ans = 0;
@@ -154,17 +155,20 @@ int main(int argc, char** argv) {
   dup2(stdout_fd, STDOUT_FILENO);
   close(stdout_fd);
   stdout = fdopen(STDOUT_FILENO, "w");
+  int AC = 0;
   for (int i = 1; i <= USACO_TASK_FILE; i++) {
     int fileIndex = i;
     string fileAns = string(TASK) + to_string(fileIndex) + ".ans";
     string fileOut = string(TASK) + to_string(fileIndex) + ".out";
-    string cmd = string("diff -w " + fileAns + " " + fileOut);
+    string cmd = string("diff -w " + fileAns + " " + fileOut + " > /dev/null");
     if (system(cmd.c_str())) {
       printf("case %d: Wrong answer, cost %.0lfms\n", i, costTime);
     } else {
+      AC++;
       printf("case %d: Accepted, cost %.0lfms\n", i, costTime);
     }
   }
+  printf("Total: %d / %d, 得分： %d\n", AC, USACO_TASK_FILE, AC * (100 / USACO_TASK_FILE));
 #endif
   return 0;
 }

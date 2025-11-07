@@ -1,14 +1,14 @@
 /*
 ID: tiankonguse
-TASK: polygon
+TASK: number
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "polygon"
-#define TASKEX ""
+#define TASK "number"
+#define TASKEX "-v3-100"
 
 #include <bits/stdc++.h>
 
@@ -50,7 +50,7 @@ constexpr ll INFL = 1LL << 60;
 constexpr ll MOD = 1000000007;
 
 const double pi = acos(-1.0), eps = 1e-7;
-// const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
 template <class T>
@@ -59,10 +59,10 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
-// #define LOCAL_IO 1
+#define LOCAL_IO 1
 #ifdef USACO_LOCAL_JUDGE
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 20
+#define USACO_TASK_FILE 25
 #define TASKNO 1
 #ifndef USACO_TASK_FILE
   fileIndex = TASKNO;
@@ -75,44 +75,27 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-ll n;
-vector<ll> a;
-const ll modV = 998244353;
+const int maxn = 1e6 + 10;
+char str[maxn];
 void Solver() {  //
-  scanf("%lld", &n);
-  a.resize(n);
-  ll maxV = 0;  // 特殊标记，大于 5000 的都当做 maxV 处理
-  for (int i = 0; i < n; i++) {
-    scanf("%lld", &a[i]);
-    maxV = max(maxV, a[i]);
-  }
-  maxV = maxV + 1;
-  sort(a.begin(), a.end());
-  ll ans = 0;
-  vector<ll> dp(maxV + 1, 0);     // 子集和为 dp[i] 的方案数
-  dp[0] = 1;                      // 空集
-  for (int i = 1; i <= n; i++) {  // a[i] 作为最大边
-    const ll v = a[i - 1];
-    // 第 i 条边作为最大边，前面的边的子集和 大于 V 的个数
-    for (int V = v + 1; V <= maxV; V++) {
-      ans = (ans + dp[V]) % modV;
-    }
-    // 第 i 条边加入子集
-    for (int V = maxV; V >= 0; V--) {
-      const ll sum = V + v;
-      if (sum >= maxV) {
-        dp[maxV] = (dp[maxV] + dp[V]) % modV;
-      } else {
-        dp[sum] = (dp[sum] + dp[V]) % modV;
-      }
+  scanf("%s", str);
+  int n = strlen(str);
+  vector<int> digits(10, 0);
+  for (auto c : string(str)) {
+    if (c >= '0' && c <= '9') {
+      digits[c - '0']++;
     }
   }
-  printf("%lld\n", ans);
+  string ans;
+  ans.reserve(n);
+  for (int i = 9; i >= 0; i--) {
+    while (digits[i] > 0) {
+      digits[i]--;
+      ans.push_back('0' + i);
+    }
+  }
+  printf("%s\n", ans.c_str());
 }
-/*
-5
-1 2 3 4 5
-*/
 
 #ifdef USACO_LOCAL_JUDGE
 double costTime = 0;
@@ -154,6 +137,7 @@ int main(int argc, char** argv) {
   dup2(stdout_fd, STDOUT_FILENO);
   close(stdout_fd);
   stdout = fdopen(STDOUT_FILENO, "w");
+  int AC = 0;
   for (int i = 1; i <= USACO_TASK_FILE; i++) {
     int fileIndex = i;
     string fileAns = string(TASK) + to_string(fileIndex) + ".ans";
@@ -162,9 +146,11 @@ int main(int argc, char** argv) {
     if (system(cmd.c_str())) {
       printf("case %d: Wrong answer, cost %.0lfms\n", i, costTime);
     } else {
+      AC++;
       printf("case %d: Accepted, cost %.0lfms\n", i, costTime);
     }
   }
+  printf("Total: %d / %d, 得分： %d\n", AC, USACO_TASK_FILE, AC * (100 / USACO_TASK_FILE));
 #endif
   return 0;
 }

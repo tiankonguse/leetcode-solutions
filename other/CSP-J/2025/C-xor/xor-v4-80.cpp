@@ -1,14 +1,14 @@
 /*
 ID: tiankonguse
-TASK: polygon
+TASK: xor
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "polygon"
-#define TASKEX ""
+#define TASK "xor"
+#define TASKEX "-v4-80"
 
 #include <bits/stdc++.h>
 
@@ -50,7 +50,7 @@ constexpr ll INFL = 1LL << 60;
 constexpr ll MOD = 1000000007;
 
 const double pi = acos(-1.0), eps = 1e-7;
-// const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
 template <class T>
@@ -59,7 +59,7 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
-// #define LOCAL_IO 1
+#define LOCAL_IO 1
 #ifdef USACO_LOCAL_JUDGE
 #ifdef LOCAL_IO
 #define USACO_TASK_FILE 20
@@ -75,43 +75,82 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-ll n;
-vector<ll> a;
-const ll modV = 998244353;
+ll n, k;
+vector<ll> dp;
 void Solver() {  //
-  scanf("%lld", &n);
-  a.resize(n);
-  ll maxV = 0;  // 特殊标记，大于 5000 的都当做 maxV 处理
-  for (int i = 0; i < n; i++) {
+  ll isA = 1;
+  ll isB = 1;
+  scanf("%lld%lld", &n, &k);
+  vector<ll> a(n + 1, 0);
+  for (int i = 1; i <= n; i++) {
     scanf("%lld", &a[i]);
-    maxV = max(maxV, a[i]);
+    if (a[i] != 1) isA = 0;
+    if (a[i] > 1) isB = 0;
   }
-  maxV = maxV + 1;
-  sort(a.begin(), a.end());
-  ll ans = 0;
-  vector<ll> dp(maxV + 1, 0);     // 子集和为 dp[i] 的方案数
-  dp[0] = 1;                      // 空集
-  for (int i = 1; i <= n; i++) {  // a[i] 作为最大边
-    const ll v = a[i - 1];
-    // 第 i 条边作为最大边，前面的边的子集和 大于 V 的个数
-    for (int V = v + 1; V <= maxV; V++) {
-      ans = (ans + dp[V]) % modV;
-    }
-    // 第 i 条边加入子集
-    for (int V = maxV; V >= 0; V--) {
-      const ll sum = V + v;
-      if (sum >= maxV) {
-        dp[maxV] = (dp[maxV] + dp[V]) % modV;
+  // 特殊性质 A: 对于所有 1≤i≤n，均有 a i  =1。
+  if (isA && k == 0) {
+    printf("%lld\n", n / 2);
+    return;
+  }
+  vector<ll> dp(n + 1, 0);
+  if (isB && k <= 1) {
+    int lastOne = -1;
+    for (int i = 1; i <= n; i++) {
+      int v = a[i];
+      if (v == k) {
+        dp[i] = dp[i - 1] + 1;  // 一个元素就满足要求
       } else {
-        dp[sum] = (dp[sum] + dp[V]) % modV;
+        if (lastOne != -1) {
+          dp[i] = max(dp[i - 1], dp[lastOne - 1] + 1);
+        } else {
+          dp[i] = dp[i - 1];
+        }
+      }
+      if (v == 1) {
+        lastOne = i;
       }
     }
+    printf("%lld\n", dp[n]);
+    return;
   }
-  printf("%lld\n", ans);
+  if (n <= 1000) {
+    for (int i = 1; i <= n; i++) {
+      dp[i] = dp[i - 1];
+      ll sum = 0;
+      for (int j = i; j >= 1; j--) {
+        sum ^= a[j];
+        if (sum == k) {
+          dp[i] = max(dp[i], dp[j - 1] + 1);
+          break;
+        }
+      }
+    }
+
+    printf("%lld\n", dp[n]);
+    return;
+  }
+  if (k <= 255) {
+    vector<int> lastXorIndex(256, -1);
+    ll preXor = 0;
+    lastXorIndex[0] = 0;
+    for (int i = 1; i <= n; i++) {
+      dp[i] = dp[i - 1];
+      preXor ^= a[i];
+      int needXor = preXor ^ k;
+      if (lastXorIndex[needXor] != -1) {
+        int index = lastXorIndex[needXor];
+        dp[i] = max(dp[i], dp[index] + 1);
+      }
+      lastXorIndex[preXor] = i;
+    }
+
+    printf("%lld\n", dp[n]);
+    return;
+  }
 }
 /*
-5
-1 2 3 4 5
+4 2
+2 1 0 3
 */
 
 #ifdef USACO_LOCAL_JUDGE
@@ -154,17 +193,20 @@ int main(int argc, char** argv) {
   dup2(stdout_fd, STDOUT_FILENO);
   close(stdout_fd);
   stdout = fdopen(STDOUT_FILENO, "w");
+  int AC = 0;
   for (int i = 1; i <= USACO_TASK_FILE; i++) {
     int fileIndex = i;
     string fileAns = string(TASK) + to_string(fileIndex) + ".ans";
     string fileOut = string(TASK) + to_string(fileIndex) + ".out";
-    string cmd = string("diff -w " + fileAns + " " + fileOut);
+    string cmd = string("diff -w " + fileAns + " " + fileOut + " > /dev/null");
     if (system(cmd.c_str())) {
       printf("case %d: Wrong answer, cost %.0lfms\n", i, costTime);
     } else {
+      AC++;
       printf("case %d: Accepted, cost %.0lfms\n", i, costTime);
     }
   }
+  printf("Total: %d / %d, 得分： %d\n", AC, USACO_TASK_FILE, AC * (100 / USACO_TASK_FILE));
 #endif
   return 0;
 }

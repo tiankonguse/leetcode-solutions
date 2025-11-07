@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "polygon"
-#define TASKEX ""
+#define TASKEX "-v4-100"
 
 #include <bits/stdc++.h>
 
@@ -59,10 +59,10 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
-// #define LOCAL_IO 1
+#define LOCAL_IO 1
 #ifdef USACO_LOCAL_JUDGE
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 20
+#define USACO_TASK_FILE 25
 #define TASKNO 1
 #ifndef USACO_TASK_FILE
   fileIndex = TASKNO;
@@ -86,6 +86,7 @@ void Solver() {  //
     scanf("%lld", &a[i]);
     maxV = max(maxV, a[i]);
   }
+
   maxV = maxV + 1;
   sort(a.begin(), a.end());
   ll ans = 0;
@@ -93,20 +94,25 @@ void Solver() {  //
   dp[0] = 1;                      // 空集
   for (int i = 1; i <= n; i++) {  // a[i] 作为最大边
     const ll v = a[i - 1];
-    // 第 i 条边作为最大边，前面的边的子集和 大于 V 的个数
-    for (int V = v + 1; V <= maxV; V++) {
+    // 第 i 条边作为最大边，前面的边的子集和 小于等于 V 的个数
+    for (int V = 0; V <= v; V++) {
       ans = (ans + dp[V]) % modV;
     }
     // 第 i 条边加入子集
     for (int V = maxV; V >= 0; V--) {
       const ll sum = V + v;
-      if (sum >= maxV) {
-        dp[maxV] = (dp[maxV] + dp[V]) % modV;
-      } else {
+      if (sum <= maxV) {
         dp[sum] = (dp[sum] + dp[V]) % modV;
       }
     }
   }
+  // 答案是 2^n - ans
+  ll total = 1;
+  for (int i = 0; i < n; i++) {
+    total = (total * 2) % modV;
+  }
+  ans = (ans + 1 + modV) % modV;  //  C(n, 0) 空集也算一个
+  ans = (total - ans + modV) % modV;
   printf("%lld\n", ans);
 }
 /*
@@ -154,17 +160,20 @@ int main(int argc, char** argv) {
   dup2(stdout_fd, STDOUT_FILENO);
   close(stdout_fd);
   stdout = fdopen(STDOUT_FILENO, "w");
+  int AC = 0;
   for (int i = 1; i <= USACO_TASK_FILE; i++) {
     int fileIndex = i;
     string fileAns = string(TASK) + to_string(fileIndex) + ".ans";
     string fileOut = string(TASK) + to_string(fileIndex) + ".out";
-    string cmd = string("diff -w " + fileAns + " " + fileOut);
+    string cmd = string("diff -w " + fileAns + " " + fileOut + " > /dev/null");
     if (system(cmd.c_str())) {
       printf("case %d: Wrong answer, cost %.0lfms\n", i, costTime);
     } else {
+      AC++;
       printf("case %d: Accepted, cost %.0lfms\n", i, costTime);
     }
   }
+  printf("Total: %d / %d, 得分： %d\n", AC, USACO_TASK_FILE, AC * (100 / USACO_TASK_FILE));
 #endif
   return 0;
 }
