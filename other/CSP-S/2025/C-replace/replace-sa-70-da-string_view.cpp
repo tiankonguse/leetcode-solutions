@@ -6,7 +6,7 @@ MAC EOF: ctrl+D
 link:
 PATH:
 submission:
-注：DA 算法， n log(n)
+注：分组，DA 算法， n log(n)
 */
 #define TASK "replace"
 #define TASKEX "-ra"

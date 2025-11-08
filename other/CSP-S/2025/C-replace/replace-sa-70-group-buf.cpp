@@ -6,7 +6,7 @@ MAC EOF: ctrl+D
 link:
 PATH:
 submission:
-注：全局求SA,使用树状数组代替差分数组
+注：分组求SA,使用树状数组代替差分数组
 */
 #define TASK "replace"
 #define TASKEX "-ra"
