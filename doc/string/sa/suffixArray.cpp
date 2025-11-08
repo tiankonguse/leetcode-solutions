@@ -78,8 +78,7 @@ void SuffixArray(char* str, int n, vector<int>& sa, vector<int>& rk) {
   }
 }
 
-void BuildHeight(char* str, int n, vector<int>& sa, vector<int>& rk,
-                 vector<int>& height) {
+void BuildHeight(char* str, int n, vector<int>& sa, vector<int>& rk, vector<int>& height) {
   height.resize(n, 0);
   int k = 0;
   for (int i = 0; i < n - 1; i++) {  // 依次从最长的前缀开始处理
@@ -121,6 +120,16 @@ int Lcp(int i, int j) {
   int r = rj + 1;
   int k = MaxBit(r - l);
   return min(st[l][k], st[r - (1 << k)][k]);
+}
+
+void SuffixArray(char* str, int n) { SuffixArray(str, n, sa, rk); }
+void BuildHeight(char* str, int n) { BuildHeight(str, n, sa, rk, height); }
+void BuildST() { BuildST(height, st); }
+
+void BuildRA(char* str, int n) {
+  SuffixArray(str, n);
+  BuildHeight(str, n);
+  BuildST();
 }
 
 const int N = 4e5 + 10;
