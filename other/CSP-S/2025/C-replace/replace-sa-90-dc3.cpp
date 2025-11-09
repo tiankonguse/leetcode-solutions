@@ -9,7 +9,7 @@ submission:
 注：DA 算法， n log(n)
 */
 #define TASK "replace"
-#define TASKEX "-ra"
+#define TASKEX "-sa"
 
 #include <bits/stdc++.h>
 
@@ -95,45 +95,128 @@ ll Hash(ll pre, const char* str, int l, int r) {  // [l, r)
 inline ll Hash(const char* str, int l, int r) { return Hash(0, str, l, r); }
 };  // namespace HASH
 
-namespace DA {
+namespace DC3 {
+
+// 所有下标都是0~n-1，height[0]无意义。
+// 所有相关数组都要开三倍
+// 0 作为全局最小哨兵，输入字符需映射到 [1..m]
+// 原字符串必须以一个最小的且前面没有出现过的字符结尾，这样才能保证结果正确
 const int maxn = 6e6 + 10;
-int wx[maxn], wy[maxn], *x, *y, wss[maxn], wv[maxn];
+#define F(x) ((x) / 3 + ((x) % 3 == 1 ? 0 : tb))
+#define G(x) ((x) < tb ? (x) * 3 + 1 : ((x) - tb) * 3 + 2)
 
-bool cmp(int* r, int n, int a, int b, int l) { return a + l < n && b + l < n && r[a] == r[b] && r[a + l] == r[b + l]; }
-void da(char str[], int sa[], int rank[], int height[], int n, int m) {
-  char* s = str;
-  int *x = wx, *y = wy, *t, p;
-  int i, j;
-  for (i = 0; i < m; i++) wss[i] = 0;
-  for (i = 0; i < n; i++) wss[x[i] = s[i]]++;
-  for (i = 1; i < m; i++) wss[i] += wss[i - 1];
-  for (i = n - 1; i >= 0; i--) sa[--wss[x[i]]] = i;
-  for (j = 1, p = 1; p < n && j < n; j *= 2, m = p) {
-    for (i = n - j, p = 0; i < n; i++) y[p++] = i;
-    for (i = 0; i < n; i++)
-      if (sa[i] - j >= 0) y[p++] = sa[i] - j;
-    for (i = 0; i < n; i++) wv[i] = x[y[i]];
-    for (i = 0; i < m; i++) wss[i] = 0;
-    for (i = 0; i < n; i++) wss[wv[i]]++;
-    for (i = 1; i < m; i++) wss[i] += wss[i - 1];
-    for (i = n - 1; i >= 0; i--) sa[--wss[wv[i]]] = y[i];
-    for (t = x, x = y, y = t, p = 1, i = 1, x[sa[0]] = 0; i < n; i++)
-      x[sa[i]] = cmp(y, n, sa[i - 1], sa[i], j) ? p - 1 : p++;
+int wa[maxn * 3], wb[maxn * 3], wv[maxn * 3], ws[maxn * 3];
+
+int c0(const int* r, int a, int b) { return r[a] == r[b] && r[a + 1] == r[b + 1] && r[a + 2] == r[b + 2]; }
+int c12(int k, const int* r, int a, int b) {
+  if (k == 2) {
+    return r[a] < r[b] || (r[a] == r[b] && c12(1, r, a + 1, b + 1));
+  } else {
+    return r[a] < r[b] || (r[a] == r[b] && wv[a + 1] < wv[b + 1]);
   }
-  for (int i = 0; i < n; i++) rank[sa[i]] = i;
-  for (int i = 0, j = 0, k = 0; i < n; height[rank[i++]] = k)
-    if (rank[i] > 0)
-      for (k ? k-- : 0, j = sa[rank[i] - 1]; i + k < n && j + k < n && str[i + k] == str[j + k]; k++);
+}
+void sort(const int* r, int* a, int* b, int n, int m) {
+  int i;
+  for (i = 0; i < n; i++) wv[i] = r[a[i]];
+  for (i = 0; i <= m; i++) ws[i] = 0;  // m 作为上界
+  for (i = 0; i < n; i++) ws[wv[i]]++;
+  for (i = 1; i <= m; i++) ws[i] += ws[i - 1];
+  for (i = n - 1; i >= 0; i--) b[--ws[wv[i]]] = a[i];
+}
+void dc3(int* r, int* sa, int n, int m) {
+  int i, j;
+  int* rn = r + n;    // 使用 r 的后段存放压缩名(需要 r 具备 3n 容量)
+  int* san = sa + n;  // sa 的后段作为递归的 sa
+  int ta = 0, tb = (n + 1) / 3, tbc = 0, p;
+
+  r[n] = r[n + 1] = 0;  // 哨兵
+  for (i = 0; i < n; i++)
+    if (i % 3 != 0) wa[tbc++] = i;
+
+  sort(r + 2, wa, wb, tbc, m);
+  sort(r + 1, wb, wa, tbc, m);
+  sort(r, wa, wb, tbc, m);
+
+  for (p = 1, rn[F(wb[0])] = 0, i = 1; i < tbc; i++) rn[F(wb[i])] = c0(r, wb[i - 1], wb[i]) ? p - 1 : p++;
+
+  if (p < tbc)
+    dc3(rn, san, tbc, p);
+  else
+    for (i = 0; i < tbc; i++) san[rn[i]] = i;
+
+  for (i = 0; i < tbc; i++)
+    if (san[i] < tb) wb[ta++] = san[i] * 3;
+  if (n % 3 == 1) wb[ta++] = n - 1;
+
+  sort(r, wb, wa, ta, m);
+
+  for (i = 0; i < tbc; i++) wv[wb[i] = G(san[i])] = i;
+
+  for (i = 0, j = 0, p = 0; i < ta && j < tbc; p++) sa[p] = c12(wb[j] % 3, r, wa[i], wb[j]) ? wa[i++] : wb[j++];
+  for (; i < ta; p++) sa[p] = wa[i++];
+  for (; j < tbc; p++) sa[p] = wb[j++];
 }
 
-int sa[maxn];      // 第几名的位置, 对应 sa
-int rk[maxn];      // 第几个元素排第几名, 对应 rk
-int height[maxn];  // 第几名与上一名的最长前缀, 对应 height
+// str 和 sa 也要三倍，但这里 r 在 BuildRA 内部构造，避免修改调用者内存
+void da(int r[], int sa[], int rank[], int height[], int n, int m) {
+  for (int i = n; i < n * 3; i++) r[i] = 0;  // 清尾保证安全访问
+  dc3(r, sa, n + 1, m);                      // 含一个哨兵位
 
-void BuildRA(char* str, int n, int m = 256) {  //  m 为值域
-  da(str, sa, rk, height, n, m);
+  int i, j, k;
+  for (i = 0; i < n; i++) {
+    sa[i] = sa[i + 1];  // 去掉哨兵suffix
+    rank[sa[i]] = i;
+  }
+  for (i = 0, j = 0, k = 0; i < n; height[rank[i++]] = k)
+    if (rank[i] > 0) {
+      j = sa[rank[i] - 1];
+      if (k) k--;
+      while (i + k < n && j + k < n && r[i + k] == r[j + k]) k++;
+    }
 }
-};  // namespace DA
+
+int sa[maxn * 3];      // 第几名的位置, 对应 sa
+int rk[maxn * 3];      // 第几个元素排第几名, 对应 rk
+int height[maxn * 3];  // 第几名与上一名的最长前缀, 对应 height
+vector<vector<int>> st;
+int r[maxn * 3];
+
+inline int MaxBit(int v) { return 31 - __builtin_clz(v); }
+
+void BuildST(int height[], int n, vector<vector<int>>& st) {
+  st.resize(n, vector<int>(20, 0));
+  for (int i = 0; i < n; i++) {
+    st[i][0] = height[i];
+  }
+  for (int j = 1; (1 << j) <= n; j++) {
+    for (int i = 0; i + (1 << j) <= n; i++) {
+      st[i][j] = min(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);
+    }
+  }
+}
+
+int Lcp(int i, int j) {
+  const int n = st.size();
+  if (i == j) return n - i;
+  int ri = rk[i];
+  int rj = rk[j];
+  if (ri > rj) {
+    swap(ri, rj);
+  }
+  int l = ri + 1;
+  int r = rj + 1;
+  int k = MaxBit(r - l);
+  return min(st[l][k], st[r - (1 << k)][k]);
+}
+inline int LcpRk(int ri, int rj) { return Lcp(sa[ri], sa[rj]); }
+
+void BuildRA(char* str, int n, int m = 256) {                    //  m 为值域
+  for (int i = 0; i < n; i++) r[i] = (unsigned char)str[i] + 1;  // 映射到 [1..m]
+  da(r, sa, rk, height, n, m);
+  BuildST(height, n, st);
+}
+
+};  // namespace DC3
 
 const int MAXN = 6e6 + 6;
 int n, q;
@@ -142,11 +225,12 @@ ll ans[max5];
 // S(最小): S3 + '('
 // T(大于S): T3 + '?'
 // S(大于T): S3 + '}'
-const char S3_TOP = '(';
-const char T3_MIDDLE = '?';
-const char S3_BOTTOM = '}';
-const char S3_JOIN = '#';
-const char BUF_END = '~';
+const char S3_TOP = '(';     // 40
+const char T3_MIDDLE = '?';  // 63
+const char S3_BOTTOM = '}';  // 125
+const char S3_JOIN = '#';    // 35
+// const char BUF_END = '~';  // 126
+const char BUF_END = ' ';  // 32
 char baseBuf[MAXN * 2];
 int baseBufLen = 0;
 char s1[MAXN], s2[MAXN];
@@ -175,7 +259,7 @@ pair<ll, string_view> MergeS1S2(int len) {
 }
 struct SInfo {
   string_view s;
-  int offset1, offset2;
+  int offset1;
 };
 struct TInfo {
   string_view s;
@@ -189,16 +273,13 @@ struct STInfo {
 
 unordered_map<ll, STInfo> mp;
 
-int differenceArray[MAXN * 2];
+int differenceArray[MAXN];
 int queryOffset[max5];
-char buf[MAXN * 2];
+char buf[MAXN * 3];
 int bufLen = 0;
 void BuildRaBuf(STInfo& info) {
   auto& patterns = info.patterns;
   auto& queries = info.queries;
-  // S+'('
-  // S + '}'
-  // T + '?'
   bufLen = 0;
   for (auto& pattern : patterns) {
     pattern.offset1 = bufLen;
@@ -206,12 +287,6 @@ void BuildRaBuf(STInfo& info) {
       buf[bufLen++] = c;
     }
     buf[bufLen++] = S3_TOP;
-
-    pattern.offset2 = bufLen;
-    for (auto c : pattern.s) {
-      buf[bufLen++] = c;
-    }
-    buf[bufLen++] = S3_BOTTOM;
   }
   for (auto& query : queries) {
     query.offsetLeft = bufLen;
@@ -242,15 +317,27 @@ void SolverGroup(STInfo& info) {
     queryOffset[i] = query.offsetLeft;
   }
 
-  DA::BuildRA(buf, totalLen);
+  DC3::BuildRA(buf, totalLen);
+  auto FindR2 = [&](const int r1, const int len) -> int {
+    int l = r1, r = totalLen;
+    while (l < r) {
+      int mid = (l + r) / 2;
+      int lcp = DC3::LcpRk(r1, mid);
+      if (lcp >= len) {
+        l = mid + 1;
+      } else {
+        r = mid;
+      }
+    }
+    return r - 1;
+  };
   for (auto& pattern : patterns) {
-    int r1 = DA::rk[pattern.offset1];
-    int r2 = DA::rk[pattern.offset2];
+    int r1 = DC3::rk[pattern.offset1];
+    int r2 = FindR2(r1, pattern.s.length());
     // r1 一定小于 r2
-    assert(r1 < r2);
-    MyPrintf("s=%s offset1=%d offset2=%d r1=%d r2=%d\n", pattern.s.data(), pattern.offset1, pattern.offset2, r1, r2);
+    assert(r1 <= r2);
+    MyPrintf("s=%s offset1=%d r1=%d r2=%d\n", pattern.s.data(), pattern.offset1, r1, r2);
     r1++;
-    r2--;
     if (r1 <= r2) {
       differenceArray[r1]++;
       differenceArray[r2 + 1]--;
@@ -267,11 +354,11 @@ void SolverGroup(STInfo& info) {
     return -1;
   };
   int preSum = 0;
-  for (int rank = 0; rank <= totalLen; rank++) {
+  for (int rank = 0; rank < totalLen; rank++) {
     preSum += differenceArray[rank];
     differenceArray[rank] = 0;
     if (preSum == 0) continue;  // 剪枝
-    int offset = DA::sa[rank];
+    int offset = DC3::sa[rank];
     int queryIdx = FindIdx(offset);
     if (preSum != 0) {
       MyPrintf("rank=%d sum=%d  offset=%d idx=%d\n", rank, preSum, offset, queryIdx);
@@ -279,6 +366,8 @@ void SolverGroup(STInfo& info) {
     if (queryIdx == -1) continue;  // 无效查询
     ans[queryIdx] += preSum;
   }
+  differenceArray[totalLen] = 0;
+  differenceArray[totalLen + 1] = 0;
 }
 
 void PreInit() {  // 不应该计算耗时

@@ -1,3 +1,6 @@
+
+#include <bits/stdc++.h>
+
 class TreeArrayEx {
  public:
   void Init(int n_) {

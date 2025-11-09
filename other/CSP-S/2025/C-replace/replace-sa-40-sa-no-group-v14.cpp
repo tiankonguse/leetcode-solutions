@@ -60,7 +60,7 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
-// #define LOCAL_IO 1
+#define LOCAL_IO 1
 #ifdef LOCAL_IO
 #ifdef USACO_LOCAL_JUDGE
 #define MAX_TIME 2000

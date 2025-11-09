@@ -9,7 +9,7 @@ submission:
 注：DA 算法， n log(n)
 */
 #define TASK "replace"
-#define TASKEX "-ra"
+#define TASKEX "-sa-v12-dc3-100"
 
 #include <bits/stdc++.h>
 
