@@ -88,58 +88,37 @@ void Solver() {  //
     nums.resize(n + 1);
     for (int i = 1; i <= n; i++) {
       scanf("%lld", &nums[i].first);
-      nums[i].first *= 2;
     }
+    ll maxTime = 0;
     for (int i = 1; i <= n; i++) {
       scanf("%lld", &nums[i].second);
-      nums[i].second *= 2;
+      maxTime = max(maxTime, nums[i].second);
     }
-    sort(nums.begin() + 1, nums.begin() + 1 + n);
-    preMin.resize(n + 2);
-    sufMax.resize(n + 2);
-    preMin[0] = INT64_MAX;
-    for (int i = 1; i <= n; i++) {
-      preMin[i] = min(preMin[i - 1], nums[i].first - nums[i].second);
-    }
-    sufMax[n + 1] = INT64_MIN;
-    for (int i = n; i >= 1; i--) {
-      sufMax[i] = max(sufMax[i + 1], nums[i].first + nums[i].second);
-    }
-    ll ansTime = max(nums[1].second, sufMax[1] - nums[1].first);  // 在第一个点处设置目标点
-    ll ansPos = nums[1].first;
-    MyPrintf("first Ans: pos=%lld, time=%lld\n", ansPos, ansTime);
-    auto UpdateAns = [&](ll tmpPos, ll tmpTime) {
-      MyPrintf("  try pos=%lld, time=%lld\n", tmpPos, tmpTime);
-      if (tmpTime < ansTime) {
-        ansTime = tmpTime;
-        ansPos = tmpPos;
-        MyPrintf("  update ans to pos=%lld, time=%lld\n", ansPos, ansTime);
+    auto Check = [&](ll mid) -> pair<bool, ll> {
+      ll leftMost = -1e10;
+      ll rightMost = 1e10;
+      for (auto [x, t] : nums) {
+        if (mid < t) return {false, 0};
+        ll leftBound = x - (mid - t);
+        ll rightBound = x + (mid - t);
+        leftMost = max(leftMost, leftBound);
+        rightMost = min(rightMost, rightBound);
+        if (leftMost > rightMost) {
+          return {false, 0};
+        }
       }
+      return {true, leftMost};
     };
-    for (int i = 1; i < n; i++) {
-      // 目标点设置在 (i, i+1] 区间内
-      ll lv = nums[i].first;
-      ll rv = nums[i + 1].first;
-      ll leftMin = preMin[i];
-      ll rightMax = sufMax[i + 1];
-      ll mid = (rightMax + leftMin) / 2;  // 一定可以整除
-      MyPrintf("i=%d, leftMin=%lld, rightMax=%lld, mid=%lld lv=%lld rv=%lld\n", i, leftMin, rightMax, mid, lv, rv);
-      if (mid <= lv) {  // 选择 left 最优
-        ll tmpPos = lv;
-        ll tmpTime = max(lv - leftMin, rightMax - lv);
-        UpdateAns(tmpPos, tmpTime);
-      } else if (mid >= rv) {
-        ll tmpPos = rv;
-        ll tmpTime = max(rv - leftMin, rightMax - rv);
-        UpdateAns(tmpPos, tmpTime);
+    ll l = 0, r = 1e9;  // [l, r]
+    while (l < r) {
+      ll mid = (l + r) / 2;
+      if (Check(mid * 2).first) {
+        r = mid;
       } else {
-        ll tmpPos = mid;
-        ll tmpTime = max(mid - leftMin, rightMax - mid);
-        UpdateAns(tmpPos, tmpTime);
+        l = mid + 1;
       }
     }
-    MyPrintf("Final Ans: pos=%lld, time=%lld\n", ansPos, ansTime);
-    ll ans = ansPos;
+    ll ans = Check(r * 2).second;
     if (ans % 2 == 1) {
       printf("%lld.5\n", ans / 2);
     } else {

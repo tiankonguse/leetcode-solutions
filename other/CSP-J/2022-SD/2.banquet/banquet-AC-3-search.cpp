@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: deploy
+TASK: banquet
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "deploy"
+#define TASK "banquet"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -63,8 +63,8 @@ void InitIO(int fileIndex) {  //
 #ifdef USACO_LOCAL_JUDGE
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 2
-// #define TASKNO 20
+#define USACO_TASK_FILE 1
+#define TASKNO 1
 #ifdef TASKNO
   fileIndex = TASKNO;
 #endif
@@ -76,66 +76,49 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n, m, q;
-vector<ll> nums;
-vector<ll> subTreeFlag;  // 代表子树需要都增加的值
-vector<ll> childFlag;    // 代表子节点和父节点需要增加的值
-vector<vector<int>> g;
-void SolverIO() {
-  scanf("%d", &n);
-  nums.resize(n + 1);
-  for (int i = 1; i <= n; i++) {
-    scanf("%lld", &nums[i]);
-  }
-  g.clear();
-  g.resize(n + 1);
-  for (int i = 1; i < n; i++) {
-    int u, v;
-    scanf("%d%d", &u, &v);
-    g[u].push_back(v);
-    g[v].push_back(u);
-  }
-  subTreeFlag.resize(n + 1, 0);
-  childFlag.resize(n + 1, 0);
-  scanf("%d", &m);
-  while (m--) {
-    ll p, x, y;
-    scanf("%lld%lld%lld", &p, &x, &y);
-    if (p == 1) {
-      subTreeFlag[x] += y;
-    } else {
-      childFlag[x] += y;
-    }
-  }
-}
-void Dfs(int u, int pre, ll addFlag) {
-  addFlag += subTreeFlag[u];
-  subTreeFlag[u] = 0;
-  nums[u] += addFlag;
-  for (int v : g[u]) {
-    if (v == pre) continue;
-    Dfs(v, u, addFlag);
-  }
-}
-void SolverQuery() {
-  scanf("%d", &q);
-  while (q--) {
-    int x;
-    scanf("%d", &x);
-    printf("%lld\n", nums[x]);
-  }
-}
+int T;
+int n;
+vector<pair<ll, ll>> nums;  // (pos, time)
+vector<ll> preMin;
+vector<ll> sufMax;
 void Solver() {  //
-  SolverIO();
-  Dfs(1, -1, 0);
-  for (int u = 1; u <= n; u++) {
-    nums[u] += childFlag[u];
-    for (int v : g[u]) {
-      nums[v] += childFlag[u];
+  scanf("%d", &T);
+  while (T--) {
+    scanf("%d", &n);
+    nums.resize(n + 1);
+    for (int i = 1; i <= n; i++) {
+      scanf("%lld", &nums[i].first);
+      nums[i].first *= 2;
     }
-    childFlag[u] = 0;
+    for (int i = 1; i <= n; i++) {
+      scanf("%lld", &nums[i].second);
+      nums[i].second *= 2;
+    }
+    sort(nums.begin() + 1, nums.begin() + 1 + n);
+    auto CalCost = [&](ll pos) {
+      ll res = 0;
+      for (int i = 1; i <= n; i++) {
+        res = max(res, abs(nums[i].first - pos) + nums[i].second);
+      }
+      return res;
+    };
+    ll l = 0, r = nums.back().first;  // [l, r]
+    while (l < r) {
+      ll mid1 = l + (r - l) / 3;
+      ll mid2 = r - (r - l) / 3;
+      if (CalCost(mid1) <= CalCost(mid2)) {
+        r = mid2 - 1;
+      } else {
+        l = mid1 + 1;
+      }
+    }
+    ll ans = r;
+    if (ans % 2 == 1) {
+      printf("%lld.5\n", ans / 2);
+    } else {
+      printf("%lld\n", ans / 2);
+    }
   }
-  SolverQuery();
 }
 
 #ifdef USACO_LOCAL_JUDGE

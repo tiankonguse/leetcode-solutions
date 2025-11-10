@@ -111,11 +111,14 @@ void SolverIO() {
 void Dfs(int u, int pre, ll addFlag) {
   addFlag += subTreeFlag[u];
   subTreeFlag[u] = 0;
-  nums[u] += addFlag;
+
   for (int v : g[u]) {
+    nums[v] += childFlag[u];
     if (v == pre) continue;
     Dfs(v, u, addFlag);
   }
+  nums[u] += childFlag[u] + addFlag;
+  childFlag[u] = 0;
 }
 void SolverQuery() {
   scanf("%d", &q);
@@ -128,13 +131,6 @@ void SolverQuery() {
 void Solver() {  //
   SolverIO();
   Dfs(1, -1, 0);
-  for (int u = 1; u <= n; u++) {
-    nums[u] += childFlag[u];
-    for (int v : g[u]) {
-      nums[v] += childFlag[u];
-    }
-    childFlag[u] = 0;
-  }
   SolverQuery();
 }
 
