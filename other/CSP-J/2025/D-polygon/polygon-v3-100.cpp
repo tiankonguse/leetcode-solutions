@@ -94,18 +94,12 @@ void Solver() {  //
   dp[0] = 1;                      // 空集
   for (int i = 1; i <= n; i++) {  // a[i] 作为最大边
     const ll v = a[i - 1];
-    // 第 i 条边作为最大边，前面的边的子集和 大于 V 的个数
     for (int V = v + 1; V <= maxV; V++) {
       ans = (ans + dp[V]) % modV;
     }
-    // 第 i 条边加入子集
     for (int V = maxV; V >= 0; V--) {
-      const ll sum = V + v;
-      if (sum >= maxV) {
-        dp[maxV] = (dp[maxV] + dp[V]) % modV;
-      } else {
-        dp[sum] = (dp[sum] + dp[V]) % modV;
-      }
+      const ll sum = min(V + v, maxV);
+      dp[sum] = (dp[sum] + dp[V]) % modV;
     }
   }
   printf("%lld\n", ans);

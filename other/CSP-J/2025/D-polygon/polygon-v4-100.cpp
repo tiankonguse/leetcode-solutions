@@ -89,21 +89,18 @@ void Solver() {  //
 
   maxV = maxV + 1;
   sort(a.begin(), a.end());
-  ll ans = 0;
+  ll isNotAns = 0;
   vector<ll> dp(maxV + 1, 0);     // 子集和为 dp[i] 的方案数
   dp[0] = 1;                      // 空集
   for (int i = 1; i <= n; i++) {  // a[i] 作为最大边
     const ll v = a[i - 1];
     // 第 i 条边作为最大边，前面的边的子集和 小于等于 V 的个数
     for (int V = 0; V <= v; V++) {
-      ans = (ans + dp[V]) % modV;
+      isNotAns = (isNotAns + dp[V]) % modV;
     }
     // 第 i 条边加入子集
-    for (int V = maxV; V >= 0; V--) {
-      const ll sum = V + v;
-      if (sum <= maxV) {
-        dp[sum] = (dp[sum] + dp[V]) % modV;
-      }
+    for (int V = maxV; V >= v; V--) {
+      dp[V] = (dp[V - v] + dp[V]) % modV;
     }
   }
   // 答案是 2^n - ans
@@ -111,8 +108,8 @@ void Solver() {  //
   for (int i = 0; i < n; i++) {
     total = (total * 2) % modV;
   }
-  ans = (ans + 1 + modV) % modV;  //  C(n, 0) 空集也算一个
-  ans = (total - ans + modV) % modV;
+  isNotAns = (isNotAns + 1 + modV) % modV;  //  C(n, 0) 空集也算一个
+  ll ans = (total - isNotAns + modV) % modV;
   printf("%lld\n", ans);
 }
 /*

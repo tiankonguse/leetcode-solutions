@@ -1,6 +1,4 @@
 #include <bits/stdc++.h>
-
-#include "base.h"
 using namespace std;
 
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
@@ -89,11 +87,3 @@ class WordDictionary {
   bool search(const string& s) { return trie.Search(s); }
 };
 
-int main() {
-  printf("hello ");
-  //   vector<double> ans = {1.00000,-1.00000,3.00000,-1.00000};
-  //   vector<vector<int>> cars = {{1, 2}, {2, 1}, {4, 3}, {7, 2}};
-  //   TEST_SMP1(Solution, getCollisionTimes, ans, cars);
-
-  return 0;
-}

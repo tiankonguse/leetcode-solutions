@@ -98,7 +98,7 @@ void Solver() {  //
     for (int i = 1; i <= n; i++) {
       int v = a[i];
       if (v == k) {
-        dp[i] = dp[i - 1] + 1;  // 一个元素就满足要求
+        dp[i] = dp[i - 1] + 1;
       } else {
         if (lastOne != -1) {
           dp[i] = max(dp[i - 1], dp[lastOne - 1] + 1);
