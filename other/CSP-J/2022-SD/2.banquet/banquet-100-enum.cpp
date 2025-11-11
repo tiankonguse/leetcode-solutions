@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "banquet"
-#define TASKEX ""
+#define TASKEX "-100-enum"
 
 #include <bits/stdc++.h>
 

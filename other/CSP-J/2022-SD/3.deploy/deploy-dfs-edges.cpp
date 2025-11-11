@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: banquet
+TASK: deploy
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "banquet"
+#define TASK "deploy"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -63,8 +63,8 @@ void InitIO(int fileIndex) {  //
 #ifdef USACO_LOCAL_JUDGE
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 1
-#define TASKNO 1
+#define USACO_TASK_FILE 2
+// #define TASKNO 20
 #ifdef TASKNO
   fileIndex = TASKNO;
 #endif
@@ -76,37 +76,66 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int T;
-int n;
-vector<pair<ll, ll>> nums;  // (pos, time)
-/*
-解方程 `A + X = B - X`，得到 `X = (B - A) / 2`。
-其中 `A = max(ti - xi)`，`B = max(ti + xi)`。
-*/
-void Solver() {  //
-  scanf("%d", &T);
-  while (T--) {
-    scanf("%d", &n);
-    nums.resize(n);
-    for (int i = 0; i < n; i++) {
-      scanf("%lld", &nums[i].first);
-    }
-    for (int i = 0; i < n; i++) {
-      scanf("%lld", &nums[i].second);
-    }
-    ll A = LLONG_MIN;
-    ll B = LLONG_MIN;
-    for (int i = 0; i < n; i++) {
-      A = max(A, nums[i].second - nums[i].first);
-      B = max(B, nums[i].second + nums[i].first);
-    }
-    ll BA = B - A;
-    if (BA % 2 == 1) {
-      printf("%lld.5\n", BA / 2);
+int n, m, q;
+vector<ll> nums;
+vector<ll> subTreeFlag;  // 代表子树需要都增加的值
+vector<ll> childFlag;    // 代表子节点和父节点需要增加的值
+vector<vector<int>> g;
+void SolverIO() {
+  scanf("%d", &n);
+  nums.resize(n + 1);
+  for (int i = 1; i <= n; i++) {
+    scanf("%lld", &nums[i]);
+  }
+  g.clear();
+  g.resize(n + 1);
+  for (int i = 1; i < n; i++) {
+    int u, v;
+    scanf("%d%d", &u, &v);
+    g[u].push_back(v);
+    g[v].push_back(u);
+  }
+  subTreeFlag.resize(n + 1, 0);
+  childFlag.resize(n + 1, 0);
+  scanf("%d", &m);
+  while (m--) {
+    ll p, x, y;
+    scanf("%lld%lld%lld", &p, &x, &y);
+    if (p == 1) {
+      subTreeFlag[x] += y;
     } else {
-      printf("%lld\n", BA / 2);
+      childFlag[x] += y;
     }
   }
+}
+void Dfs(int u, int pre, ll addFlag) {
+  addFlag += subTreeFlag[u];
+  subTreeFlag[u] = 0;
+  nums[u] += addFlag;
+  for (int v : g[u]) {
+    if (v == pre) continue;
+    Dfs(v, u, addFlag);
+  }
+}
+void SolverQuery() {
+  scanf("%d", &q);
+  while (q--) {
+    int x;
+    scanf("%d", &x);
+    printf("%lld\n", nums[x]);
+  }
+}
+void Solver() {  //
+  SolverIO();
+  Dfs(1, -1, 0);
+  for (int u = 1; u <= n; u++) {
+    nums[u] += childFlag[u];
+    for (int v : g[u]) {
+      nums[v] += childFlag[u];
+    }
+    childFlag[u] = 0;
+  }
+  SolverQuery();
 }
 
 #ifdef USACO_LOCAL_JUDGE

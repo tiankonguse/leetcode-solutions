@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: banquet
+TASK: planting
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "banquet"
+#define TASK "planting"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -59,12 +59,12 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
-#define LOCAL_IO 1
+// #define LOCAL_IO 1
 #ifdef USACO_LOCAL_JUDGE
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 1
-#define TASKNO 1
+#define USACO_TASK_FILE 0
+// #define TASKNO 20
 #ifdef TASKNO
   fileIndex = TASKNO;
 #endif
@@ -76,37 +76,27 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int T;
+const int maxn = 1e6 + 10;
 int n;
-vector<pair<ll, ll>> nums;  // (pos, time)
-/*
-解方程 `A + X = B - X`，得到 `X = (B - A) / 2`。
-其中 `A = max(ti - xi)`，`B = max(ti + xi)`。
-*/
+int diffArr[maxn] = {0};
 void Solver() {  //
-  scanf("%d", &T);
-  while (T--) {
-    scanf("%d", &n);
-    nums.resize(n);
-    for (int i = 0; i < n; i++) {
-      scanf("%lld", &nums[i].first);
-    }
-    for (int i = 0; i < n; i++) {
-      scanf("%lld", &nums[i].second);
-    }
-    ll A = LLONG_MIN;
-    ll B = LLONG_MIN;
-    for (int i = 0; i < n; i++) {
-      A = max(A, nums[i].second - nums[i].first);
-      B = max(B, nums[i].second + nums[i].first);
-    }
-    ll BA = B - A;
-    if (BA % 2 == 1) {
-      printf("%lld.5\n", BA / 2);
-    } else {
-      printf("%lld\n", BA / 2);
-    }
+  scanf("%d", &n);
+  int maxR = 0;
+  for (int i = 0; i < n; i++) {
+    int a, b;
+    scanf("%d%d", &a, &b);
+    diffArr[a]++;
+    diffArr[b + 1]--;
+    maxR = max(maxR, b);
   }
+  int ans = 0;
+  int prefixSum = 0;
+  for (int i = 0; i <= maxR + 1; i++) {
+    prefixSum += diffArr[i];
+    diffArr[i] = 0;
+    ans = max(ans, prefixSum);
+  }
+  printf("%d\n", ans);
 }
 
 #ifdef USACO_LOCAL_JUDGE

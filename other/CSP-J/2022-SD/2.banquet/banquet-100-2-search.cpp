@@ -79,10 +79,8 @@ void InitIO(int fileIndex) {  //
 int T;
 int n;
 vector<pair<ll, ll>> nums;  // (pos, time)
-/*
-解方程 `A + X = B - X`，得到 `X = (B - A) / 2`。
-其中 `A = max(ti - xi)`，`B = max(ti + xi)`。
-*/
+vector<ll> preMin;
+vector<ll> sufMax;
 void Solver() {  //
   scanf("%d", &T);
   while (T--) {
@@ -90,21 +88,48 @@ void Solver() {  //
     nums.resize(n);
     for (int i = 0; i < n; i++) {
       scanf("%lld", &nums[i].first);
+      nums[i].first *= 2;
     }
+    ll maxTime = 0;
     for (int i = 0; i < n; i++) {
       scanf("%lld", &nums[i].second);
+      nums[i].second *= 2;
+      maxTime = max(maxTime, nums[i].second);
     }
-    ll A = LLONG_MIN;
-    ll B = LLONG_MIN;
-    for (int i = 0; i < n; i++) {
-      A = max(A, nums[i].second - nums[i].first);
-      B = max(B, nums[i].second + nums[i].first);
+    sort(nums.begin() + 1, nums.end());
+    for (auto [x, t] : nums) {
+      MyPrintf("(%lld, %lld) \n", x, t);
     }
-    ll BA = B - A;
-    if (BA % 2 == 1) {
-      printf("%lld.5\n", BA / 2);
+    auto Check = [&](ll mid) -> pair<bool, ll> {
+      ll leftMost = -1e10;
+      ll rightMost = 1e10;
+      for (auto [x, t] : nums) {
+        if (mid < t) return {false, 0};
+        ll leftBound = x - (mid - t);
+        ll rightBound = x + (mid - t);
+        leftMost = max(leftMost, leftBound);
+        rightMost = min(rightMost, rightBound);
+        if (leftMost > rightMost) {
+          return {false, 0};
+        }
+      }
+      return {true, leftMost};
+    };
+    ll l = 0, r = 1e9;  // [l, r]
+    while (l < r) {
+      ll mid = (l + r) / 2;
+      if (Check(mid).first) {
+        r = mid;
+      } else {
+        l = mid + 1;
+      }
+    }
+    MyPrintf("Min time: %lld\n", r);
+    ll ans = Check(r).second;
+    if (ans % 2 == 1) {
+      printf("%lld.5\n", ans / 2);
     } else {
-      printf("%lld\n", BA / 2);
+      printf("%lld\n", ans / 2);
     }
   }
 }
