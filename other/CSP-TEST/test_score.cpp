@@ -1,3 +1,9 @@
+/**
+ * CSP-J/S 考试评分系统
+ * v1: 2025-11-12 基本版本，评测 N 个省份数据
+ * v2: 2025-11-13 修复部分考生没有创建题目目录时报错的问题 
+ */
+
 #include <bits/stdc++.h>
 #include <spawn.h>
 #include <unistd.h>     // For environ
@@ -148,6 +154,13 @@ tuple<int, int, int, int> TestOneStudent(const string& student_dir) {
   vector<int> problem_scores;
   for (auto [problem_name, sample_count] : problem_samples) {
     const string problem_dir = student_dir + "/" + problem_name;
+
+    // 判断目录是否存在
+    if (!filesystem::exists(problem_dir) || !filesystem::is_directory(problem_dir)) {
+      printf("  Problem directory %s does not exist for student %s\n", problem_dir.c_str(), student_id.c_str());
+      problem_scores.push_back(0);
+      continue;
+    }
 
     filesystem::current_path(problem_dir);  // cd 到问题目录
     int problem_score = TestOneProblem(problem_dir);
