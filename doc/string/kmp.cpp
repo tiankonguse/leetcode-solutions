@@ -2,7 +2,7 @@
 #include <bits/stdc++.h>
 
 
-// 前缀函数 next[i]： 前缀 [0,j] 的最长公共前后缀的长度
+// 前缀函数 next[j]： 前缀 [0,j] 的最长公共前后缀的长度
 // 即第 j 位匹配失败时，说明 pat[0,j-1] 与前缀是匹配的，此时 j 应该回退到 next[j-1]+1 重新开始匹配
 // 扩展: 计算 Next 是一个在线算法，可以按顺序计算 Next 数组，故可以计算树上的 Next
 //
@@ -28,6 +28,8 @@ void getNext(const char* pat) {
     }
   }
 }
+
+
 int kmp(const char* str, const char* pat) {
   next.resize(strlen(pat) + 1, -1);
   getNext(pat);

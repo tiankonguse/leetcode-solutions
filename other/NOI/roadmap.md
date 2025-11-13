@@ -94,16 +94,16 @@ flowchart TD
         B[CSP-J/S<br>（每年9月/10月）]
         C[NOIP<br>（每年11月）]
         D[省选<br>（次年3月/4月）]
-        E[NOI<br>（次年7月/8月）]
-        F[WC<br>（次年1月/2月）]
+        E[NOI<br>（次年7月/8月） <br> 国家OI]
+        F[WC<br>（次年1月/2月） <br> 冬令营/候选队选拔]
         
         B -- 晋级 --> C
         C -- 晋级 --> D
         D -- 晋级 --> E
         E -- 前50名 --> F
-        F -- 入选 --> G[CTS/CTSC<br>（次年4月/5月）]
+        F -- 入选 --> G[CTS/CTSC<br>（次年4月/5月）<br> 中国国家队选拔]
         G -- 前15名 --> H[IOI中国国家队集训]
-        H -- 最终4人 --> I[IOI<br>（每年7月/8月）]
+        H -- 最终4人 --> I[IOI<br>（每年7月/8月） <br>  国际OI]
     end
 
     subgraph X [集训队相关]
