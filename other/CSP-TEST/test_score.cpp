@@ -1,8 +1,10 @@
 /**
  * CSP-J/S 考试评分系统
  * v1: 2025-11-12 基本版本，评测 N 个省份数据
- * v2: 2025-11-13 修复部分考生没有创建题目目录时报错的问题 
- * v3: 增加编译命令: c++ -std=c++2a -O2 test_score.cpp -o test_score
+ * v2: 2025-11-13 修复部分考生没有创建题目目录时报错的问题
+ * v3: 2025-11-14 增加编译命令: c++ -std=c++2a -O2 test_score.cpp -o test_score
+ * v4: 2025-11-14 删除测试的临时文件，避免磁盘空间占用过多
+ * v5: 2025-11-14 新增调试信息开关 debugFlag，默认关闭
  */
 
 #include <bits/stdc++.h>
@@ -68,7 +70,13 @@ string main_path;
 string official_data_path;
 // 探测系统上 timeout 或 gtimeout 命令（macOS 上用 gtimeout 来自 coreutils）
 string timeout_cmd = "gtimeout";
-int ioFlag;
+int ioFlag = 1;     // 0 代表程序里不从文件读写， 1 代表程序里从文件读写
+int debugFlag = 0;  // 0 代表不打印调试信息， 1 代表打印调试信息
+
+#define MyPrintf(...)                   \
+  do {                                  \
+    if (debugFlag) printf(__VA_ARGS__); \
+  } while (0)
 
 // mac 电脑 system 不支持并发，所以只能顺序执行
 int run_compile(const char* cmd) {
@@ -84,20 +92,20 @@ int TestOneProblem(const string& problem_dir) {
   // 只有一个代码，文件名与目录名一致
   string code_path = "./" + problem_name + ".cpp";
   if (!filesystem::exists(code_path)) {
-    // printf("Code file %s does not exist for problem %s\n", code_path.c_str(), problem_name.c_str());
+    MyPrintf("Code file %s does not exist for problem %s\n", code_path.c_str(), problem_name.c_str());
     return 0;  // 没传代码，0 分
   }
 
   string exe_path = "./" + problem_name + ".exe";
   string compile_cmd = "g++ " + code_path + " -O2 -std=c++14  " + BITS_STDC + " -o " + exe_path + " 2>/dev/null";
   if (run_compile(compile_cmd.c_str()) != 0) {
-    // printf("Compilation failed for problem %s\n", compile_cmd.c_str());
+    MyPrintf("Compilation failed for problem %s\n", compile_cmd.c_str());
     return 0;  // 编译失败，得分 0
   }
   // 检查编译文件是否存在
   if (!filesystem::exists(exe_path)) {
-    // printf("Executable file %s does not exist after compilation for problem %s\n", exe_path.c_str(),
-    //        problem_name.c_str());
+    MyPrintf("Executable file %s does not exist after compilation for problem %s\n", exe_path.c_str(),
+             problem_name.c_str());
     return 0;  // 编译失败，得分 0
   }
 
@@ -105,46 +113,55 @@ int TestOneProblem(const string& problem_dir) {
   int passed_tests = 0;
   // 检查系统上是否有 timeout 或 gtimeout（macOS 上用 gtimeout 来自 coreutils）
   for (int i = 1; i <= sample_count; i++) {
-    const string input_file_path_i = official_data_path + "/" + problem_name + to_string(i) + ".in";
-    const string answer_file_path_i = official_data_path + "/" + problem_name + to_string(i) + ".ans";
-    const string output_file_path_i = "./" + problem_name + to_string(i) + ".out";
-    const string output_file_path = "./" + problem_name + ".out";
-    const string input_file_path = "./" + problem_name + ".in";
+    const string official_input_file_path_i = official_data_path + "/" + problem_name + to_string(i) + ".in";
+    const string official_answer_file_path_i = official_data_path + "/" + problem_name + to_string(i) + ".ans";
+    const string student_output_file_path_i = "./" + problem_name + to_string(i) + ".out";
+    const string student_output_file_path = "./" + problem_name + ".out";
+    const string student_input_file_path = "./" + problem_name + ".in";
 
     // output_file_path_i 文件清空
-    run_compile(("echo > " + output_file_path_i).c_str());
-    run_compile(("echo > " + output_file_path).c_str());
+    run_compile(("echo > " + student_output_file_path_i).c_str());
+    run_compile(("echo > " + student_output_file_path).c_str());
 
     // input_file_path_i 是官方数据的输入文件，拷贝到考生目录下作为输入文件
-    filesystem::copy_file(input_file_path_i, input_file_path, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(official_input_file_path_i, student_input_file_path,
+                          filesystem::copy_options::overwrite_existing);
 
     string run_cmd = timeout_cmd + " 1 " + exe_path;
     if (ioFlag == 0) {
-      run_cmd += " < " + input_file_path;
-      run_cmd += " > " + output_file_path;
+      run_cmd += " < " + student_input_file_path;
+      run_cmd += " > " + student_output_file_path;
     }
     int ret = run_compile(run_cmd.c_str());
     if (ret != 0) {
-      // printf("Runtime error or timeout on test %d for problem %s\n", i + 1, problem_name.c_str());
+      MyPrintf("Runtime error or timeout on test %d for problem %s\n", i + 1, problem_name.c_str());
       continue;  // 运行错误，跳过该测试点
     }
 
-    if (!filesystem::exists(output_file_path)) {
-      printf("Output file %s does not exist after running test %d for problem %s\n", output_file_path.c_str(), i + 1,
-             problem_name.c_str());
+    if (!filesystem::exists(student_output_file_path)) {
+      MyPrintf("Output file %s does not exist after running test %d for problem %s\n", student_output_file_path.c_str(),
+               i + 1, problem_name.c_str());
       continue;  // 某种原因输出文件不见了，跳过该测试点
     }
-    filesystem::copy_file(output_file_path, output_file_path_i, filesystem::copy_options::overwrite_existing);
+    filesystem::copy_file(student_output_file_path, student_output_file_path_i,
+                          filesystem::copy_options::overwrite_existing);
 
     // 比较输出结果
-    string diff_cmd = "diff -w " + answer_file_path_i + " " + output_file_path_i + " > /dev/null";
+    string diff_cmd = "diff -w " + official_answer_file_path_i + " " + student_output_file_path_i + " > /dev/null";
     if (run_compile(diff_cmd.c_str()) == 0) {
-      // printf("    Test %d passed for problem %s\n", i + 1, problem_name.c_str());
+      MyPrintf("    Test %d passed for problem %s\n", i + 1, problem_name.c_str());
       passed_tests++;
     } else {
-      // printf("    Test %d failed for problem %s\n", i + 1, problem_name.c_str());
+      MyPrintf("    Test %d failed for problem %s\n", i + 1, problem_name.c_str());
     }
+
+    // 清理第 i 个测试的输入输出文件
+    filesystem::remove(student_input_file_path);
+    filesystem::remove(student_output_file_path);
+    filesystem::remove(student_output_file_path_i);
   }
+  // 删除可执行文件
+  filesystem::remove(exe_path);
   return (passed_tests * 100) / sample_count;
 };
 
@@ -237,10 +254,11 @@ bool Init(string user_code_path) {
 
 void Usage() {
   printf("\n");
-  printf("Usage: ./run_score lastNum ioFlag\n");
+  printf("Usage: ./run_score lastNum ioFlag debugFlag\n");
   printf("\n");
   printf("lastNum: 并发度，范围为 [0,9]，代表考试编号最后一位。 -1 代表不分组，串行运行\n");
   printf("ioFlag: 程序里是否从文件读测试数据， 1 代表是， 0 代表否\n");
+  printf("debugFlag: 是否打印调试信息， 1 代表打印， 0 代表不打印\n");
   printf("\n");
   printf("学生的代码放在 code 目录，子目录为学生考试编号\n");
   printf("官方测试数据放在 data 目录，是测试数据文件列表\n");
@@ -279,14 +297,15 @@ void Usage() {
 }
 
 int main(int argc, char** argv) {
-  if (argc != 3) {
+  if (argc != 4) {
     Usage();
     return 0;
   }
 
   const int lastNum = atoi(argv[1]);
   ioFlag = atoi(argv[2]);
-  if (lastNum < -1 || lastNum > 9 || ioFlag < 0 || ioFlag > 1) {
+  debugFlag = atoi(argv[3]);
+  if (lastNum < -1 || lastNum > 9 || ioFlag < 0 || ioFlag > 1 || debugFlag < 0 || debugFlag > 1) {
     Usage();
     return 0;
   }
