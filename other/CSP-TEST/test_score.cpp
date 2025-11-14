@@ -2,6 +2,7 @@
  * CSP-J/S 考试评分系统
  * v1: 2025-11-12 基本版本，评测 N 个省份数据
  * v2: 2025-11-13 修复部分考生没有创建题目目录时报错的问题 
+ * v3: 增加编译命令: c++ -std=c++2a -O2 test_score.cpp -o test_score
  */
 
 #include <bits/stdc++.h>
