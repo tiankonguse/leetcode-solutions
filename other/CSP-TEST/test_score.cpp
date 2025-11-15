@@ -5,6 +5,12 @@
  * v3: 2025-11-14 增加编译命令: c++ -std=c++2a -O2 test_score.cpp -o test_score
  * v4: 2025-11-14 删除测试的临时文件，避免磁盘空间占用过多
  * v5: 2025-11-14 新增调试信息开关 debugFlag，默认关闭
+ * V6: 2025-11-14 参数解析改进，增加 --from 和 --to 参数，支持部分考生测试
+ * V7: 2025-11-15 优化批量模式，指定批次和索引
+ * V8: 2025-11-15 部分考生输出时没有写到文件，把输出重定向到 /dev/null，避免刷屏
+ * V9: 2025-11-15 增加 --timeout 参数，支持设置程序运行超时时间，单位秒，范围 1-60
+ * V10: 2025-11-15 修复部分考试代码运行失败时，没有清理输入输出文件的问题
+ * V11: 2025-11-15 部分考生使用 cerr 输出调试信息，强制重定向到 /dev/null，避免刷屏
  */
 
 #include <bits/stdc++.h>
@@ -70,8 +76,14 @@ string main_path;
 string official_data_path;
 // 探测系统上 timeout 或 gtimeout 命令（macOS 上用 gtimeout 来自 coreutils）
 string timeout_cmd = "gtimeout";
-int ioFlag = 1;     // 0 代表程序里不从文件读写， 1 代表程序里从文件读写
-int debugFlag = 0;  // 0 代表不打印调试信息， 1 代表打印调试信息
+int ioFlag = 1;       // 0 代表程序里不从文件读写， 1 代表程序里从文件读写
+int batchNum = 1;     // 1 批就是全量运行
+int batchIndex = 0;   // 0 代表运行  % batchNum = 0 的学生， 1 代表运行 % batchNum = 1 的学生， 以此类推
+int debugFlag = 0;    // 0 代表不打印调试信息， 1 代表打印调试信息
+int lastNum = -1;     // 默认不分组，全量运行
+int fromNum = 1;      // 默认从第 1 个学生开始跑
+int toNum = 1000000;  // 默认跑到最后一个学生
+int timeout = 1;      // 程序运行超时时间，单位秒，默认 1 秒
 
 #define MyPrintf(...)                   \
   do {                                  \
@@ -127,11 +139,15 @@ int TestOneProblem(const string& problem_dir) {
     filesystem::copy_file(official_input_file_path_i, student_input_file_path,
                           filesystem::copy_options::overwrite_existing);
 
-    string run_cmd = timeout_cmd + " 1 " + exe_path;
+    string run_cmd = timeout_cmd + " " + to_string(timeout) + " " + exe_path;
     if (ioFlag == 0) {
       run_cmd += " < " + student_input_file_path;
       run_cmd += " > " + student_output_file_path;
+    } else {
+      run_cmd += " > /dev/null";  // 把程序输出重定向到 /dev/null，避免刷屏
     }
+    // 为了防止部分考生使用 cerr 输出调试信息，强制重定向到 /dev/null
+    run_cmd += " 2> /dev/null";
     int ret = run_compile(run_cmd.c_str());
     if (ret != 0) {
       MyPrintf("Runtime error or timeout on test %d for problem %s\n", i + 1, problem_name.c_str());
@@ -154,11 +170,23 @@ int TestOneProblem(const string& problem_dir) {
     } else {
       MyPrintf("    Test %d failed for problem %s\n", i + 1, problem_name.c_str());
     }
+  }
 
-    // 清理第 i 个测试的输入输出文件
+  // 清理最后的输入输出文件
+  const string student_output_file_path = "./" + problem_name + ".out";
+  const string student_input_file_path = "./" + problem_name + ".in";
+  if (filesystem::exists(student_input_file_path)) {
     filesystem::remove(student_input_file_path);
+  }
+  if (filesystem::exists(student_output_file_path)) {
     filesystem::remove(student_output_file_path);
-    filesystem::remove(student_output_file_path_i);
+  }
+  for (int i = 1; i <= sample_count; i++) {
+    const string student_output_file_path_i = "./" + problem_name + to_string(i) + ".out";
+    // 先检查是否存在再删除
+    if (filesystem::exists(student_output_file_path_i)) {
+      filesystem::remove(student_output_file_path_i);
+    }
   }
   // 删除可执行文件
   filesystem::remove(exe_path);
@@ -168,7 +196,7 @@ int TestOneProblem(const string& problem_dir) {
 tuple<int, int, int, int> TestOneStudent(const string& student_dir) {
   printf("Testing student: %s\n", student_dir.c_str());
   string student_id = filesystem::path(student_dir).filename().string();
-
+  auto t1 = std::chrono::steady_clock::now();
   vector<int> problem_scores;
   for (auto [problem_name, sample_count] : problem_samples) {
     const string problem_dir = student_dir + "/" + problem_name;
@@ -185,10 +213,13 @@ tuple<int, int, int, int> TestOneStudent(const string& student_dir) {
     filesystem::current_path(main_path);  // 切回主路径
     problem_scores.push_back(problem_score);
   }
+  auto t2 = std::chrono::steady_clock::now();
+  auto my = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+  double costTime = my.count();
 
   int all_score = (problem_scores[0] + problem_scores[1] + problem_scores[2] + problem_scores[3]);
-  printf("  Student %s allScore=%d, problem score: %d %d %d %d\n", student_id.c_str(), all_score, problem_scores[0],
-         problem_scores[1], problem_scores[2], problem_scores[3]);
+  printf("  Student %s allScore=%d, problem score: %d %d %d %d, costTime=%.2f ms\n", student_id.c_str(), all_score,
+         problem_scores[0], problem_scores[1], problem_scores[2], problem_scores[3], costTime);
   return {problem_scores[0], problem_scores[1], problem_scores[2], problem_scores[3]};
 }
 
@@ -254,11 +285,14 @@ bool Init(string user_code_path) {
 
 void Usage() {
   printf("\n");
-  printf("Usage: ./run_score lastNum ioFlag debugFlag\n");
-  printf("\n");
-  printf("lastNum: 并发度，范围为 [0,9]，代表考试编号最后一位。 -1 代表不分组，串行运行\n");
-  printf("ioFlag: 程序里是否从文件读测试数据， 1 代表是， 0 代表否\n");
-  printf("debugFlag: 是否打印调试信息， 1 代表打印， 0 代表不打印\n");
+  printf("Usage:\n");
+  printf("    --batch=N  批次，指定批次号，默认 1 全量运行\n");
+  printf("    --index=M  索引，指定批次内的索引号\n");
+  printf("    --IO=ioFlag , 默认值 1，程序里是否从文件读测试数据， 1 代表是， 0 代表否\n");
+  printf("    --debug=debugFlag , 默认值 0，是否打印调试信息， 1 代表打印， 0 代表不打印\n");
+  printf("    --from=num , 默认值 1， 从 num 开始跑数据\n");
+  printf("    --to=num , 默认值 max， 到 num 结束跑数据\n");
+  printf("    --timeout=t , 默认值 1， 程序运行超时时间，单位秒, 取值范围 1-60\n");
   printf("\n");
   printf("学生的代码放在 code 目录，子目录为学生考试编号\n");
   printf("官方测试数据放在 data 目录，是测试数据文件列表\n");
@@ -296,20 +330,89 @@ void Usage() {
   printf("    ...\n");
 }
 
+// 判断字符串是否以 prefix 开头
+bool starts_with(const std::string& s, const std::string& prefix) { return s.rfind(prefix, 0) == 0; }
+bool ParseArgs(int argc, char** argv) {
+  const string kBatchPrefix = "--batch=";
+  const string kIndexPrefix = "--index=";
+  const string kIOPrefix = "--IO=";
+  const string kDebugPrefix = "--debug=";
+  const string kFromPrefix = "--from=";
+  const string kToPrefix = "--to=";
+  const string kTimeoutPrefix = "--timeout=";
+  std::vector<std::string> args(argv + 1, argv + argc);
+  for (size_t i = 0; i < args.size(); i++) {
+    const std::string& arg = args[i];
+    if (starts_with(arg, kBatchPrefix)) {
+      batchNum = std::stoi(arg.substr(kBatchPrefix.size()));
+      if (batchNum < 1) {
+        return false;
+      }
+    } else if (starts_with(arg, kIndexPrefix)) {
+      batchIndex = std::stoi(arg.substr(kIndexPrefix.size()));
+      if (batchIndex < 0) {
+        return false;
+      }
+    } else if (starts_with(arg, kIOPrefix)) {
+      ioFlag = std::stoi(arg.substr(kIOPrefix.size()));
+      if (ioFlag < 0 || ioFlag > 1) {
+        return false;
+      }
+    } else if (starts_with(arg, kDebugPrefix)) {
+      debugFlag = std::stoi(arg.substr(kDebugPrefix.size()));
+      if (debugFlag < 0 || debugFlag > 1) {
+        return false;
+      }
+    } else if (starts_with(arg, kFromPrefix)) {
+      fromNum = std::stoi(arg.substr(kFromPrefix.size()));
+      if (fromNum < 1) {
+        return false;
+      }
+    } else if (starts_with(arg, kToPrefix)) {
+      toNum = std::stoi(arg.substr(kToPrefix.size()));
+      if (toNum < fromNum) {
+        return false;
+      }
+    } else if (starts_with(arg, kTimeoutPrefix)) {
+      timeout = std::stoi(arg.substr(kTimeoutPrefix.size()));
+      if (timeout < 1 || timeout > 60) {
+        return false;
+      }
+    } else {
+      printf("Unknown argument: %s\n", arg.c_str());
+      return false;
+    }
+  }
+  if (batchIndex >= batchNum) {
+    printf("Error: batchIndex (%d) must be less than batchNum (%d)\n", batchIndex, batchNum);
+    return false;
+  }
+  if (batchNum == 1) {
+    printf("Running all students from %d to %d\n", fromNum, toNum);
+  } else {
+    printf("Running batch=%d only students with last number %d, from %d to %d\n", batchNum, batchIndex, fromNum, toNum);
+  }
+  if (ioFlag) {
+    printf("IO Flag is ON: Programs will read/write from/to files.\n");
+  } else {
+    printf("IO Flag is OFF: Programs will use standard input/output.\n");
+  }
+  if (debugFlag) {
+    printf("Debug Flag is ON: Debug information will be printed.\n");
+  } else {
+    printf("Debug Flag is OFF: No debug information will be printed.\n");
+  }
+
+  return true;
+}
+
 int main(int argc, char** argv) {
-  if (argc != 4) {
+  if (ParseArgs(argc, argv) == false) {
     Usage();
     return 0;
   }
 
-  const int lastNum = atoi(argv[1]);
-  ioFlag = atoi(argv[2]);
-  debugFlag = atoi(argv[3]);
-  if (lastNum < -1 || lastNum > 9 || ioFlag < 0 || ioFlag > 1 || debugFlag < 0 || debugFlag > 1) {
-    Usage();
-    return 0;
-  }
-  string out_result_path = lastNum == -1 ? "./results.txt" : "./results" + to_string(lastNum) + ".txt";
+  string out_result_path = batchNum == 1 ? "./results.txt" : "./results" + to_string(batchIndex) + ".txt";
   main_path = filesystem::current_path().string();  // 获取当前程序的路径
   string user_code_path = main_path + "/code";
   official_data_path = main_path + "/data";
@@ -327,6 +430,22 @@ int main(int argc, char** argv) {
   for (const auto& entry : filesystem::directory_iterator(user_code_path)) {
     if (entry.is_directory()) {
       string student_dir = entry.path().string();
+      // 文件名格式 XX-S000001， 考试编号是后五位数字
+      string student_id = filesystem::path(student_dir).filename().string();
+      if (student_id.length() < 7) {
+        printf("Skipping invalid student_dir: %s\n", entry.path().string().c_str());
+        continue;
+      }
+      int student_num = stoi(student_id.substr(student_id.length() - 5, 5));
+      if (student_num < fromNum || student_num > toNum) {
+        printf("Skipping student_dir out of range: %s\n", entry.path().string().c_str());
+        continue;
+      }
+      if (student_num % batchNum != batchIndex) {
+        // printf("Skipping student_dir not in batch %d index %d: %s\n", batchNum, batchIndex,
+        // entry.path().string().c_str());
+        continue;
+      }
       student_dirs.push_back(student_dir);
     } else {
       printf("Skipping non-directory student_dir: %s\n", entry.path().string().c_str());
@@ -338,14 +457,7 @@ int main(int argc, char** argv) {
   map<string, tuple<int, int, int, int>> student_scores;  // 使用 map 储存，方便后续按学生 ID 顺序输出结果
   for (auto& student_dir : student_dirs) {
     string student_id = filesystem::path(student_dir).filename().string();
-    int last_student_num = student_id.back() - '0';
-    if (lastNum == -1) {
-      student_scores[student_id] = TestOneStudent(student_dir);
-      continue;
-    }
-    if (last_student_num == lastNum) {
-      student_scores[student_id] = TestOneStudent(student_dir);
-    }
+    student_scores[student_id] = TestOneStudent(student_dir);
   }
   vector<string> problem_ids;
   for (auto& [problem_id, _] : problem_samples) {
