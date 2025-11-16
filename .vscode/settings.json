@@ -155,5 +155,8 @@
     "marscode.enableInlineCommand": true,
     "files.watcherExclude": {
         "**/target": true
-    }
+    },
+    "lldb.showDisassembly": "auto",
+    "lldb.dereferencePointers": true,
+    "lldb.consoleMode": "commands"
 }
