@@ -11,6 +11,10 @@
  * V9: 2025-11-15 增加 --timeout 参数，支持设置程序运行超时时间，单位秒，范围 1-60
  * V10: 2025-11-15 修复部分考试代码运行失败时，没有清理输入输出文件的问题
  * V11: 2025-11-15 部分考生使用 cerr 输出调试信息，强制重定向到 /dev/null，避免刷屏
+ *
+ * cp /Users/tiankonguse-m3/project/github/leetcode-solutions/other/CSP-TEST/test_score.cpp ./
+ * c++ -std=c++2a -O2 -I/Users/tiankonguse-m3/project/github/leetcode-solutions/include/ -DUSACO_LOCAL_JUDGE
+ * test_score.cpp -o test_score
  */
 
 #include <bits/stdc++.h>
@@ -109,7 +113,14 @@ int TestOneProblem(const string& problem_dir) {
   }
 
   string exe_path = "./" + problem_name + ".exe";
-  string compile_cmd = "g++ " + code_path + " -O2 -std=c++14  " + BITS_STDC + " -o " + exe_path + " 2>/dev/null";
+  string compile_cmd = "g++ " + code_path + " -O2 -std=c++14  " + BITS_STDC;
+  compile_cmd += " -Wno-c++11-narrowing ";
+  compile_cmd += " -Werror=return-type ";
+  compile_cmd += " -o " + exe_path;
+  if (debugFlag == 0) {
+    compile_cmd += "  2>/dev/null";
+  }
+  MyPrintf("Compiling problem %s with command: %s\n", problem_name.c_str(), compile_cmd.c_str());
   if (run_compile(compile_cmd.c_str()) != 0) {
     MyPrintf("Compilation failed for problem %s\n", compile_cmd.c_str());
     return 0;  // 编译失败，得分 0
@@ -165,10 +176,10 @@ int TestOneProblem(const string& problem_dir) {
     // 比较输出结果
     string diff_cmd = "diff -w " + official_answer_file_path_i + " " + student_output_file_path_i + " > /dev/null";
     if (run_compile(diff_cmd.c_str()) == 0) {
-      MyPrintf("    Test %d passed for problem %s\n", i + 1, problem_name.c_str());
+      MyPrintf("    Test %d passed for problem %s\n", i, problem_name.c_str());
       passed_tests++;
     } else {
-      MyPrintf("    Test %d failed for problem %s\n", i + 1, problem_name.c_str());
+      MyPrintf("    Test %d failed for problem %s\n", i, problem_name.c_str());
     }
   }
 
@@ -197,30 +208,33 @@ tuple<int, int, int, int> TestOneStudent(const string& student_dir) {
   printf("Testing student: %s\n", student_dir.c_str());
   string student_id = filesystem::path(student_dir).filename().string();
   auto t1 = std::chrono::steady_clock::now();
-  vector<int> problem_scores;
+  vector<pair<string, int>> problem_scores;
   for (auto [problem_name, sample_count] : problem_samples) {
     const string problem_dir = student_dir + "/" + problem_name;
 
     // 判断目录是否存在
     if (!filesystem::exists(problem_dir) || !filesystem::is_directory(problem_dir)) {
       printf("  Problem directory %s does not exist for student %s\n", problem_dir.c_str(), student_id.c_str());
-      problem_scores.push_back(0);
+      problem_scores.push_back({problem_name, 0});
       continue;
     }
 
     filesystem::current_path(problem_dir);  // cd 到问题目录
     int problem_score = TestOneProblem(problem_dir);
     filesystem::current_path(main_path);  // 切回主路径
-    problem_scores.push_back(problem_score);
+    problem_scores.push_back({problem_name, problem_score});
   }
   auto t2 = std::chrono::steady_clock::now();
   auto my = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
   double costTime = my.count();
 
-  int all_score = (problem_scores[0] + problem_scores[1] + problem_scores[2] + problem_scores[3]);
-  printf("  Student %s allScore=%d, problem score: %d %d %d %d, costTime=%.2f ms\n", student_id.c_str(), all_score,
-         problem_scores[0], problem_scores[1], problem_scores[2], problem_scores[3], costTime);
-  return {problem_scores[0], problem_scores[1], problem_scores[2], problem_scores[3]};
+  int all_score =
+      (problem_scores[0].second + problem_scores[1].second + problem_scores[2].second + problem_scores[3].second);
+  printf("  Student %s allScore=%d, problem score: %s=%d %s=%d %s=%d %s=%d, costTime=%.2f ms\n", student_id.c_str(),
+         all_score, problem_scores[0].first.c_str(), problem_scores[0].second, problem_scores[1].first.c_str(),
+         problem_scores[1].second, problem_scores[2].first.c_str(), problem_scores[2].second,
+         problem_scores[3].first.c_str(), problem_scores[3].second, costTime);
+  return {problem_scores[0].second, problem_scores[1].second, problem_scores[2].second, problem_scores[3].second};
 }
 
 bool Init(string user_code_path) {
@@ -438,7 +452,7 @@ int main(int argc, char** argv) {
       }
       int student_num = stoi(student_id.substr(student_id.length() - 5, 5));
       if (student_num < fromNum || student_num > toNum) {
-        printf("Skipping student_dir out of range: %s\n", entry.path().string().c_str());
+        // printf("Skipping student_dir out of range: %s\n", entry.path().string().c_str());
         continue;
       }
       if (student_num % batchNum != batchIndex) {

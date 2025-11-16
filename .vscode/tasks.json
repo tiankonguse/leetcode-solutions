@@ -18,8 +18,8 @@
                 "-o",
                 "${workspaceFolder}/tmp/tmp.exe",
                 "-std=c++17",
-                "-Wall",
-                "-Wno-unused-const-variable",
+                // "-Wall",
+                // "-Wno-unused-const-variable",
                 // "-Wl,--stack=26843545"
             ],
             "options": {
@@ -122,10 +122,10 @@
                 "-o",
                 "${workspaceFolder}/tmp/tmp.exe",
                 "-std=c++20",
-                "-Wall",
+                // "-Wall",
                 // "-Wl,--stack=26843545",
                 "-Wstack-usage=2684354500",
-                "-Werror"
+                // "-Werror"
             ],
             "options": {
                 "cwd": "${fileDirname}", // The current working directory of the executed program or script. If omitted Code's current workspace root is used.
