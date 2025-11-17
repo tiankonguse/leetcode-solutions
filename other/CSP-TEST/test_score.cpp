@@ -11,10 +11,11 @@
  * V9: 2025-11-15 增加 --timeout 参数，支持设置程序运行超时时间，单位秒，范围 1-60
  * V10: 2025-11-15 修复部分考试代码运行失败时，没有清理输入输出文件的问题
  * V11: 2025-11-15 部分考生使用 cerr 输出调试信息，强制重定向到 /dev/null，避免刷屏
+ * V12: 2025-11-17 支持配置每道题的内存和超时时间，以及配置时间放大系数
  *
  * cp /Users/tiankonguse-m3/project/github/leetcode-solutions/other/CSP-TEST/test_score.cpp ./
- * c++ -std=c++2a -O2 -I/Users/tiankonguse-m3/project/github/leetcode-solutions/include/ -DUSACO_LOCAL_JUDGE
- * test_score.cpp -o test_score
+ * c++ -std=c++2a -O2 test_score.cpp -o test_score
+ * -I/Users/tiankonguse-m3/project/github/leetcode-solutions/include/ -DUSACO_LOCAL_JUDGE
  */
 
 #include <bits/stdc++.h>
@@ -74,20 +75,26 @@ using namespace std::chrono;
 
 // 简单固定大小线程池（C++14）
 
-map<string, int> problem_samples;
+struct Node {
+  string problem_name;
+  int sample_count;
+  double timeout;
+  int memory;
+};
+map<string, Node> problem_samples;
 
 string main_path;
 string official_data_path;
 // 探测系统上 timeout 或 gtimeout 命令（macOS 上用 gtimeout 来自 coreutils）
 string timeout_cmd = "gtimeout";
-int ioFlag = 1;       // 0 代表程序里不从文件读写， 1 代表程序里从文件读写
-int batchNum = 1;     // 1 批就是全量运行
-int batchIndex = 0;   // 0 代表运行  % batchNum = 0 的学生， 1 代表运行 % batchNum = 1 的学生， 以此类推
-int debugFlag = 0;    // 0 代表不打印调试信息， 1 代表打印调试信息
-int lastNum = -1;     // 默认不分组，全量运行
-int fromNum = 1;      // 默认从第 1 个学生开始跑
-int toNum = 1000000;  // 默认跑到最后一个学生
-int timeout = 1;      // 程序运行超时时间，单位秒，默认 1 秒
+int ioFlag = 1;              // 0 代表程序里不从文件读写， 1 代表程序里从文件读写
+int batchNum = 1;            // 1 批就是全量运行
+int batchIndex = 0;          // 0 代表运行  % batchNum = 0 的学生， 1 代表运行 % batchNum = 1 的学生， 以此类推
+int debugFlag = 0;           // 0 代表不打印调试信息， 1 代表打印调试信息
+int lastNum = -1;            // 默认不分组，全量运行
+int fromNum = 1;             // 默认从第 1 个学生开始跑
+int toNum = 1000000;         // 默认跑到最后一个学生
+double timeout_scale = 1.0;  // 程序运行超时时间放大系数，默认 1.0
 
 #define MyPrintf(...)                   \
   do {                                  \
@@ -103,7 +110,12 @@ int TestOneProblem(const string& problem_dir) {
   // 已经 cd 到问题目录了，所以这里面全是文件，不需要加路径前缀
   const string problem_name = filesystem::path(problem_dir).filename().string();
   assert(problem_samples.find(problem_name) != problem_samples.end());
-  int sample_count = problem_samples[problem_name];
+  Node& node = problem_samples[problem_name];
+  int sample_count = node.sample_count;
+  double timeout = node.timeout;
+  int memory = node.memory * 1024;
+  MyPrintf("Testing problem %s with %d samples, timeout %f, memory %d\n", problem_name.c_str(), sample_count, timeout,
+           memory);
 
   // 只有一个代码，文件名与目录名一致
   string code_path = "./" + problem_name + ".cpp";
@@ -150,7 +162,8 @@ int TestOneProblem(const string& problem_dir) {
     filesystem::copy_file(official_input_file_path_i, student_input_file_path,
                           filesystem::copy_options::overwrite_existing);
 
-    string run_cmd = timeout_cmd + " " + to_string(timeout) + " " + exe_path;
+    string ulimit = "ulimit -s " + to_string(memory);
+    string run_cmd = ulimit + " && " + timeout_cmd + " " + to_string(timeout) + " " + exe_path;
     if (ioFlag == 0) {
       run_cmd += " < " + student_input_file_path;
       run_cmd += " > " + student_output_file_path;
@@ -288,12 +301,45 @@ bool Init(string user_code_path) {
   }
   problem_samples.clear();
   for (const auto& [problem_name, sample_set] : problem_sample_set) {
-    problem_samples[problem_name] = sample_set.size();
+    Node& node = problem_samples[problem_name];
+    node.problem_name = problem_name;
+    node.sample_count = sample_set.size();
   }
+
+  // 加载 perblem.txt 数据
+  string problem_txt_path = main_path + "/perblem.txt";
+  if (!filesystem::exists(problem_txt_path)) {
+    printf("Error: Problem txt path %s does not exist.\n", problem_txt_path.c_str());
+    return false;
+  }
+  {
+    freopen(problem_txt_path.c_str(), "r", stdin);
+    Node tmpNode;
+    char tmpProblemName[100];
+    while (scanf("%s %lf %d %d", tmpProblemName, &tmpNode.timeout, &tmpNode.memory, &tmpNode.sample_count) != EOF) {
+      tmpNode.problem_name = tmpProblemName;
+      if (problem_samples.count(tmpNode.problem_name) == 0) {
+        printf("Error: Problem %s not found in problem data\n", tmpNode.problem_name.c_str());
+        return false;
+      }
+      Node& node = problem_samples[tmpNode.problem_name];
+      if (node.sample_count != tmpNode.sample_count) {
+        printf("Error: Problem %s sample count not match, problem.txt Count is %d, data Count is %d\n",
+               tmpNode.problem_name.c_str(), tmpNode.sample_count, node.sample_count);
+        return false;
+      }
+      node.problem_name = tmpNode.problem_name;
+      node.timeout = tmpNode.timeout * timeout_scale;
+      node.memory = tmpNode.memory;
+    }
+  }
+
   printf("Detected problems and sample counts:\n");
-  for (const auto& [problem_name, sample_count] : problem_samples) {
-    printf("  Problem %s has %d samples\n", problem_name.c_str(), sample_count);
+  for (const auto& [problem_name, node] : problem_samples) {
+    printf("  Problem %s has %d samples, timeout=%.1f memory=%dM\n", problem_name.c_str(), node.sample_count,
+           node.timeout, node.memory);
   }
+
   return true;
 }
 
@@ -306,14 +352,23 @@ void Usage() {
   printf("    --debug=debugFlag , 默认值 0，是否打印调试信息， 1 代表打印， 0 代表不打印\n");
   printf("    --from=num , 默认值 1， 从 num 开始跑数据\n");
   printf("    --to=num , 默认值 max， 到 num 结束跑数据\n");
-  printf("    --timeout=t , 默认值 1， 程序运行超时时间，单位秒, 取值范围 1-60\n");
+  printf("    --scale=t , 默认值 1.0， 程序运行超时时间放大系数，范围 1.0~3.0\n");
   printf("\n");
   printf("学生的代码放在 code 目录，子目录为学生考试编号\n");
   printf("官方测试数据放在 data 目录，是测试数据文件列表\n");
   printf("Linux 使用 timeout 命令来限制程序运行时间;Mac 使用 gtimeout 命令，需要安装依赖 brew install coreutils\n");
+  printf(
+      "perblem.txt 每道题一行，四列空格分隔，分别为 "
+      "目录名、时间限制(单位秒，支持浮点数)、内存限制(单位M)、测试点数目\n");
+  printf("例如： \n");
+  printf("club 1.0 512 20\n");
+  printf("road 1.0 512 25\n");
+  printf("replace 1.0 2048 20\n");
+  printf("employ 1.0 512 25\n");
   printf("\n");
   printf("目录结构如下\n");
   printf("test_score.cpp\n");
+  printf("perblem.txt\n");
   printf("code/\n");
   printf("    XX-S000001/\n");
   printf("        arena/\n");
@@ -353,43 +408,50 @@ bool ParseArgs(int argc, char** argv) {
   const string kDebugPrefix = "--debug=";
   const string kFromPrefix = "--from=";
   const string kToPrefix = "--to=";
-  const string kTimeoutPrefix = "--timeout=";
+  const string kScalePrefix = "--scale=";
   std::vector<std::string> args(argv + 1, argv + argc);
   for (size_t i = 0; i < args.size(); i++) {
     const std::string& arg = args[i];
     if (starts_with(arg, kBatchPrefix)) {
       batchNum = std::stoi(arg.substr(kBatchPrefix.size()));
       if (batchNum < 1) {
+        printf("Error: batchNum (%d) must be greater than 0\n", batchNum);
         return false;
       }
     } else if (starts_with(arg, kIndexPrefix)) {
       batchIndex = std::stoi(arg.substr(kIndexPrefix.size()));
-      if (batchIndex < 0) {
+      if (batchIndex < 0 || batchIndex >= batchNum) {
+        printf("Error: batchIndex (%d) must be in [0, %d)\n", batchIndex, batchNum);
         return false;
       }
     } else if (starts_with(arg, kIOPrefix)) {
       ioFlag = std::stoi(arg.substr(kIOPrefix.size()));
       if (ioFlag < 0 || ioFlag > 1) {
+        printf("Error: ioFlag (%d) must be 0 or 1\n", ioFlag);
         return false;
       }
     } else if (starts_with(arg, kDebugPrefix)) {
       debugFlag = std::stoi(arg.substr(kDebugPrefix.size()));
       if (debugFlag < 0 || debugFlag > 1) {
+        printf("Error: debugFlag (%d) must be 0 or 1\n", debugFlag);
         return false;
       }
     } else if (starts_with(arg, kFromPrefix)) {
       fromNum = std::stoi(arg.substr(kFromPrefix.size()));
       if (fromNum < 1) {
+        printf("Error: fromNum (%d) must be greater than 0\n", fromNum);
         return false;
       }
     } else if (starts_with(arg, kToPrefix)) {
       toNum = std::stoi(arg.substr(kToPrefix.size()));
       if (toNum < fromNum) {
+        printf("Error: toNum (%d) must be greater than or equal to fromNum (%d)\n", toNum, fromNum);
         return false;
       }
-    } else if (starts_with(arg, kTimeoutPrefix)) {
-      timeout = std::stoi(arg.substr(kTimeoutPrefix.size()));
-      if (timeout < 1 || timeout > 60) {
+    } else if (starts_with(arg, kScalePrefix)) {
+      timeout_scale = std::stof(arg.substr(kScalePrefix.size()));
+      if (timeout_scale < 1.0 || timeout_scale > 3.0) {
+        printf("Error: timeout_scale (%.1f) must be in [1.0, 3.0]\n", timeout_scale);
         return false;
       }
     } else {
@@ -416,6 +478,7 @@ bool ParseArgs(int argc, char** argv) {
   } else {
     printf("Debug Flag is OFF: No debug information will be printed.\n");
   }
+  printf("Timeout scale is %.1f\n", timeout_scale);
 
   return true;
 }
@@ -426,8 +489,9 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  string out_result_path = batchNum == 1 ? "./results.txt" : "./results" + to_string(batchIndex) + ".txt";
   main_path = filesystem::current_path().string();  // 获取当前程序的路径
+  string out_result_path = batchNum == 1 ? "./results.txt" : "./results" + to_string(batchIndex) + ".txt";
+  out_result_path = main_path + "/" + out_result_path;
   string user_code_path = main_path + "/code";
   official_data_path = main_path + "/data";
   printf("Main path: %s\n", main_path.c_str());
