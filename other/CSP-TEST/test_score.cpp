@@ -164,8 +164,8 @@ int TestOneProblem(const string& problem_dir) {
 
     string ulimit = "ulimit -m " + to_string(memory) + " ";
     ulimit += " && ulimit -s " + to_string(memory) + " ";
-    ulimit += " && ulimit -d " + to_string(timeout) + " ";
-    ulimit += " && ulimit -v " + to_string(timeout) + " ";
+    ulimit += " && ulimit -d " + to_string(memory) + " ";
+    ulimit += " && ulimit -v " + to_string(memory) + " ";
     string run_cmd = ulimit + " && " + timeout_cmd + " " + to_string(timeout) + " " + exe_path;
     if (ioFlag == 0) {
       run_cmd += " < " + student_input_file_path;
