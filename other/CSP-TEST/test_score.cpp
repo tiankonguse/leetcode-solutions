@@ -172,6 +172,7 @@ int TestOneProblem(const string& problem_dir) {
     }
     // 为了防止部分考生使用 cerr 输出调试信息，强制重定向到 /dev/null
     run_cmd += " 2> /dev/null";
+    MyPrintf("Running problem %s with command: %s\n", problem_name.c_str(), run_cmd.c_str());
     int ret = run_compile(run_cmd.c_str());
     if (ret != 0) {
       MyPrintf("Runtime error or timeout on test %d for problem %s\n", i + 1, problem_name.c_str());
