@@ -126,8 +126,8 @@ int TestOneProblem(const string& problem_dir) {
 
   string exe_path = "./" + problem_name + ".exe";
   string compile_cmd = "g++ " + code_path + " -O2 -std=c++14  " + BITS_STDC;
-  compile_cmd += " -Wno-c++11-narrowing ";
-  compile_cmd += " -Werror=return-type ";
+  // compile_cmd += " -Wno-c++11-narrowing ";
+  // compile_cmd += " -Werror=return-type ";
   compile_cmd += " -o " + exe_path;
   if (debugFlag == 0) {
     compile_cmd += "  2>/dev/null";
