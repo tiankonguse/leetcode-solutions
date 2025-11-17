@@ -162,7 +162,8 @@ int TestOneProblem(const string& problem_dir) {
     filesystem::copy_file(official_input_file_path_i, student_input_file_path,
                           filesystem::copy_options::overwrite_existing);
 
-    string ulimit = "ulimit -m " + to_string(memory);
+    string ulimit = "ulimit -m " + to_string(memory) + " -s " + to_string(memory) + " -d " + to_string(memory) +
+                    " -v " + to_string(memory) + "";
     string run_cmd = ulimit + " && " + timeout_cmd + " " + to_string(timeout) + " " + exe_path;
     if (ioFlag == 0) {
       run_cmd += " < " + student_input_file_path;
