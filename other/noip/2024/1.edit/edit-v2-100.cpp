@@ -149,7 +149,6 @@ void SolverCase() {
     if (nodes[p1].back().TryPop(v)) {
       ans++;
     }
-    // 删除空的区间
     for (int i = 0; i < 2; i++) {
       if (nodes[i].back().Size() == 0) {
         nodes[i].pop_back();

@@ -77,27 +77,25 @@ void InitIO(int fileIndex) {  //
 }
 
 int n;
-char s[2][max5];
-char t[2][max5];
-
+char s1[max5], s2[max5];
+char t1[max5], t2[max5];
 enum NodeType {
   TYPE_CONST = 0,
   TYPE_SWAP = 1,
 };
 struct Node {
   int type;
+  int val = 0;
   int v[2] = {0, 0};
-  Node(int type = TYPE_CONST) : type(type) {
-    v[0] = 0;
-    v[1] = 0;
+  Node(int type = 0, int val = 0) : type(type), val(val) {}
+  void Add(int x) {
+    v[x]++;
+    val++;
   }
-  Node(int type, int val) : type(type) {
-    v[val] = 1;
-    v[1 - val] = 0;
-  }
-  void Add(int x) { v[x]++; }
+  bool Has(int x) const { return v[x] > 0; }
   bool TryPop(int x) {
-    if (v[x]) {
+    val--;
+    if (Has(x)) {
       v[x]--;
       return true;
     } else {
@@ -105,9 +103,10 @@ struct Node {
       return false;
     }
   }
-  int Size() const { return v[0] + v[1]; }
+  bool Empty() const { return val == 0; }
+  int Size() const { return val; }
 };
-vector<Node> nodes[2];
+vector<Node> nodes1, nodes2;
 void Init(vector<Node>& nodes, char* s, char* t) {
   nodes.clear();
   nodes.push_back(Node(NodeType::TYPE_CONST, 0));  // 哨兵
@@ -115,44 +114,75 @@ void Init(vector<Node>& nodes, char* s, char* t) {
     const int type = t[i] - '0';
     const int v = s[i] - '0';
     if (type == NodeType::TYPE_CONST) {
-      nodes.push_back(Node(NodeType::TYPE_CONST, v));
+      nodes.push_back(Node(NodeType::TYPE_CONST, s[i] - '0'));
     } else {
       if (nodes.back().type == NodeType::TYPE_SWAP) {
         nodes.back().Add(v);
       } else {
-        nodes.push_back(Node(NodeType::TYPE_SWAP, v));
+        Node node(NodeType::TYPE_SWAP, 0);
+        node.Add(v);
+        nodes.push_back(node);
       }
     }
-  }
-  MyPrintf("nodes.size=%lu\n", nodes.size());
-  for (auto& node : nodes) {
-    MyPrintf("type=%d, v[0]=%d, v[1]=%d\n", node.type, node.v[0], node.v[1]);
   }
 }
 void SolverCase() {
   scanf("%d", &n);
-  scanf("%s%s", s[0], s[1]);
-  scanf("%s%s", t[0], t[1]);
-  Init(nodes[0], s[0], t[0]);
-  Init(nodes[1], s[1], t[1]);
+  scanf("%s%s", s1, s2);
+  scanf("%s%s", t1, t2);
+  Init(nodes1, s1, t1);
+  Init(nodes2, s2, t2);
   int ans = 0;
-  while (n--) {
-    int p0 = 0, p1 = 1;
-    if (nodes[p0].back().Size() > nodes[p1].back().Size()) {
-      swap(p0, p1);
-    }
-    // 大的匹配小的
-    int v = 0;
-    if (!nodes[p0].back().TryPop(v)) {
-      v = 1 - v;
-    }
-    if (nodes[p1].back().TryPop(v)) {
+  auto MergeConstSwap = [&ans](vector<Node>& nodes1, vector<Node>& nodes2) {
+    assert(nodes1.back().type == NodeType::TYPE_CONST);
+    assert(nodes2.back().type == NodeType::TYPE_SWAP);
+    const int val = nodes1.back().val;
+    nodes1.pop_back();
+    if (nodes2.back().TryPop(val)) {
       ans++;
     }
-    // 删除空的区间
-    for (int i = 0; i < 2; i++) {
-      if (nodes[i].back().Size() == 0) {
-        nodes[i].pop_back();
+    if (nodes2.back().Empty()) {
+      nodes2.pop_back();
+    }
+  };
+  auto MergeSwapSwap = [&ans](vector<Node>& nodes1, vector<Node>& nodes2) {
+    assert(nodes1.back().type == NodeType::TYPE_SWAP);
+    assert(nodes2.back().type == NodeType::TYPE_SWAP);
+    assert(nodes1.back().Size() <= nodes2.back().Size());
+    if (nodes1.back().Has(0)) {
+      nodes1.back().TryPop(0);
+      if (nodes2.back().TryPop(0)) {
+        ans++;
+      }
+    } else {
+      nodes1.back().TryPop(1);
+      if (nodes2.back().TryPop(1)) {
+        ans++;
+      }
+    }
+    if (nodes1.back().Empty()) {
+      nodes1.pop_back();
+    }
+    if (nodes2.back().Empty()) {
+      nodes2.pop_back();
+    }
+  };
+  while (n--) {
+    if (nodes1.back().type == NodeType::TYPE_CONST && nodes2.back().type == NodeType::TYPE_CONST) {
+      if (nodes1.back().val == nodes2.back().val) {
+        ans++;
+      }
+      nodes1.pop_back();
+      nodes2.pop_back();
+    } else if (nodes1.back().type == NodeType::TYPE_CONST) {  // nodes2 swap
+      MergeConstSwap(nodes1, nodes2);
+    } else if (nodes2.back().type == NodeType::TYPE_CONST) {  // nodes1 swap
+      MergeConstSwap(nodes2, nodes1);
+    } else {  // swap swap
+      if (nodes1.back().Size() > nodes2.back().Size()) {
+        MergeSwapSwap(nodes2, nodes1);
+      } else {
+        MergeSwapSwap(nodes1, nodes2);
       }
     }
   }
@@ -239,6 +269,8 @@ int main(int argc, char** argv) {
 #endif
   return 0;
 }
+
+
 
 /*
 6
