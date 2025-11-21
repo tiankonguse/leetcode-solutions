@@ -12,6 +12,7 @@
       "command": "/usr/bin/g++",
       "args": [
         "-g",
+        "-O2",
         "${file}",
         "-I${workspaceFolder}/include/",
         "-DUSACO_LOCAL_JUDGE",
@@ -106,6 +107,7 @@
       "args": [
         "-fdiagnostics-color=always",
         "-g",
+        "-O2",
         "-I${workspaceFolder}/include/",
         "-DUSACO_LOCAL_JUDGE",
         "${file}",
