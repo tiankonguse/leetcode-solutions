@@ -107,7 +107,7 @@
       "args": [
         "-fdiagnostics-color=always",
         "-g",
-        "-O2",
+        // "-O2",
         "-I${workspaceFolder}/include/",
         "-DUSACO_LOCAL_JUDGE",
         "${file}",

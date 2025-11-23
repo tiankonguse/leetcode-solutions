@@ -1,0 +1,98 @@
+
+#ifdef USACO_LOCAL_JUDGE
+#include <bits/stdc++.h>
+
+#include "base.h"
+using namespace std;
+#endif
+
+int debug = 1;
+#define MyPrintf(...)               \
+  do {                              \
+    if (debug) printf(__VA_ARGS__); \
+  } while (0)
+
+typedef long long ll;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+class Solution {
+ public:
+  int countEffective(vector<int>& nums) {
+    int n = nums.size();
+    vector<ll> powers(n + 1, 1);
+    powers[0] = 1;
+    int maxVal = 1;
+    for (int i = 1; i <= n; i++) {
+      maxVal = max(maxVal, nums[i - 1]);
+      powers[i] = (powers[i - 1] * 2) % mod;
+    }
+    int kMaxBit = 1;  // 10^6
+    while (maxVal) {
+      kMaxBit++;
+      maxVal /= 2;
+    }
+
+    const ll kMaxMask = 1 << kMaxBit;
+    ll preOr = 0;
+    vector<ll> preMaskCount(kMaxMask, 0);
+    for (ll x : nums) {
+      preMaskCount[x]++;
+      preOr |= x;
+    }
+
+    vector<ll> realBits;
+    for (int i = 0; i < kMaxBit; i++) {
+      if (preOr & (1 << i)) {
+        realBits.push_back(i);
+      }
+    }
+
+    for (int i = 0; i < kMaxBit; i++) {
+      for (int mask = 0; mask < kMaxMask; mask++) {
+        if (mask & (1 << i)) {
+          preMaskCount[mask] += preMaskCount[mask ^ (1 << i)];
+        }
+      }
+    }
+    int m = realBits.size();
+    ll kRealMaxMask = 1 << m;
+
+    ll ans = 0;
+    for (int realMask = 1; realMask < kRealMaxMask; realMask++) {
+      ll oneCount = 0;
+      ll mask = 0;
+      for (int i = 0; i < m; i++) {
+        if (realMask & (1 << i)) {
+          oneCount++;
+          mask |= (1 << realBits[i]);
+        }
+      }
+
+      ll complement_mask = (kMaxMask - 1) ^ mask;
+      ll count_A = preMaskCount[complement_mask];
+      ll tmp = powers[count_A];
+      if (oneCount % 2 == 1) {
+        ans = (ans + tmp) % mod;
+      } else {
+        ans = (ans - tmp + mod) % mod;
+      }
+    }
+    return ans;
+  }
+};
+
+#ifdef USACO_LOCAL_JUDGE
+
+void Test(const vector<int>& nums1, const int& ans) {  //
+  TEST_SMP1(Solution, countEffective, ans, nums1);
+}
+
+int main() {
+  Test({1, 2, 3}, 3);
+  Test({7, 4, 6}, 4);
+  Test({8, 8}, 1);
+  Test({2, 2, 1}, 5);
+  Test({2, 10, 6}, 6);
+  return 0;
+}
+
+#endif
