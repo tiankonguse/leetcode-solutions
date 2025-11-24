@@ -41,12 +41,11 @@ class Solution {
     }
 
     for (int i = 0; i < kMaxBit; i++) {
-      for (int mask = preOr;; mask = (mask - 1) & preOr) {
+      for (int mask = 0; mask < kMaxMask; mask++) {
         preMaskCount[i + 1][mask] = preMaskCount[i][mask];
         if (mask & (1 << i)) {
           preMaskCount[i + 1][mask] += preMaskCount[i][mask ^ (1 << i)];
         }
-        if (mask == 0) break;
       }
     }
 

@@ -25,26 +25,28 @@ class Solution {
       preOr |= nums[i - 1];
       powers[i] = (powers[i - 1] * 2) % mod;
     }
-    ll kMaxBit = 1;  // 10^6
+    int kMaxBit = 1;  // 10^6
     while ((1 << kMaxBit) <= preOr) {
       kMaxBit++;
     }
 
     const ll kMaxMask = (1 << kMaxBit);
-
-    // MyPrintf("preOr=%lld\n", preOr);
-    // MyPrintf("kMaxBit=%lld\n", kMaxBit);
-    // MyPrintf("kMaxMask=%lld\n", kMaxMask);
-    vector<vector<ll>> preMaskCount(kMaxBit + 1, vector<ll>(kMaxMask, 0));
+    vector<ll> preMaskCount(kMaxMask, 0);
     for (ll x : nums) {
-      preMaskCount[0][x]++;
+      preMaskCount[x]++;
     }
 
     for (int i = 0; i < kMaxBit; i++) {
-      for (int mask = preOr;; mask = (mask - 1) & preOr) {
-        preMaskCount[i + 1][mask] = preMaskCount[i][mask];
-        if (mask & (1 << i)) {
-          preMaskCount[i + 1][mask] += preMaskCount[i][mask ^ (1 << i)];
+      if ((preOr & (1 << i)) == 0) continue;
+      int rightMask2 = (1 << (i + 2)) - 1;  // 相同后缀的
+      int rightMask1 = (1 << (i + 1)) - 1;  // 相同后缀的
+      int rightMask0 = (1 << i) - 1;        // 相同后缀的
+      int leftOr = preOr & rightMask2;
+      int rightOr = preOr ^ leftOr;
+      for (int mask = rightOr;; mask = (mask - 1) & rightOr) {
+        int tmp = mask | leftOr;
+        if (tmp & (1 << i)) {
+          preMaskCount[tmp] += preMaskCount[tmp ^ (1 << i)];
         }
         if (mask == 0) break;
       }
@@ -53,7 +55,7 @@ class Solution {
     ll ans = 0;
     for (int sub = preOr; sub; sub = (sub - 1) & preOr) {
       ll oneCount = __builtin_popcount(sub);
-      ll count_A = preMaskCount[kMaxBit][preOr ^ sub];
+      ll count_A = preMaskCount[preOr ^ sub];
       ll tmp = powers[count_A];
       if (oneCount % 2 == 1) {
         ans = (ans + tmp) % mod;

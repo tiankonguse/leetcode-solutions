@@ -31,29 +31,35 @@ class Solution {
     }
 
     const ll kMaxMask = (1 << kMaxBit);
-
-    // MyPrintf("preOr=%lld\n", preOr);
-    // MyPrintf("kMaxBit=%lld\n", kMaxBit);
-    // MyPrintf("kMaxMask=%lld\n", kMaxMask);
-    vector<vector<ll>> preMaskCount(kMaxBit + 1, vector<ll>(kMaxMask, 0));
+    vector<ll> preMaskCount(kMaxMask, 0);
     for (ll x : nums) {
-      preMaskCount[0][x]++;
+      preMaskCount[x]++;
     }
 
+    MyPrintf("preOr=%lld\n", preOr);
+    MyPrintf("kMaxBit=%lld\n", kMaxBit);
+    MyPrintf("kMaxMask=%lld\n", kMaxMask);
     for (int i = 0; i < kMaxBit; i++) {
+      if ((preOr & (1 << i)) == 0) continue;
+      // int rightMask = (1 << (i + 1)) - 1;  // 相同后缀的
+      // int rightOr = preOr & rightMask;
+      // int leftOr = preOr ^ rightOr;
+      // MyPrintf("i=%d, rightMask=%d rightOr=%d, leftOr=%d\n", i, rightMask, rightOr, leftOr);
       for (int mask = preOr;; mask = (mask - 1) & preOr) {
-        preMaskCount[i + 1][mask] = preMaskCount[i][mask];
-        if (mask & (1 << i)) {
-          preMaskCount[i + 1][mask] += preMaskCount[i][mask ^ (1 << i)];
+        // int tmp = mask | rightOr;
+        int tmp = mask ;
+        MyPrintf("mask=%d, tmp=%d tmp & (1 << i)=%d\n", mask, tmp, tmp & (1 << i));
+        if (tmp & (1 << i)) {
+          MyPrintf("preMaskCount[%d]=%lld, child[%d]=%lld, sum=%lld\n", tmp, preMaskCount[tmp], tmp ^ (1 << i), preMaskCount[tmp ^ (1 << i)], preMaskCount[tmp] + preMaskCount[tmp ^ (1 << i)]);
+          preMaskCount[tmp] += preMaskCount[tmp ^ (1 << i)];
         }
         if (mask == 0) break;
       }
     }
-
     ll ans = 0;
     for (int sub = preOr; sub; sub = (sub - 1) & preOr) {
       ll oneCount = __builtin_popcount(sub);
-      ll count_A = preMaskCount[kMaxBit][preOr ^ sub];
+      ll count_A = preMaskCount[preOr ^ sub];
       ll tmp = powers[count_A];
       if (oneCount % 2 == 1) {
         ans = (ans + tmp) % mod;
@@ -72,11 +78,11 @@ void Test(const vector<int>& nums1, const int& ans) {  //
 }
 
 int main() {
-  Test({1, 2, 3}, 3);
+  // Test({1, 2, 3}, 3);
   Test({7, 4, 6}, 4);
-  Test({8, 8}, 1);
-  Test({2, 2, 1}, 5);
-  Test({2, 10, 6}, 6);
+  // Test({8, 8}, 1);
+  // Test({2, 2, 1}, 5);
+  // Test({2, 10, 6}, 6);
   return 0;
 }
 
