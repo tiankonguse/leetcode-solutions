@@ -41,6 +41,40 @@
       }
     },
     {
+      "label": "mac-cpp-no-debug",
+      "type": "shell",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-g",
+        // "-O2",
+        "${file}",
+        "-I${workspaceFolder}/include/",
+        "-DUSACO_LOCAL_JUDGE",
+        "-o",
+        "${workspaceFolder}/tmp/tmp.exe",
+        "-std=c++17"
+        // "-Wall",
+        // "-Wno-unused-const-variable",
+        // "-Wl,--stack=26843545"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": ["$gcc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "showReuseMessage": true,
+        "clear": true,
+        "panel": "shared"
+      }
+    },
+    {
       "label": "win10-compile-cpp",
       "type": "shell",
       "command": "g++.exe",
