@@ -47,3 +47,15 @@ ll C(ll n, ll r, ll mod) {
 }
 
 ll P(ll n, ll r, ll mod) { return A[n] * RA[n - r] % mod; }
+
+// 使用递推的方式计算组合数
+int CC[max3][max3];
+void InitCC(int n, int mod) {
+  CC[0][0] = 1;
+  for (int i = 1; i < n; ++i) {
+    CC[i][0] = 1;
+    for (int j = 1; j <= i; ++j) {
+      CC[i][j] = (CC[i - 1][j - 1] + CC[i - 1][j]) % mod;
+    }
+  }
+}
