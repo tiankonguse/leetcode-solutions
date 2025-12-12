@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "query"
-#define TASKEX ""
+#define TASKEX "-005-order-que-95"
 
 #include <bits/stdc++.h>
 
@@ -100,98 +100,50 @@ ull Fix(ll k) {
   return kk;
 }
 
-ll rmq[max5][20];
+pair<ll, int> que[max5];  // 单调队列, {maxVal, pos}, 递减
+int qL, qR;               // [qL, qR)
 
-// rmq[l][i] = max(preSums[l], ..., preSums[l+2^i-1])  [l, l+2^i-1]
-// max(a,..., b) = max(rmq[a][k], rmq[b-2^k+1][k])
-ll MaxSum(int a, int b) {
-  int ba = b - a + 1;
-  int k = 0;
-  while ((1 << k) < ba) {
-    k++;
-  }
-  k = max(0, k - 1);
-  //   int k = (int)log2(b - a + 1);
-  return max(rmq[a][k], rmq[b - (1 << k) + 1][k]);
-}
 
-deque<pair<ll, int>> queLeft;
-deque<tuple<ll, int, int>> queRight;
-void AddLeft(ll sum, int r) {
-  while ((!queLeft.empty()) && preSums[r] - sum >= preSums[queLeft.back().second] - queLeft.back().first) {
-    queLeft.pop_back();  // 整体单调性
+deque<pair<ll, int>> queLeft, queRight, queTmp;
+void AddRight(deque<pair<ll, int>>& que, ll sum, int r) {
+  while ((!que.empty()) && preSums[r] - sum >= preSums[que.back().second] - que.back().first) {
+    que.pop_back();  // 整体单调性
   }
-  queLeft.push_back({sum, r});
-}
-void AddRight(ll newSum, int newL, int newR) {
-  while (!queRight.empty()) {
-    const auto [oldSum, oldL, oldR] = queRight.back();
-    const ll oldMaxSum = MaxSum(oldL, oldR);
-    const ll newMaxSum = MaxSum(newL, newR);
-    if (newMaxSum - newSum >= oldMaxSum - oldSum) {  // 保持整体单调性，递减
-      newL = oldL;                                   // 区间不需要连续，直接删除这个区间
-      queRight.pop_back();
-    } else {
-      break;
-    }
-  }
-  queRight.push_back({newSum, newL, newR});
+  que.push_back({sum, r});
 }
 // queLeft + queRight: preSums[second] - first 单调递减
 // queRight: first 单调递增， first 相等时，preSums[second] 单调递减
 ull Solver(const int L, const int R) {
-  while (!queLeft.empty()) queLeft.pop_back();
+  //   while (!queLeft.empty()) queLeft.pop_back();
   while (!queRight.empty()) queRight.pop_back();
-  if (L < R) {
-    queRight.push_back({0, L, R - 1});
+  for (int r = L; r < R; r++) {
+    AddRight(queRight, 0, r);
   }
-  for (int i = 1; i <= n; i++) {  // i-1 -> i
-    // 第一步：queLeft 里 [?, i-1] 区间需要弹出
-    if ((!queLeft.empty()) && queLeft.front().second == i - 1) {
-      queLeft.pop_front();
-    }
-
-    // 第二步: queRight 里 [i, i+L-1], ..., [i, i+R-2] 区间更新为更小的 preSums[i - 1] 值
-    {
-      ll newSum = preSums[i - 1];
-      int newL = min(i + R - 1, n), newR = min(i + R - 1, n);
-      while ((!queRight.empty()) && get<0>(queRight.back()) >= newSum) {  // 右半部单调递增
-        auto [oldSum, oldL, oldR] = queRight.back();
-        queRight.pop_back();
-        newL = oldL;
-      }
-      AddRight(newSum, newL, newR);
-    }
-
-    // 第三步：queRight 里 [?, i+L-1, ?] 区间需要转移到 queLeft， 但依旧需要保持整体单调性
-    if (!queRight.empty() && get<1>(queRight.front()) == i + L - 1) {
-      auto [newSum, newL, newR] = queRight.front();
+  for (int i = 1; i <= n; i++) {
+    // TransRightToLeft(L, R, i);
+    if ((!queRight.empty()) && queRight.front().second == i - 1) {
       queRight.pop_front();
-      AddLeft(newSum, newL);
-      newL++;
-      if (newL <= newR) {
-        // queRight 也需要保持单调性, 有可能 newL 移出去后，第一个就不是最优值了
-        if (!queRight.empty()) {
-          auto [oldSum, oldL, oldR] = queRight.front();
-          ll oldMaxSum = MaxSum(oldL, oldR);
-          ll newMaxSum = MaxSum(newL, newR);
-          if (newMaxSum - newSum > oldMaxSum - oldSum) {  // 第一个依旧是最优，入队
-            queRight.push_front({newSum, newL, newR});
-          } else {
-            // 不是最优，不需要入队
-          }
-        } else {
-          queRight.push_front({newSum, newL, newR});
-        }
-      }
     }
 
-    // 第四步：更新 dpL[i]
-    dpL[i] = preSums[queLeft.front().second] - queLeft.front().first;  // 可以保证 queLeft 肯定非空
-    if (!queRight.empty()) {                                           // 有可能左侧不是最优的
-      auto [oldSum, oldL, oldR] = queRight.front();
-      dpL[i] = max(dpL[i], MaxSum(oldL, oldR) - oldSum);
+    // 后缀长度为 r=[L,R] 的区间，原先的区间是 [i-1, r], 现在 [i,r] 也需要加进来，i 可能比 i - 1 更小
+    while ((!queRight.empty()) && queRight.back().second - i + 1 >= L && queRight.back().first > preSums[i - 1]) {
+      auto [sum, r] = queRight.back();
+      queRight.pop_back();
+      sum = preSums[i - 1];
+      if ((!queTmp.empty()) && preSums[r] - sum <= preSums[queTmp.front().second] - queTmp.front().first) {
+        continue;  // 从左侧插入，需要保证 区间和 左边的更大
+      }
+      queTmp.push_front({sum, r});
     }
+    while (!queTmp.empty()) {
+      auto [sum, r] = queTmp.front();
+      queTmp.pop_front();
+      AddRight(queRight, sum, r);
+    }
+    if (i + R - 1 <= n) {  // 插入长度为 R 的区间
+      AddRight(queRight, preSums[i - 1], i + R - 1);
+    }
+    dpL[i] = preSums[queRight.front().second] - queRight.front().first;
     MyPrintf("i=%d, dpL=%lld\n", i, dpL[i]);
   }
 
@@ -208,13 +160,10 @@ void Init() {
   for (int i = 1; i <= n; i++) {
     preSums[i] = preSums[i - 1] + nums[i];
   }
-  for (int i = 1; i <= n; i++) {
-    rmq[i][0] = preSums[i];
-  }
-  for (int k = 1; k < 20; k++) {
-    for (int i = 1; i <= n; i++) {
-      rmq[i][k] = max(rmq[i][k - 1], rmq[min(i + (1 << (k - 1)), n)][k - 1]);
-    }
+
+  sufSums[n + 1] = 0;
+  for (int i = n; i >= 1; i--) {
+    sufSums[i] = sufSums[i + 1] + nums[i];
   }
 }
 

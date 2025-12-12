@@ -1,6 +1,6 @@
 /*
 ID: tiankonguse
-TASK: query
+TASK: query-A
 LANG: C++
 MAC EOF: ctrl+D
 link:
@@ -8,12 +8,13 @@ PATH:
 submission:
 */
 #define TASK "query"
-#define TASKEX ""
+#define TASKEX "-002-rmq-25"
 
 #include <bits/stdc++.h>
 
 using namespace std;
 typedef long long ll;
+typedef unsigned long long ull;
 
 void CheckUsacoTask() {
 #ifdef USACO_LOCAL_JUDGE
@@ -29,7 +30,7 @@ void CheckUsacoTask() {
 }
 
 #ifdef USACO_LOCAL_JUDGE
-int debug_log = 0;
+int debug_log = 1;
 int debug_assert = 0;
 #define MyPrintf(...)                   \
   do {                                  \
@@ -51,7 +52,7 @@ constexpr ll MOD = 1000000007;
 
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
-const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
+const int max3 = 2010, max4 = 20010, max5 = 500010, max6 = 2000010;
 
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
@@ -76,99 +77,19 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-/*
-线段树：单点更新，区间查询
-特征：不需要延迟标记与PushDown，log(N)的更新时间复杂度
-
-输入数组： vector<int> str; [0, n-1]
-
-SegTree segTree;
-segTree.Init(str); // 内部会对数组进行右移，转化为 [1,n]
-segTree.Build();
-segTree.Update(l, val); // 单点 l 都加上 val, 数据范围 [1,n]
-segTree.QueryMax/QueryMin/QuerySum 区间查询, 数据范围 [1,n]
-*/
-
-// 1.Build(); 2.query(a,b) 3.update(a,b)
-#define lson l, m, rt << 1
-#define rson m + 1, r, rt << 1 | 1
-const int maxn = 1e5 + 10;
-const int kMaxVal = 10e8;
-
-int maxNM;
-
-typedef long long ll;
-typedef long long ull;
-struct SegTree {
-  vector<pair<ll, int>> maxVal;  // 记录最值的位置
-  vector<ll> str;
-
-  void Init(vector<ll>& str_, const ll default_val = 0) {
-    maxNM = str_.size() + 1;
-    maxVal.resize(maxNM << 2);
-
-    str.clear();
-    // default_val 初始值按需设置，一般是0，也可以按需设置为最大值或者最小值
-    str.resize(maxNM + 1, default_val);
-    for (int i = 1; i < str_.size(); i++) {
-      str[i] = str_[i];
-    }
-  }
-
-  // 合并函数，按需进行合并
-  void PushUp(int rt, int l, int r) {  //
-    maxVal[rt] = max(maxVal[rt << 1], maxVal[rt << 1 | 1]);
-  }
-  int Num(pair<ll, ll> p) { return p.second - p.first + 1; }
-  void Build(int l = 1, int r = maxNM, int rt = 1) {
-    if (l == r) {
-      maxVal[rt] = {str[l], l};
-      return;
-    }
-    int m = (l + r) >> 1;
-    Build(lson);
-    Build(rson);
-    PushUp(rt, l, r);
-  }
-  void Update(int L, ll setVal, int l = 1, int r = maxNM, int rt = 1) {
-    if (L == l && r == L) {
-      maxVal[rt].first = setVal;
-      return;
-    }
-    int m = (l + r) >> 1;
-    if (L <= m) Update(L, setVal, lson);
-    if (L > m) Update(L, setVal, rson);
-    PushUp(rt, l, r);
-  }
-  pair<ll, int> QueryMax(int L, int R, int l = 1, int r = maxNM, int rt = 1) {
-    if (L <= l && r <= R) {
-      return maxVal[rt];
-    }
-    int m = (l + r) >> 1;
-    pair<ll, int> ret = {INT64_MIN, 0};
-    if (L <= m) {
-      ret = max(ret, QueryMax(L, R, lson));
-    }
-    if (m < R) {
-      ret = max(ret, QueryMax(L, R, rson));
-    }
-    return ret;
-  }
-};
-
 int n, q;
-vector<ll> preSums;
-vector<ll> sufSums;
-vector<ll> nums;
-SegTree segTreePre;
-SegTree segTreeSuf;
-SegTree segTreeTmp;
+ll preSums[max5];
+ll sufSums[max5];
+ll nums[max5];
 
 // dpL[i] = max(sums[i,L], ..., sums[i,R])
 // dpLL[i] = max(dpL[i-L+1], ..., dpL[i]);
-vector<ll> dpL;  // dpL[i]: 以 i 为左端点的所有极好区间的最大权值
-vector<ll> dpR;  // dpR[i]: 以 i 为右端点的所有极好区间的最大权值
+ll dpL[max5];  // dpL[i]: 以 i 为左端点的所有极好区间的最大权值
+ll dpR[max5];  // dpR[i]: 以 i 为右端点的所有极好区间的最大权值
 __int128_t pow2_64 = (__int128_t(1) << 64);
+
+
+ll rmq[max5][20];
 
 ull Fix(ll k) {
   ull kk = 0;
@@ -182,85 +103,65 @@ ull Fix(ll k) {
   return kk;
 }
 
-ull Solver(int L, int R) {
-  dpL.resize(n + 1, 0);
-  for (int l = 1; l <= n; l++) {
-    int rL = l + L - 1;
-    int rR = l + R - 1;
-    // [l, rL] ... [l, rR]
-    if (rL > n) {  // 没有答案
-      dpL[l] = INT64_MIN;
-    } else {
-      rR = min(rR, n);
-      dpL[l] = segTreePre.QueryMax(rL, rR).first - preSums[l - 1];
-    }
-    MyPrintf("l=%d, rL=%d rR=%d, dpL[l]=%lld\n", l, rL, rR, dpL[l]);
-    segTreeTmp.Update(l, dpL[l]);
-  }
-  for (int i = 1; i <= n; i++) {
-    int left = max(i - L + 1, 1);
-    dpL[i] = segTreeTmp.QueryMax(left, i).first;
-    MyPrintf("i=%d, max(dpL[%d, %d])=%lld\n", i, left, i, dpL[i]);
-  }
+pair<ll, int> que[max5];  // 单调队列, {maxVal, pos}, 递减
+int qL, qR;               // [qL, qR)
 
-  dpR.resize(n + 1, 0);
-  for (int r = n; r >= 1; r--) {
-    int lR = r - L + 1;
-    int lL = r - R + 1;
-    if (lR < 1) {  // 没有答案
-      dpR[r] = INT64_MIN;
-    } else {
-      lL = max(lL, 1);
-      dpR[r] = segTreeSuf.QueryMax(lL, lR).first - sufSums[r + 1];
+// n * R * log(R)
+// rmq[l][i] = max(preSums[l], ..., preSums[l+2^i-1])  [l, l+2^i-1]
+// max(a,..., b) = max(rmq[a][k], rmq[b-2^k+1][k])
+ll MaxSum(int a, int b) {
+    int ba = b - a + 1;
+    int k = 0;
+    while ((1 << k) < ba) {
+      k++;
     }
-    MyPrintf("r=%d, lL=%d lR=%d dpR[r]=%lld\n", r, lL, lR, dpR[r]);
-    segTreeTmp.Update(r, dpR[r]);
-  }
-  for (int i = n; i >= 1; i--) {
-    int right = min(i + L - 1, n);
-    dpR[i] = segTreeTmp.QueryMax(i, right).first;
-    MyPrintf("i=%d, max(dpR[%d, %d])=%lld\n", i, i, right, dpR[i]);
+    k = max(0, k - 1);
+//   int k = (int)log2(b - a + 1);
+  return max(rmq[a][k], rmq[b - (1 << k) + 1][k]);
+}
+ull SolverRMQ(int L, int R) {
+  for (int i = 1; i <= n; i++) {
+    dpL[i] = INT64_MIN;
+    for (int l = max(i - R + 1, 1); l <= i; l++) {
+      int r1 = max(l + L - 1, i);
+      int r2 = min(l + R - 1, n);
+      if (r1 <= r2) {
+        dpL[i] = max(dpL[i], MaxSum(r1, r2) - preSums[l - 1]);
+      }
+    }
   }
 
   ull ans = 0;
   for (int i = 1; i <= n; i++) {
-    ll k = max(dpL[i], dpR[i]);
-    MyPrintf("i=%d, k=%lld, dpL=%lld dpR=%lld\n", i, k, dpL[i], dpR[i]);
+    ll k = dpL[i];
     ans ^= Fix(k * i);
   }
-
   return ans;
 }
-void Init() {
-  preSums.resize(n + 2, 0);
-  segTreeTmp.Init(preSums);
-  segTreeTmp.Build();
 
+
+void Init() {
   preSums[0] = 0;
   for (int i = 1; i <= n; i++) {
     preSums[i] = preSums[i - 1] + nums[i];
   }
-  for (int i = 0; i <= n; i++) {
-    MyPrintf("i=%d, preSums[i]=%lld\n", i, preSums[i]);
-  }
 
-  segTreePre.Init(preSums);
-  segTreePre.Build();
-
-  sufSums.resize(n + 2, 0);
   sufSums[n + 1] = 0;
   for (int i = n; i >= 1; i--) {
     sufSums[i] = sufSums[i + 1] + nums[i];
   }
-  for (int i = n + 1; i >= 1; i--) {
-    MyPrintf("i=%d, sufSums[i]=%lld\n", i, sufSums[i]);
+  for (int i = 1; i <= n; i++) {
+    rmq[i][0] = preSums[i];
   }
-  segTreeSuf.Init(sufSums);
-  segTreeSuf.Build();
+  for (int k = 1; k < 20; k++) {
+    for (int i = 1; i <= n; i++) {
+      rmq[i][k] = max(rmq[i][k - 1], rmq[min(i + (1 << (k - 1)), n)][k - 1]);
+    }
+  }
 }
+
 void Solver() {  //
   scanf("%d", &n);
-  nums.resize(n + 1);
   for (int i = 1; i <= n; i++) {
     scanf("%lld", &nums[i]);
   }
@@ -269,7 +170,16 @@ void Solver() {  //
   while (q--) {
     int l, r;
     scanf("%d%d", &l, &r);
-    printf("%llu\n", Solver(l, r));
+    printf("%llu\n", SolverRMQ(l, r));
+    // if (l == r) {
+    //   printf("%llu\n", SolverA(l, r));
+    // } else if (r <= 32) {
+    //   printf("%llu\n", SolverB(l, r));
+    // } else if (l > n / 2) {
+    //   printf("%llu\n", SolverD(l, r));
+    // } else {
+    //   printf("%llu\n", Solver(l, r));
+    // }
   }
 }
 

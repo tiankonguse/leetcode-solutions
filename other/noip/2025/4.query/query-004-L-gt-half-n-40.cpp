@@ -1,6 +1,6 @@
 /*
 ID: tiankonguse
-TASK: query
+TASK: query-A
 LANG: C++
 MAC EOF: ctrl+D
 link:
@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "query"
-#define TASKEX ""
+#define TASKEX "-004-L-gt-half-n-40"
 
 #include <bits/stdc++.h>
 
@@ -30,7 +30,7 @@ void CheckUsacoTask() {
 }
 
 #ifdef USACO_LOCAL_JUDGE
-int debug_log = 0;
+int debug_log = 1;
 int debug_assert = 0;
 #define MyPrintf(...)                   \
   do {                                  \
@@ -88,6 +88,8 @@ ll dpL[max5];  // dpL[i]: 以 i 为左端点的所有极好区间的最大权值
 ll dpR[max5];  // dpR[i]: 以 i 为右端点的所有极好区间的最大权值
 __int128_t pow2_64 = (__int128_t(1) << 64);
 
+ll rmq[max5][20];
+
 ull Fix(ll k) {
   ull kk = 0;
   if (k < 0) {
@@ -103,7 +105,78 @@ ull Fix(ll k) {
 pair<ll, int> que[max5];  // 单调队列, {maxVal, pos}, 递减
 int qL, qR;               // [qL, qR)
 
-ull Solver(int L, int R) {
+// n * R * log(R)
+// rmq[l][i] = max(preSums[l], ..., preSums[l+2^i-1])  [l, l+2^i-1]
+// max(a,..., b) = max(rmq[a][k], rmq[b-2^k+1][k])
+ll MaxSum(int a, int b) {
+  int ba = b - a + 1;
+  int k = 0;
+  while ((1 << k) < ba) {
+    k++;
+  }
+  k = max(0, k - 1);
+  //   int k = (int)log2(b - a + 1);
+  return max(rmq[a][k], rmq[b - (1 << k) + 1][k]);
+}
+ull SolverRMQ(int L, int R) {
+  for (int i = 1; i <= n; i++) {
+    dpL[i] = INT64_MIN;
+    for (int l = max(i - R + 1, 1); l <= i; l++) {
+      int r1 = max(l + L - 1, i);
+      int r2 = min(l + R - 1, n);
+      if (r1 <= r2) {
+        dpL[i] = max(dpL[i], MaxSum(r1, r2) - preSums[l - 1]);
+      }
+    }
+  }
+
+  ull ans = 0;
+  for (int i = 1; i <= n; i++) {
+    ll k = dpL[i];
+    ans ^= Fix(k * i);
+  }
+  return ans;
+}
+
+/*
+性质A: L == R
+覆盖 i 的区间： [i-L+1, i], ..., [i, i+R-1]
+定义 S(a) = sum(a, a+L-1)
+则 ans[i] = max(S(a),S(a+1),...,S(a+L-1))
+思路1：线段树
+思路2：单调队列
+*/
+ull SolverA(int L, int R) {
+  qL = 0, qR = 0;
+  for (int l = 1; l <= n; l++) {  // [l-L+1, l], ..., [l, l+R-1]
+    int r = l + L - 1;
+    if (r <= n) {  // 入队
+      ll sum = preSums[r] - preSums[l - 1];
+      while (qL < qR && que[qR - 1].first <= sum) {
+        qR--;
+      }
+      que[qR++] = {sum, l};
+    }
+    dpL[l] = que[qL].first;  // 肯定有答案
+    // 删除 pos = l + L - 1
+    if (qL < qR && que[qL].second == l - L + 1) {
+      qL++;
+    }
+  }
+
+  ull ans = 0;
+  for (int i = 1; i <= n; i++) {
+    ll k = dpL[i];
+    ans ^= Fix(k * i);
+  }
+  return ans;
+}
+
+/*
+性质A: L > n/2
+答案： max(dpL[i-L+1],...,dpL[i], dpR[i], ..., dpR[i+L-1])
+*/
+ull SolverD(int L, int R) {
   qL = 0, qR = 0;
   for (int l = 1; l <= n; l++) {  // [l, rL) ... [l, rR)
     int r = l + L - 1;
@@ -178,12 +251,13 @@ ull Solver(int L, int R) {
   ull ans = 0;
   for (int i = 1; i <= n; i++) {
     ll k = max(dpL[i], dpR[i]);
-    MyPrintf("i=%d, k=%lld, dpL=%lld dpR=%lld\n", i, k, dpL[i], dpR[i]);
+    // MyPrintf("i=%d, k=%lld, dpL=%lld dpR=%lld\n", i, k, dpL[i], dpR[i]);
     ans ^= Fix(k * i);
   }
 
   return ans;
 }
+
 void Init() {
   preSums[0] = 0;
   for (int i = 1; i <= n; i++) {
@@ -194,7 +268,16 @@ void Init() {
   for (int i = n; i >= 1; i--) {
     sufSums[i] = sufSums[i + 1] + nums[i];
   }
+  for (int i = 1; i <= n; i++) {
+    rmq[i][0] = preSums[i];
+  }
+  for (int k = 1; k < 20; k++) {
+    for (int i = 1; i <= n; i++) {
+      rmq[i][k] = max(rmq[i][k - 1], rmq[min(i + (1 << (k - 1)), n)][k - 1]);
+    }
+  }
 }
+
 void Solver() {  //
   scanf("%d", &n);
   for (int i = 1; i <= n; i++) {
@@ -205,7 +288,13 @@ void Solver() {  //
   while (q--) {
     int l, r;
     scanf("%d%d", &l, &r);
-    printf("%llu\n", Solver(l, r));
+    if (l == r) {
+      printf("%llu\n", SolverA(l, r));
+    } else if (l > n / 2) {
+      printf("%llu\n", SolverD(l, r));
+    } else {
+      printf("%llu\n", SolverRMQ(l, r));
+    }
   }
 }
 

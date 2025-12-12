@@ -1,6 +1,6 @@
 /*
 ID: tiankonguse
-TASK: query
+TASK: query-A
 LANG: C++
 MAC EOF: ctrl+D
 link:
@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "query"
-#define TASKEX ""
+#define TASKEX "-001-force-5"
 
 #include <bits/stdc++.h>
 
@@ -30,7 +30,7 @@ void CheckUsacoTask() {
 }
 
 #ifdef USACO_LOCAL_JUDGE
-int debug_log = 0;
+int debug_log = 1;
 int debug_assert = 0;
 #define MyPrintf(...)                   \
   do {                                  \
@@ -52,7 +52,7 @@ constexpr ll MOD = 1000000007;
 
 const double pi = acos(-1.0), eps = 1e-7;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
-const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
+const int max3 = 2010, max4 = 20010, max5 = 500010, max6 = 2000010;
 
 template <class T>
 using min_queue = priority_queue<T, vector<T>, greater<T>>;
@@ -78,15 +78,18 @@ void InitIO(int fileIndex) {  //
 }
 
 int n, q;
-vector<ll> preSums;
-vector<ll> sufSums;
-vector<ll> nums;
+ll preSums[max5];
+ll sufSums[max5];
+ll nums[max5];
 
 // dpL[i] = max(sums[i,L], ..., sums[i,R])
 // dpLL[i] = max(dpL[i-L+1], ..., dpL[i]);
-vector<ll> dpL;  // dpL[i]: 以 i 为左端点的所有极好区间的最大权值
-vector<ll> dpR;  // dpR[i]: 以 i 为右端点的所有极好区间的最大权值
+ll dpL[max5];  // dpL[i]: 以 i 为左端点的所有极好区间的最大权值
+ll dpR[max5];  // dpR[i]: 以 i 为右端点的所有极好区间的最大权值
 __int128_t pow2_64 = (__int128_t(1) << 64);
+
+
+ll rmq[max5][20];
 
 ull Fix(ll k) {
   ull kk = 0;
@@ -100,108 +103,51 @@ ull Fix(ll k) {
   return kk;
 }
 
-deque<pair<ll, int>> que;  // 单调队列, {maxVal, pos}, 递减
+pair<ll, int> que[max5];  // 单调队列, {maxVal, pos}, 递减
+int qL, qR;               // [qL, qR)
 
-ull Solver(int L, int R) {
-  while (!que.empty()) que.pop_back();
-  for (int l = 1; l <= n; l++) {  // [l, rL) ... [l, rR)
-    int r = l + L - 1;
-    if (!que.empty()) r = que.back().second;
-    while (r <= n && r <= l + R - 1) {
-      while (!que.empty() && que.back().first <= preSums[r]) {
-        que.pop_back();
+ull SolverCase1(const int L, const int R) {
+  for (int i = 1; i <= n; i++) {
+    dpL[i] = INT64_MIN;
+    for (int l = max(i - R + 1, 1); l <= i; l++) {                    // 枚举左边界
+      for (int r = max(l + L - 1, i); r <= min(l + R - 1, n); r++) {  // 枚举右边界
+        dpL[i] = max(dpL[i], preSums[r] - preSums[l - 1]);
+        // MyPrintf("i=%d, l=%d, r=%d dpL=%lld\n", i, l, r, dpL[i]);
       }
-      que.push_back({preSums[r], r});
-      r++;
     }
-    if (que.empty()) {  // 没有答案
-      dpL[l] = INT64_MIN;
-    } else {
-      dpL[l] = que.front().first - preSums[l - 1];
-    }
-    // 删除 pos = l + L - 1
-    if (!que.empty() && que.front().second == l + L - 1) {
-      que.pop_front();
-    }
-  }
-
-  while (!que.empty()) que.pop_back();
-  for (int r = 1; r <= n; r++) {  // dpL[l] ... dpL[r]
-    // pop dpL[pos] if pos + L - 1 < r
-    while (!que.empty() && que.front().second + L - 1 < r) {
-      que.pop_front();
-    }
-    // add dpL[r]
-    while (!que.empty() && que.back().first <= dpL[r]) {
-      que.pop_back();
-    }
-    que.push_back({dpL[r], r});
-    dpL[r] = que.front().first;
-  }
-
-  while (!que.empty()) que.pop_back();
-  for (int r = n; r >= 1; r--) {  // [lL, r] ... [lR, r]
-    int l = r - L + 1;
-    if (!que.empty()) l = que.back().second;
-    while (l >= 1 && l >= r - R + 1) {
-      while (!que.empty() && que.back().first <= sufSums[l]) {
-        que.pop_back();
-      }
-      que.push_back({sufSums[l], l});
-      l--;
-    }
-    if (que.empty()) {  // 没有答案
-      dpR[r] = INT64_MIN;
-    } else {
-      dpR[r] = que.front().first - sufSums[r + 1];
-    }
-    // 删除 pos = r - L + 1
-    if (!que.empty() && que.front().second == r - L + 1) {
-      que.pop_front();
-    }
-  }
-  while (!que.empty()) que.pop_back();
-  for (int l = n; l >= 1; l--) {  //  dpR[l] ... dpR[r]
-    // pop dpR[pos] if pos - L + 1 > l
-    while (!que.empty() && que.front().second - L + 1 > l) {
-      que.pop_front();
-    }
-    // add dpR[l]
-    while (!que.empty() && que.back().first <= dpR[l]) {
-      que.pop_back();
-    }
-    que.push_back({dpR[l], l});
-    dpR[l] = que.front().first;
   }
 
   ull ans = 0;
   for (int i = 1; i <= n; i++) {
-    ll k = max(dpL[i], dpR[i]);
-    MyPrintf("i=%d, k=%lld, dpL=%lld dpR=%lld\n", i, k, dpL[i], dpR[i]);
+    ll k = dpL[i];
     ans ^= Fix(k * i);
   }
-
   return ans;
 }
-void Init() {
-  preSums.resize(n + 2, 0);
 
+
+void Init() {
   preSums[0] = 0;
   for (int i = 1; i <= n; i++) {
     preSums[i] = preSums[i - 1] + nums[i];
   }
 
-  sufSums.resize(n + 2, 0);
   sufSums[n + 1] = 0;
   for (int i = n; i >= 1; i--) {
     sufSums[i] = sufSums[i + 1] + nums[i];
   }
-  dpL.resize(n + 1, 0);
-  dpR.resize(n + 1, 0);
+  for (int i = 1; i <= n; i++) {
+    rmq[i][0] = preSums[i];
+  }
+  for (int k = 1; k < 20; k++) {
+    for (int i = 1; i <= n; i++) {
+      rmq[i][k] = max(rmq[i][k - 1], rmq[min(i + (1 << (k - 1)), n)][k - 1]);
+    }
+  }
 }
+
 void Solver() {  //
   scanf("%d", &n);
-  nums.resize(n + 1);
   for (int i = 1; i <= n; i++) {
     scanf("%lld", &nums[i]);
   }
@@ -210,7 +156,16 @@ void Solver() {  //
   while (q--) {
     int l, r;
     scanf("%d%d", &l, &r);
-    printf("%llu\n", Solver(l, r));
+    printf("%llu\n", SolverCase1(l, r));
+    // if (l == r) {
+    //   printf("%llu\n", SolverA(l, r));
+    // } else if (r <= 32) {
+    //   printf("%llu\n", SolverB(l, r));
+    // } else if (l > n / 2) {
+    //   printf("%llu\n", SolverD(l, r));
+    // } else {
+    //   printf("%llu\n", Solver(l, r));
+    // }
   }
 }
 
