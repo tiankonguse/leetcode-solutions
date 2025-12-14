@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "query"
-#define TASKEX ""
+#define TASKEX "-005-order-que-95-v2"
 
 #include <bits/stdc++.h>
 
@@ -80,128 +80,56 @@ void InitIO(int fileIndex) {  //
 int n, q;
 ll preSums[max5];
 
-ull pow2_63 = (ull(1) << 63);
-int base2[max5];
-
-inline ull Fix(ll k) {
-  ull kk = 0;
-  if (k < 0) {
-    k = -k;
-    kk = pow2_63 - k + pow2_63;
-  } else {
-    kk = k;
-  }
-  return kk;
-}
 __int128_t pow2_64 = (__int128_t(1) << 64);
-ull Fix1(ll k) {  //
-  return (k + pow2_64) % pow2_64;
-}
-ll rmq[max5][20];
 
-// rmq[l][i] = max(preSums[l], ..., preSums[l+2^i-1])  [l, l+2^i-1]
-// max(a,..., b) = max(rmq[a][k], rmq[b-2^k+1][k])
-inline ll MaxSum(int a, int b) {
-  int k = base2[b - a + 1];
-  return max(rmq[a][k], rmq[b - (1 << k) + 1][k]);
+ull pow2_63 = (ull(1) << 63);
+inline ull Fix(ll k) {
+  return ull(k);
 }
 
-pair<ll, int> queLeft[max5];
-int qLL, qLR;
+pair<ll, int> que[max5];  // 单调队列, {maxVal, pos}, 递减
+int qL, qR;               // [qL, qR)
 
-tuple<ll, int, int> queRight[max5];
-int qRL, qRR;
-
-inline void AddLeft(ll sum, int r) {
-  while (qLL < qLR && preSums[r] - sum >= preSums[queLeft[qLR - 1].second] - queLeft[qLR - 1].first) {
-    qLR--;  // 整体单调性
+deque<pair<ll, int>> queRight, queTmp;
+void AddRight(deque<pair<ll, int>>& que, ll sum, int r) {
+  while ((!que.empty()) && preSums[r] - sum >= preSums[que.back().second] - que.back().first) {
+    que.pop_back();  // 整体单调性
   }
-  queLeft[qLR++] = {sum, r};
-}
-inline void AddRight(const ll newSum, int newL, const int newR) {
-  ll newMaxSum = MaxSum(newL, newR);
-  while (qRL < qRR) {
-    const auto [oldSum, oldL, oldR] = queRight[qRR - 1];
-    const ll oldMaxSum = MaxSum(oldL, oldR);
-    if (newMaxSum - newSum < oldMaxSum - oldSum) {  // 保持整体单调性，递减
-      break;
-    }
-    // MyAssert(oldR + 1 == newL);  // 预期是连续的
-    newL = oldL;  // 区间不需要连续，直接删除这个区间
-    newMaxSum = max(newMaxSum, oldMaxSum);
-    qRR--;
-  }
-  queRight[qRR++] = {newSum, newL, newR};
+  que.push_back({sum, r});
 }
 // queLeft + queRight: preSums[second] - first 单调递减
 // queRight: first 单调递增， first 相等时，preSums[second] 单调递减
 ull Solver(const int L, const int R) {
   ull ans = 0;
-  qLL = qLR = 0;
-  qRL = qRR = 0;
-  if (L < R) {
-    queRight[qRR++] = {0, L, R - 1};
+  while (!queRight.empty()) queRight.pop_back();
+  for (int r = L; r < R; r++) {
+    AddRight(queRight, 0, r);
   }
-  for (int i = 1; i <= n; i++) {  // i-1 -> i
-    // 第一步：queLeft 里 [?, i-1] 区间需要弹出
-    if (qLL < qLR && queLeft[qLL].second == i - 1) {
-      qLL++;
+  for (int i = 1; i <= n; i++) {
+    if ((!queRight.empty()) && queRight.front().second == i - 1) {
+      queRight.pop_front();
     }
 
-    // 第二步: queRight 里 [i, i+L-1], ..., [i, i+R-2] 区间更新为更小的 preSums[i - 1] 值
-    {
-      ll newSum = preSums[i - 1];
-      int newL = i + R - 1, newR = i + R - 1;
-      while ((qRL < qRR) && get<0>(queRight[qRR - 1]) >= newSum) {  // 右半部单调递增
-        auto [oldSum, oldL, oldR] = queRight[qRR - 1];
-        qRR--;
-        newL = oldL;
+    // 后缀长度为 r=[L,R] 的区间，原先的区间是 [i-1, r], 现在 [i,r] 也需要加进来，i 可能比 i - 1 更小
+    while ((!queRight.empty()) && queRight.back().second - i + 1 >= L && queRight.back().first > preSums[i - 1]) {
+      auto [sum, r] = queRight.back();
+      queRight.pop_back();
+      sum = preSums[i - 1];
+      if ((!queTmp.empty()) && preSums[r] - sum <= preSums[queTmp.front().second] - queTmp.front().first) {
+        continue;  // 从左侧插入，需要保证 区间和 左边的更大
       }
-      if (newL <= n) {
-        newR = min(newR, n);
-        AddRight(newSum, newL, newR);
-      }
+      queTmp.push_front({sum, r});
     }
-
-    // 第三步：queRight 里 [?, i+L-1, ?] 区间需要转移到 queLeft， 但依旧需要保持整体单调性
-    // if (qRL < qRR) {
-    //   MyAssert(get<1>(queRight[qRL]) == i + L - 1);  // 非空时，一定存在 i+L-1
-    // }
-    if (qRL < qRR && get<1>(queRight[qRL]) == i + L - 1) {
-      auto [newSum, newL, newR] = queRight[qRL];
-      qRL++;
-      AddLeft(newSum, newL);
-      if (newL != newR) {
-        newL++;
-        // queRight 也需要保持单调性, 有可能 newL 移出去后，第一个就不是最优值了
-        if (qRL < qRR) {
-          const auto [oldSum, oldL, oldR] = queRight[qRL];
-          qRL++;
-          // MyAssert(newSum < oldSum);
-          // MyAssert(newR + 1 == oldL);
-          ll oldMaxSum = MaxSum(oldL, oldR);
-          ll newMaxSum = MaxSum(newL, newR);
-          if (newMaxSum - newSum > oldMaxSum - oldSum) {  // 第一个依旧是最优，入队
-            queRight[--qRL] = {oldSum, oldL, oldR};
-            queRight[--qRL] = {newSum, newL, newR};
-          } else {
-            // 不是最优，不需要入队
-            queRight[--qRL] = {oldSum, newL, oldR};
-          }
-        } else {
-          queRight[--qRL] = {newSum, newL, newR};
-        }
-      }
+    while (!queTmp.empty()) {
+      auto [sum, r] = queTmp.front();
+      queTmp.pop_front();
+      AddRight(queRight, sum, r);
     }
-
-    // 第四步：更新 dpL[i]
-    ll ansi = preSums[queLeft[qLL].second] - queLeft[qLL].first;  // 可以保证 queLeft 肯定非空
-    if (qRL < qRR) {                                             // 有可能左侧不是最优的
-      auto [oldSum, oldL, oldR] = queRight[qRL];
-      ansi = max(ansi, MaxSum(oldL, oldR) - oldSum);
+    if (i + R - 1 <= n) {  // 插入长度为 R 的区间
+      AddRight(queRight, preSums[i - 1], i + R - 1);
     }
-    ans ^= Fix(ansi * i);
-    // MyPrintf("i=%d, dpL=%lld\n", i, dpL[i]);
+    ll k = preSums[queRight.front().second] - queRight.front().first;
+    ans ^= Fix(k * i);
   }
   return ans;
 }
@@ -210,18 +138,6 @@ void Init() {
   preSums[0] = 0;
   for (int i = 1; i <= n; i++) {
     preSums[i] += preSums[i - 1];
-  }
-  for (int i = 1; i <= n; i++) {
-    rmq[i][0] = preSums[i];
-  }
-  for (int k = 1; k < 20; k++) {
-    for (int i = 1; i <= n; i++) {
-      rmq[i][k] = max(rmq[i][k - 1], rmq[min(i + (1 << (k - 1)), n)][k - 1]);
-    }
-  }
-  base2[1] = 0;
-  for (int i = 2; i <= n; i++) {
-    base2[i] = base2[i / 2] + 1;
   }
 }
 

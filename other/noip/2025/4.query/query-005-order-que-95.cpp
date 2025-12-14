@@ -79,13 +79,7 @@ void InitIO(int fileIndex) {  //
 
 int n, q;
 ll preSums[max5];
-ll sufSums[max5];
-ll nums[max5];
 
-// dpL[i] = max(sums[i,L], ..., sums[i,R])
-// dpLL[i] = max(dpL[i-L+1], ..., dpL[i]);
-ll dpL[max5];  // dpL[i]: 以 i 为左端点的所有极好区间的最大权值
-ll dpR[max5];  // dpR[i]: 以 i 为右端点的所有极好区间的最大权值
 __int128_t pow2_64 = (__int128_t(1) << 64);
 
 ull Fix(ll k) {
@@ -103,8 +97,7 @@ ull Fix(ll k) {
 pair<ll, int> que[max5];  // 单调队列, {maxVal, pos}, 递减
 int qL, qR;               // [qL, qR)
 
-
-deque<pair<ll, int>> queLeft, queRight, queTmp;
+deque<pair<ll, int>> queRight, queTmp;
 void AddRight(deque<pair<ll, int>>& que, ll sum, int r) {
   while ((!que.empty()) && preSums[r] - sum >= preSums[que.back().second] - que.back().first) {
     que.pop_back();  // 整体单调性
@@ -114,13 +107,12 @@ void AddRight(deque<pair<ll, int>>& que, ll sum, int r) {
 // queLeft + queRight: preSums[second] - first 单调递减
 // queRight: first 单调递增， first 相等时，preSums[second] 单调递减
 ull Solver(const int L, const int R) {
-  //   while (!queLeft.empty()) queLeft.pop_back();
+  ull ans = 0;
   while (!queRight.empty()) queRight.pop_back();
   for (int r = L; r < R; r++) {
     AddRight(queRight, 0, r);
   }
   for (int i = 1; i <= n; i++) {
-    // TransRightToLeft(L, R, i);
     if ((!queRight.empty()) && queRight.front().second == i - 1) {
       queRight.pop_front();
     }
@@ -143,13 +135,7 @@ ull Solver(const int L, const int R) {
     if (i + R - 1 <= n) {  // 插入长度为 R 的区间
       AddRight(queRight, preSums[i - 1], i + R - 1);
     }
-    dpL[i] = preSums[queRight.front().second] - queRight.front().first;
-    MyPrintf("i=%d, dpL=%lld\n", i, dpL[i]);
-  }
-
-  ull ans = 0;
-  for (int i = 1; i <= n; i++) {
-    ll k = dpL[i];
+    ll k = preSums[queRight.front().second] - queRight.front().first;
     ans ^= Fix(k * i);
   }
   return ans;
@@ -158,19 +144,14 @@ ull Solver(const int L, const int R) {
 void Init() {
   preSums[0] = 0;
   for (int i = 1; i <= n; i++) {
-    preSums[i] = preSums[i - 1] + nums[i];
-  }
-
-  sufSums[n + 1] = 0;
-  for (int i = n; i >= 1; i--) {
-    sufSums[i] = sufSums[i + 1] + nums[i];
+    preSums[i] += preSums[i - 1];
   }
 }
 
 void Solver() {  //
   scanf("%d", &n);
   for (int i = 1; i <= n; i++) {
-    scanf("%lld", &nums[i]);
+    scanf("%lld", &preSums[i]);
   }
   Init();
   scanf("%d", &q);

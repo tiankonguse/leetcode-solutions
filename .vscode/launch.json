@@ -5,16 +5,33 @@
   // Variables Reference: https://code.visualstudio.com/docs/editor/variables-reference
 
   "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "mac-run-home-cpp",
+  "configurations": [{
+      "name": "mac-run-home-cpp-nodebug",
       "type": "lldb",
       "request": "launch",
       // "program": "${fileDirname}/${fileBasenameNoExtension}.exe",
       "program": "${workspaceFolder}/tmp/tmp.exe",
       "args": [],
       // "stopAtEntry": false,
-      "preLaunchTask": "mac-build-home-2", // 调试会话开始前执行的任务，一般为编译程序。与tasks.json的label相对应
+      "preLaunchTask": "mac-build-home-nodebug", // 调试会话开始前执行的任务，一般为编译程序。与tasks.json的label相对应
+      // "cwd": "${fileDirname}/",
+      "cwd": "${fileDirname}/"
+      // "cwd": "${workspaceFolder}/tmp/",
+      // "environment": [],
+      // "externalConsole": false,
+      // "MIMode": "gdb",
+      //  "console": "internalConsole",// Terminal type to use. (This setting is a compatibility alias of 'terminal'.)
+      //internalConsole: Use VScode Debug Console for stdout and stderr. Stdin will be unavailable.
+    },
+    {
+      "name": "mac-run-home-cpp-debug",
+      "type": "lldb",
+      "request": "launch",
+      // "program": "${fileDirname}/${fileBasenameNoExtension}.exe",
+      "program": "${workspaceFolder}/tmp/tmp.exe",
+      "args": [],
+      // "stopAtEntry": false,
+      "preLaunchTask": "mac-build-home-debug", // 调试会话开始前执行的任务，一般为编译程序。与tasks.json的label相对应
       // "cwd": "${fileDirname}/",
       "cwd": "${fileDirname}/"
       // "cwd": "${workspaceFolder}/tmp/",

@@ -79,29 +79,31 @@ void InitIO(int fileIndex) {  //
 
 int n, q;
 ll preSums[max5];
+ll nums[max5];
 
-ull pow2_63 = (ull(1) << 63);
+// dpL[i] = max(sums[i,L], ..., sums[i,R])
+// dpLL[i] = max(dpL[i-L+1], ..., dpL[i]);
+ll dpL[max5];  // dpL[i]: 以 i 为左端点的所有极好区间的最大权值
+__int128_t pow2_64 = (__int128_t(1) << 64);
 int base2[max5];
 
-inline ull Fix(ll k) {
+ull Fix(ll k) {
   ull kk = 0;
   if (k < 0) {
-    k = -k;
-    kk = pow2_63 - k + pow2_63;
+    __int128_t t = k;
+    t += pow2_64;
+    kk = t;
   } else {
     kk = k;
   }
   return kk;
 }
-__int128_t pow2_64 = (__int128_t(1) << 64);
-ull Fix1(ll k) {  //
-  return (k + pow2_64) % pow2_64;
-}
+
 ll rmq[max5][20];
 
 // rmq[l][i] = max(preSums[l], ..., preSums[l+2^i-1])  [l, l+2^i-1]
 // max(a,..., b) = max(rmq[a][k], rmq[b-2^k+1][k])
-inline ll MaxSum(int a, int b) {
+ll MaxSum(int a, int b) {
   int k = base2[b - a + 1];
   return max(rmq[a][k], rmq[b - (1 << k) + 1][k]);
 }
@@ -111,24 +113,22 @@ int qLL, qLR;
 
 tuple<ll, int, int> queRight[max5];
 int qRL, qRR;
-
-inline void AddLeft(ll sum, int r) {
+void AddLeft(ll sum, int r) {
   while (qLL < qLR && preSums[r] - sum >= preSums[queLeft[qLR - 1].second] - queLeft[qLR - 1].first) {
     qLR--;  // 整体单调性
   }
   queLeft[qLR++] = {sum, r};
 }
-inline void AddRight(const ll newSum, int newL, const int newR) {
-  ll newMaxSum = MaxSum(newL, newR);
+void AddRight(const ll newSum, int newL, const int newR) {
   while (qRL < qRR) {
     const auto [oldSum, oldL, oldR] = queRight[qRR - 1];
     const ll oldMaxSum = MaxSum(oldL, oldR);
+    const ll newMaxSum = MaxSum(newL, newR);
     if (newMaxSum - newSum < oldMaxSum - oldSum) {  // 保持整体单调性，递减
       break;
     }
-    // MyAssert(oldR + 1 == newL);  // 预期是连续的
-    newL = oldL;  // 区间不需要连续，直接删除这个区间
-    newMaxSum = max(newMaxSum, oldMaxSum);
+    MyAssert(oldR + 1 == newL);  // 预期是连续的
+    newL = oldL;                 // 区间不需要连续，直接删除这个区间
     qRR--;
   }
   queRight[qRR++] = {newSum, newL, newR};
@@ -136,7 +136,6 @@ inline void AddRight(const ll newSum, int newL, const int newR) {
 // queLeft + queRight: preSums[second] - first 单调递减
 // queRight: first 单调递增， first 相等时，preSums[second] 单调递减
 ull Solver(const int L, const int R) {
-  ull ans = 0;
   qLL = qLR = 0;
   qRL = qRR = 0;
   if (L < R) {
@@ -164,9 +163,9 @@ ull Solver(const int L, const int R) {
     }
 
     // 第三步：queRight 里 [?, i+L-1, ?] 区间需要转移到 queLeft， 但依旧需要保持整体单调性
-    // if (qRL < qRR) {
-    //   MyAssert(get<1>(queRight[qRL]) == i + L - 1);  // 非空时，一定存在 i+L-1
-    // }
+    if (qRL < qRR) {
+      MyAssert(get<1>(queRight[qRL]) == i + L - 1);  // 非空时，一定存在 i+L-1
+    }
     if (qRL < qRR && get<1>(queRight[qRL]) == i + L - 1) {
       auto [newSum, newL, newR] = queRight[qRL];
       qRL++;
@@ -177,8 +176,8 @@ ull Solver(const int L, const int R) {
         if (qRL < qRR) {
           const auto [oldSum, oldL, oldR] = queRight[qRL];
           qRL++;
-          // MyAssert(newSum < oldSum);
-          // MyAssert(newR + 1 == oldL);
+          MyAssert(newSum < oldSum);
+          MyAssert(newR + 1 == oldL);
           ll oldMaxSum = MaxSum(oldL, oldR);
           ll newMaxSum = MaxSum(newL, newR);
           if (newMaxSum - newSum > oldMaxSum - oldSum) {  // 第一个依旧是最优，入队
@@ -195,13 +194,18 @@ ull Solver(const int L, const int R) {
     }
 
     // 第四步：更新 dpL[i]
-    ll ansi = preSums[queLeft[qLL].second] - queLeft[qLL].first;  // 可以保证 queLeft 肯定非空
+    dpL[i] = preSums[queLeft[qLL].second] - queLeft[qLL].first;  // 可以保证 queLeft 肯定非空
     if (qRL < qRR) {                                             // 有可能左侧不是最优的
       auto [oldSum, oldL, oldR] = queRight[qRL];
-      ansi = max(ansi, MaxSum(oldL, oldR) - oldSum);
+      dpL[i] = max(dpL[i], MaxSum(oldL, oldR) - oldSum);
     }
-    ans ^= Fix(ansi * i);
-    // MyPrintf("i=%d, dpL=%lld\n", i, dpL[i]);
+    MyPrintf("i=%d, dpL=%lld\n", i, dpL[i]);
+  }
+
+  ull ans = 0;
+  for (int i = 1; i <= n; i++) {
+    ll k = dpL[i];
+    ans ^= Fix(k * i);
   }
   return ans;
 }
@@ -209,7 +213,7 @@ ull Solver(const int L, const int R) {
 void Init() {
   preSums[0] = 0;
   for (int i = 1; i <= n; i++) {
-    preSums[i] += preSums[i - 1];
+    preSums[i] = preSums[i - 1] + nums[i];
   }
   for (int i = 1; i <= n; i++) {
     rmq[i][0] = preSums[i];
@@ -228,7 +232,7 @@ void Init() {
 void Solver() {  //
   scanf("%d", &n);
   for (int i = 1; i <= n; i++) {
-    scanf("%lld", &preSums[i]);
+    scanf("%lld", &nums[i]);
   }
   Init();
   scanf("%d", &q);

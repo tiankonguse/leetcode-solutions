@@ -80,23 +80,21 @@ void InitIO(int fileIndex) {  //
 int n, q;
 ll preSums[max5];
 
-ull pow2_63 = (ull(1) << 63);
+__int128_t pow2_64 = (__int128_t(1) << 64);
 int base2[max5];
 
 inline ull Fix(ll k) {
   ull kk = 0;
   if (k < 0) {
-    k = -k;
-    kk = pow2_63 - k + pow2_63;
+    __int128_t t = k;
+    t += pow2_64;
+    kk = t;
   } else {
     kk = k;
   }
   return kk;
 }
-__int128_t pow2_64 = (__int128_t(1) << 64);
-ull Fix1(ll k) {  //
-  return (k + pow2_64) % pow2_64;
-}
+
 ll rmq[max5][20];
 
 // rmq[l][i] = max(preSums[l], ..., preSums[l+2^i-1])  [l, l+2^i-1]
@@ -109,7 +107,7 @@ inline ll MaxSum(int a, int b) {
 pair<ll, int> queLeft[max5];
 int qLL, qLR;
 
-tuple<ll, int, int> queRight[max5];
+tuple<ll, int, int> queRight[max5]; // sum, l, r
 int qRL, qRR;
 
 inline void AddLeft(ll sum, int r) {
