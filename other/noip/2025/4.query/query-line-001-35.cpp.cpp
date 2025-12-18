@@ -1,0 +1,323 @@
+/*
+ID: tiankonguse
+TASK: query-A
+LANG: C++
+MAC EOF: ctrl+D
+link:
+PATH:
+submission:
+*/
+#define TASK "query"
+#define TASKEX ""
+
+#include <bits/stdc++.h>
+
+using namespace std;
+typedef long long ll;
+typedef unsigned long long ull;
+
+void CheckUsacoTask() {
+#ifdef USACO_LOCAL_JUDGE
+  // 获取当前文件的完整路径
+  string filePath = __FILE__;
+  // 从路径中提取文件名（包含扩展名）
+  string fileNameEx = filePath.substr(filePath.rfind('/') + 1);
+  // 提取文件名（不包含扩展名）
+  string fileName = fileNameEx.substr(0, fileNameEx.find("."));
+  // 检查文件名是否与预定义的 TASK 和 TASKEX 匹配
+  assert(fileName == TASK TASKEX);
+#endif
+}
+
+#ifdef USACO_LOCAL_JUDGE
+int debug_log = 0;
+int debug_assert = 0;
+#define MyPrintf(...)                   \
+  do {                                  \
+    if (debug_log) printf(__VA_ARGS__); \
+  } while (0)
+
+#define MyAssert(...)                      \
+  do {                                     \
+    if (debug_assert) assert(__VA_ARGS__); \
+  } while (0)
+#else
+#define MyPrintf(...)
+#define MyAssert(...)
+#endif
+
+constexpr int INF = 1 << 30;
+constexpr ll INFL = 1LL << 60;
+constexpr ll MOD = 1000000007;
+
+const double pi = acos(-1.0), eps = 1e-7;
+const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+const int max3 = 2010, max4 = 20010, max5 = 500010, max6 = 2000010;
+
+template <class T>
+using min_queue = priority_queue<T, vector<T>, greater<T>>;
+template <class T>
+using max_queue = priority_queue<T>;
+
+void InitIO(int fileIndex) {  //
+#define LOCAL_IO 1
+#ifdef USACO_LOCAL_JUDGE
+#define MAX_TIME 2000
+#ifdef LOCAL_IO
+#define USACO_TASK_FILE 20
+// #define TASKNO 20
+#ifdef TASKNO
+  fileIndex = TASKNO;
+#endif
+  string fileInName = string(TASK) + to_string(fileIndex) + ".in";
+  string fileOutName = string(TASK) + to_string(fileIndex) + ".out";
+  freopen(fileInName.c_str(), "r", stdin);
+  freopen(fileOutName.c_str(), "w", stdout);
+#endif
+#endif
+}
+
+int n, q;
+ll preSums[max5];
+
+int base2[max5];
+
+inline ull Fix(ll k) {  //
+  return ull(k);
+}
+ll rmqMax[max5][20];
+ll rmqMin[max5][20];
+
+// rmq[l][i] = max(preSums[l], ..., preSums[l+2^i-1])  [l, l+2^i-1]
+// max(a,..., b) = max(rmq[a][k], rmq[b-2^k+1][k])
+inline ll MaxSum(int a, int b) {
+  int k = base2[b - a + 1];
+  return max(rmqMax[a][k], rmqMax[b - (1 << k) + 1][k]);
+}
+inline ll MinSum(int a, int b) {
+  int k = base2[b - a + 1];
+  return min(rmqMin[a][k], rmqMin[b - (1 << k) + 1][k]);
+}
+
+ll dp[max5];                               // 最终的答案
+inline void UpdateAns(int i, ll tmpAns) {  //
+  MyPrintf("i=%d update tmpAns %lld\n", i, tmpAns);
+  dp[i] = max(dp[i], tmpAns);
+}
+
+ll dpTmp[max5];
+pair<ll, int> que[max5];  // 单调队列, {maxVal, pos}, 递减
+int qL, qR;               // [qL, qR)
+
+void SolverL(int D, int U, int minDis, int maxDis) {
+  MyPrintf("SolverL D=%d U=%d minDis=%d maxDis=%d\n", D, U, minDis, maxDis);
+  // 第一步：计算以 i 为左端点，长度为 [D,U] 的所有极好区间的最大权值
+  for (int i = 1; i <= n; i++) {
+    int l = i + D - 1;
+    int r = i + U - 1;
+    if (l > n) {
+      dpTmp[i] = INT64_MIN;
+    } else {
+      r = min(r, n);
+      dpTmp[i] = MaxSum(l, r) - preSums[i - 1];
+    }
+  }
+  // 第二步：计算以 [i-maxDis+1,i-minDis+1] 为左端点，长度为 [D,U] 的所有极好区间的最大权值
+  qL = 0, qR = 0;
+  int l = 0, r = 0;
+  for (int i = 1; i <= n; i++) {
+    if (i - minDis + 1 < 1) continue;  // 无效区间
+    // pop dpL[pos] if pos < i - maxDis + 1
+    while (qL < qR && que[qL].second < i - maxDis + 1) {
+      qL++;
+    }
+    // add dpL[i-minDis+1]
+    while (qL < qR && que[qR - 1].first <= dpTmp[i - minDis + 1]) {
+      qR--;
+    }
+    que[qR++] = {dpTmp[i - minDis + 1], i - minDis + 1};
+    UpdateAns(i, que[qL].first);
+  }
+}
+void SolverR(int D, int U, int minDis, int maxDis) {
+  MyPrintf("SolverR D=%d U=%d minDis=%d maxDis=%d\n", D, U, minDis, maxDis);
+  // 第一步：计算以 i 为右端点，长度为 [D,U] 的所有极好区间的最大权值
+  for (int i = 1; i <= n; i++) {
+    int r = i - D + 1;
+    int l = i - U + 1;
+    if (r < 1) {
+      dpTmp[i] = INT64_MIN;
+    } else {
+      l = max(l, 1);
+      dpTmp[i] = preSums[i] - MinSum(l - 1, r - 1);
+    }
+  }
+  // 第二步：计算以 [i+minDis-1,i+maxDis-1] 为右端点，长度为 [D,U] 的所有极好区间的最大权值
+  qL = 0, qR = 0;
+  int l = 0, r = 0;
+  for (int i = n; i >= 1; i--) {
+    if (i + minDis - 1 > n) continue;  // 无效区间
+    // pop dpL[pos] if pos > i + maxDis - 1
+    while (qL < qR && que[qL].second > i + maxDis - 1) {
+      qL++;
+    }
+    // add dpL[i+minDis-1]
+    while (qL < qR && que[qR - 1].first <= dpTmp[i + minDis - 1]) {
+      qR--;
+    }
+    que[qR++] = {dpTmp[i + minDis - 1], i + minDis - 1};
+    UpdateAns(i, que[qL].first);
+  }
+}
+
+/*
+// 右下角顶点为 (i-L+1, i) 变成为 a 的正方向
+f(i) = max(sum(i-L-a+1, i), ..., sum(i-L+1, i))
+= max(sum(i) - sum(i-L-a), ..., sum(i) - sum(i-L));
+= sum(i) - min(sum(i-L-a), ..., sum(i-L));
+
+f(i+1) = max(sum(i-L-a+1, i+1), ..., sum(i-L+1, i+1))
+= max(sum(i+1) - sum(i-L-a), ..., sum(i+1) - sum(i-L));
+= sum(i+1) - min(sum(i-L-a), ..., sum(i-L));
+
+max(f(i), ..., f(i+a-1))
+ = max(
+   sum(i) - min(sum(i-L-a), ..., sum(i-L))
+   ...
+   sum(i+a-1) - min(sum(i-L-a), ..., sum(i-L))
+ )
+= max(sum(i),..., sum(i+a-1)) - min(sum(i-L-a), ..., sum(i-L))
+*/
+void SolverSquare(int L, int a) {
+  MyPrintf("SolverSquare L=%d a=%d\n", L, a);
+  if (a == 0) return;
+  for (int i = 1; i <= n; i++) {
+    if (i - L < 1) continue;
+    ll tmp = MaxSum(i, min(n, i + a - 1)) - MinSum(max(1, i - L - a), i - L);
+    UpdateAns(i, tmp);
+  }
+}
+
+ull Solver(int L, int R) {
+  int a = (R - L) / 2;
+  fill(dp + 1, dp + n + 1, INT64_MIN);
+  SolverL(L, R, 1, L);          // 梯形的左半部平行四边形
+  SolverL(L + a, R, L, L + a);  // 三角形右上的平行四边形
+  SolverR(L + a, R, 1, 1 + a);  // 三角形左下的平行四边形
+  SolverSquare(L, a);           // 三角形内的正方向
+
+  ull ans = 0;
+  for (int i = 1; i <= n; i++) {
+    ans ^= Fix(dp[i] * i);
+  }
+
+  return ans;
+}
+
+void Init() {
+  preSums[0] = 0;
+  for (int i = 1; i <= n; i++) {
+    preSums[i] += preSums[i - 1];
+  }
+  for (int i = 1; i <= n; i++) {
+    rmqMax[i][0] = preSums[i];
+    rmqMin[i][0] = preSums[i];
+  }
+  for (int k = 1; k < 20; k++) {
+    for (int i = 1; i <= n; i++) {
+      rmqMax[i][k] = max(rmqMax[i][k - 1], rmqMax[min(i + (1 << (k - 1)), n)][k - 1]);
+      rmqMin[i][k] = min(rmqMin[i][k - 1], rmqMin[min(i + (1 << (k - 1)), n)][k - 1]);
+    }
+  }
+  base2[1] = 0;
+  for (int i = 2; i <= n; i++) {
+    base2[i] = base2[i / 2] + 1;
+  }
+}
+
+void Solver() {  //
+  scanf("%d", &n);
+  for (int i = 1; i <= n; i++) {
+    scanf("%lld", &preSums[i]);
+  }
+  Init();
+  scanf("%d", &q);
+  while (q--) {
+    int l, r;
+    scanf("%d%d", &l, &r);
+    printf("%llu\n", Solver(l, r));
+  }
+}
+
+#ifdef USACO_LOCAL_JUDGE
+double costTime = 0;
+#endif
+void ExSolver() {
+#ifdef USACO_LOCAL_JUDGE
+  auto t1 = std::chrono::steady_clock::now();
+#endif
+  Solver();
+#ifdef USACO_LOCAL_JUDGE
+  auto t2 = std::chrono::steady_clock::now();
+  auto my = std::chrono::duration_cast<std::chrono::duration<double, ratio<1, 1000>>>(t2 - t1);
+  costTime = my.count();
+#ifndef USACO_TASK_FILE
+  printf("my 用时: %.0lfms\n", costTime);
+#endif
+#endif
+}
+
+#ifdef USACO_TASK_FILE
+#include <unistd.h>
+
+#include <cstdio>
+int AC = 0;
+void DiffAns(int stdout_fd, int i) {
+  dup2(stdout_fd, STDOUT_FILENO);
+  close(stdout_fd);
+  stdout = fdopen(STDOUT_FILENO, "w");
+  int fileIndex = i;
+#ifdef TASKNO
+  fileIndex = TASKNO;
+#endif
+  string fileAns = string(TASK) + to_string(fileIndex) + ".ans";
+  string fileOut = string(TASK) + to_string(fileIndex) + ".out";
+  string cmd = string("diff -w " + fileAns + " " + fileOut + " > /dev/null");
+  if (system(cmd.c_str())) {
+    printf("case %d: Wrong answer, cost %.0lfms\n", i, costTime);
+  } else {
+    if (costTime > MAX_TIME) {
+      printf("case %d: Time Limit Exceeded, cost %.0lfms\n", i, costTime);
+    } else {
+      AC++;
+      printf("case %d: Accepted, cost %.0lfms\n", i, costTime);
+    }
+  }
+}
+void DiffSummary(int stdout_fd) {  // 统计通过的用例数量和得分
+  dup2(stdout_fd, STDOUT_FILENO);
+  close(stdout_fd);
+  stdout = fdopen(STDOUT_FILENO, "w");
+  printf("Total: %d / %d, 得分： %d\n", AC, USACO_TASK_FILE, AC * (100 / USACO_TASK_FILE));
+}
+#endif
+int main(int argc, char** argv) {
+  CheckUsacoTask();
+  int fileIndex = 1;
+#ifdef USACO_TASK_FILE
+  // 保存当前的 stdout 文件指针
+  int stdout_fd = dup(STDOUT_FILENO);
+  for (int i = 1; i <= USACO_TASK_FILE; i++) {
+    fileIndex = i;
+#endif
+    InitIO(fileIndex);
+    ExSolver();
+#ifdef USACO_TASK_FILE
+    fclose(stdout);
+    DiffAns(stdout_fd, i);
+    stdout_fd = dup(STDOUT_FILENO);
+  }
+  DiffSummary(stdout_fd);
+#endif
+  return 0;
+}

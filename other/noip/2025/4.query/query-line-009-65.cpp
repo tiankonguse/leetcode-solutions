@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "query"
-#define TASKEX "-line-010-60"
+#define TASKEX ""
 
 #include <bits/stdc++.h>
 
@@ -80,49 +80,28 @@ void InitIO(int fileIndex) {  //
 int n, q;
 ll preSums[max4];
 
-// int base2[max4];
+int base2[max4];
 
 inline ull Fix(ll k) {  //
   return ull(k);
 }
 
-struct MonoQueueMax {
-  int idx[max4];
-  ll val[max4];
-  int l, r;
-  inline void reset() { l = 0, r = 0; }
-  inline void push(ll v, int pos) {
-    while (l < r && val[r - 1] <= v) r--;
-    val[r] = v;
-    idx[r] = pos;
-    r++;
-  }
-  inline void pop(int pos) {
-    while (l < r && idx[l] < pos) l++;
-  }
-  inline ll top() { return val[l]; }
-  inline bool empty() { return l == r; }
-} Q1;
-struct MonoQueueMin {
-  int idx[max4];
-  ll val[max4];
-  int l, r;
-  inline void reset() { l = 0, r = 0; }
-  inline void push(ll v, int pos) {
-    while (l < r && val[r - 1] >= v) r--;
-    val[r] = v;
-    idx[r] = pos;
-    r++;
-  }
-  inline void pop(int pos) {
-    while (l < r && idx[l] < pos) l++;
-  }
-  inline ll top() { return val[l]; }
-  inline bool empty() { return l == r; }
-} Q2;
+const int maxLog = 16;
+// ll rmqMax[max4][maxLog];
+ll rmqMin[max4][maxLog];
+
+// rmq[l][i] = max(preSums[l], ..., preSums[l+2^i-1])  [l, l+2^i-1]
+// max(a,..., b) = max(rmq[a][k], rmq[b-2^k+1][k])
+// inline ll MaxSum(const int a, const int b) {
+//   const int k = base2[b - a + 1];
+//   return max(rmqMax[a][k], rmqMax[b - (1 << k) + 1][k]);
+// }
+inline ll MinSum(const int a, const int b) {
+  const int k = base2[b - a + 1];
+  return min(rmqMin[a][k], rmqMin[b - (1 << k) + 1][k]);
+}
 
 ll tmpDP[max5];
-ll tmpDP2[max5];
 ll dp[max5];                                           // 最终的答案
 inline void UpdateAns(const int i, const ll tmpAns) {  //
   // MyPrintf("i=%d update tmpAns %lld\n", i, tmpAns);
@@ -136,22 +115,27 @@ int qL, qR;               // [qL, qR)
 void SolverL(const int D, const int U, const int minDis, const int maxDis) {
   // MyPrintf("SolverL D=%d U=%d minDis=%d maxDis=%d\n", D, U, minDis, maxDis);
   // 第一步：计算以 i 为左端点，长度为 [D,U] 的所有极好区间的最大权值
-  Q1.reset();
+  qL = 0, qR = 0;
   for (int i = 1; i <= n; i++) {
     // pop que[qL] if que[qL].second < i + D
-    Q1.pop(i + D);
+    while (qL < qR && que[qL].second < i + D) {
+      qL++;
+    }
 
     int r = i + D;
-    if (!Q1.empty()) r = que[qR - 1].second + 1;
+    if (qL < qR) r = que[qR - 1].second + 1;
     while (r <= n && r <= i + U) {
       // pop que[qR - 1] if que[qR - 1].first <= preSums[r]
-      Q1.push(preSums[r], r);
+      while (qL < qR && que[qR - 1].first <= preSums[r]) {
+        qR--;
+      }
+      que[qR++] = {preSums[r], r};
       r++;
     }
-    if (Q1.empty()) {  // 没有答案
+    if (qL == qR) {  // 没有答案
       tmpDP[i] = INT64_MIN;
     } else {
-      tmpDP[i] = Q1.top() - preSums[i - 1];
+      tmpDP[i] = que[qL].first - preSums[i - 1];
     }
   }
 
@@ -266,32 +250,10 @@ void SolverSquare(int L, int a) {
       tmpDP[i] = que[qL].first;
     }
   }
-  qL = 0, qR = 0;
-  for (int i = 1; i <= n; i++) {  // min(preSums[i-L-a-1], ..., preSums[i-L-1]);
-    // pop que[qL] if que[qL].second < i - L - a - 1
-    while (qL < qR && que[qL].second < i - L - a - 1) {
-      qL++;
-    }
-    int r = max(0, i - L - a - 1);
-    if (qL < qR) r = que[qR - 1].second + 1;
-    while (r <= n && r <= i - L - 1) {
-      // pop que[qR - 1] if que[qR - 1].first >= preSums[r]
-      while (qL < qR && que[qR - 1].first >= preSums[r]) {
-        qR--;
-      }
-      que[qR++] = {preSums[r], r};
-      r++;
-    }
-    if (qL == qR) {  // 没有答案
-      tmpDP2[i] = INT64_MAX;
-    } else {
-      tmpDP2[i] = que[qL].first;
-    }
-  }
 
   for (int i = 1 + L; i <= n; i++) {
     // if (i - L < 1) continue;
-    const ll tmp = tmpDP[i] - tmpDP2[i];
+    ll tmp = tmpDP[i] - MinSum(max(0, i - L - a - 1), i - L - 1);
     UpdateAns(i, tmp);
   }
 }
@@ -334,19 +296,19 @@ void Init() {
   //     rmqMax[i][k] = max(rmqMax[i][k - 1], rmqMax[min(i + (1 << (k - 1)), n)][k - 1]);
   //   }
   // }
-  // for (int i = 0; i <= n; i++) {
-  //   rmqMin[i][0] = preSums[i];
-  // }
-  // for (int k = 1; k < maxLog; k++) {
-  //   for (int i = 0; i <= n; i++) {
-  //     if (i + (1 << (k - 1)) > n) break;
-  //     rmqMin[i][k] = min(rmqMin[i][k - 1], rmqMin[min(i + (1 << (k - 1)), n)][k - 1]);
-  //   }
-  // }
-  // base2[1] = 0;
-  // for (int i = 2; i <= n; i++) {
-  //   base2[i] = base2[i >> 1] + 1;
-  // }
+  for (int i = 0; i <= n; i++) {
+    rmqMin[i][0] = preSums[i];
+  }
+  for (int k = 1; k < maxLog; k++) {
+    for (int i = 0; i <= n; i++) {
+      if (i + (1 << (k - 1)) > n) break;
+      rmqMin[i][k] = min(rmqMin[i][k - 1], rmqMin[min(i + (1 << (k - 1)), n)][k - 1]);
+    }
+  }
+  base2[1] = 0;
+  for (int i = 2; i <= n; i++) {
+    base2[i] = base2[i >> 1] + 1;
+  }
 }
 
 void Solver() {  //

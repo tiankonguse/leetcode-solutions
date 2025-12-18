@@ -7,7 +7,7 @@
       "problemMatcher": []
     },
     {
-      "label": "mac-cpp",
+      "label": "mac-cpp-nodebug",
       "type": "shell",
       "command": "/usr/bin/g++",
       "args": [
@@ -41,7 +41,7 @@
       }
     },
     {
-      "label": "mac-cpp-no-debug",
+      "label": "mac-cpp-debug",
       "type": "shell",
       "command": "/usr/bin/g++",
       "args": [

@@ -8,7 +8,7 @@ PATH:
 submission:
 */
 #define TASK "query"
-#define TASKEX "-line-010-60"
+#define TASKEX ""
 
 #include <bits/stdc++.h>
 
@@ -86,40 +86,20 @@ inline ull Fix(ll k) {  //
   return ull(k);
 }
 
-struct MonoQueueMax {
-  int idx[max4];
-  ll val[max4];
-  int l, r;
-  inline void reset() { l = 0, r = 0; }
-  inline void push(ll v, int pos) {
-    while (l < r && val[r - 1] <= v) r--;
-    val[r] = v;
-    idx[r] = pos;
-    r++;
-  }
-  inline void pop(int pos) {
-    while (l < r && idx[l] < pos) l++;
-  }
-  inline ll top() { return val[l]; }
-  inline bool empty() { return l == r; }
-} Q1;
-struct MonoQueueMin {
-  int idx[max4];
-  ll val[max4];
-  int l, r;
-  inline void reset() { l = 0, r = 0; }
-  inline void push(ll v, int pos) {
-    while (l < r && val[r - 1] >= v) r--;
-    val[r] = v;
-    idx[r] = pos;
-    r++;
-  }
-  inline void pop(int pos) {
-    while (l < r && idx[l] < pos) l++;
-  }
-  inline ll top() { return val[l]; }
-  inline bool empty() { return l == r; }
-} Q2;
+// const int maxLog = 16;
+// ll rmqMax[max4][maxLog];
+// ll rmqMin[max4][maxLog];
+
+// rmq[l][i] = max(preSums[l], ..., preSums[l+2^i-1])  [l, l+2^i-1]
+// max(a,..., b) = max(rmq[a][k], rmq[b-2^k+1][k])
+// inline ll MaxSum(const int a, const int b) {
+//   const int k = base2[b - a + 1];
+//   return max(rmqMax[a][k], rmqMax[b - (1 << k) + 1][k]);
+// }
+// inline ll MinSum(const int a, const int b) {
+//   const int k = base2[b - a + 1];
+//   return min(rmqMin[a][k], rmqMin[b - (1 << k) + 1][k]);
+// }
 
 ll tmpDP[max5];
 ll tmpDP2[max5];
@@ -134,24 +114,28 @@ pair<ll, int> que[max5];  // 单调队列, {maxVal, pos}, 递减
 int qL, qR;               // [qL, qR)
 
 void SolverL(const int D, const int U, const int minDis, const int maxDis) {
-  // MyPrintf("SolverL D=%d U=%d minDis=%d maxDis=%d\n", D, U, minDis, maxDis);
   // 第一步：计算以 i 为左端点，长度为 [D,U] 的所有极好区间的最大权值
-  Q1.reset();
+  qL = 0, qR = 0;
   for (int i = 1; i <= n; i++) {
     // pop que[qL] if que[qL].second < i + D
-    Q1.pop(i + D);
+    while (qL < qR && que[qL].second < i + D) {
+      qL++;
+    }
 
     int r = i + D;
-    if (!Q1.empty()) r = que[qR - 1].second + 1;
+    if (qL < qR) r = que[qR - 1].second + 1;
     while (r <= n && r <= i + U) {
       // pop que[qR - 1] if que[qR - 1].first <= preSums[r]
-      Q1.push(preSums[r], r);
+      while (qL < qR && que[qR - 1].first <= preSums[r]) {
+        qR--;
+      }
+      que[qR++] = {preSums[r], r};
       r++;
     }
-    if (Q1.empty()) {  // 没有答案
+    if (qL == qR) {  // 没有答案
       tmpDP[i] = INT64_MIN;
     } else {
-      tmpDP[i] = Q1.top() - preSums[i - 1];
+      tmpDP[i] = que[qL].first - preSums[i - 1];
     }
   }
 
@@ -301,19 +285,13 @@ ull Solver(int L, int R) {
   for (int i = 1; i <= n; i++) {
     dp[i] = INT64_MIN;
   }
-  if (L > 1) {
-    SolverL(L - 1, R - 1, 0, L - 1);  // 梯形的左半部平行四边形
-  }
+  SolverL(L - 1, R - 1, 0, L - 1);              // 梯形的左半部平行四边形
   SolverL(L - 1 + a, R - 1, L - 1, L - 1 + a);  // 三角形右上的平行四边形
   SolverR(L - 1 + a, R - 1, 0, a);              // 三角形左下的平行四边形
   SolverSquare(L - 1, a);                       // 三角形内的正方形
 
   ull ans = 0;
   for (int i = 1; i <= n; i++) {
-    // ll square = INT64_MIN;
-    // if (i - (L - 1) >= 1) {
-    //   square = MaxSum(i, min(n, i + a)) - MinSum(max(0, i - (L - 1) - a - 1), i - (L - 1) - 1);
-    // }
     ans ^= Fix(dp[i] * i);
   }
 
