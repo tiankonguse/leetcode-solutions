@@ -199,14 +199,16 @@ ull Solver(int L, int R) {
   Q[1].reset();
   Q[2].reset();
   ull ans = 0;
-  MyPrintf("L=%d R=%d a=%d\n", L, R, a);
   for (int i = 1; i <= n; i++) {
-    ll v1 = SolverLEx(0, i, L - 1, R - 1, L - 1);          // 计算梯形的左半部平行四边形
-    ll v2 = SolverLEx(1, i, L - 1 + a, R - 1, a + L - 1);  // 计算三角形左半部平行四边形
-    ll v3 = SolverR(2, i, L - 1 + a, R - 1, a);            // 计算三角形右半部平行四边形
-    ll v4 = SolverSquare(i, L - 1, a);                     // 三角形内的正方形
+     // 计算梯形的左半部平行四边形
+    ll v1 = SolverLEx(0, i, L - 1, R - 1, L - 1);         
+    // 计算三角形左半部平行四边形
+    ll v2 = SolverLEx(1, i, L - 1 + a, R - 1, a + L - 1);  
+    // 计算三角形右半部平行四边形
+    ll v3 = SolverR(2, i, L - 1 + a, R - 1, a);            
+     // 三角形内的正方形
+    ll v4 = SolverSquare(i, L - 1, a);                    
     ll v = max(max(v1, v2), max(v3, v4));
-    MyPrintf("i=%d, v1=%lld v2=%lld v3=%lld v4=%lld v=%lld\n", i, v1, v2, v3, v4, v);
     ans ^= ull(v) * i;
   }
   return ans;
