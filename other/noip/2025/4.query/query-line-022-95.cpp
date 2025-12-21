@@ -126,44 +126,74 @@ struct MonoQueue {
 int n, q;
 ll preSums[max4];
 
-inline int lg2(int x) { return 31 - __builtin_clz(x); }
-inline int Log(int x) { return lg2(x); }
-const int kMaxLog = 16;
-
-ll stMax[kMaxLog][max4];
-inline ll QueryMax(const int a, const int b) {
-  const int k = lg2(b - a + 1);
-  ll left = stMax[k][a];
-  ll right = stMax[k][b - (1 << k) + 1];
-  return left > right ? left : right;
-}
-
-ll stmin[kMaxLog][max4];
-inline ll QueryMin(const int a, const int b) {
-  const int k = lg2(b - a + 1);
-  ll left = stmin[k][a];
-  ll right = stmin[k][b - (1 << k) + 1];
-  return left < right ? left : right;
-}
-
-void InitSparseTable(int n, ll nums[]) {
-  int maxLog = Log(n) + 1;
-  stMax[0][0] = stmin[0][0] = 0;
-  for (int i = 1; i <= n; i++) {
-    stMax[0][i] = stmin[0][i] = nums[i];
+int base2[max4];
+void InitBase2(int n) {
+  base2[1] = 0;
+  for (int i = 2; i <= n; i++) {
+    base2[i] = base2[i >> 1] + 1;
   }
-  for (int k = 1; k < maxLog; k++) {
-    for (int i = 0; i + (1 << k) - 1 <= n; i++) {
-      stMax[k][i] = max(stMax[k - 1][i], stMax[k - 1][i + (1 << (k - 1))]);
-      stmin[k][i] = min(stmin[k - 1][i], stmin[k - 1][i + (1 << (k - 1))]);
+}
+// 使用内建函数计算 ⌊ log_2 x ⌋
+inline int lg2(int x) { return 31 - __builtin_clz(x); }
+inline int Log2(int x) { return base2[x]; }
+// inline int Lg(int x) { return __lg(x); }
+inline int Log(int x) { return Log2(x); }
+const int kMaxLog = 16;
+struct SparseTableMax {
+  inline ll Max(const int a, const int b) { return a > b ? a : b; }
+  // nums[1...n]
+  void Init(int n, ll nums[]) {
+    int maxLog = lg2(n) + 1;
+    st[0][0] = 0;
+    for (int i = 1; i <= n; i++) {
+      st[0][i] = nums[i];
+    }
+    for (int k = 1; k < maxLog; k++) {
+      for (int i = 0; i + (1 << k) - 1 <= n; i++) {
+        st[k][i] = Max(st[k - 1][i], st[k - 1][i + (1 << (k - 1))]);
+      }
     }
   }
-}
+  inline ll Query(const int a, const int b) {
+    const int k = lg2(b - a + 1);
+    return Max(st[k][a], st[k][b - (1 << k) + 1]);
+  }
+
+ private:
+  ll st[kMaxLog][max4];
+};
+
+struct SparseTableMin {
+  inline ll Min(const int a, const int b) { return a < b ? a : b; }
+  // nums[1...n]
+  void Init(int n, ll nums[]) {
+    int maxLog = lg2(n) + 1;
+    st[0][0] = 0;
+    for (int i = 1; i <= n; i++) {
+      st[0][i] = nums[i];
+    }
+    for (int k = 1; k < maxLog; k++) {
+      for (int i = 0; i + (1 << k) - 1 <= n; i++) {
+        st[k][i] = Min(st[k - 1][i], st[k - 1][i + (1 << (k - 1))]);
+      }
+    }
+  }
+  inline ll Query(const int a, const int b) {
+    const int k = lg2(b - a + 1);
+    return Min(st[k][a], st[k][b - (1 << k) + 1]);
+  }
+
+ private:
+  ll st[kMaxLog][max4];
+};
+
+SparseTableMax stMax;
+SparseTableMin stMin;
 
 // rmq[l][i] = max(preSums[l], ..., preSums[l+2^i-1])  [l, l+2^i-1]
 // max(a,..., b) = max(rmq[a][k], rmq[b-2^k+1][k])
-inline ll MaxSum(const int a, const int b) { return QueryMax(a, b); }
-inline ll MinSum(const int a, const int b) { return QueryMin(a, b); }
+inline ll MaxSum(const int a, const int b) { return stMax.Query(a, b); }
+inline ll MinSum(const int a, const int b) { return stMin.Query(a, b); }
 
 ll SolverLEx(const int q, const int j, const int D, const int U, const int W) {
   auto& Qq = Q[q];
@@ -235,8 +265,9 @@ ull Solver(int L, int R) {
 }
 
 void Init() {
-  // InitBase2(n);
-  InitSparseTable(n, preSums);
+  InitBase2(n);
+  stMax.Init(n, preSums);
+  stMin.Init(n, preSums);
 }
 
 void Solver() {  //
