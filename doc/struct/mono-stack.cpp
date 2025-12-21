@@ -19,7 +19,7 @@ struct MonoStackMax {
   int idx[max4];
   ll val[max4];
   int l, r;
-  inline void reset() { l = 0, r = 0; }
+  inline void clear() { l = 0, r = 0; }
   inline void push(ll v, int pos) {
     while (l < r && val[r - 1] <= v) r--;
     val[r] = v;
@@ -34,11 +34,11 @@ struct MonoStackMax {
 };
 
 // 单调递增栈，栈顶是最大值
-struct MonoQueueMin {
+struct MonoStackMin {
   int idx[max4];
   ll val[max4];
   int l, r;
-  inline void reset() { l = 0, r = 0; }
+  inline void clear() { l = 0, r = 0; }
   inline void push(ll v, int pos) {
     while (l < r && val[r - 1] >= v) r--;
     val[r] = v;
