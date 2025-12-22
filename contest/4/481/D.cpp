@@ -13,84 +13,235 @@ int debug = 0;
   } while (0)
 
 typedef long long ll;
-class Solution {
-  vector<vector<int>> g;
-  vector<int> group;
-  vector<vector<pair<int, ll>>> gg;  // <cnt, sum>
-  void DfsInit(int u, int p) {
-    gg[u][group[u]] = {1, 0};
-    for (int v : g[u]) {
-      if (v == p) continue;
-      DfsInit(v, u);
-      for (int i = 0; i < 20; i++) {  // u 为根的答案
-        const auto [vCnt, vSum] = gg[v][i];
-        auto& [uCnt, uSum] = gg[u][i];
-        uCnt += vCnt;
-        uSum += vSum + vCnt;
+
+namespace VirtualTree {
+int maxLog = 20;
+int vTimeStamp = 0;
+vector<int> dfn;                           // dfs 序
+vector<int> dep;                           // 深度
+vector<vector<int>> g;                     // 原树
+vector<vector<pair<int, int>>> vg;         // 虚树， <v, d>
+vector<vector<int>> st;                    // 稀疏表
+vector<int> timeSeq;                       // 版本
+unordered_map<int, vector<int>> groupNum;  // 组编号
+
+vector<int> A;
+vector<pair<int, int>> flag;  // <version, keyPoint>
+int flagVersion;
+
+void BuildDfn(const int u, const int p) {
+  dfn[u] = vTimeStamp;
+  MyPrintf("dfn[%d]=%d p=%d\n", u, vTimeStamp, p);
+  timeSeq[vTimeStamp] = u;
+  vTimeStamp++;
+  st[0][u] = p;
+  for (int v : g[u]) {
+    if (v == p) continue;
+    dep[v] = dep[u] + 1;
+    BuildDfn(v, u);
+  }
+}
+
+void BuildSparseTable(int n) {
+  for (int i = 1; i < maxLog; i++) {
+    for (int v = 0; v < n; v++) {
+      int p = st[i - 1][v];
+      if (p != -1) {
+        st[i][v] = st[i - 1][p];
+      } else {
+        st[i][v] = -1;
       }
     }
   }
-  ll ans;
-  void AddChild(vector<pair<int, ll>>& ug, const vector<pair<int, ll>>& vg) {
-    for (int i = 0; i < 20; i++) {  // u 为根，排除包括 v 的答案
-      const auto [vCnt, vSum] = vg[i];
-      auto& [ugCnt, ugSum] = ug[i];
-      ugCnt = ugCnt + vCnt;
-      ugSum = ugSum + vSum + vCnt;
+}
+
+void BuildGroup(int n, const vector<int>& group) {
+  groupNum.clear();
+  for (int t = 0; t < n; t++) {
+    int u = timeSeq[t];
+    int id = group[u];
+    groupNum[id].push_back(u);
+  }
+}
+void InitVirtualTree(int n, const vector<vector<int>>& edges, const vector<int>& group) {
+  g.clear();
+  g.resize(n);
+  for (auto& e : edges) {
+    int u = e[0], v = e[1];
+    g[u].push_back(v);
+    g[v].push_back(u);
+  }
+
+  dfn.clear();
+  dfn.resize(n);
+  dep.clear();
+  dep.resize(n);
+  timeSeq.clear();
+  timeSeq.resize(n);
+  vTimeStamp = 0;
+  maxLog = log2(n) + 1;
+  st.clear();
+  st.resize(maxLog, vector<int>(n));
+
+  dep[0] = 0;
+  BuildDfn(0, -1);
+  BuildSparseTable(n);
+  BuildGroup(n, group);
+
+  A.clear();
+  A.reserve(n);
+  flag.clear();
+  flag.resize(n);
+  flagVersion = 0;
+  vg.clear();
+  vg.resize(n);
+}
+
+// u 向上跳 k 步，返回跳到的节点编号
+int PreKthAncestor(int u, int k) {
+  for (int i = maxLog - 1; k && i >= 0; i--) {
+    if (k & (1 << i)) {
+      u = st[i][u];
+      k = k ^ (1 << i);
     }
   }
-  void RemoveChild(vector<pair<int, ll>>& ug, const vector<pair<int, ll>>& vg) {
-    for (int i = 0; i < 20; i++) {  // u 为根，排除包括 v 的答案
-      const auto [vCnt, vSum] = vg[i];
-      auto& [ugCnt, ugSum] = ug[i];
-      ugCnt = ugCnt - vCnt;
-      ugSum = ugSum - vSum - vCnt;
+  return u;
+}
+int UptoDep(int u, int d) {
+  if (dep[u] <= d) {
+    return u;
+  }
+  return PreKthAncestor(u, dep[u] - d);
+}
+
+int Lca(int u, int v) {
+  if (dep[u] < dep[v]) {
+    swap(u, v);
+  }
+  u = UptoDep(u, dep[v]);
+  if (u == v) {
+    return u;
+  }
+  for (int i = maxLog - 1; i >= 0; i--) {
+    if (st[i][u] != st[i][v]) {
+      u = st[i][u];
+      v = st[i][v];
     }
   }
-  // pg 父节点作为子树的答案
-  void DfsDp(int u, int p, const vector<pair<int, ll>>& pg) {
-    // 更新答案
-    AddChild(gg[u], pg);
-    ans += gg[u][group[u]].second;  // 计算 u 为根的答案
-    for (int v : g[u]) {
+  return st[0][u];
+}
+
+void ResetVirtualTreeGroup() {
+  // 清空虚树
+  for (auto u : A) {
+    vg[u].clear();
+  }
+  A.clear();
+}
+
+int BuildVirtualTree(int id) {
+  // nodes 关键点按照 dfs 序排序
+  const vector<int>& nodes = groupNum[id];
+  flagVersion++;
+
+  ResetVirtualTreeGroup();
+
+  int m = nodes.size();
+  auto Add = [](int u, int isKey) {
+    if (flag[u].first != flagVersion) {
+      flag[u] = {flagVersion, isKey};
+      A.push_back(u);
+    }
+  };
+  for (int i = 1; i < m; i++) {
+    int u = nodes[i], v = nodes[i - 1];
+    Add(u, 1);
+    Add(v, 1);
+    Add(Lca(u, v), 0);
+  }
+  sort(A.begin(), A.end(), [&](int u, int v) { return dfn[u] < dfn[v]; });
+  m = A.size();
+  for (int i = 1; i < m; i++) {
+    int v = A[i - 1], u = A[i];
+    int lca = Lca(u, v);
+    int d = dep[u] - dep[lca];
+    vg[lca].push_back({u, d});
+    vg[u].push_back({lca, d});
+  }
+  return A.front();  // 第一个节点当做根
+}
+
+};  // namespace VirtualTree
+
+class Solution {
+  ll ans = 0;
+  int Dfs(const int u, const int p, const ll allNum) {
+    ll uNum = 0;
+    if (VirtualTree::flag[u].second) {
+      uNum = 1;
+    }
+    for (auto [v, d] : VirtualTree::vg[u]) {
       if (v == p) continue;
-      RemoveChild(gg[u], gg[v]);
-      DfsDp(v, u, gg[u]);
-      AddChild(gg[u], gg[v]);
+      int vNum = Dfs(v, u, allNum);
+      ans += vNum * (allNum - vNum) * d;
+      uNum += vNum;
     }
-    RemoveChild(gg[u], pg);
+    return uNum;
   }
 
  public:
-  ll interactionCosts(int n, vector<vector<int>>& edges, vector<int>& group_) {
-    g.resize(n);
-    group.swap(group_);
-    for (int i = 0; i < n; i++) {
-      group[i]--;
-    }
-    for (auto& e : edges) {
-      int u = e[0], v = e[1];
-      g[u].push_back(v);
-      g[v].push_back(u);
-    }
-    gg.resize(n, vector<pair<int, ll>>(20, {0, 0}));
-    DfsInit(0, -1);
-    vector<pair<int, ll>> pg(20, {0, 0});
+  ll interactionCosts(int n, vector<vector<int>>& edges, vector<int>& group) {
+    VirtualTree::InitVirtualTree(n, edges, group);
+
     ans = 0;
-    DfsDp(0, -1, pg);
-    return ans / 2;
+    for (auto [id, nodes] : VirtualTree::groupNum) {
+      // nodes 是同一组的关键节点，已经按 dfn 排序
+      int m = nodes.size();
+      if (m <= 1) continue;
+      int root = VirtualTree::BuildVirtualTree(id);
+      Dfs(root, -1, m);
+    }
+    return ans;
   }
 };
 
 #ifdef USACO_LOCAL_JUDGE
 
-// void Test(const vector<int>& jump, const int& ans) {
-//   // TEST_SMP1(Solution, minJump, ans, jump);
-// }
+void Test(int n, vector<vector<int>>& edges, vector<int>& group, const ll& ans) {
+  TEST_SMP3(Solution, interactionCosts, ans, n, edges, group);
+}
 
 int main() {
-  // Test({1, 2, 3}, 6);
+  {
+    int n = 3;
+    vector<vector<int>> edges = {{0, 1}, {1, 2}};
+    vector<int> group = {1, 1, 1};
+    ll ans = 4;
+    Test(n, edges, group, ans);
+  }
+  {
+    int n = 3;
+    vector<vector<int>> edges = {{0, 1}, {1, 2}};
+    vector<int> group = {1, 1, 1};
+    ll ans = 4;
+    Test(n, edges, group, ans);
+  }
+
+  {
+    int n = 3;
+    vector<vector<int>> edges = {{0, 1}, {1, 2}};
+    vector<int> group = {3, 2, 3};
+    ll ans = 2;
+    Test(n, edges, group, ans);
+  }
+  {
+    int n = 4;
+    vector<vector<int>> edges = {{0, 1}, {0, 2}, {0, 3}};  // [[0,1],[0,2],[0,3]],
+    vector<int> group = {1, 1, 4, 4};
+    ll ans = 3;
+    Test(n, edges, group, ans);
+  }
   return 0;
 }
 
-#endif©leetcode
+#endif
