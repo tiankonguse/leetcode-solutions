@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: number
+TASK: base
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "number"
+#define TASK "base"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -63,7 +63,7 @@ void InitIO(int fileIndex) {  //
 #ifdef USACO_LOCAL_JUDGE
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 0
+#define USACO_TASK_FILE 2
 // #define TASKNO 20
 #ifdef TASKNO
   fileIndex = TASKNO;
@@ -76,43 +76,76 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-vector<string> nums;
-int lenSum;
-string ans;
-string buf;
+vector<vector<string>> table;
+char str[5];
+int n;
 
-// ansFlag: 当前 cur 是否肯定大于 ans
-void Dfs(const int n, const int offset) {
-  if (strncmp(ans.data(), buf.data(), offset) > 0) return;  // 剪枝
-  if (n == -1) {
-    ans = buf;
-    return;
+map<string, int> H;
+map<int, string> h;
+int B = 0;
+bool Check() {
+  B = n - 1;
+  // 第一步：找到 0 对应的字符
+  for (int i = 1; i < n; i++) {
+    int towBit = 0;
+    for (int j = 1; j < n; j++) {
+      if (table[i][j].size() == 2) {
+        towBit++;
+      }
+    }
+    H[table[i][0]] = towBit;
+    if (h.count(towBit)) {
+      MyPrintf("h[%d] = %s\n", towBit, h[towBit].data());
+      return false;
+    }
+    h[towBit] = table[i][0];
+    MyPrintf("h[%d] = %s\n", towBit, table[i][0].data());
+    MyPrintf("H[%s] = %d\n", table[i][0].data(), towBit);
   }
-  for (int i = n; i >= 0; i--) {
-    // 优先选择较大的数，这样较小的递归时就可以直接被剪枝掉
-    swap(nums[i], nums[n]);
-    memcpy(buf.data() + offset, nums[n].data(), nums[n].size());
-    Dfs(n - 1, offset + nums[n].size());
-    swap(nums[i], nums[n]);
+  MyPrintf("B = %d\n", B);
+  for (int i = 1; i < n; i++) {
+    for (int j = 1; j < n; j++) {
+      const int a = H[table[i][0]];
+      const int b = H[table[0][j]];
+      const int ab10 = a + b;
+      string abStr;
+      if (ab10 >= B) {
+        const int V1 = ab10 / B;
+        const int V0 = ab10 % B;
+        abStr = h[V1] + h[V0];
+        MyPrintf("%d >= %d: V1=%d h[V1]=%s, V0=%d h[V0]=%s +=%s\n", ab10, B, V1, h[V1].data(), V0, h[V0].data(), abStr.data());
+      } else {
+        abStr = h[ab10];
+        MyPrintf("%d < %d: abStr = %s\n", ab10, B, abStr.data());
+      }
+      if (abStr != table[i][j]) {
+        MyPrintf("i:%s->%d, j:%s->%d,  ab10=%d abStr = %s, table[%d][%d] = %s\n", table[i][0].data(), a,
+                 table[0][j].data(), b, ab10, abStr.data(), i, j, table[i][j].data());
+        return false;
+      }
+    }
   }
+
+  return true;
 }
 
 void Solver() {  //
-  int n;
   scanf("%d", &n);
-  nums.resize(n);
-  lenSum = 0;
+  table.resize(n, vector<string>(n));
   for (int i = 0; i < n; i++) {
-    ll x;
-    scanf("%lld", &x);
-    nums[i] = to_string(x);
-    lenSum += nums[i].size();
+    for (int j = 0; j < n; j++) {
+      scanf("%s", str);
+      table[i][j] = str;
+    }
   }
-  ans.resize(lenSum, '0');
-  buf.resize(lenSum, '0');
-  sort(nums.begin(), nums.end());
-  Dfs(n - 1, 0);
-  printf("%s\n", ans.c_str());
+  if (!Check()) {
+    printf("ERROR!\n");
+  } else {
+    for (int i = 1; i < n; i++) {
+      printf("%s=%d%c", table[0][i].data(), H[table[0][i]], i == n - 1 ? '\n' : ' ');
+    }
+    printf("%d\n", B);
+  }
 }
 
 #ifdef USACO_LOCAL_JUDGE
@@ -125,7 +158,7 @@ void ExSolver() {
   Solver();
 #ifdef USACO_LOCAL_JUDGE
   auto t2 = std::chrono::steady_clock::now();
-  auto my = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+  auto my = std::chrono::duration_cast<std::chrono::duration<double, ratio<1, 1000>>>(t2 - t1);
   costTime = my.count();
 #ifndef USACO_TASK_FILE
   printf("my 用时: %.0lfms\n", costTime);
@@ -187,18 +220,3 @@ int main(int argc, char** argv) {
 #endif
   return 0;
 }
-
-/*
-6
-321 32 407 135 13 217
-4073232121713513
-
-5
-321 32 135 13 217
-3232121713513
-
-
-2
-321 32
-32321
-*/

@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: number
+TASK: chessboard
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "number"
+#define TASK "chessboard"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -63,7 +63,7 @@ void InitIO(int fileIndex) {  //
 #ifdef USACO_LOCAL_JUDGE
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 0
+#define USACO_TASK_FILE 2
 // #define TASKNO 20
 #ifdef TASKNO
   fileIndex = TASKNO;
@@ -76,43 +76,56 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-vector<string> nums;
-int lenSum;
-string ans;
-string buf;
+/*
+n <= m
+正方形个数：
+1 1 1 1 1 1 1 1 1
+1 2 2 2 2 2 2 2 2
+1 2 3 3 3 3 3 3 3
+1 2 3 4 4 4 4 4 4
+1 2 3 4 5 5 5 5 5
+1 2 3 4 5 6 6 6 6
 
-// ansFlag: 当前 cur 是否肯定大于 ans
-void Dfs(const int n, const int offset) {
-  if (strncmp(ans.data(), buf.data(), offset) > 0) return;  // 剪枝
-  if (n == -1) {
-    ans = buf;
-    return;
-  }
-  for (int i = n; i >= 0; i--) {
-    // 优先选择较大的数，这样较小的递归时就可以直接被剪枝掉
-    swap(nums[i], nums[n]);
-    memcpy(buf.data() + offset, nums[n].data(), nums[n].size());
-    Dfs(n - 1, offset + nums[n].size());
-    swap(nums[i], nums[n]);
-  }
-}
+与 1-n 的列求差
 
+0 0 0 0 0 0
+1 0 0 0 0 0
+2 1 0 0 0 0
+3 2 1 0 0 0
+4 3 2 1 0 0
+5 4 3 2 1 0
+
+0
+0+1
+0+1+2
+0+1+2+3
+...
+0+1+2+3+...+(n-1)
+
+S(n) = (n-1)*n/2
+SS(n) = S(1)+S(2)+...+S(n) = (n*(n+1)*(n-1))/6
+
+(1+2+3+...+n)*m - SS(n) = m*(1+n)*n/2 - (n*(n+1)*(n-1))/6
+
+
+长方形个数：
+1*(1+2+3...+m)
+2*(1+2+3...+m)
+...
+n*(1+2+3...+m)
+= (1+n)*n/2 * (1+m)*m/2
+
+
+*/
 void Solver() {  //
-  int n;
-  scanf("%d", &n);
-  nums.resize(n);
-  lenSum = 0;
-  for (int i = 0; i < n; i++) {
-    ll x;
-    scanf("%lld", &x);
-    nums[i] = to_string(x);
-    lenSum += nums[i].size();
+  ll n, m;
+  scanf("%lld%lld", &n, &m);
+  if (n > m) {
+    swap(n, m);
   }
-  ans.resize(lenSum, '0');
-  buf.resize(lenSum, '0');
-  sort(nums.begin(), nums.end());
-  Dfs(n - 1, 0);
-  printf("%s\n", ans.c_str());
+  ll aa = m * (1 + n) * n / 2 - (n * (n + 1) * (n - 1)) / 6;
+  ll ab = (1 + m) * m / 2 * (1 + n) * n / 2;
+  printf("%lld %lld\n", aa, ab - aa);
 }
 
 #ifdef USACO_LOCAL_JUDGE
@@ -125,7 +138,7 @@ void ExSolver() {
   Solver();
 #ifdef USACO_LOCAL_JUDGE
   auto t2 = std::chrono::steady_clock::now();
-  auto my = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+  auto my = std::chrono::duration_cast<std::chrono::duration<double, ratio<1, 1000>>>(t2 - t1);
   costTime = my.count();
 #ifndef USACO_TASK_FILE
   printf("my 用时: %.0lfms\n", costTime);
@@ -187,18 +200,3 @@ int main(int argc, char** argv) {
 #endif
   return 0;
 }
-
-/*
-6
-321 32 407 135 13 217
-4073232121713513
-
-5
-321 32 135 13 217
-3232121713513
-
-
-2
-321 32
-32321
-*/

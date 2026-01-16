@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: number
+TASK: rank
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "number"
+#define TASK "rank"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -63,7 +63,7 @@ void InitIO(int fileIndex) {  //
 #ifdef USACO_LOCAL_JUDGE
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 0
+#define USACO_TASK_FILE 2
 // #define TASKNO 20
 #ifdef TASKNO
   fileIndex = TASKNO;
@@ -76,43 +76,91 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-vector<string> nums;
-int lenSum;
-string ans;
-string buf;
-
-// ansFlag: 当前 cur 是否肯定大于 ans
-void Dfs(const int n, const int offset) {
-  if (strncmp(ans.data(), buf.data(), offset) > 0) return;  // 剪枝
-  if (n == -1) {
-    ans = buf;
-    return;
-  }
-  for (int i = n; i >= 0; i--) {
-    // 优先选择较大的数，这样较小的递归时就可以直接被剪枝掉
-    swap(nums[i], nums[n]);
-    memcpy(buf.data() + offset, nums[n].data(), nums[n].size());
-    Dfs(n - 1, offset + nums[n].size());
-    swap(nums[i], nums[n]);
-  }
-}
-
+int n;
+vector<vector<ll>> X;
+vector<vector<double>> Y;
+vector<ll> avg, sumX, xAvg;
+vector<double> sumY;
 void Solver() {  //
-  int n;
   scanf("%d", &n);
-  nums.resize(n);
-  lenSum = 0;
+  const double N =n;
+
+  X.resize(n, vector<ll>(8));
   for (int i = 0; i < n; i++) {
-    ll x;
-    scanf("%lld", &x);
-    nums[i] = to_string(x);
-    lenSum += nums[i].size();
+    for (int j = 0; j < 8; j++) {
+      ll x;
+      scanf("%lld", &x);
+      X[i][j] = x;
+    }
   }
-  ans.resize(lenSum, '0');
-  buf.resize(lenSum, '0');
-  sort(nums.begin(), nums.end());
-  Dfs(n - 1, 0);
-  printf("%s\n", ans.c_str());
+  // 计算竞赛的平均分
+  avg.resize(8);
+  for (int j = 0; j < 8; j++) {
+    for (int i = 0; i < n; i++) {
+      avg[j] += X[i][j];
+    }
+    // avg[j] /= N;
+  }
+
+  // 计算选手的总分
+  sumX.resize(n);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < 8; j++) {
+      sumX[i] += X[i][j];
+    }
+  }
+
+  // 竞赛的位置分
+  xAvg.resize(8);
+  for (int j = 0; j < 8; j++) {
+    for (int i = 0; i < n; i++) {
+      xAvg[j] += abs(X[i][j] * N - avg[j]);
+    }
+    // xAvg[j] /= N; // 都除 N 相当于都不除
+  }
+
+  Y.resize(n, vector<double>(8, 0));
+  for (int j = 0; j < 8; j++) {
+    if (xAvg[j] == 0) continue;
+    for (int i = 0; i < n; i++) {
+      Y[i][j] = N * (X[i][j] * N - avg[j]) * 1.0 / xAvg[j];
+    }
+  }
+
+  // 总位置分
+  sumY.resize(n, 0);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < 3; j++) {
+      sumY[i] += Y[i][j] * 10;
+    }
+    for (int j = 3; j < 8; j++) {
+      sumY[i] += Y[i][j] * 8;
+    }
+  }
+
+  vector<int> rank(n);
+  for (int i = 0; i < n; i++) {
+    rank[i] = i;
+  }
+  sort(rank.begin(), rank.end(), [&](int a, int b) {
+    // 优先按照总位置分排序
+    if (abs(sumY[a] - sumY[b]) > eps) {
+      return sumY[a] > sumY[b];
+    }
+    // 如果总位置分相同，按照总分排序
+    if (sumX[a] != sumX[b]) {
+      return sumX[a] > sumX[b];
+    }
+    // 最后编号在前的选手名次在前
+    return a < b;
+  });
+  for (int i = 0; i < n; i++) {
+    int id = rank[i];
+    MyPrintf("选手%d的名次是：", i + 1);
+    MyPrintf("sumY=%.12f ", sumY[id]);
+    MyPrintf("sumX=%lld ", sumX[id]);
+    printf("%d\n", id + 1);
+  }
 }
 
 #ifdef USACO_LOCAL_JUDGE
@@ -125,7 +173,7 @@ void ExSolver() {
   Solver();
 #ifdef USACO_LOCAL_JUDGE
   auto t2 = std::chrono::steady_clock::now();
-  auto my = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+  auto my = std::chrono::duration_cast<std::chrono::duration<double, ratio<1, 1000>>>(t2 - t1);
   costTime = my.count();
 #ifndef USACO_TASK_FILE
   printf("my 用时: %.0lfms\n", costTime);
@@ -187,18 +235,3 @@ int main(int argc, char** argv) {
 #endif
   return 0;
 }
-
-/*
-6
-321 32 407 135 13 217
-4073232121713513
-
-5
-321 32 135 13 217
-3232121713513
-
-
-2
-321 32
-32321
-*/

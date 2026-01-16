@@ -5,7 +5,7 @@ LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
-submission:
+submission: 复杂度 O(n!)
 */
 #define TASK "number"
 #define TASKEX ""
@@ -88,8 +88,8 @@ void Dfs(const int n, const int offset) {
     ans = buf;
     return;
   }
-  for (int i = n; i >= 0; i--) {
-    // 优先选择较大的数，这样较小的递归时就可以直接被剪枝掉
+  for (int i = 0; i <= n; i++) {
+    // 选择第 i 个元素，放在 mask 后面
     swap(nums[i], nums[n]);
     memcpy(buf.data() + offset, nums[n].data(), nums[n].size());
     Dfs(n - 1, offset + nums[n].size());
@@ -110,7 +110,6 @@ void Solver() {  //
   }
   ans.resize(lenSum, '0');
   buf.resize(lenSum, '0');
-  sort(nums.begin(), nums.end());
   Dfs(n - 1, 0);
   printf("%s\n", ans.c_str());
 }

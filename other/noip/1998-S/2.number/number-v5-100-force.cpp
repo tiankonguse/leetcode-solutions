@@ -5,7 +5,7 @@ LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
-submission:
+submission: 复杂度 O(n!) + 分段剪枝
 */
 #define TASK "number"
 #define TASKEX ""
@@ -82,17 +82,31 @@ string ans;
 string buf;
 
 // ansFlag: 当前 cur 是否肯定大于 ans
-void Dfs(const int n, const int offset) {
-  if (strncmp(ans.data(), buf.data(), offset) > 0) return;  // 剪枝
-  if (n == -1) {
-    ans = buf;
-    return;
-  }
+void Dfs(const int n, const int offset, int ansFlag) {
+  if (n == -1) return;
+  // 前缀确定的情况下，接下来只能选择字母最大的值，即最后的几个字符串
+  // 这个剪枝最多少若干次 strncmp
+    const char maxVal = nums[n].front();
+
   for (int i = n; i >= 0; i--) {
-    // 优先选择较大的数，这样较小的递归时就可以直接被剪枝掉
+    if (nums[i].front() != maxVal) break;
+    // 尝试选择第 i 个元素
     swap(nums[i], nums[n]);
-    memcpy(buf.data() + offset, nums[n].data(), nums[n].size());
-    Dfs(n - 1, offset + nums[n].size());
+    if (ansFlag) {
+      // ansFlag=1 代表前缀已经确定比答案更大了，且已经覆盖答案，所以先快速贪心随意找到一个更大的答案
+      ansFlag = 0;  // 只有第一个可以直接覆盖，之后的需要再次比大小
+      memcpy(ans.data() + offset, nums[n].data(), nums[n].size());
+      Dfs(n - 1, offset + nums[n].size(), 1);
+    } else {
+      int cmpFlag = strncmp(ans.data() + offset, nums[n].data(), nums[n].size());
+      if (cmpFlag < 0) {
+        memcpy(ans.data() + offset, nums[n].data(), nums[n].size());
+        Dfs(n - 1, offset + nums[n].size(), 1);
+      } else if (cmpFlag == 0) {  // 前缀相等
+        Dfs(n - 1, offset + nums[n].size(), 0);
+      } else {
+      }
+    }
     swap(nums[i], nums[n]);
   }
 }
@@ -108,10 +122,9 @@ void Solver() {  //
     nums[i] = to_string(x);
     lenSum += nums[i].size();
   }
-  ans.resize(lenSum, '0');
-  buf.resize(lenSum, '0');
   sort(nums.begin(), nums.end());
-  Dfs(n - 1, 0);
+  ans.resize(lenSum, '0');
+  Dfs(n - 1, 0, 1);
   printf("%s\n", ans.c_str());
 }
 

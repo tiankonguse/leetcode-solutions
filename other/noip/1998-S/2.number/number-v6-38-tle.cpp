@@ -5,7 +5,7 @@ LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
-submission:
+submission: 复杂度 O(n^n * n * log(n))
 */
 #define TASK "number"
 #define TASKEX ""
@@ -76,29 +76,29 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
+int n;
 vector<string> nums;
 int lenSum;
 string ans;
 string buf;
 
 // ansFlag: 当前 cur 是否肯定大于 ans
-void Dfs(const int n, const int offset) {
+void Dfs(const int mask, const int offset) {
   if (strncmp(ans.data(), buf.data(), offset) > 0) return;  // 剪枝
-  if (n == -1) {
+  if (mask == 0) {
     ans = buf;
     return;
   }
-  for (int i = n; i >= 0; i--) {
-    // 优先选择较大的数，这样较小的递归时就可以直接被剪枝掉
-    swap(nums[i], nums[n]);
-    memcpy(buf.data() + offset, nums[n].data(), nums[n].size());
-    Dfs(n - 1, offset + nums[n].size());
-    swap(nums[i], nums[n]);
+  for (int i = 0; i < n; i++) {
+    if (mask & (1 << i)) {
+      // 选择第 i 个元素，放在 mask 后面
+      memcpy(buf.data() + offset, nums[i].data(), nums[i].size());
+      Dfs(mask ^ (1 << i), offset + nums[i].size());
+    }
   }
 }
 
 void Solver() {  //
-  int n;
   scanf("%d", &n);
   nums.resize(n);
   lenSum = 0;
@@ -110,8 +110,7 @@ void Solver() {  //
   }
   ans.resize(lenSum, '0');
   buf.resize(lenSum, '0');
-  sort(nums.begin(), nums.end());
-  Dfs(n - 1, 0);
+  Dfs((1 << n) - 1, 0);
   printf("%s\n", ans.c_str());
 }
 
