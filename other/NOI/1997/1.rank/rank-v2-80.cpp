@@ -83,7 +83,7 @@ ll Gcd(ll x, ll y) {
   return y;
 }
 
-// 有符号分数 sign * A / B
+// 有符号分数  A / B
 struct Number {
   ll A;
   ll B;
@@ -121,7 +121,6 @@ struct Number {
     Normalize();
     return *this;
   }
-
   Number& operator/=(const Number& b) {
     Number& a = *this;
     a.A = a.A * b.B;
@@ -133,7 +132,9 @@ struct Number {
     const Number& a = *this;
     return a.A == b.A && a.B == b.B;
   }
-  bool operator!=(const Number& b) const { return !(*this == b); }
+  bool operator!=(const Number& b) const {  //
+    return !(*this == b);
+  }
   bool operator<(const Number& b) const {
     const Number& a = *this;
     return a.A * b.B < b.A * a.B;
@@ -142,7 +143,6 @@ struct Number {
     const Number& a = *this;
     return a.A * b.B > b.A * a.B;
   }
-
   Number Abs() const {
     Number ret;
     ret.A = abs(A);
@@ -194,7 +194,7 @@ vector<ll> avg, sumX, xAvg;
 vector<double> sumY;
 void Solver() {  //
   scanf("%d", &n);
-  const double N =n;
+  const double N = n;
 
   X.resize(n, vector<ll>(8));
   for (int i = 0; i < n; i++) {
