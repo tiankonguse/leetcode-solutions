@@ -677,7 +677,7 @@ long long MNow() {
     auto tmpP1 = clone(firstData);                                      \
     auto tmpP2 = clone(secondData);                                     \
     auto tmpP3 = clone(thirdData);                                      \
-    auto tmpP4 = clone(fouthData);                                      \
+    auto tmpP4 = clone(fourthData);                                      \
     long long beginTime = MNow();                                       \
     auto tmpAns = work.FunNAme(tmpP1, tmpP2, tmpP3, tmpP4);             \
     long long endTime = MNow();                                         \
@@ -688,7 +688,37 @@ long long MNow() {
       output("firstData", firstData);                                   \
       output("secondData", secondData);                                 \
       output("thirdData", thirdData);                                   \
-      output("fouthData", fouthData);                                   \
+      output("fourthData", fourthData);                                   \
+      output("ans", tmpAns);                                            \
+      output("expectAns", expectAns);                                   \
+      printf("\n");                                                     \
+    } else {                                                            \
+      printf("index %d: YES %lldms\n", getIndex(), cost);               \
+    }                                                                   \
+  } while (0)
+
+  
+#define TEST_SMP5(ClassName, FunNAme, expectAns, firstData, secondData, \
+                  thirdData, fourthData, fifthData)                                 \
+  do {                                                                  \
+    ClassName work;                                                     \
+    auto tmpP1 = clone(firstData);                                      \
+    auto tmpP2 = clone(secondData);                                     \
+    auto tmpP3 = clone(thirdData);                                      \
+    auto tmpP4 = clone(fourthData);                                      \
+    auto tmpP5 = clone(fifthData);                                      \
+    long long beginTime = MNow();                                       \
+    auto tmpAns = work.FunNAme(tmpP1, tmpP2, tmpP3, tmpP4, tmpP5);      \
+    long long endTime = MNow();                                         \
+    long long cost = endTime - beginTime;                               \
+                                                                        \
+    if (!eq(tmpAns, expectAns)) {                                       \
+      printf("index %d: NO %lldms\n", getIndex(), cost);                \
+      output("firstData", firstData);                                   \
+      output("secondData", secondData);                                 \
+      output("thirdData", thirdData);                                   \
+      output("fourthData", fourthData);                                   \
+      output("fifthData", fifthData);                                   \
       output("ans", tmpAns);                                            \
       output("expectAns", expectAns);                                   \
       printf("\n");                                                     \
