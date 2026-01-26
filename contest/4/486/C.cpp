@@ -6,7 +6,7 @@
 using namespace std;
 #endif
 
-int debug = 1;
+int debug = 0;
 #define MyPrintf(...)               \
   do {                              \
     if (debug) printf(__VA_ARGS__); \
@@ -28,7 +28,7 @@ void Init(int n) {
 }
 
 void BuildDepth(const int u, const int p) {
-  st[u][0] = p;
+  st[0][u] = p;
   for (int v : g[u]) {
     if (v == p) continue;
     dep[v] = dep[u] + 1;
@@ -53,6 +53,7 @@ void BuildSparseTable(int n) {
 int PreKthAncestor(int u, int k) {
   for (int i = maxLog - 1; k && i >= 0; i--) {
     if (k & (1 << i)) {
+      assert(u != -1);
       u = st[i][u];
       k = k ^ (1 << i);
     }
@@ -131,9 +132,13 @@ void Test(int n, const vector<vector<int>>& edges, int x, int y, int z, const in
 }
 
 int main() {
+  // {
+  //   vector<vector<int>> edges = {{0, 1}, {0, 2}, {0, 3}};
+  //   Test(4, edges, 1, 2, 3, 3);
+  // }
   {
-    vector<vector<int>> edges = {{0, 1}, {0, 2}, {0, 3}};
-    Test(4, edges, 0, 2, 3, 3);
+    vector<vector<int>> edges = {{0, 1}, {1, 2}, {2, 3}};
+    Test(4, edges, 0, 3, 2, 0);
   }
   return 0;
 }

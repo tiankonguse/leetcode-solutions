@@ -1,7 +1,7 @@
 /*
 最近公共祖先简称 LCA（Lowest Common Ancestor）。
 两个节点的最近公共祖先，就是这两个点的公共祖先里面，离根最远的那个。
-记某点集 𝑆 ={𝑣1,𝑣2,…,𝑣𝑛} 的最近公共祖先为 LCA(𝑣1,𝑣2,…,𝑣𝑛) 或 LCA(𝑆) 
+记某点集 𝑆 ={𝑣1,𝑣2,…,𝑣𝑛} 的最近公共祖先为 LCA(𝑣1,𝑣2,…,𝑣𝑛) 或 LCA(𝑆)
 
 性质：
 
@@ -25,7 +25,6 @@ https://oi-wiki.org/graph/lca/
 https://wcipeg.com/wiki/Lowest_common_ancestor
 */
 
-
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
@@ -36,8 +35,15 @@ vector<int> g[maxn];  // 需要主动初始化
 ll st[maxLog][maxn];  // st[i][v] 表示 v 的 2^i 祖先
 int dep[maxn];
 
+void Init(int n) {
+  for (int i = 0; i < n; i++) {
+    g[i].clear();
+    dep[i] = 0;
+  }
+}
+
 void BuildDepth(const int u, const int p) {
-  st[u][0] = p;
+  st[0][u] = p;
   for (int v : g[u]) {
     if (v == p) continue;
     dep[v] = dep[u] + 1;
