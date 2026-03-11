@@ -9,7 +9,8 @@
     {
       "label": "mac-cpp-nodebug",
       "type": "shell",
-      "command": "/usr/bin/g++",
+      "command": "/usr/local/bin/g++-14",
+      // "command": "/usr/bin/g++",
       "args": [
         "-g",
         "-O2",
@@ -43,7 +44,8 @@
     {
       "label": "mac-cpp-debug",
       "type": "shell",
-      "command": "/usr/bin/g++",
+      "command": "/usr/local/bin/g++-14",
+      // "command": "/usr/bin/g++",
       "args": [
         "-g",
         // "-O2",
@@ -137,8 +139,8 @@
     {
       "label": "mac-build-home-debug",
       "type": "shell",
-      // "command": "/usr/local/bin/g++-14",
-      "command": "/usr/bin/g++",
+      "command": "/usr/local/bin/g++-14",
+      // "command": "/usr/bin/g++",
       "args": [
         "-fdiagnostics-color=always",
         "-g",
@@ -178,6 +180,7 @@
       "label": "mac-build-home-nodebug",
       "type": "shell",
       "command": "/usr/local/bin/g++-14",
+      // "command": "/usr/bin/g++",
       "args": [
         "-fdiagnostics-color=always",
         "-g",
