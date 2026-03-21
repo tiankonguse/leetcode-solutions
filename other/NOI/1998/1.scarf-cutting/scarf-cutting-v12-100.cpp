@@ -224,7 +224,6 @@ void Solver() {  //
   dpDownMax.resize(n, 0);
 
   scanf("%d", &m);
-  // basePoints.resize(m+10);
   for (int i = 0; i < m; i++) {
     int x, y;
     scanf("%d%d", &x, &y);  // 1-based

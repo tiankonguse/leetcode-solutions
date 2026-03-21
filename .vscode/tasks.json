@@ -139,8 +139,8 @@
     {
       "label": "mac-build-home-debug",
       "type": "shell",
-      "command": "/usr/local/bin/g++-14",
-      // "command": "/usr/bin/g++",
+      // "command": "/usr/local/bin/g++-14",
+      "command": "/usr/bin/g++",
       "args": [
         "-fdiagnostics-color=always",
         "-g",
@@ -148,15 +148,18 @@
         "-I${workspaceFolder}/include/",
         "-DUSACO_LOCAL_JUDGE",
         "${file}",
-        "-o",
-        "${workspaceFolder}/tmp/tmp.exe",
         // "-std=c++17"
-        "-std=c++20"
+        "-std=c++20",
+        "-D_GLIBCXX_DEBUG",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=address,undefined",
         // "-Wall",
         // "-Wl,--stack=268454500",
         // "-Wl,stack-size=268454500",
         // "-Wstack-usage=268454500"
         // "-Werror"
+        "-o",
+        "${workspaceFolder}/tmp/tmp.exe",
       ],
       "options": {
         "cwd": "${fileDirname}" // The current working directory of the executed program or script. If omitted Code's current workspace root is used.

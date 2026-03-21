@@ -80,18 +80,18 @@ int n, n2;
 int m;
 const int N = 205;  // 开够
 int dp[N][N];
+int dpUpMax[N], dpDownMax[N];
 int points[N][N];
-vector<int> dpUpMax;
-vector<int> dpDownMax;
 inline bool OK(const int x, const int y) {  // 0-based
   return x >= 0 && x < n && y >= 0 && y < 2 * x + 1;
 }
 void SolverUp() {
   // points 内存大小为 [n][n2]
   const int n2 = n * 2 - 1;
+  fill(dpUpMax, dpUpMax + N, 0);
+
   for (int i = 0; i < n; i++) {
     const int ni = i * 2 + 1;
-    dpUpMax[i] = 0;
     for (int j = 0; j < ni; j++) {
       dp[i][j] = 0;
       if (points[i][j] == 0) continue;
@@ -122,9 +122,9 @@ void SolverUp() {
 void SolverDown() {
   // points 内存大小为 [n][n2]
   const int n2 = n * 2 - 1;
+  fill(dpDownMax, dpDownMax + N, 0);
 
   for (int i = n - 1; i >= 0; i--) {
-    dpDownMax[i] = 0;
     const int ni = i * 2 + 1;
     for (int j = 0; j < ni; j++) {
       dp[i][j] = 0;
@@ -220,11 +220,10 @@ void Solver() {  //
     fill(points[i], points[i] + N, 1);
     fill(dp[i], dp[i] + N, 0);
   }
-  dpUpMax.resize(n, 0);
-  dpDownMax.resize(n, 0);
+  fill(dpUpMax, dpUpMax + N, 0);
+  fill(dpDownMax, dpDownMax + N, 0);
 
   scanf("%d", &m);
-  // basePoints.resize(m+10);
   for (int i = 0; i < m; i++) {
     int x, y;
     scanf("%d%d", &x, &y);  // 1-based

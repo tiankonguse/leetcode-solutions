@@ -153,11 +153,10 @@ void SolverDown() {
   }
 }
 
-pair<int, int> basePoints[N*N];  // 0-based
+vector<pair<int, int>> basePoints;  // 0-based
 int SolverOne() {
   // 只需要处理上下分割线即可
-  for (int i = 0; i < m; i++) {
-    auto [x, y] = basePoints[i];
+  for (auto& [x, y] : basePoints) {
     points[x][y] = 0;
   }
   SolverUp();
@@ -170,8 +169,7 @@ int SolverOne() {
       ans = max(ans, upVal * upVal + downVal * downVal);
     }
   }
-  for (int i = 0; i < m; i++) {
-    auto [x, y] = basePoints[i];
+   for (auto& [x, y] : basePoints) {
     points[x][y] = 1;  // 还原默认值
   }
   return ans;
@@ -190,12 +188,12 @@ void Rotate(const int n) {
   // 逆时针旋转 90 度
   // x1 = n - 1 - y0 / 2;
   // y1 = 2 * x0 - y0;
-  for (int i = 0; i < m; i++) {
-    auto [x0, y0] = basePoints[i];
+  for (auto& [x0, y0] : basePoints) {
     MyAssert(x0 >= 0 && x0 < n && y0 >= 0 && y0 < 2 * x0 + 1);
     auto [x1, y1] = Rotate(n, x0, y0);
-    basePoints[i] = {x1, y1};
-    MyAssert(x1 >= 0 && x1 < n && y1 >= 0 && y1 < 2 * x1 + 1);
+    x0 = x1;
+    y0 = y1;
+    MyAssert(x0 >= 0 && x0 < n && y0 >= 0 && y0 < 2 * x0 + 1);
   }
 }
 
@@ -224,7 +222,7 @@ void Solver() {  //
   dpDownMax.resize(n, 0);
 
   scanf("%d", &m);
-  // basePoints.resize(m+10);
+  basePoints.resize(m);
   for (int i = 0; i < m; i++) {
     int x, y;
     scanf("%d%d", &x, &y);  // 1-based

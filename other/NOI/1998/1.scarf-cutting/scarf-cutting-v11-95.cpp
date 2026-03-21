@@ -153,7 +153,7 @@ void SolverDown() {
   }
 }
 
-pair<int, int> basePoints[N*N];  // 0-based
+vector<pair<int, int>> basePoints;  // 0-based
 int SolverOne() {
   // 只需要处理上下分割线即可
   for (int i = 0; i < m; i++) {
@@ -224,7 +224,7 @@ void Solver() {  //
   dpDownMax.resize(n, 0);
 
   scanf("%d", &m);
-  // basePoints.resize(m+10);
+  basePoints.resize(m);
   for (int i = 0; i < m; i++) {
     int x, y;
     scanf("%d%d", &x, &y);  // 1-based

@@ -76,171 +76,110 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n, n2;
+int n;
 int m;
-const int N = 205;  // 开够
-int dp[N][N];
-int points[N][N];
-vector<int> dpUpMax;
-vector<int> dpDownMax;
-inline bool OK(const int x, const int y) {  // 0-based
-  return x >= 0 && x < n && y >= 0 && y < 2 * x + 1;
-}
-void SolverUp() {
-  // points 内存大小为 [n][n2]
-  const int n2 = n * 2 - 1;
+vector<pair<int, int>> basePoints;  // 0-based
+vector<int> dpUpMax, dpDownMax;
+void SolverUp(const vector<vector<int>>& points) {
+  const int n2 = n * 2 + 1;
+  vector<vector<int>> dpUp(n, vector<int>(n2 + 2, 0));
+  dpUpMax.resize(n, 0);
+  fill(dpUpMax.begin(), dpUpMax.end(), 0);
+
   for (int i = 0; i < n; i++) {
     const int ni = i * 2 + 1;
-    dpUpMax[i] = 0;
     for (int j = 0; j < ni; j++) {
-      dp[i][j] = 0;
       if (points[i][j] == 0) continue;
-      dp[i][j] = 1;
+      dpUp[i][j] = 1;
       if (j % 2 == 0) {  // 正三角形
-        // 左边和左上的最小正三角
-        if (OK(i - 1, j - 2) && OK(i, j - 2) && points[i][j - 1] == 1) {
-          int leftVal = dp[i][j - 2];
-          int upVal = dp[i - 1][j - 2];
-          dp[i][j] = min(leftVal, upVal) + 1;
+        if (i - 1 >= 0 && j - 1 >= 0 && points[i][j - 1] == 1 && j - 2 >= 0) {
+          int leftVal = dpUp[i][j - 2];
+          int upVal = dpUp[i - 1][j - 2];
+          dpUp[i][j] = min(leftVal, upVal) + 1;
         }
       } else {  // 倒三角形
-        // 左上与右上的最小倒三角
-        if (OK(i - 1, j - 2) && OK(i - 1, j) && points[i - 1][j - 1] == 1) {
-          int leftVal = dp[i - 1][j - 2];
-          int rightVal = dp[i - 1][j];
-          dp[i][j] = min(leftVal, rightVal) + 1;
+        if (i - 1 >= 0 && j - 1 >= 0 && points[i - 1][j - 1] == 1 && j - 2 >= 0) {
+          int leftVal = dpUp[i - 1][j - 2];
+          int rightVal = dpUp[i - 1][j];
+          dpUp[i][j] = min(leftVal, rightVal) + 1;
         }
       }
-      dpUpMax[i] = max(dpUpMax[i], dp[i][j]);
+      dpUpMax[i] = max(dpUpMax[i], dpUp[i][j]);
     }
   }
-  for (int i = 1; i < n; i++) {
-    dpUpMax[i] = max(dpUpMax[i], dpUpMax[i - 1]);
-  }
 }
-
-void SolverDown() {
-  // points 内存大小为 [n][n2]
-  const int n2 = n * 2 - 1;
+void SolverDown(const vector<vector<int>>& points) {
+  const int n2 = n * 2 + 1;
+  vector<vector<int>> dpDown(n + 1, vector<int>(n2 + 2, 0));
+  dpDownMax.resize(n + 1, 0);
+  fill(dpDownMax.begin(), dpDownMax.end(), 0);
 
   for (int i = n - 1; i >= 0; i--) {
-    dpDownMax[i] = 0;
     const int ni = i * 2 + 1;
     for (int j = 0; j < ni; j++) {
-      dp[i][j] = 0;
       if (points[i][j] == 0) continue;
-      dp[i][j] = 1;
+      dpDown[i][j] = 1;
+
       if (j % 2 == 0) {  // 正三角形
-        // 左下与右下的最小正三角
-        if (OK(i + 1, j) && OK(i + 1, j + 2) && points[i + 1][j + 1] == 1) {
-          int leftVal = dp[i + 1][j];
-          int rightVal = dp[i + 1][j + 2];
-          dp[i][j] = min(leftVal, rightVal) + 1;
+        if (i + 1 < n && j + 1 < n2 && points[i][j + 1] == 1 && j + 2 < n2) {
+          int leftVal = dpDown[i + 1][j];
+          int rightVal = dpDown[i + 1][j + 2];
+          dpDown[i][j] = min(leftVal, rightVal) + 1;
         }
       } else {  // 倒三角形
-        // 左边和左下的最小倒三角
-        if (OK(i, j - 2) && OK(i + 1, j) && points[i][j - 1] == 1) {
-          int leftVal = dp[i][j - 2];
-          int downVal = dp[i + 1][j];
-          dp[i][j] = min(leftVal, downVal) + 1;
+        if (i + 1 < n && j - 1 >= 0 && points[i][j - 1] == 1 && j - 2 >= 0) {
+          int leftVal = dpDown[i][j - 2];
+          int downVal = dpDown[i + 1][j];
+          dpDown[i][j] = min(leftVal, downVal) + 1;
         }
       }
-      dpDownMax[i] = max(dpDownMax[i], dp[i][j]);
+      dpDownMax[i] = max(dpDownMax[i], dpDown[i][j]);
     }
   }
-  for (int i = n - 2; i >= 0; i--) {
-    dpDownMax[i] = max(dpDownMax[i], dpDownMax[i + 1]);
-  }
 }
-
-pair<int, int> basePoints[N*N];  // 0-based
 int SolverOne() {
   // 只需要处理上下分割线即可
-  for (int i = 0; i < m; i++) {
-    auto [x, y] = basePoints[i];
+  const int n2 = n * 2 + 1;
+  vector<vector<int>> points(n, vector<int>(n2, 1));
+  for (auto& [x, y] : basePoints) {
     points[x][y] = 0;
   }
-  SolverUp();
-  SolverDown();
+  SolverUp(points);
+  SolverDown(points);
   int ans = 0;
-  for (int i = 0; i + 1 < n; i++) {
+  for (int i = 0; i < n; i++) {
     int upVal = dpUpMax[i];
     int downVal = dpDownMax[i + 1];
     if (upVal > 0 && downVal > 0) {
       ans = max(ans, upVal * upVal + downVal * downVal);
     }
   }
-  for (int i = 0; i < m; i++) {
-    auto [x, y] = basePoints[i];
-    points[x][y] = 1;  // 还原默认值
-  }
   return ans;
 }
-pair<int, int> Rotate(const int n, const int x0, const int y0) {
-  const int x1 = n - 1 - y0 / 2;
-  const int y1 = 2 * x0 - y0;
-  return {x1, y1};
-}
-void Rotate(const int n) {
-  // 第 0 行有 1 个小三角形
-  // 第 1 行有 3 个小三角形
-  // 第 2 行有 5 个小三角形
-  // ...
-  // 第 n 行有 2n + 1 个小三角形
-  // 逆时针旋转 90 度
+void Rotate() {
   // x1 = n - 1 - y0 / 2;
   // y1 = 2 * x0 - y0;
-  for (int i = 0; i < m; i++) {
-    auto [x0, y0] = basePoints[i];
-    MyAssert(x0 >= 0 && x0 < n && y0 >= 0 && y0 < 2 * x0 + 1);
-    auto [x1, y1] = Rotate(n, x0, y0);
-    basePoints[i] = {x1, y1};
-    MyAssert(x1 >= 0 && x1 < n && y1 >= 0 && y1 < 2 * x1 + 1);
+  for (auto& [x0, y0] : basePoints) {
+    int x1 = n - 1 - y0 / 2;
+    int y1 = 2 * x0 - y0;
+    x0 = x1;
+    y0 = y1;
   }
-}
-
-void Test() {
-  // for(int p=2;p<=100;p++){
-  //   MyPrintf("p=%d\n", p);
-  //   for(int i=0;i<p;i++){
-  //     for(int j=0;j<2*i+1;j++){
-  //       const int x0 = i;
-  //       const int y0 = j;
-  //       const auto [x1, y1] = Rotate(p, x0, y0);
-  //       assert(x1 >= 0 && x1 < p && y1 >= 0 && y1 < 2 * p - 1);
-  //     }
-  //   }
-  // }
 }
 
 void Solver() {  //
   scanf("%d", &n);
-  n2 = n * 2 - 1;
-  for (int i = 0; i < N; i++) {
-    fill(points[i], points[i] + N, 1);
-    fill(dp[i], dp[i] + N, 0);
-  }
-  dpUpMax.resize(n, 0);
-  dpDownMax.resize(n, 0);
-
   scanf("%d", &m);
-  // basePoints.resize(m+10);
+  basePoints.resize(m);
   for (int i = 0; i < m; i++) {
     int x, y;
-    scanf("%d%d", &x, &y);  // 1-based
-    int x1 = x - 1;
-    int y1 = y - 1;
-    MyAssert(x1 >= 0 && x1 < n && y1 >= 0 && y1 < 2 * x1 + 1);
-    basePoints[i] = {x1, y1};  // 0-based
+    scanf("%d%d", &x, &y);           // 1-based
+    basePoints[i] = {x - 1, y - 1};  // 0-based
   }
-  if (n == 1) {
-    printf("0\n");
-    return;
-  }
-  int ans = SolverOne();
-  for (int i = 0; i < 2; i++) {
-    Rotate(n);
+  int ans = 2;
+  for (int i = 0; i < 3; i++) {
     ans = max(ans, SolverOne());
+    Rotate();
   }
   printf("%d\n", ans);
 }
@@ -258,7 +197,7 @@ void ExSolver() {
   auto my = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
   costTime = my.count();
 #ifndef USACO_TASK_FILE
-  MyPrintf("my 用时: %.0lfms\n", costTime);
+  printf("my 用时: %.0lfms\n", costTime);
 #endif
 #endif
 }
@@ -280,13 +219,13 @@ void DiffAns(int stdout_fd, int i) {
   string fileOut = string(TASK) + to_string(fileIndex) + ".out";
   string cmd = string("diff -w " + fileAns + " " + fileOut + " > /dev/null");
   if (system(cmd.c_str())) {
-    MyPrintf("case %d: Wrong answer, cost %.0lfms\n", i, costTime);
+    printf("case %d: Wrong answer, cost %.0lfms\n", i, costTime);
   } else {
     if (costTime > MAX_TIME) {
-      MyPrintf("case %d: Time Limit Exceeded, cost %.0lfms\n", i, costTime);
+      printf("case %d: Time Limit Exceeded, cost %.0lfms\n", i, costTime);
     } else {
       AC++;
-      MyPrintf("case %d: Accepted, cost %.0lfms\n", i, costTime);
+      printf("case %d: Accepted, cost %.0lfms\n", i, costTime);
     }
   }
 }
@@ -294,7 +233,7 @@ void DiffSummary(int stdout_fd) {  // 统计通过的用例数量和得分
   dup2(stdout_fd, STDOUT_FILENO);
   close(stdout_fd);
   stdout = fdopen(STDOUT_FILENO, "w");
-  MyPrintf("Total: %d / %d, 得分： %d\n", AC, USACO_TASK_FILE, AC * (100 / USACO_TASK_FILE));
+  printf("Total: %d / %d, 得分： %d\n", AC, USACO_TASK_FILE, AC * (100 / USACO_TASK_FILE));
 }
 #endif
 int main(int argc, char** argv) {
