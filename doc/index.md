@@ -50,6 +50,7 @@
 * [Dijkstra](./graph/dijkstra.cpp)
 * [并查集 DSU](./graph/dsu.cpp)
 * [欧拉路径](./graph/EulerianPath.cpp)
+* [全源最短路 floyd](./graph/floyd.cpp)
 
 ## 数学
 
