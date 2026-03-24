@@ -14,7 +14,7 @@
 
 * [枚举子集/子集容斥/子集最大值/子集最大和](./dp/subset.cpp)
 * [容斥](./dp/rongchi.cpp)
-
+* [LIS 最长递增子序列 n log(n)](./dp/LIS.cpp)
 
 
 ## 几何
@@ -70,7 +70,8 @@
 ## 数据结构
 
 * [树状数组/第k大值](./struct/fenwick/fenwick.cpp)
-* [单点更新树状数组](./struct/fenwick/treeArray.cpp)
-* [区间更新树状数组](./struct/fenwick/treeArrayEx.cpp)
+* [单点更新树状数组-区间和](./struct/fenwick/treeArray.cpp)
+* [区间更新树状数组-区间和](./struct/fenwick/treeArrayEx.cpp)
 * [带版本快速初始化的单点更新树状数组](./struct/fenwick/treeArrayVer.cpp)
+* [单点更新-前缀最大值](./struct/fenwick/treeArrayMax.cpp)
 
