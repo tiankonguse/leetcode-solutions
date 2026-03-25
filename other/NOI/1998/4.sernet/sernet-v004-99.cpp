@@ -90,9 +90,6 @@ bool Bfs(ll packId, ll startTime, ll srcNodeId, ll dstNodeId) {
   if (srcNodeId == dstNodeId) {
     dstNodeId = -1;  // 如果源点就是终点，标记为终点不存在
   }
-  if(startTime > T){
-    return false;
-  }
   vector<ll> dist(n, INF);
   dist[srcNodeId] = startTime;
   priority_queue<pll, vector<pll>, greater<pll>> pque;
