@@ -129,7 +129,7 @@ bool Check() {
         break;
       }
       left -= need;
-      Add(pi);
+      Add(pi); // 后悔退掉便宜的油，并加满油
       pos = di;
     }
   }

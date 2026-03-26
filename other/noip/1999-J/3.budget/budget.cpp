@@ -90,23 +90,26 @@ bool Check() {
     return false;  // 油箱容量为0，无法行驶
   }
   // 策略：每次都加满油并记录油价，遇到更便宜的油，剩余多少油就返回不加这些油，然后在更便宜的油站加满
-  map<double, double> que;  // <p, c*L> 价格为 p 的油有 c 升
+  deque<pair<double, double>> que;  // <p, c*L> 价格为 p 的油有 c 升
   double left = 0;
   auto Add = [&que, &left](double p) {
-    double gap = C * L - left;
-    ans += p * gap;
-    que[p] += gap;
-    left += gap;
     while (!que.empty()) {
-      auto [p2, c2] = *que.rbegin();
+      auto [p2, c2] = que.back();
       if (p2 > p + eps) {
-        que.erase(--que.end());
+        que.pop_back();
         ans -= p2 * c2;
-        que[p] += c2;
-        ans += p * c2;
+        left -= c2;
       } else {
         break;
       }
+    }
+    double gap = C * L - left;
+    ans += p * gap;
+    left += gap;
+    if (que.empty() || que.back().first < p) {
+      que.push_back(make_pair(p, gap));
+    } else {
+      que.back().second += gap;
     }
   };
   Add(P);
@@ -119,13 +122,13 @@ bool Check() {
     if (need > eps) {
       // 如果可以到达，开过来的时候，优先使用 que 里面更便宜的油
       while (!que.empty()) {
-        auto [p2, c2] = *que.begin();
+        auto [p2, c2] = que.front();
         if (c2 + eps <= need) {
           need -= c2;
-          que.erase(que.begin());
+          que.pop_front();
           continue;
         }
-        que[p2] -= need;
+        que.front().second -= need;
         break;
       }
       left -= need;
