@@ -15,6 +15,7 @@
 * [枚举子集/子集容斥/子集最大值/子集最大和](./dp/subset.cpp)
 * [容斥](./dp/rongchi.cpp)
 * [LIS 最长递增子序列 n log(n)](./dp/LIS.cpp)
+* [数位DP](./dp/digit-dp.cpp)  
 
 
 ## 几何
