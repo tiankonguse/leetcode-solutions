@@ -5,7 +5,9 @@ LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
-submission:
+submission: 
+desc: 看错题了，题目要求选择 K 种不同面值的邮票，最多选择 N 种，问每次独立选择，拼出的最大连续值。
+当前解法是先选择，再拼凑。
 */
 #define TASK "stamp"
 #define TASKEX ""
@@ -29,8 +31,8 @@ void CheckUsacoTask() {
 }
 
 #ifdef USACO_LOCAL_JUDGE
-int debug_log = 0;
-int debug_assert = 1;
+int debug_log = 1;
+int debug_assert = 0;
 #define MyPrintf(...)                   \
   do {                                  \
     if (debug_log) printf(__VA_ARGS__); \
@@ -78,63 +80,51 @@ void InitIO(int fileIndex) {  //
 
 typedef bitset<50> B;
 int N, K;
+ll ansFlag = 0;
 int maxVal = 0;
-vector<int> ans;
-vector<int> buf;
 
-vector<int> dp(5000);
-const int MaxAns = 500000;
-
-int CalAns() {
-  int k = buf.size();
-  if (k == 0) return 0;
-  // k 种邮票，最多选择 N 种的最优值
-  const int MaxVal = buf.back() * N;
-  dp[0] = 0;
-  for (int i = 1; i <= MaxVal + 1; i++) {
-    dp[i] = MaxAns;
-  }
-  for (auto x : buf) {
-    for (int j = x; j <= x * N; j++) {
-      dp[j] = min(dp[j], dp[j - x] + 1);
-    }
-  }
-  for (int i = 1; i <= MaxVal + 1; i++) {
-    if (dp[i] > N) {
-      return i - 1;
-    }
-  }
-  MyAssert(0);
-  return 0;
+int TrailingOnes(const B& b) {
+  int cnt = 0;
+  while (cnt < N && b.test(cnt)) ++cnt;
+  return cnt;
 }
-int UpdateAns() {
-  int nowMaxVal = CalAns();
-  if (nowMaxVal > maxVal) {
-    maxVal = nowMaxVal;
-    ans = buf;
+int Update(const B& b, const ll flag) {
+  int tmpVal = TrailingOnes(b);
+  if (tmpVal > maxVal) {
+    maxVal = tmpVal;
+    ansFlag = flag;
   }
-  return nowMaxVal;
+  return tmpVal;
 }
-
-void Dfs(const int val) {
+const B b1(1);
+void Dfs(const B& b, const ll flag, const int val, const int cnt) {
   // flag 中 1 的个数
-  const int nowMaxVal = UpdateAns();
-  if (buf.size() == K) return;  // 最多选择 K 种不同的邮票
+  int flagCnt = __builtin_popcountll(flag);
+  if (flagCnt > K || cnt > N) return;
+  const int nowMaxVal = Update(b, flag);
+  MyPrintf("b=%s flag=%lld val=%d cnt=%d nowMaxVal=%d\n", b.to_string().c_str(), flag, val, cnt, nowMaxVal);
   for (int i = val; i <= nowMaxVal + 1; i++) {
-    buf.push_back(i);
-    Dfs(i + 1);
-    buf.pop_back();
+    Dfs(b | (b << i) | b1 << (i-1), flag | (1LL << i), i, cnt + 1);
   }
 }
 
 void Solver() {  //
   scanf("%d%d", &N, &K);
   MyPrintf("N=%d K=%d\n", N, K);
-  buf.clear();
-  Dfs(1);
+  B b(0);
+  ll flag(0);
+  maxVal = 0;
+  ansFlag = 0;
+  Dfs(b, flag, 1, 0);
+  MyPrintf("ansFlag=%lld\n", ansFlag);
+  vector<int> ans;
+  // ansFlag 转化为数组
+  for (int i = 0; i < 60; i++) {
+    if (ansFlag & (1LL << i)) ans.push_back(i + 1);
+  }
   for (int x : ans) printf("%d ", x);
   printf("\n");
-  printf("MAX=%d\n", maxVal);
+  printf("%d\n", maxVal);
 }
 
 #ifdef USACO_LOCAL_JUDGE

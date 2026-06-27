@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: stamp
+TASK: grid-number
 LANG: C++
 MAC EOF: ctrl+D
-link:
+link: https://www.luogu.com.cn/problem/P1004
 PATH:
 submission:
 */
-#define TASK "stamp"
+#define TASK "grid-number"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -30,7 +30,7 @@ void CheckUsacoTask() {
 
 #ifdef USACO_LOCAL_JUDGE
 int debug_log = 0;
-int debug_assert = 1;
+int debug_assert = 0;
 #define MyPrintf(...)                   \
   do {                                  \
     if (debug_log) printf(__VA_ARGS__); \
@@ -76,65 +76,53 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-typedef bitset<50> B;
-int N, K;
-int maxVal = 0;
-vector<int> ans;
-vector<int> buf;
+int N;
+int g[11][11];
+int dp[11][11][11][11];
 
-vector<int> dp(5000);
-const int MaxAns = 500000;
+/*
+    规则1: r0 >= r1，即 点0 不可能在 点1 的上方
+    规则2: c0 <= c1，即 点0 不可能在 点1 的右方
+    规则3: r0 - r1 <= 1，即 点0 和 点1 的行号差不超过1
+    规则4: r0 == r1，即 点0 和 点1 的行号相同时，必须对点1进行操作
+    规则5: c0 == c1，即 点0 和 点1 的列号相同时，必须对点0进行操作
+*/
 
-int CalAns() {
-  int k = buf.size();
-  if (k == 0) return 0;
-  // k 种邮票，最多选择 N 种的最优值
-  const int MaxVal = buf.back() * N;
-  dp[0] = 0;
-  for (int i = 1; i <= MaxVal + 1; i++) {
-    dp[i] = MaxAns;
+int Dfs(int r0, int c0, int r1, int c1) {
+  int& ans = dp[r0][c0][r1][c1];
+  if (ans != -1) {
+    return ans;
   }
-  for (auto x : buf) {
-    for (int j = x; j <= x * N; j++) {
-      dp[j] = min(dp[j], dp[j - x] + 1);
-    }
+  ans = 0;
+  if (r0 == 0 || c0 == 0 || r1 == 0 || c1 == 0) {
+    return ans;
   }
-  for (int i = 1; i <= MaxVal + 1; i++) {
-    if (dp[i] > N) {
-      return i - 1;
-    }
+  if (r0 == r1 && c0 == c1) {  // 同点，答案不会变大
+    ans = max(Dfs(r0, c0 - 1, r1, c1), Dfs(r0, c0, r1 - 1, c1));
+  } else if (r0 == r1) {
+    ans = max(Dfs(r0, c0, r1, c1 - 1), Dfs(r0, c0, r1 - 1, c1)) + g[r1][c1];
+  } else if (c0 == c1) {
+    ans = max(Dfs(r0 - 1, c0, r1, c1), Dfs(r0, c0 - 1, r1, c1)) + g[r0][c0];
+  } else {
+    int ans0 = max(Dfs(r0 - 1, c0, r1, c1), Dfs(r0, c0 - 1, r1, c1)) + g[r0][c0];
+    int ans1 = max(Dfs(r0, c0, r1, c1 - 1), Dfs(r0, c0, r1 - 1, c1)) + g[r1][c1];
+    ans = max(ans0, ans1);
   }
-  MyAssert(0);
-  return 0;
-}
-int UpdateAns() {
-  int nowMaxVal = CalAns();
-  if (nowMaxVal > maxVal) {
-    maxVal = nowMaxVal;
-    ans = buf;
-  }
-  return nowMaxVal;
-}
-
-void Dfs(const int val) {
-  // flag 中 1 的个数
-  const int nowMaxVal = UpdateAns();
-  if (buf.size() == K) return;  // 最多选择 K 种不同的邮票
-  for (int i = val; i <= nowMaxVal + 1; i++) {
-    buf.push_back(i);
-    Dfs(i + 1);
-    buf.pop_back();
-  }
+  return ans;
 }
 
 void Solver() {  //
-  scanf("%d%d", &N, &K);
-  MyPrintf("N=%d K=%d\n", N, K);
-  buf.clear();
-  Dfs(1);
-  for (int x : ans) printf("%d ", x);
-  printf("\n");
-  printf("MAX=%d\n", maxVal);
+  scanf("%d", &N);
+  memset(g, 0, sizeof(g));
+  int x, y, v;
+  while (true) {
+    scanf("%d%d%d", &x, &y, &v);
+    if (x == 0 && y == 0 && v == 0) break;
+    g[x][y] = v;
+  }
+  memset(dp, -1, sizeof(dp));
+  dp[1][1][1][1] = g[0][0];
+  printf("%d\n", Dfs(N, N, N, N));
 }
 
 #ifdef USACO_LOCAL_JUDGE
