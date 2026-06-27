@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: base-conversion
+TASK: word-chain
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "base-conversion"
+#define TASK "word-chain"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -76,32 +76,69 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-// 把 10进制的 n 转化为 r 进制, r 为负数，范围是 [-2,-20]， 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
-const string num = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-string Convert(int n, int r) {
-  string ans;
-  while (n) {
-    int rem = n % r;
-    n /= r;
+int n;
+vector<string> words;
+char buf[30];
+vector<vector<pair<int, int>>> g;  // {node, commonLen}
 
-    if (rem < 0) {
-      rem -= r;  // 因为 r<0，所以 rem += |r|
-      n++;
+// 判断 a 与 b 是否可以接龙
+// 需要满足 a 的后缀等于 b 的前缀，但是不能是包含关系
+// 重复部分越短越好
+int Check(const string& a, const string& b) {
+  int len = min(a.length(), b.length());
+  const int an = a.length(), bn = b.length();
+  for (int i = 1; i < len; i++) {
+    if (a.substr(an - i) == b.substr(0, i)) {
+      return i;
     }
-    ans.push_back(num[rem]);
   }
-  reverse(ans.begin(), ans.end());
-  if (ans.empty()) {
-    ans = "0";
+  return -1;
+}
+
+void Build() {
+  // 构建图
+  g.resize(n);
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      int pos = Check(words[i], words[j]);
+      if (pos != -1) {
+        g[i].push_back({j, pos});
+      }
+    }
+  }
+}
+
+int visited[25];
+int Dfs(const int u, const int len) {
+  int ans = len;
+  for (auto [v, pos] : g[u]) {
+    if (visited[v] >= 2) continue;
+    visited[v]++;
+    ans = max(ans, Dfs(v, len + words[v].length() - pos));
+    visited[v]--;
   }
   return ans;
 }
 
 void Solver() {  //
-  int n, r;
-  scanf("%d%d", &n, &r);
-  // 输出格式： n=<r进制表示>(base{r})
-  printf("%d=%s(base%d)\n", n, Convert(n, r).c_str(), r);
+  scanf("%d", &n);
+  for (int i = 0; i < n; i++) {
+    scanf("%s", buf);
+    words.push_back(buf);
+  }
+  {
+    scanf("%s", buf);
+    string tmp = "$";
+    tmp.push_back(buf[0]);
+    words.push_back(tmp);
+    // 翻转 words
+    std::reverse(words.begin(), words.end());
+    n++;
+  }
+  Build();
+  memset(visited, 0, sizeof(visited));
+  visited[0] = 1;
+  printf("%d\n", Dfs(0, words[0].length()) - 1);
 }
 
 #ifdef USACO_LOCAL_JUDGE

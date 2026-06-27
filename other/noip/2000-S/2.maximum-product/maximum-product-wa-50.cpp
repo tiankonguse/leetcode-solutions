@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: base-conversion
+TASK: maximum-product
 LANG: C++
 MAC EOF: ctrl+D
-link:
+link: https://www.luogu.com.cn/problem/P1018
 PATH:
 submission:
 */
-#define TASK "base-conversion"
+#define TASK "maximum-product"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -76,32 +76,119 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-// 把 10进制的 n 转化为 r 进制, r 为负数，范围是 [-2,-20]， 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
-const string num = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-string Convert(int n, int r) {
-  string ans;
-  while (n) {
-    int rem = n % r;
-    n /= r;
-
-    if (rem < 0) {
-      rem -= r;  // 因为 r<0，所以 rem += |r|
-      n++;
+struct BigNum {
+  vector<ll> data;  // 逆序存储
+  BigNum() {}
+  BigNum(ll x) {
+    while (x) {
+      data.push_back(x % 10);
+      x /= 10;
     }
-    ans.push_back(num[rem]);
+    if (data.empty()) {
+      data.push_back(0);
+    }
   }
-  reverse(ans.begin(), ans.end());
-  if (ans.empty()) {
-    ans = "0";
+  BigNum(const string& s) {
+    for (int i = s.size() - 1; i >= 0; i--) {
+      data.push_back(s[i] - '0');
+    }
   }
+  BigNum& Smp() {
+    while (data.size() > 1 && data.back() == 0) {
+      data.pop_back();
+    }
+    return *this;
+  }
+  BigNum& Append(ll x) {
+    data.push_back(x);
+    return Smp();
+  }
+  BigNum operator*(const BigNum& other) const {
+    BigNum res;
+    res.data.resize(data.size() + other.data.size() + 1, 0);
+    for (int i = 0; i < data.size(); i++) {
+      int carry = 0;
+      int pos = i;
+      for (int j = 0; j < other.data.size(); j++) {
+        res.data[pos] += data[i] * other.data[j] + carry;
+        carry = res.data[pos] / 10;
+        res.data[pos] %= 10;
+        pos++;
+      }
+      while (carry) {
+        res.data[pos] += carry;
+        carry = res.data[pos] / 10;
+        res.data[pos] %= 10;
+        pos++;
+      }
+    }
+    return res.Smp();
+  }
+  bool operator<(const BigNum& other) const {
+    if (data.size() != other.data.size()) {
+      return data.size() < other.data.size();
+    }
+    for (int i = data.size() - 1; i >= 0; i--) {
+      if (data[i] != other.data[i]) {
+        return data[i] < other.data[i];
+      }
+    }
+    return false;
+  }
+  string ToString() const {
+    string res;
+    for (int i = data.size() - 1; i >= 0; i--) {
+      res.push_back(data[i] + '0');
+    }
+    return res;
+  }
+};
+
+char s[100];
+string S;
+
+BigNum dp[50][10];
+bool dpFlag[50][10];
+
+// 前 p 个数字，分割为 k 个数字的最大乘积
+BigNum& Dfs(const int p, const int k) {
+  if (dpFlag[p][k]) {
+    return dp[p][k];
+  }
+  dpFlag[p][k] = true;
+  BigNum& ans = dp[p][k];
+  if (k == 1) {
+    ans = BigNum(S.substr(0, p));
+    MyPrintf("p=%d k=%d ans=%s substr=%s\n", p, k, ans.ToString().c_str(), S.substr(0, p).c_str());
+    return ans;
+  }
+  // 枚举最后一个数字的长度
+  ans = BigNum(0);
+  BigNum now;
+  int pi = p;
+  while (pi >= k) {
+    now.Append(S[pi - 1] - '0');
+    const BigNum& next = Dfs(pi - 1, k - 1);
+    BigNum newAns = next * now;
+    MyPrintf("p=%d k=%d pi=%d next=%s now=%s newAns=%s\n", p, k, pi, next.ToString().c_str(), now.ToString().c_str(),
+             newAns.ToString().c_str());
+    if (ans < newAns) {
+      ans = newAns;
+    }
+    pi--;
+  }
+  MyPrintf("p=%d k=%d ans=%s\n", p, k, ans.ToString().c_str());
   return ans;
 }
 
 void Solver() {  //
-  int n, r;
-  scanf("%d%d", &n, &r);
-  // 输出格式： n=<r进制表示>(base{r})
-  printf("%d=%s(base%d)\n", n, Convert(n, r).c_str(), r);
+  int N, K;
+  scanf("%d%d", &N, &K);
+  scanf("%s", s);
+  S = s;
+  memset(dpFlag, 0, sizeof(dpFlag));
+  BigNum& ans = Dfs(N, K + 1);
+  printf("%s\n", ans.ToString().c_str());
 }
 
 #ifdef USACO_LOCAL_JUDGE
