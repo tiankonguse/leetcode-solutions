@@ -86,8 +86,8 @@ bool IsZero(double x) { return fabs(x) < eps3; }
 void Solver() {  //
   scanf("%lf%lf%lf%lf", &a, &b, &c, &d);
   vector<double> ans;
-  for (double i = -1001; i < 1001; i += 1) {
-    double l = i / 10, r = l + 1;
+  for (double i = -100.00; i <= 100.00; i += 0.01) {
+    double l = i, r = l + 1;
     double lv = f(l), rv = f(r);
     if (IsZero(lv)) {
       ans.push_back(l);
@@ -105,7 +105,7 @@ void Solver() {  //
         }
       }
       ans.push_back(l);
-      i = l * 10;
+      i = l;
     }
   }
   for (double x : ans) {

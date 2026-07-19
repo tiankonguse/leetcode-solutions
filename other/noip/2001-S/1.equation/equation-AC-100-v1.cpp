@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: number-calculation
+TASK: equation
 LANG: C++
 MAC EOF: ctrl+D
-link:
+link: https://www.luogu.com.cn/problem/P1024
 PATH:
 submission:
 */
-#define TASK "number-calculation"
+#define TASK "equation"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -49,7 +49,7 @@ constexpr int INF = 1 << 30;
 constexpr ll INFL = 1LL << 60;
 constexpr ll MOD = 1000000007;
 
-const double pi = acos(-1.0), eps = 1e-7;
+const double pi = acos(-1.0), eps = 1e-7, eps3 = 1e-3;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
@@ -76,19 +76,42 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n;
+double a, b, c, d;
+
+double f(double x) {  //
+  return a * x * x * x + b * x * x + c * x + d;
+}
+bool IsZero(double x) { return fabs(x) < eps3; }
 
 void Solver() {  //
-  scanf("%d", &n);
-  vector<ll> dp(n + 1, 0);
-
-  dp[0] = 1;
-  for (int i = 1; i <= n; i++) {
-    for(int j = 0; j <= i / 2; j++) {
-      dp[i] += dp[j];
+  scanf("%lf%lf%lf%lf", &a, &b, &c, &d);
+  vector<double> ans;
+  for (double i = -1001; i < 1001; i += 1) {
+    double l = i / 10, r = l + 1;
+    double lv = f(l), rv = f(r);
+    if (IsZero(lv)) {
+      ans.push_back(l);
+      continue;
+    }
+    if (lv * rv < 0) {
+      // 二分法求根
+      double x = (l + r) / 2;
+      while (r - l > eps) {
+        double mid = (l + r) / 2;
+        if (f(l) * f(mid) < 0) {
+          r = mid;
+        } else {
+          l = mid;
+        }
+      }
+      ans.push_back(l);
+      i = l * 10;
     }
   }
-  printf("%lld\n", dp[n]);
+  for (double x : ans) {
+    printf("%.2f ", x);
+  }
+  printf("\n");
 }
 
 #ifdef USACO_LOCAL_JUDGE

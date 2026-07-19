@@ -81,12 +81,13 @@ int n;
 void Solver() {  //
   scanf("%d", &n);
   vector<ll> dp(n + 1, 0);
+  vector<ll> sum(n + 1, 0);
 
   dp[0] = 1;
+  sum[0] = 1;
   for (int i = 1; i <= n; i++) {
-    for(int j = 0; j <= i / 2; j++) {
-      dp[i] += dp[j];
-    }
+    dp[i] = sum[i / 2];
+    sum[i] = sum[i - 1] + dp[i];
   }
   printf("%lld\n", dp[n]);
 }

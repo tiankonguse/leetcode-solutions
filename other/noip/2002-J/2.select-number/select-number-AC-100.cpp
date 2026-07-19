@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: number-calculation
+TASK: select-number
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "number-calculation"
+#define TASK "select-number"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -59,7 +59,7 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
-// #define LOCAL_IO 1
+// #define LOCAL_IO 0
 #ifdef USACO_LOCAL_JUDGE
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
@@ -76,25 +76,90 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n;
-
-void Solver() {  //
-  scanf("%d", &n);
-  vector<ll> dp(n + 1, 0);
-
-  dp[0] = 1;
-  for (int i = 1; i <= n; i++) {
-    for(int j = 0; j <= i / 2; j++) {
-      dp[i] += dp[j];
+// 埃氏筛求 N 范围内的所有质数
+/*
+1e4 3.732020845644619
+1e5 4.053948940531981
+1e6 4.316983346365776
+1e7 4.539375767702223
+*/
+const int N = 50000;
+const int M = 50000;
+bool is[N];
+int prm[M];
+int prmCnt = 0;
+int InitPrimes() {
+  // O(n log log n)
+  if (prmCnt > 0) return prmCnt;
+  int e = (int)(sqrt(0.0 + N) + 1), k = 0, i;
+  memset(is, 1, sizeof(is));
+  prm[k++] = 2;
+  is[0] = is[1] = 0;
+  for (i = 4; i < N; i += 2) is[i] = 0;
+  for (i = 3; i < e; i += 2) {
+    if (is[i]) {
+      prm[k++] = i;
+      for (int j = i * i; j < N; j += i * 2) {
+        is[j] = 0;
+      }
     }
   }
-  printf("%lld\n", dp[n]);
+  for (; i < N; i += 2) {
+    if (is[i]) {
+      prm[k++] = i;
+    }
+  }
+  return prmCnt = k;
+}
+
+int isprime(int x) {  // 判断一个数是否是素数
+  if (x < N) return is[x];
+  for (int i = 0; i < prmCnt; i++) {  // 遍历所有素数
+    if (x % prm[i] == 0) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+int a[25], ans, n, k;
+unordered_map<ll, int> mp;
+int dfs(int depth, ll sum, int start) {
+  const ll h = sum * 100 * 100 + depth * 100 + start;
+  if (mp.count(h)) return mp[h];  // 记忆化搜索
+  // 现在已经选了 depth 个数，当前总和为 sum
+  // start 是这次选数的起始下标，即我们从 a[start] 开始选数枚举
+  if (depth == k) {
+    return mp[h] = isprime(sum);
+  }
+
+  // 已经选了 depth 个数，这次选完后，还有 k - depth - 1 个数要选择
+  // 因此 a[n - (k - depth - 1)] 即 a[n - k + depth + 1] 是枚举的终点
+  int ans = 0;
+  for (int i = start; i <= n - k + depth; i++) {
+    ans += dfs(depth + 1, sum + a[i], i + 1);
+  }
+  return mp[h] = ans;
+}
+
+void Input(){
+  scanf("%d%d", &n, &k);
+  for (int i = 0; i < n; i++) {
+    scanf("%d", &a[i]);
+  }
+}
+
+void Solver() {  //
+  InitPrimes();
+  sort(a, a + n);
+  printf("%d\n", dfs(0, 0, 0));
 }
 
 #ifdef USACO_LOCAL_JUDGE
 double costTime = 0;
 #endif
 void ExSolver() {
+  Input();
 #ifdef USACO_LOCAL_JUDGE
   auto t1 = std::chrono::steady_clock::now();
 #endif

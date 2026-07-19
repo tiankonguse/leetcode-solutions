@@ -83,17 +83,15 @@ ll Gcd(ll x, ll y) {
 ll x, y;
 void Solver() {  //
   scanf("%lld%lld", &x, &y);
-  if (y % x != 0) {
-    printf("0\n");
-    return;
-  }
-  ll z = y / x;
   ll ans = 0;
-  for (ll i = 1; i <= z; i++) {
-    if (z % i == 0) {
-      ll j = z / i;
-      if (Gcd(i, j) != 1) continue;
-      ans++;
+  if (y % x == 0) {
+    ll YX = y / x;
+    for (ll PX = 1; PX <= YX; PX++) {
+      if (YX % PX == 0) {
+        ll PY = YX / PX;
+        if (Gcd(PX, PY) != 1) continue;
+        ans++;
+      }
     }
   }
   printf("%lld\n", ans);

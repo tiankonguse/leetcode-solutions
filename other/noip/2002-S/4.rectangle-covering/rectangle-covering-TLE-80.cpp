@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: number-calculation
+TASK: rectangle-covering
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "number-calculation"
+#define TASK "rectangle-covering"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -76,19 +76,89 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n;
+struct Rectangle {
+  int top, bottom, left, right;
+  int num;
+  Rectangle() : num(0) {}
+  void Add(pair<int, int> p) {
+    auto [x, y] = p;
+    if (num == 0) {
+      top = bottom = y;
+      left = right = x;
+      num = 1;
+      return;
+    }
+    top = max(top, y);
+    bottom = min(bottom, y);
+    left = min(left, x);
+    right = max(right, x);
+    num++;
+  }
+};
+vector<Rectangle> rs;
+
+int n, k;
+vector<pair<int, int>> points;
+
+int ans;
+void UpdateAns() {  //
+  int tmpAns = 0;
+  for (int i = 0; i < k; i++) {
+    if (rs[i].num == 0) continue;
+    tmpAns += (rs[i].top - rs[i].bottom) * (rs[i].right - rs[i].left);
+  }
+  ans = min(ans, tmpAns);
+}
+
+bool OverlapIn(int x, int y, int j) {
+  return x >= rs[j].bottom && x <= rs[j].top && y >= rs[j].left && y <= rs[j].right;
+}
+
+// 判断 i 的其中一个点是否在 j 中
+bool OverlapIn(int i, int j) {
+  if (OverlapIn(rs[i].bottom, rs[i].left, j)) return true;
+  if (OverlapIn(rs[i].bottom, rs[i].right, j)) return true;
+  if (OverlapIn(rs[i].top, rs[i].left, j)) return true;
+  if (OverlapIn(rs[i].top, rs[i].right, j)) return true;
+  return false;
+}
+
+// 检查第 i 个矩阵与其他矩阵是否有交集
+bool Overlap(int i) {
+  for (int j = 0; j < k; j++) {
+    if (i == j) continue;
+    if (rs[j].num == 0) continue;
+    if (OverlapIn(i, j) || OverlapIn(j, i)) return true;
+  }
+  return false;
+}
+void Dfs(int p) {
+  if (p == n) {
+    UpdateAns();
+    return;
+  }
+  // 枚举第 p 个点加入的矩阵
+  for (int i = 0; i < k; i++) {
+    const Rectangle back = rs[i];
+    rs[i].Add(points[p]);
+    if (!Overlap(i)) {
+      Dfs(p + 1);
+    }
+    rs[i] = back;
+  }
+}
 
 void Solver() {  //
-  scanf("%d", &n);
-  vector<ll> dp(n + 1, 0);
-
-  dp[0] = 1;
-  for (int i = 1; i <= n; i++) {
-    for(int j = 0; j <= i / 2; j++) {
-      dp[i] += dp[j];
-    }
+  scanf("%d%d", &n, &k);
+  points.resize(n);
+  rs.resize(k);
+  for (int i = 0; i < n; i++) {
+    scanf("%d%d", &points[i].first, &points[i].second);
   }
-  printf("%lld\n", dp[n]);
+  ans = 1000 * 1000;
+  Dfs(0);
+
+  printf("%d\n", ans);
 }
 
 #ifdef USACO_LOCAL_JUDGE

@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: number-calculation
+TASK: divisor-and-multiple
 LANG: C++
 MAC EOF: ctrl+D
 link:
 PATH:
 submission:
 */
-#define TASK "number-calculation"
+#define TASK "divisor-and-multiple"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -76,19 +76,27 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n;
-
+ll Gcd(ll x, ll y) {
+  if (y == 0) return x;
+  return Gcd(y, x % y);
+}
+ll x, y;
 void Solver() {  //
-  scanf("%d", &n);
-  vector<ll> dp(n + 1, 0);
-
-  dp[0] = 1;
-  for (int i = 1; i <= n; i++) {
-    for(int j = 0; j <= i / 2; j++) {
-      dp[i] += dp[j];
+  scanf("%lld%lld", &x, &y);
+  if (y % x != 0) {
+    printf("0\n");
+    return;
+  }
+  ll z = y / x;
+  ll ans = 0;
+  for (ll i = 1; i <= z; i++) {
+    if (z % i == 0) {
+      ll j = z / i;
+      if (Gcd(i, j) != 1) continue;
+      ans++;
     }
   }
-  printf("%lld\n", dp[n]);
+  printf("%lld\n", ans);
 }
 
 #ifdef USACO_LOCAL_JUDGE

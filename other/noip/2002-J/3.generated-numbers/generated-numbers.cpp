@@ -186,7 +186,17 @@ int Bfs(int s) {
   }
   return ans;
 }
+std::string toString(__int128 x) {
+  if (x == 0) return "0";
 
+  std::string s;
+  while (x) {
+    s.push_back(char('0' + x % 10));
+    x /= 10;
+  }
+  reverse(s.begin(), s.end());
+  return s;
+}
 void Solver() {  //
   int k;
   g.resize(10);
@@ -202,13 +212,13 @@ void Solver() {  //
     nums[i] = Bfs(i);
   }
 
-  BigNum ans(1);
+  __int128 ans = 1;
   string S = buf;
   for (auto c : S) {
-    ll cnt = nums[c - '0'];
+    __int128 cnt = nums[c - '0'];
     ans = ans * cnt;
   }
-  printf("%s\n", ans.ToString().c_str());
+  printf("%s\n", toString(ans).c_str());
 }
 
 #ifdef USACO_LOCAL_JUDGE

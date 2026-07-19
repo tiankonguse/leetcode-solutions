@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: number-calculation
+TASK: free-fall
 LANG: C++
 MAC EOF: ctrl+D
-link:
-PATH:
+link: https://www.luogu.com.cn/problem/P1033
+PATH: ./free-fall.md
 submission:
 */
-#define TASK "number-calculation"
+#define TASK "free-fall"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -76,19 +76,30 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
+double H, S, V, L, K;
 int n;
-
+const double g = 10;
+bool Check(int p) {
+  double t0 = sqrt(2 * (H - K) / g);
+  double t1 = sqrt(2 * H / g);
+  double S0 = S - t0 * V;
+  double S1 = S - t1 * V;
+  if (S0 + L >= p && S1 <= p) {
+    return true;
+  }
+  return false;
+}
 void Solver() {  //
-  scanf("%d", &n);
-  vector<ll> dp(n + 1, 0);
-
-  dp[0] = 1;
-  for (int i = 1; i <= n; i++) {
-    for(int j = 0; j <= i / 2; j++) {
-      dp[i] += dp[j];
+  scanf("%lf%lf%lf%lf%lf%d", &H, &S, &V, &L, &K, &n);
+  // d = 0.5 * g * t^2
+  // t = sqrt(2 * d / g)
+  int ans = 0;
+  for (int i = 0; i < n; i++) {
+    if (Check(i)) {
+      ans++;
     }
   }
-  printf("%lld\n", dp[n]);
+  printf("%d\n", ans);
 }
 
 #ifdef USACO_LOCAL_JUDGE

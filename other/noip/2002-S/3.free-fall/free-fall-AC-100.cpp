@@ -1,14 +1,14 @@
 /*
 ID: tiankonguse
-TASK: number-calculation
+TASK: free-fall
 LANG: C++
 MAC EOF: ctrl+D
-link:
-PATH:
+link: https://www.luogu.com.cn/problem/P1033
+PATH: ./free-fall.md
 submission:
 */
-#define TASK "number-calculation"
-#define TASKEX ""
+#define TASK "free-fall"
+#define TASKEX "-AC-100"
 
 #include <bits/stdc++.h>
 
@@ -29,7 +29,7 @@ void CheckUsacoTask() {
 }
 
 #ifdef USACO_LOCAL_JUDGE
-int debug_log = 0;
+int debug_log = 1;
 int debug_assert = 0;
 #define MyPrintf(...)                   \
   do {                                  \
@@ -49,7 +49,7 @@ constexpr int INF = 1 << 30;
 constexpr ll INFL = 1LL << 60;
 constexpr ll MOD = 1000000007;
 
-const double pi = acos(-1.0), eps = 1e-7;
+const double pi = acos(-1.0), eps = 1e-7, eps4 = 1e-4;
 const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
@@ -76,19 +76,32 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
+double H, S, V, L, K;
 int n;
+const double g = 10;
 
+bool Check(int p) {
+  double t0 = sqrt(2 * (H - K) / g);
+  double t1 = sqrt(2 * H / g);
+  double S0 = S - t0 * V;
+  double S1 = S - t1 * V;
+  if (S0 + L >= p - eps4 && S1 <= p + eps4) {
+    return true;
+  }
+  return false;
+}
 void Solver() {  //
-  scanf("%d", &n);
-  vector<ll> dp(n + 1, 0);
-
-  dp[0] = 1;
-  for (int i = 1; i <= n; i++) {
-    for(int j = 0; j <= i / 2; j++) {
-      dp[i] += dp[j];
+  scanf("%lf%lf%lf%lf%lf%d", &H, &S, &V, &L, &K, &n);
+  // d = 0.5 * g * t^2
+  // t = sqrt(2 * d / g)
+  int ans = 0;
+  for (int i = 0; i < n; i++) {
+    if (Check(i)) {
+      MyPrintf("p = %d\n", i);
+      ans++;
     }
   }
-  printf("%lld\n", dp[n]);
+  printf("%d\n", ans);
 }
 
 #ifdef USACO_LOCAL_JUDGE

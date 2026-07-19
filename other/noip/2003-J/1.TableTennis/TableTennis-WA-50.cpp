@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: number-calculation
+TASK: TableTennis
 LANG: C++
 MAC EOF: ctrl+D
-link:
+link: https://www.luogu.com.cn/problem/P1042
 PATH:
 submission:
 */
-#define TASK "number-calculation"
+#define TASK "TableTennis"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -76,19 +76,41 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n;
+string S;
+char buf[100];
 
-void Solver() {  //
-  scanf("%d", &n);
-  vector<ll> dp(n + 1, 0);
-
-  dp[0] = 1;
-  for (int i = 1; i <= n; i++) {
-    for(int j = 0; j <= i / 2; j++) {
-      dp[i] += dp[j];
+void Input() {
+  S.reserve(5000);
+  while (~scanf("%s", buf)) {
+    string tmp = buf;
+    for (auto c : tmp) {
+      if (c == 'E') return;
+      S.push_back(c);
     }
   }
-  printf("%lld\n", dp[n]);
+}
+
+void Solver(int B) {
+  int W = 0, L = 0;
+  for (auto c : S) {
+    if (c == 'W') {
+      W++;
+    } else {
+      L++;
+    }
+    if (L + W == B) {
+      printf("%d:%d\n", W, L);
+      L = 0, W = 0;
+    }
+  }
+  printf("%d:%d\n", W, L);
+}
+
+void Solver() {  //
+  Input();
+  Solver(11);
+  printf("\n");
+  Solver(21);
 }
 
 #ifdef USACO_LOCAL_JUDGE

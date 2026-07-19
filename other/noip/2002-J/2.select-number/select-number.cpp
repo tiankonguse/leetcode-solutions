@@ -3,7 +3,7 @@ ID: tiankonguse
 TASK: select-number
 LANG: C++
 MAC EOF: ctrl+D
-link:
+link: https://www.luogu.com.cn/problem/P1036
 PATH:
 submission:
 */
@@ -123,31 +123,26 @@ int isprime(int x) {  // 判断一个数是否是素数
 }
 
 int a[25], ans, n, k;
-unordered_map<ll, int> mp;
-int dfs(int depth, ll sum, int start) {
-  const ll h = sum * 100 * 100 + depth * 100 + start;
-  if (mp.count(h)) return mp[h];  // 记忆化搜索
-  // 现在已经选了 depth 个数，当前总和为 sum
-  // start 是这次选数的起始下标，即我们从 a[start] 开始选数枚举
-  if (depth == k) {
-    return mp[h] = isprime(sum);
+int dfs(const int num, const ll sum, const int pos) {
+  if(num + (n - pos) < k) return 0; // 剪枝
+  if (num == k) {
+    return isprime(sum);
   }
-
-  // 已经选了 depth 个数，这次选完后，还有 k - depth - 1 个数要选择
-  // 因此 a[n - (k - depth - 1)] 即 a[n - k + depth + 1] 是枚举的终点
   int ans = 0;
-  for (int i = start; i <= n - k + depth; i++) {
-    ans += dfs(depth + 1, sum + a[i], i + 1);
-  }
-  return mp[h] = ans;
+  ans += dfs(num, sum, pos + 1); // 不选择
+  ans += dfs(num + 1, sum + a[pos], pos + 1); // 选择
+  return ans;
 }
 
-void Solver() {  //
-  InitPrimes();
+void Input(){
   scanf("%d%d", &n, &k);
   for (int i = 0; i < n; i++) {
     scanf("%d", &a[i]);
   }
+}
+
+void Solver() {  //
+  InitPrimes();
   sort(a, a + n);
   printf("%d\n", dfs(0, 0, 0));
 }
@@ -156,6 +151,7 @@ void Solver() {  //
 double costTime = 0;
 #endif
 void ExSolver() {
+  Input();
 #ifdef USACO_LOCAL_JUDGE
   auto t1 = std::chrono::steady_clock::now();
 #endif
