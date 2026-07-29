@@ -77,32 +77,25 @@ void InitIO(int fileIndex) {  //
 }
 
 int n;
-vector<vector<ll>> dp;
+vector<ll> dp;
 
-// A 栈1的个数
-// B 栈2的个数
-// 栈1 可以进入栈2，也可以进入栈3
-// 栈2 可以进入栈3
-ll Dfs(int a, int b) {
-  ll& ret = dp[a][b];
+ll Dfs(int n) {
+  ll& ret = dp[n];
   if (ret != -1) {
     return ret;
   }
   ret = 0;
-  if (a > 0) {
-    ret += Dfs(a - 1, b + 1);
-  }
-  if (b > 0) {
-    ret += Dfs(a, b - 1);
+  for (int i = 0; i < n; i++) {
+    ret += Dfs(i) * Dfs(n - i - 1);
   }
   return ret;
 }
 
 void Solver() {  //
   scanf("%d", &n);
-  dp.resize(n + 1, vector<ll>(n + 1, -1));
-  dp[0][0] = 1;
-  printf("%lld\n", Dfs(n, 0));
+  dp.resize(n + 1, -1);
+  dp[0] = dp[1] = 1;
+  printf("%lld\n", Dfs(n));
 }
 
 #ifdef USACO_LOCAL_JUDGE

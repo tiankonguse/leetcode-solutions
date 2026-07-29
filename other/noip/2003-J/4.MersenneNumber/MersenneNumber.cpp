@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: Stack
+TASK: MersenneNumber
 LANG: C++
 MAC EOF: ctrl+D
-link: https://www.luogu.com.cn/problem/P1044
+link: https://www.luogu.com.cn/problem/P1045
 PATH:
 submission:
 */
-#define TASK "Stack"
+#define TASK "MersenneNumber"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -63,7 +63,7 @@ void InitIO(int fileIndex) {  //
 #ifdef USACO_LOCAL_JUDGE
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 0
+#define USACO_TASK_FILE 2
 // #define TASKNO 20
 #ifdef TASKNO
   fileIndex = TASKNO;
@@ -76,49 +76,125 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n;
-vector<vector<ll>> dp;
+int p;
 
-// A 栈1的个数
-// B 栈2的个数
-// 栈1 可以进入栈2，也可以进入栈3
-// 栈2 可以进入栈3
-ll Dfs(int a, int b) {
-  ll& ret = dp[a][b];
-  if (ret != -1) {
-    return ret;
+const ll BASE = 100000LL;
+const int BASE_BIT = 5;
+struct BigNum {
+  vector<ll> data;  // 逆序存储
+  BigNum() {}
+  BigNum(ll x) {
+    while (x) {
+      data.push_back(x % BASE);
+      x /= BASE;
+    }
+    if (data.empty()) {
+      data.push_back(0);
+    }
   }
-  ret = 0;
-  if (a > 0) {
-    ret += Dfs(a - 1, b + 1);
+
+  BigNum& Smp() {
+    while (data.size() > 1 && data.back() == 0) {
+      data.pop_back();
+    }
+    while(data.size() > 100){
+        data.pop_back();
+    }
+    return *this;
   }
-  if (b > 0) {
-    ret += Dfs(a, b - 1);
+  BigNum operator*(const BigNum& other) const {
+    BigNum res;
+    res.data.resize(data.size() + other.data.size() + 1, 0);
+    for (int i = 0; i < data.size(); i++) {
+      ll carry = 0;
+      int pos = i;
+      for (int j = 0; j < other.data.size(); j++) {
+        res.data[pos] += data[i] * other.data[j] + carry;
+        carry = res.data[pos] / BASE;
+        res.data[pos] %= BASE;
+        pos++;
+      }
+      while (carry) {
+        res.data[pos] += carry;
+        carry = res.data[pos] / BASE;
+        res.data[pos] %= BASE;
+        pos++;
+      }
+    }
+    return res.Smp();
+  }
+};
+
+// 快速幂
+BigNum qpow(BigNum x, ll v) {
+  BigNum y = 1;
+  while (v) {
+    if (v & 1) y = y * x;
+    x = x * x;
+    v >>= 1;
+  }
+  return y;
+}
+ll Bit(ll a) {
+  int ret = 0;
+  while (a) {
+    a /= 10;
+    ret++;
   }
   return ret;
 }
+void SolverInput() {  //
+  scanf("%d", &p);
+}
+
+ll SolverBit() {  //
+  return p * log10(2) + 1;
+}
 
 void Solver() {  //
-  scanf("%d", &n);
-  dp.resize(n + 1, vector<ll>(n + 1, -1));
-  dp[0][0] = 1;
-  printf("%lld\n", Dfs(n, 0));
+  BigNum x = 2;
+  BigNum y = qpow(x, p);
+
+  auto& bits = y.data;
+  bits[0]--;
+  int maxBit = bits.size();
+//   printf("%lld\n", Bit(bits[maxBit - 1]) + (maxBit - 1) * BASE_BIT);
+  printf("%lld\n", SolverBit());
+  string ans;  // 存最低位 500 位
+  ans.reserve(555);
+  for (int i = 0; i < maxBit; i++) {
+    ll v = bits[i];
+    for (int j = 0; j < BASE_BIT; j++) {
+      ans.push_back(v % 10 + '0');
+      v /= 10;
+    }
+    if (ans.size() >= 500) break;
+  }
+  ans.resize(500, '0');
+  reverse(ans.begin(), ans.end());
+  for (int i = 0; i < 500; i++) {
+    printf("%c", ans[i]);
+    if ((i + 1) % 50 == 0) {
+      printf("\n");
+    }
+  }
 }
 
 #ifdef USACO_LOCAL_JUDGE
 double costTime = 0;
 #endif
 void ExSolver() {
+  SolverInput();
 #ifdef USACO_LOCAL_JUDGE
   auto t1 = std::chrono::steady_clock::now();
 #endif
   Solver();
 #ifdef USACO_LOCAL_JUDGE
   auto t2 = std::chrono::steady_clock::now();
-  auto my = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+  auto my = std::chrono::duration_cast<std::chrono::duration<double, ratio<1, 1000>>>(t2 - t1);
   costTime = my.count();
 #ifndef USACO_TASK_FILE
-  MyPrintf("my 用时: %.0lfms\n", costTime);
+  printf("my 用时: %.0lfms\n", costTime);
 #endif
 #endif
 }
@@ -140,13 +216,13 @@ void DiffAns(int stdout_fd, int i) {
   string fileOut = string(TASK) + to_string(fileIndex) + ".out";
   string cmd = string("diff -w " + fileAns + " " + fileOut + " > /dev/null");
   if (system(cmd.c_str())) {
-    MyPrintf("case %d: Wrong answer, cost %.0lfms\n", i, costTime);
+    printf("case %d: Wrong answer, cost %.0lfms\n", i, costTime);
   } else {
     if (costTime > MAX_TIME) {
-      MyPrintf("case %d: Time Limit Exceeded, cost %.0lfms\n", i, costTime);
+      printf("case %d: Time Limit Exceeded, cost %.0lfms\n", i, costTime);
     } else {
       AC++;
-      MyPrintf("case %d: Accepted, cost %.0lfms\n", i, costTime);
+      printf("case %d: Accepted, cost %.0lfms\n", i, costTime);
     }
   }
 }
@@ -154,7 +230,7 @@ void DiffSummary(int stdout_fd) {  // 统计通过的用例数量和得分
   dup2(stdout_fd, STDOUT_FILENO);
   close(stdout_fd);
   stdout = fdopen(STDOUT_FILENO, "w");
-  MyPrintf("Total: %d / %d, 得分： %d\n", AC, USACO_TASK_FILE, AC * (100 / USACO_TASK_FILE));
+  printf("Total: %d / %d, 得分： %d\n", AC, USACO_TASK_FILE, AC * (100 / USACO_TASK_FILE));
 }
 #endif
 int main(int argc, char** argv) {
