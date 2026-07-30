@@ -106,19 +106,16 @@ unordered_map<string, int> weeks = {{"Monday", 0}, {"Tuesday", 1},  {"Wednesday"
 
 void Parse(string s) {
   if (s.empty()) return;
-  while (!s.empty() && (s.back() == '\n' || s.back() == '\r')) s.pop_back();
-  if (s.empty()) return;
+  while (s.back() == '\n' || s.back() == '\r') s.pop_back();
   //   MyPrintf("s:[%d] [%s]\n", int(s.size()), s.c_str());
   if (s.back() != '.') return;
   s.pop_back();
-  if (s.empty()) return;
   // s 格式： name: words
   // words 格式： xxx xxx xxx xxx.
   int pos = s.find(':');
   const string name = s.substr(0, pos);
   const int nameID = nameIds[name];
   const string words = s.substr(pos + 2);
-  if (words.empty()) return;
   vector<string> wordList = SplitWords(words);
   if (wordList.empty()) return;
   if (words == "I am guilty") {
@@ -152,7 +149,7 @@ void Parse(string s) {
 const int bufsize = 4096;
 char buffer[bufsize];
 
-set<int> ans;
+vector<int> ans;
 int ToAns(int guilty) {
   int ans = 0;
   for (int i = 0; i < m; i++) {
@@ -162,40 +159,37 @@ int ToAns(int guilty) {
   }
   return -1;
 }
-
-bool Check(int week, int notWeek, int guilty, int notGuilty) {
-  if (notGuilty & guilty) return false;
-  if (notWeek & week) return false;
-  if (notGuilty == (1 << m) - 1) return false;
-  if (notWeek == (1 << 7) - 1) return false;
-  if (guilty & (guilty - 1)) return false;
-  if (week & (week - 1)) return false;
-  return true;
-}
 void UpdateAns(int week, int notWeek, int guilty, int notGuilty) {
-  if (!Check(week, notWeek, guilty, notGuilty)) return;
   if (guilty != 0) {
-    ans.insert(ToAns(guilty));
+    ans.push_back(ToAns(guilty));
     return;
   }
   int tmpGuilty = notGuilty ^ ((1 << m) - 1);
   if (__builtin_popcount(tmpGuilty) == 1) {
-    ans.insert(ToAns(tmpGuilty));
+    ans.push_back(ToAns(tmpGuilty));
     return;
   }
 }
+
 tuple<int, int, int, int, bool> TryTrue(int nameId, int week, int notWeek, int guilty, int notGuilty) {
   for (const auto& state : nameToWords[nameId]) {
     const int xxx = state.xxx;
     if (state.type == GUILTY) {
       guilty |= 1 << xxx;
+      if ((notGuilty & guilty) || (guilty ^ (1 << xxx))) {
+        return {week, notWeek, guilty, notGuilty, false};
+      }
     } else if (state.type == NOT_GUILTY) {
       notGuilty |= 1 << xxx;
+      // m 个人都不是 guilty，非法
+      if ((notGuilty & guilty) || (notGuilty == (1 << m) - 1)) {
+        return {week, notWeek, guilty, notGuilty, false};
+      }
     } else if (state.type == DAY) {
       week |= 1 << xxx;
-    }
-    if (!Check(week, notWeek, guilty, notGuilty)) {
-      return {week, notWeek, guilty, notGuilty, false};
+      if ((notWeek & week) || (week ^ (1 << xxx))) {
+        return {week, notWeek, guilty, notGuilty, false};
+      }
     }
   }
   return {week, notWeek, guilty, notGuilty, true};
@@ -206,13 +200,21 @@ tuple<int, int, int, int, bool> TryFalse(int nameId, int week, int notWeek, int 
     const int xxx = state.xxx;
     if (state.type == GUILTY) {
       notGuilty |= 1 << xxx;
+      // m 个人都不是 guilty，非法
+      if ((notGuilty & guilty) || (notGuilty == (1 << m) - 1)) {
+        return {week, notWeek, guilty, notGuilty, false};
+      }
     } else if (state.type == NOT_GUILTY) {
       guilty |= 1 << xxx;
+      if ((notGuilty & guilty) || (guilty ^ (1 << xxx))) {
+        return {week, notWeek, guilty, notGuilty, false};
+      }
     } else if (state.type == DAY) {
       notWeek |= 1 << xxx;
-    }
-    if (!Check(week, notWeek, guilty, notGuilty)) {
-      return {week, notWeek, guilty, notGuilty, false};
+      // 不能 7 天都是 notWeek
+      if ((notWeek & week) || (notWeek == (1 << 7) - 1)) {
+        return {week, notWeek, guilty, notGuilty, false};
+      }
     }
   }
   return {week, notWeek, guilty, notGuilty, true};
@@ -258,7 +260,7 @@ void Solver() {  //
   if (ans.empty()) {
     printf("Impossible\n");
   } else if (ans.size() == 1) {
-    printf("%s\n", names[*ans.begin()].c_str());
+    printf("%s\n", names[ans[0]].c_str());
   } else {
     printf("Cannot Determine\n");
   }

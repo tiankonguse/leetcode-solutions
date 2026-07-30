@@ -106,19 +106,16 @@ unordered_map<string, int> weeks = {{"Monday", 0}, {"Tuesday", 1},  {"Wednesday"
 
 void Parse(string s) {
   if (s.empty()) return;
-  while (!s.empty() && (s.back() == '\n' || s.back() == '\r')) s.pop_back();
-  if (s.empty()) return;
+  while (s.back() == '\n' || s.back() == '\r') s.pop_back();
   //   MyPrintf("s:[%d] [%s]\n", int(s.size()), s.c_str());
   if (s.back() != '.') return;
   s.pop_back();
-  if (s.empty()) return;
   // s 格式： name: words
   // words 格式： xxx xxx xxx xxx.
   int pos = s.find(':');
   const string name = s.substr(0, pos);
   const int nameID = nameIds[name];
   const string words = s.substr(pos + 2);
-  if (words.empty()) return;
   vector<string> wordList = SplitWords(words);
   if (wordList.empty()) return;
   if (words == "I am guilty") {
