@@ -78,15 +78,15 @@ void InitIO(int fileIndex) {  //
 
 int p;
 
-const ll BASE = 10;
-const int BASE_BIT = 1;
+const ll BASE = 100000LL;
+const int BASE_BIT = 5;
 struct BigNum {
   vector<ll> data;  // 逆序存储
   BigNum() {}
   BigNum(ll x) {
     while (x) {
-      data.push_back(x % 10);
-      x /= 10;
+      data.push_back(x % BASE);
+      x /= BASE;
     }
     if (data.empty()) {
       data.push_back(0);
@@ -97,7 +97,7 @@ struct BigNum {
     while (data.size() > 1 && data.back() == 0) {
       data.pop_back();
     }
-    while(data.size() > 500){
+    while(data.size() > 100){
         data.pop_back();
     }
     return *this;
@@ -110,14 +110,14 @@ struct BigNum {
       int pos = i;
       for (int j = 0; j < other.data.size(); j++) {
         res.data[pos] += data[i] * other.data[j] + carry;
-        carry = res.data[pos] / 10;
-        res.data[pos] %= 10;
+        carry = res.data[pos] / BASE;
+        res.data[pos] %= BASE;
         pos++;
       }
       while (carry) {
         res.data[pos] += carry;
-        carry = res.data[pos] / 10;
-        res.data[pos] %= 10;
+        carry = res.data[pos] / BASE;
+        res.data[pos] %= BASE;
         pos++;
       }
     }
