@@ -29,7 +29,7 @@ void CheckUsacoTask() {
 }
 
 #ifdef USACO_LOCAL_JUDGE
-int debug_log = 0;
+int debug_log = 1;
 int debug_assert = 0;
 #define MyPrintf(...)                   \
   do {                                  \
@@ -116,7 +116,6 @@ void Parse(string s) {
   // words 格式： xxx xxx xxx xxx.
   int pos = s.find(':');
   const string name = s.substr(0, pos);
-  if (nameIds.count(name) == 0) return;
   const int nameID = nameIds[name];
   const string words = s.substr(pos + 2);
   if (words.empty()) return;
@@ -153,6 +152,72 @@ void Parse(string s) {
 const int bufsize = 4096;
 char buffer[bufsize];
 
+set<int> ans;
+int ToAns(int guilty) {
+  int ans = 0;
+  for (int i = 0; i < m; i++) {
+    if (guilty & (1 << i)) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+bool Check(int week, int notWeek, int guilty, int notGuilty) {
+  if (notGuilty & guilty) return false;
+  if (notWeek & week) return false;
+  if (notGuilty == (1 << m) - 1) return false;
+  if (notWeek == (1 << 7) - 1) return false;
+  if (guilty & (guilty - 1)) return false;
+  if (week & (week - 1)) return false;
+  return true;
+}
+void UpdateAns(int week, int notWeek, int guilty, int notGuilty) {
+  if (!Check(week, notWeek, guilty, notGuilty)) return;
+  if (guilty != 0) {
+    ans.insert(ToAns(guilty));
+    return;
+  }
+  int tmpGuilty = notGuilty ^ ((1 << m) - 1);
+  if (__builtin_popcount(tmpGuilty) == 1) {
+    ans.insert(ToAns(tmpGuilty));
+    return;
+  }
+}
+tuple<int, int, int, int, bool> TryTrue(int nameId, int week, int notWeek, int guilty, int notGuilty) {
+  for (const auto& state : nameToWords[nameId]) {
+    const int xxx = state.xxx;
+    if (state.type == GUILTY) {
+      guilty |= 1 << xxx;
+    } else if (state.type == NOT_GUILTY) {
+      notGuilty |= 1 << xxx;
+    } else if (state.type == DAY) {
+      week |= 1 << xxx;
+    }
+    if (!Check(week, notWeek, guilty, notGuilty)) {
+      return {week, notWeek, guilty, notGuilty, false};
+    }
+  }
+  return {week, notWeek, guilty, notGuilty, true};
+}
+
+tuple<int, int, int, int, bool> TryFalse(int nameId, int week, int notWeek, int guilty, int notGuilty) {
+  for (const auto& state : nameToWords[nameId]) {
+    const int xxx = state.xxx;
+    if (state.type == GUILTY) {
+      notGuilty |= 1 << xxx;
+    } else if (state.type == NOT_GUILTY) {
+      guilty |= 1 << xxx;
+    } else if (state.type == DAY) {
+      notWeek |= 1 << xxx;
+    }
+    if (!Check(week, notWeek, guilty, notGuilty)) {
+      return {week, notWeek, guilty, notGuilty, false};
+    }
+  }
+  return {week, notWeek, guilty, notGuilty, true};
+}
+
 int CheckName(const int nameId, const int guiltyId, const int day) {
   int ans = 0;  // 1 真话, 2 假话, 0 可真可假， -1 矛盾
   for (const auto& state : nameToWords[nameId]) {
@@ -183,14 +248,14 @@ int CheckName(const int nameId, const int guiltyId, const int day) {
   return ans;
 }
 // 假设 nameId 是 guilty ，day 是 week，判断是否成立
-bool Check(const int guiltyId, const int day) {
+bool Check(int guiltyId, int day) {
   int ans[3] = {0, 0, 0};
-  for (int nameId = 1; nameId <= m; nameId++) {
+  for (auto [nameId, words] : nameToWords) {
     int ret = CheckName(nameId, guiltyId, day);
     if (ret == -1) return false;
     ans[ret]++;
   }
-  return ans[2] <= n && n <= ans[0] + ans[2];
+  return ans[0] + ans[2] <= n;
 }
 
 void Solver() {  //
@@ -206,24 +271,17 @@ void Solver() {  //
     fgets(buffer, bufsize, stdin);
     Parse(buffer);
   }
-
-  int ans = 0;
   for (int i = 1; i <= m; i++) {
     for (int day = 0; day < 7; day++) {
       if (Check(i, day)) {
-        if (ans == 0 || ans == i) {
-          ans = i;
-        } else {
-          ans = -1;
-          break;
-        }
+        ans.insert(i);
       }
     }
   }
-  if (ans == 0) {
+  if (ans.empty()) {
     printf("Impossible\n");
-  } else if (ans != -1) {
-    printf("%s\n", names[ans].c_str());
+  } else if (ans.size() == 1) {
+    printf("%s\n", names[*ans.begin()].c_str());
   } else {
     printf("Cannot Determine\n");
   }
