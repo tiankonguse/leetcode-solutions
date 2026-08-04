@@ -88,7 +88,6 @@ void DfsLevel(int u, int pre) {
   for (int v : g[u]) {
     if (v == pre) continue;
     G[u].push_back(v);
-    level[v] = level[u] + 1;
     DfsLevel(v, u);
     childNum[u] += childNum[v];
   }

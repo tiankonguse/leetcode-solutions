@@ -98,21 +98,10 @@ void UpdateAns(int sum) {
 void Dfs(const int l, const int r, const int preDelNum) {
   if (l == r) {
     UpdateAns(r - preDelNum);
-    // MyPrintf("l = %d, r = %d, preLev = %d, preDelNum = %d\n", l, r, preLev, preDelNum);
-    // for (int i = 0; i < r; i++) {
-    //   MyPrintf("%d ", que[i]);
-    // }
-    // MyPrintf("\n");
     return;
   }
-  //   MyPrintf("l = %d, r = %d, preLev = %d, preDelNum = %d\n", l, r, preLev, preDelNum);
-  //   for (int i = l; i < r; i++) {
-  //     MyPrintf("%d ", i);
-  //   }
-  //   MyPrintf("\n");
   for (int i = l; i < r; i++) {  // [l, r)
     // 枚举删除节点 i 与父节点的边
-    // MyPrintf("del = %d\n", que[i]);
     int p = r;
     for (int j = l; j < r; j++) {
       if (i == j) continue;
