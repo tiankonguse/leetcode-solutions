@@ -76,91 +76,63 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int n;
+int n, p;
 vector<vector<int>> g;
 vector<vector<int>> G;
-vector<int> childNum;
-struct Node {
-  int u;
-  int preBrother, nextBrother;
-  int leftChild, rightChild;
-  Node(int u = 0) : u(u) {
-    preBrother = nextBrother = -1;
-    leftChild = rightChild = -1;
-  }
-};
+vector<int> level;
+vector<int> que;
 
-void DfsLevel(int u, int preBrother) {
-  childNum[u] = 1;
+void DfsLevel(int u, int pre) {
   for (int v : g[u]) {
-    if (v == preBrother) continue;
+    if (v == pre) continue;
     G[u].push_back(v);
+    level[v] = level[u] + 1;
     DfsLevel(v, u);
-    childNum[u] += childNum[v];
   }
-  // 儿子节点按子树大小降序排列，方便后续枚举删除节点时，优先删除子树大的节点
-  sort(G[u].begin(), G[u].end(), [&](int a, int b) { return childNum[a] > childNum[b]; });
 }
 int ans = 0;
-void UpdateAns(int preDelNum) {
-  ans = min(ans, n - preDelNum);  // 更新答案
+void UpdateAns(int sum) {
+  ans = min(ans, sum);  // 更新答案
 }
 
-vector<Node> que;
-vector<int> sta;
-// 遍历树，最多遍历 n -1 层
-void Dfs(const int l, const int r, const int preDelNum, const int forestNum) {
-  if (l == -1 || l == r) {
-    UpdateAns(preDelNum);
+void Dfs(const int l, const int r, const int preDelNum) {
+  if (l == r) {
+    UpdateAns(r - preDelNum);
+    // MyPrintf("l = %d, r = %d, preLev = %d, preDelNum = %d\n", l, r, preLev, preDelNum);
+    // for (int i = 0; i < r; i++) {
+    //   MyPrintf("%d ", que[i]);
+    // }
+    // MyPrintf("\n");
     return;
   }
-  // 森林都删除依旧比当前答案大，则不需要继续枚举删除节点
-  if (n - (preDelNum + forestNum) >= ans) return;
-
-  int len = 0;
-
-  int p = r;
-  const int headOffset = sta.back();  // 获取当前的 headOffset
-  sta.pop_back();
-  que[headOffset] = Node(-1);  // head节点初始化，用于连接链表
-
-  int preOffset = headOffset;
-  for (int i = l; i != -1; i = que[i].nextBrother) {
-    len++;  // 因为是指针，所以遍历指针计算长度
-    for (auto v : G[que[i].u]) {
-      que[p] = Node(v);
-      que[preOffset].nextBrother = p;
-      que[p].preBrother = preOffset;
-      preOffset = p;
-      if (que[i].leftChild == -1) que[i].leftChild = p;
-      que[i].rightChild = p;
-      p++;
+  //   MyPrintf("l = %d, r = %d, preLev = %d, preDelNum = %d\n", l, r, preLev, preDelNum);
+  //   for (int i = l; i < r; i++) {
+  //     MyPrintf("%d ", i);
+  //   }
+  //   MyPrintf("\n");
+  for (int i = l; i < r; i++) {  // [l, r)
+    // 枚举删除节点 i 与父节点的边
+    // MyPrintf("del = %d\n", que[i]);
+    int p = r;
+    for (int j = l; j < r; j++) {
+      if (i == j) continue;
+      for (auto v : G[que[j]]) {
+        que[p] = v;
+        p++;
+      }
     }
+    Dfs(r, p, preDelNum + 1);
   }
-  for (int i = l; i != -1; i = que[i].nextBrother) {
-    const int u = que[i].u;
-    // 枚举删除节点 i 及其子树
-    if (childNum[u] == 1) {  // 没有儿子，不需要把儿子从链表中删除
-      Dfs(que[headOffset].nextBrother, p, preDelNum + childNum[u], forestNum - childNum[u] - len + 1);
-    } else {
-      // u 的儿子从链表中删除
-      const int leftChild = que[i].leftChild;
-      const int rightChild = que[i].rightChild;
-      if (que[leftChild].preBrother != -1) que[que[leftChild].preBrother].nextBrother = que[rightChild].nextBrother;
-      if (que[rightChild].nextBrother != -1) que[que[rightChild].nextBrother].preBrother = que[leftChild].preBrother;
-      Dfs(que[headOffset].nextBrother, p, preDelNum + childNum[u], forestNum - childNum[u] - len + 1);
-      if (que[leftChild].preBrother != -1) que[que[leftChild].preBrother].nextBrother = leftChild;
-      if (que[rightChild].nextBrother != -1) que[que[rightChild].nextBrother].preBrother = rightChild;
-    }
-  }
-  sta.push_back(headOffset);  // 回收 headOffset
 }
 
 void Solver() {  //
-  int m;
-  scanf("%d%d", &n, &m);
+  scanf("%d%d", &n, &p);
+  if (p + 1 != n) {
+    printf("0\n");
+    return;
+  }
   g.resize(n);
-  for (int i = 0; i < m; i++) {
+  for (int i = 0; i < p; i++) {
     int u, v;
     scanf("%d%d", &u, &v);
     u--, v--;
@@ -168,28 +140,18 @@ void Solver() {  //
     g[v].push_back(u);
   }
   G.resize(n);
-  childNum.resize(n, 0);
+  level.resize(n, 0);
   DfsLevel(0, -1);
-  que.resize(n * 4);
-  sta.reserve(n);
-  for (int i = 2 * n; i < 4 * n; i++) {
-    sta.push_back(i);
-  }
+  que.resize(n);
 
   ans = n;
-  que[0] = Node(0);  // lev=0
+  que[0] = 0;
   int p = 1;
-  int preOffset = -1;
   for (int v : G[0]) {
-    que[p] = Node(v);
-    if (preOffset != -1) {
-      que[preOffset].nextBrother = p;
-      que[p].preBrother = preOffset;
-    }
-    preOffset = p;
+    que[p] = v;
     p++;
   }
-  Dfs(1, p, 0, n - 1);
+  Dfs(1, p, 0);
   printf("%d\n", ans);
 }
 
