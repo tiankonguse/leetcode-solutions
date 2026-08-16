@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: PeanutPicking
+TASK: Cycle
 LANG: C++
 MAC EOF: ctrl+D
-link: https://www.luogu.com.cn/problem/P1086
+link: https://www.luogu.com.cn/problem/P1050
 PATH:
 submission:
 */
-#define TASK "PeanutPicking"
+#define TASK "Cycle"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -76,46 +76,122 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int m, n, k;
-int nums[30][30];
-vector<tuple<int, int, int>> g;
-
-pair<int, int> GetGoOut(int x0, int y0, int x1, int y1) {
-  int go = abs(x0 - x1) + abs(y0 - y1) + 1;
-  int out = x1;
-  return {go, out};
-}
-
+struct BigNum {
+  vector<ll> data;  // 逆序存储
+  BigNum() {}
+  BigNum(ll x) {
+    while (x) {
+      data.push_back(x % 10);
+      x /= 10;
+    }
+    if (data.empty()) {
+      data.push_back(0);
+    }
+  }
+  BigNum(const string& s) {
+    for (int i = s.size() - 1; i >= 0; i--) {
+      data.push_back(s[i] - '0');
+    }
+  }
+  BigNum& Smp(int minBit = 0) {
+    while (minBit > 0 && data.size() > minBit) {
+      data.pop_back();
+    }
+    while (data.size() > 1 && data.back() == 0) {
+      data.pop_back();
+    }
+    return *this;
+  }
+  BigNum operator*(const BigNum& other) const {
+    BigNum res;
+    res.data.resize(data.size() + other.data.size() + 1, 0);
+    for (int i = 0; i < data.size(); i++) {
+      int carry = 0;
+      int pos = i;
+      for (int j = 0; j < other.data.size(); j++) {
+        res.data[pos] += data[i] * other.data[j] + carry;
+        carry = res.data[pos] / 10;
+        res.data[pos] %= 10;
+        pos++;
+      }
+      while (carry) {
+        res.data[pos] += carry;
+        carry = res.data[pos] / 10;
+        res.data[pos] %= 10;
+        pos++;
+      }
+    }
+    return res.Smp();
+  }
+  bool operator<(const BigNum& other) const {
+    if (data.size() != other.data.size()) {
+      return data.size() < other.data.size();
+    }
+    for (int i = data.size() - 1; i >= 0; i--) {
+      if (data[i] != other.data[i]) {
+        return data[i] < other.data[i];
+      }
+    }
+    return false;
+  }
+  string ToString() const {
+    string res;
+    for (int i = data.size() - 1; i >= 0; i--) {
+      res.push_back(data[i] + '0');
+    }
+    return res;
+  }
+};
+int k;
+char buf[222];
 void Solver() {  //
-  scanf("%d%d%d", &m, &n, &k);
-  g.reserve(m * n);
-  for (int i = 1; i <= m; i++) {
-    for (int j = 1; j <= n; j++) {
-      scanf("%d", &nums[i][j]);
-      if (nums[i][j] > 0) {
-        g.emplace_back(nums[i][j], i, j);
-      }
+
+  scanf("%s%d", buf, &k);
+  string s = buf;
+  BigNum n(s);
+
+  if (s.back() == '0') {
+    int zeroCnt = 0;
+    while (s.back() == '0') {
+      zeroCnt++;
+      s.pop_back();
+    }
+    if (zeroCnt >= k) {
+      printf("1\n");  // 后缀 k 个0，后缀不变
+    } else {
+      printf("-1\n");
     }
   }
-  // 从大到小排序
-  sort(g.begin(), g.end(), greater<tuple<int, int, int>>());
-  int ans = 0;
-  if (!g.empty()) {
-    auto [_, x0, y0] = g[0];
-    x0 = 0;
-    for (auto [val, x1, y1] : g) {
-      auto [go, out] = GetGoOut(x0, y0, x1, y1);
-      if (go + out <= k) {
-        k -= go;
-        ans += val;
+  if (s.length() == 1 && s.back() == '1') {
+    printf("1\n");
+    return;
+  }
+  // if (s.size() < k) {
+  //   printf("-1\n");  // 初始值长度小于 k，越乘越大，不可能等于原始值
+  //   return;
+  // }
+
+  n.Smp(k);
+  BigNum val = n;
+  unordered_map<string, int> mp;
+  int times = 1;
+  mp[val.ToString()] = times;
+  while (1) {
+    val = val * n;
+    val.Smp(k);
+    times++;
+    string s = val.ToString();
+    if (mp.count(s)) {
+      if (mp[s] == 1) {
+        printf("%d\n", times - 1);
       } else {
-        break;
+        printf("-1\n");
       }
-      x0 = x1;
-      y0 = y1;
+      break;
     }
+    mp[s] = times;
   }
-  printf("%d\n", ans);
+  return;
 }
 
 #ifdef USACO_LOCAL_JUDGE
@@ -188,13 +264,6 @@ int main(int argc, char** argv) {
   }
   DiffSummary(stdout_fd);
 #endif
+
   return 0;
 }
-/*
-(0,2)->(4,2) val=15 go=5 out=2 k=21, ans=0
-(4,2)->(2,5) val=13 go=6 out=5 k=16, ans=15
-(2,5)->(5,4) val=9 go=5 out=4 k=10, ans=28
-(5,4)->(3,7) val=7 go=6 out=7 k=5, ans=37
-37
-my 用时: 9845ms
-*/

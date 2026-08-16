@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: PeanutPicking
+TASK: ScholarshipMoney
 LANG: C++
 MAC EOF: ctrl+D
-link: https://www.luogu.com.cn/problem/P1086
+link:
 PATH:
 submission:
 */
-#define TASK "PeanutPicking"
+#define TASK "ScholarshipMoney"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -76,46 +76,54 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int m, n, k;
-int nums[30][30];
-vector<tuple<int, int, int>> g;
+int n;
+struct Node {
+  char name[30];
+  int finalAverageScore = 0;
+  int classEvaluationScore = 0;
+  char studentCadres[10];
+  char westernProvinces[10];
+  int papers = 0;
+  int money = 0;
+};
+vector<Node> nums;
+void CalMoney(Node& node) {
+  node.money = 0;
+  if (node.finalAverageScore > 80 && node.papers >= 1) {
+    node.money += 8000;
+  }
+  if (node.finalAverageScore > 85 && node.classEvaluationScore > 80) {
+    node.money += 4000;
+  }
+  if (node.finalAverageScore > 90) {
+    node.money += 2000;
+  }
+  if (node.finalAverageScore > 85 && node.westernProvinces[0] == 'Y') {
+    node.money += 1000;
+  }
 
-pair<int, int> GetGoOut(int x0, int y0, int x1, int y1) {
-  int go = abs(x0 - x1) + abs(y0 - y1) + 1;
-  int out = x1;
-  return {go, out};
+  if (node.classEvaluationScore > 80 && node.studentCadres[0] == 'Y') {
+    node.money += 850;
+  }
 }
-
 void Solver() {  //
-  scanf("%d%d%d", &m, &n, &k);
-  g.reserve(m * n);
-  for (int i = 1; i <= m; i++) {
-    for (int j = 1; j <= n; j++) {
-      scanf("%d", &nums[i][j]);
-      if (nums[i][j] > 0) {
-        g.emplace_back(nums[i][j], i, j);
-      }
+  scanf("%d", &n);
+  nums.resize(n);
+  int maxMoney = -1;
+  int maxMoneyIndex = -1;
+  int sum = 0;
+  for (int i = 0; i < n; i++) {
+    scanf("%s %d %d %s %s %d", nums[i].name, &nums[i].finalAverageScore, &nums[i].classEvaluationScore,
+          nums[i].studentCadres, nums[i].westernProvinces, &nums[i].papers);
+    CalMoney(nums[i]);
+    if (nums[i].money > maxMoney) {
+      maxMoney = nums[i].money;
+      maxMoneyIndex = i;
     }
+    sum += nums[i].money;
   }
-  // 从大到小排序
-  sort(g.begin(), g.end(), greater<tuple<int, int, int>>());
-  int ans = 0;
-  if (!g.empty()) {
-    auto [_, x0, y0] = g[0];
-    x0 = 0;
-    for (auto [val, x1, y1] : g) {
-      auto [go, out] = GetGoOut(x0, y0, x1, y1);
-      if (go + out <= k) {
-        k -= go;
-        ans += val;
-      } else {
-        break;
-      }
-      x0 = x1;
-      y0 = y1;
-    }
-  }
-  printf("%d\n", ans);
+  printf("%s\n%d\n", nums[maxMoneyIndex].name, nums[maxMoneyIndex].money);
+  printf("%d\n", sum);
 }
 
 #ifdef USACO_LOCAL_JUDGE
@@ -190,11 +198,3 @@ int main(int argc, char** argv) {
 #endif
   return 0;
 }
-/*
-(0,2)->(4,2) val=15 go=5 out=2 k=21, ans=0
-(4,2)->(2,5) val=13 go=6 out=5 k=16, ans=15
-(2,5)->(5,4) val=9 go=5 out=4 k=10, ans=28
-(5,4)->(3,7) val=7 go=6 out=7 k=5, ans=37
-37
-my 用时: 9845ms
-*/

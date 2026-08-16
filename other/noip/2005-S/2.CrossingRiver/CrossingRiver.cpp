@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: PeanutPicking
+TASK: CrossingRiver
 LANG: C++
 MAC EOF: ctrl+D
-link: https://www.luogu.com.cn/problem/P1086
+link:
 PATH:
 submission:
 */
-#define TASK "PeanutPicking"
+#define TASK "CrossingRiver"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -76,46 +76,129 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int m, n, k;
-int nums[30][30];
-vector<tuple<int, int, int>> g;
+int L;
+int S, T, M;
+vector<int> dp;
+vector<int> nums;
+unordered_map<int, int> mp;
+set<int> stones;
 
-pair<int, int> GetGoOut(int x0, int y0, int x1, int y1) {
-  int go = abs(x0 - x1) + abs(y0 - y1) + 1;
-  int out = x1;
-  return {go, out};
+vector<int> ST;
+int stLast = 0;
+void InitST(int S, int T) {  //
+  int maxLen = 100;
+  ST.clear();
+  ST.resize(maxLen, 0);
+  ST[0] = 1;
+  for (int i = 0; i < maxLen; i++) {
+    if (ST[i] == 0) {
+      stLast = i;
+      continue;
+    }
+    for (int j = i + S; j <= i + T && j < maxLen; j++) {
+      ST[j] = 1;
+    }
+  }
+  MyPrintf("S=%d T=%d stLast = %d\n", S, T, stLast);
+}
+
+int IsStone(int i) {  //
+  return stones.count(nums[i]);
+}
+bool IsGoTo(int i, int j) {  //
+  int dis = j - i;
+  if (S == T) {  //
+    return dis % S == 0;
+  }
+  if (dis > stLast) {
+    return true;
+  }
+  return ST[dis];
 }
 
 void Solver() {  //
-  scanf("%d%d%d", &m, &n, &k);
-  g.reserve(m * n);
-  for (int i = 1; i <= m; i++) {
-    for (int j = 1; j <= n; j++) {
-      scanf("%d", &nums[i][j]);
-      if (nums[i][j] > 0) {
-        g.emplace_back(nums[i][j], i, j);
+
+  //   for (int S = 1; S <= 10; S++) {
+  //     for (int T = S + 1; T <= 10; T++) {
+  //       InitST(S, T);
+  //     }
+  //   }
+
+  scanf("%d", &L);
+  scanf("%d%d%d", &S, &T, &M);
+
+  InitST(S, T);
+
+  mp[0] = 0;
+  mp[L] = 0;
+  for (int i = 0; i < M; i++) {
+    int v;
+    scanf("%d", &v);
+    mp[v] = 1;
+    stones.insert(v);
+    for (int j = 0; j <= T; j++) {
+      mp[L + j] = 0;  // 最后插入 T 个空间
+      int p0 = v - j;
+      if (p0 > 0 && !mp.count(p0)) {
+        mp[p0] = 0;
+      }
+      int p1 = v + j;
+      if (!mp.count(p1)) {
+        mp[p1] = 0;
       }
     }
   }
-  // 从大到小排序
-  sort(g.begin(), g.end(), greater<tuple<int, int, int>>());
-  int ans = 0;
-  if (!g.empty()) {
-    auto [_, x0, y0] = g[0];
-    x0 = 0;
-    for (auto [val, x1, y1] : g) {
-      auto [go, out] = GetGoOut(x0, y0, x1, y1);
-      if (go + out <= k) {
-        k -= go;
-        ans += val;
+  int n = mp.size();
+  nums.reserve(n);
+  for (auto [k, v] : mp) {
+    nums.push_back(k);
+  }
+  sort(nums.begin(), nums.end());
+  for (int i = 0; i < n; i++) {
+    mp[nums[i]] = i;
+  }
+
+  // 方法1：暴力枚举
+  //   dp.resize(L + 1, INF);
+  //   dp[0] = 0;
+  //   for (int i = 0; i < L; i++) {
+  //     for (int j = S; j <= T; j++) {
+  //       int p = min(i + j, L);
+  //       if (mp.count(p)) {
+  //         dp[p] = min(dp[p], dp[i] + 1);
+  //       } else {
+  //         dp[p] = min(dp[p], dp[i]);
+  //       }
+  //     }
+  //   }
+  //   printf("%d\n", dp[L]);
+  // 方法2：离散化
+
+  stones.insert(L + 2 * T + 1);  // 添加一个虚拟的石头
+  dp.resize(n + 1, INF);
+  dp[0] = 0;
+  for (int i = 0; i < n; i++) {
+    const int pi = nums[i];                            // 压缩后的第 i 个位置
+    const int nextStonePos = *stones.upper_bound(pi);  // 下个石头的位置
+    MyPrintf("i=%d pi=%d isStone=%d nextStonePos=%d\n", i, pi, IsStone(i), nextStonePos);
+    for (int j = 1; j <= T; j++) {
+      const int ij = min(i + j, n - 1);
+      const int pj = nums[ij];
+      const int dis = pj - pi;
+      if (dis < S) {
+        // 什么都不做
+      } else if (dis >= S && dis <= T) {
+        dp[ij] = min(dp[ij], dp[i] + IsStone(ij));
       } else {
-        break;
+        assert(pj < nextStonePos);  // 不可能，已经在所有石头前后插入 T 个空间
+        // 超过了 T
+        if (IsGoTo(pi, pj)) {  // pi 到 pj 之间没有石头
+          dp[ij] = min(dp[ij], dp[i]);
+        }
       }
-      x0 = x1;
-      y0 = y1;
     }
   }
-  printf("%d\n", ans);
+  printf("%d\n", dp[n - 1]);
 }
 
 #ifdef USACO_LOCAL_JUDGE
@@ -190,11 +273,3 @@ int main(int argc, char** argv) {
 #endif
   return 0;
 }
-/*
-(0,2)->(4,2) val=15 go=5 out=2 k=21, ans=0
-(4,2)->(2,5) val=13 go=6 out=5 k=16, ans=15
-(2,5)->(5,4) val=9 go=5 out=4 k=10, ans=28
-(5,4)->(3,7) val=7 go=6 out=7 k=5, ans=37
-37
-my 用时: 9845ms
-*/

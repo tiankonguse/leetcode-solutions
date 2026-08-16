@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: PeanutPicking
+TASK: HerbPicking
 LANG: C++
 MAC EOF: ctrl+D
-link: https://www.luogu.com.cn/problem/P1086
+link: https://www.luogu.com.cn/problem/P1048
 PATH:
 submission:
 */
-#define TASK "PeanutPicking"
+#define TASK "HerbPicking"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -76,46 +76,19 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-int m, n, k;
-int nums[30][30];
-vector<tuple<int, int, int>> g;
-
-pair<int, int> GetGoOut(int x0, int y0, int x1, int y1) {
-  int go = abs(x0 - x1) + abs(y0 - y1) + 1;
-  int out = x1;
-  return {go, out};
-}
-
+int V, n;
+vector<int> pack;
 void Solver() {  //
-  scanf("%d%d%d", &m, &n, &k);
-  g.reserve(m * n);
-  for (int i = 1; i <= m; i++) {
-    for (int j = 1; j <= n; j++) {
-      scanf("%d", &nums[i][j]);
-      if (nums[i][j] > 0) {
-        g.emplace_back(nums[i][j], i, j);
-      }
+  scanf("%d%d", &V, &n);
+  pack.resize(V + 1, 0);
+  while (n--) {
+    int t, v;
+    scanf("%d%d", &t, &v);
+    for (int i = V; i >= t; i--) {
+      pack[i] = max(pack[i], pack[i - t] + v);
     }
   }
-  // 从大到小排序
-  sort(g.begin(), g.end(), greater<tuple<int, int, int>>());
-  int ans = 0;
-  if (!g.empty()) {
-    auto [_, x0, y0] = g[0];
-    x0 = 0;
-    for (auto [val, x1, y1] : g) {
-      auto [go, out] = GetGoOut(x0, y0, x1, y1);
-      if (go + out <= k) {
-        k -= go;
-        ans += val;
-      } else {
-        break;
-      }
-      x0 = x1;
-      y0 = y1;
-    }
-  }
-  printf("%d\n", ans);
+  printf("%d\n", pack[V]);
 }
 
 #ifdef USACO_LOCAL_JUDGE
@@ -190,11 +163,3 @@ int main(int argc, char** argv) {
 #endif
   return 0;
 }
-/*
-(0,2)->(4,2) val=15 go=5 out=2 k=21, ans=0
-(4,2)->(2,5) val=13 go=6 out=5 k=16, ans=15
-(2,5)->(5,4) val=9 go=5 out=4 k=10, ans=28
-(5,4)->(3,7) val=7 go=6 out=7 k=5, ans=37
-37
-my 用时: 9845ms
-*/
