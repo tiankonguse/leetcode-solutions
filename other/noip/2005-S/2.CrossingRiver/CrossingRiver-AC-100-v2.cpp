@@ -129,16 +129,16 @@ void Solver() {  //
 
   //  T <= 10, M <=100
   assert(T <= 10 && M <= 100);
-  // if (S == T) {
-  //   ll ans = 0;
-  //   for (ll i = 0; i < M; i++) {
-  //     ll v;
-  //     scanf("%lld", &v);
-  //     ans += v % S == 0;
-  //   }
-  //   printf("%lld\n", ans);
-  //   return;
-  // }
+  if (S == T) {
+    ll ans = 0;
+    for (ll i = 0; i < M; i++) {
+      ll v;
+      scanf("%lld", &v);
+      ans += v % S == 0;
+    }
+    printf("%lld\n", ans);
+    return;
+  }
 
   InitST(S, T);
 
@@ -189,10 +189,10 @@ void Solver() {  //
   //   printf("%d\n", dp[L]);
   // 方法2：离散化
 
-  stones.insert(L + T * 2 + 1);  // 添加一个虚拟的石头
+  stones.insert(L + T * T + 1);  // 添加一个虚拟的石头
   dp.resize(n + 1, INF);
   dp[0] = 0;
-  for (ll i = 0; i < n && nums[i] <= L; i++) {
+  for (ll i = 0; i < n; i++) {
     const ll pi = nums[i];                            // 压缩后的第 i 个位置
     const ll nextStonePos = *stones.upper_bound(pi);  // 下个石头的位置
     MyPrintf("i=%lld pi=%lld isStone=%lld nextStonePos=%lld\n", i, pi, IsStone(pi), nextStonePos);

@@ -85,6 +85,7 @@ set<ll> stones;
 
 vector<int> ST;
 ll stLast = 0;
+ll extLen = 0;
 void InitST(ll S, ll T) {  //
   ll maxLen = 1000;
   ST.clear();
@@ -99,11 +100,12 @@ void InitST(ll S, ll T) {  //
       ST[j] = 1;
     }
   }
+  extLen = max(stLast + 1, T + 1);
   MyPrintf("S=%lld T=%lld stLast = %lld\n", S, T, stLast);
 }
 
-ll IsStone(ll v) {  //
-  return stones.count(v);
+ll IsStone(int i) {  //
+  return stones.count(nums[i]);
 }
 bool IsGoTo(ll i, ll j) {  //
   ll dis = j - i;
@@ -129,39 +131,30 @@ void Solver() {  //
 
   //  T <= 10, M <=100
   assert(T <= 10 && M <= 100);
-  // if (S == T) {
-  //   ll ans = 0;
-  //   for (ll i = 0; i < M; i++) {
-  //     ll v;
-  //     scanf("%lld", &v);
-  //     ans += v % S == 0;
-  //   }
-  //   printf("%lld\n", ans);
-  //   return;
-  // }
 
   InitST(S, T);
 
   mp[0] = 0;
-  for (ll i = 0; i <= T; i++) {
+  for (ll i = 0; i <= extLen; i++) {
     mp[i] = 0;
     mp[L + i] = 0;
   }
-  ll ans = 0;
   for (ll i = 0; i < M; i++) {
     ll v;
     scanf("%lld", &v);
-    mp[v] = 0;
+    mp[v] = 1;
     stones.insert(v);
-    for (ll j = 1; j <= T; j++) {
+    for (ll j = 0; j <= extLen; j++) {
       ll p0 = v - j;
-      if (p0 > 0) {
+      if (p0 > 0 && !mp.count(p0)) {
         mp[p0] = 0;
       }
-      mp[v + j] = 0;
+      ll p1 = v + j;
+      if (!mp.count(p1)) {
+        mp[p1] = 0;
+      }
     }
   }
-
   ll n = mp.size();
   nums.clear();
   nums.reserve(n);
@@ -189,22 +182,21 @@ void Solver() {  //
   //   printf("%d\n", dp[L]);
   // 方法2：离散化
 
-  stones.insert(L + T * 2 + 1);  // 添加一个虚拟的石头
+  stones.insert(L + extLen * extLen + 1);  // 添加一个虚拟的石头
   dp.resize(n + 1, INF);
   dp[0] = 0;
-  for (ll i = 0; i < n && nums[i] <= L; i++) {
+  for (ll i = 0; i < n; i++) {
     const ll pi = nums[i];                            // 压缩后的第 i 个位置
     const ll nextStonePos = *stones.upper_bound(pi);  // 下个石头的位置
-    MyPrintf("i=%lld pi=%lld isStone=%lld nextStonePos=%lld\n", i, pi, IsStone(pi), nextStonePos);
-    for (ll j = i + 1; j <= i + T * 2 && j < n; j++) {
+    MyPrintf("i=%lld pi=%lld isStone=%lld nextStonePos=%lld\n", i, pi, IsStone(i), nextStonePos);
+    for (ll j = i + 1; j <= i + T && j < n; j++) {
       const ll pj = nums[j];
       const ll dis = pj - pi;
       if (dis < S) {
         // 什么都不做
       } else if (dis >= S && dis <= T) {
-        dp[j] = min(dp[j], dp[i] + IsStone(pj));
+        dp[j] = min(dp[j], dp[i] + IsStone(j));
       } else {
-        if (pj >= nextStonePos) break;
         assert(pj < nextStonePos);  // 不可能，已经在所有石头前后插入 T 个空间
         // 超过了 T
         if (IsGoTo(pi, pj)) {  // pi 到 pj 之间没有石头
@@ -213,7 +205,7 @@ void Solver() {  //
       }
     }
   }
-  ans = dp[n - 1];
+  ll ans = dp[n - 1];
   for (int i = mp[L]; i < n; i++) {
     ans = min(ans, dp[i]);
   }
