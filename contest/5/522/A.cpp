@@ -12,21 +12,17 @@ int debug = 1;
     if (debug) printf(__VA_ARGS__); \
   } while (0)
 
+typedef long long ll;
 class Solution {
  public:
-  vector<int> rearrangeArray(vector<int>& nums) {
-    vector<pair<int, int>> indexNums;
-    indexNums.reserve(nums.size());
-    unordered_map<int, int> mp;
-    for (int v : nums) {
-      mp[v]++;
-      indexNums.push_back({mp[v], v});
-    }
-    sort(indexNums.begin(), indexNums.end());
-    vector<int> ans;
-    ans.reserve(nums.size());
-    for (auto [_, v] : indexNums) {
-      ans.push_back(v);
+  int minRotations(string s) {
+    int ans = 0;
+    int pre = 0;
+    for (auto c : s) {
+      int v = c - '0';
+      int dis = abs(v - pre);
+      ans += min(dis, 10 - dis);
+      pre = v;
     }
     return ans;
   }

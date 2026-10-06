@@ -47,6 +47,34 @@ struct BigNum {
     }
     return res.Smp();
   }
+
+  BigNum operator-(const BigNum& other) const {
+    // 保证 *this <= other
+    BigNum res = *this;
+    ll carry = 0;
+    int i = 0;
+    for (; i < other.data.size(); i++) {
+      ll val = carry + data[i] - other.data[i];
+      carry = 0;
+      if (val >= 0) {
+        res.data[i] = val;
+      } else {
+        carry = -1;
+        res.data[i] = val + 10;
+      }
+    }
+    for (; i < data.size(); i++) {
+      ll val = carry + data[i];
+      carry = 0;
+      if (val >= 0) {
+        res.data[i] = val;
+      } else {
+        carry = -1;
+        res.data[i] = val + 10;
+      }
+    }
+    return res.Smp();
+  }
   bool operator<(const BigNum& other) const {
     if (data.size() != other.data.size()) {
       return data.size() < other.data.size();
