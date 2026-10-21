@@ -76,6 +76,20 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
+/*
+Red[i][j] 前i个数字，第 i 个是红色，最后一个蓝色是第 j 个时的最大值
+Blue[i][j] 前i个数字，第 i 个是蓝色，最后一个红色是第 j 个时的最大值
+BlueEx[i] = max(Blue[i][k] - A[k]);
+
+
+Red[i][j] = max{
+    1) i > j+1, [j+1,i-1] 都是是红色 => Red[i-1][j] + (A[i] - A[i-1]);
+    2) i = j+1, 需要枚举红色的位置 k, max(Blue[j][k] + (A[i] - A[k])) = BlueEx[j] + A[i]
+    3) i = j+1, 前面没有红色 => Blue[i-1][0]
+}
+
+*/
+
 int n;
 vector<ll> nums;
 void Solver() {  //
@@ -93,7 +107,7 @@ void Solver() {  //
     // 枚举与位置 0 相同颜色的最后一个位置
     if (i + 1 == n) {
       // 第一个与最后一个颜色相同
-      // 特殊情况，此时另一个颜色取值为 0 < p0 < p1 < n，且 p1 - p0 最大
+      // 特殊情况，此时另一个颜色取值为 0 < p0 < p1 < n-1，且 p1 - p0 最大
       // 循环时，提前计算出 preMaxDis = max(p1 - p0)
       ans = max(ans, preMaxDis);
     } else {

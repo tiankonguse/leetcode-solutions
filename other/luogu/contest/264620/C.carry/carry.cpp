@@ -150,13 +150,11 @@ bool CheckCarry(const ll p, const ll mid) {
 }
 ll SearchFirstCarry(const ll p, const ll preFirstCarry) {
   ll l = max(preFirstCarry, p), r = min(mapIndexOffset, l + 2 * MAX_BIT + 1);
-  while (l < r) {  // [l,r)
-    ll mid = (l + r) / 2;
-    if (CheckCarry(p, mid)) {
-      r = mid;
-    } else {
-      l = mid + 1;
+  while (l < mapIndexOffset) {
+    if (CheckCarry(p, l)) {
+      break;
     }
+    l++;
   }
   return l;
 }
