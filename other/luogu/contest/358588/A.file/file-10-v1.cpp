@@ -86,7 +86,7 @@ vector<vector<ll>> B;
 测试点 1~2: m<=7
 思路：暴力求 m 的排列
 得分： 10 分
-复杂度：m^m * (L + m*L*log(L) + L)
+复杂度：m! * (m*L*log(L))
 
 */
 

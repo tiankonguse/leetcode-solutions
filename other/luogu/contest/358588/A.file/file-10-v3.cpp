@@ -76,20 +76,20 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-ll n, m;
-unordered_map<ll, int> mp;
-vector<ll> A;
-vector<vector<ll>> B;
-
 /*
 基本思路：
 测试点 1~2: m<=7
-思路2：合并两个序列优化
+思路3：合并两个序列优化
 复杂度：m! * (m*L)
 得分： 10 分
 
 */
 
+
+ll n, m;
+unordered_map<ll, int> mp;
+vector<ll> A;
+vector<vector<ll>> B;
 vector<int> vis;  // 记录当前排列
 int allCnt = 0;
 ll ans = 0;

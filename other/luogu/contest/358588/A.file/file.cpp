@@ -5,7 +5,7 @@ LANG: C++
 MAC EOF: ctrl+D
 link: https://www.luogu.com.cn/problem/P17722?contestId=358588
 PATH: P17722 [SCP-S 2026] 档案 / file
-submission: https://www.luogu.com.cn/record/304516548
+submission:
 */
 #define TASK "file"
 #define TASKEX ""
@@ -77,88 +77,57 @@ void InitIO(int fileIndex) {  //
 }
 
 ll n, m;
-unordered_map<ll, int> mp;
 vector<ll> A;
-vector<vector<ll>> B;
-
+vector<ll> B;
 /*
-基本思路：显然需要对 A 和 B 都排序
-测试点 1~2: m<=7
-思路1：暴力求 m 的排列
-得分： 10 分
-复杂度：m^m * (L + m*L*log(L) + L)
+// 思路6：根据性质1 和性质2的规律近一步推导。
 
-思路2：排列组合优化 m^m -> m!
-复杂度：m! * (L + m*L*log(L) + L)
-得分： 10 分
+默认编号 1 到 n
+论证：对于 B 序列，谁应该在前面，谁应该在后面？
+假设 B 序列都是一个数字，第一个序列有 b1 个数字，第二个序列有 b2个数字。A 中大于 b1 的有 x 个数字，大于 b2 的有 y 个数字
 
+
+如果 b1 在前面，b2 在后面
+则第一次代价是 1+2+3+...+n+x， 加上x是由于A中有 x 个数字都后移一位，编号都加1
+第二次代价是 1+2+3+...+n+x+y，加上 y 是由于A中有 y 个数字再次后移一位，编号再次加1
+总代价是 2*(1+2+3+...+n)+2*x+y。
+与性质A一样，x 越小，应该越靠前
+
+如果 B 序列有多个数字呢?  
+可以发现，每个数字都会让 A 中大于它的数字都后移一位，编号也会增加 1。编号累计增加的值就是 B 序列中A 大于每个数字的个数之和。
+同理，可以发现，多个数字依旧满足性质A的规律。
+
+故，计算出每个序列导致编号增大的个数，然后排序，然后按上述方式计算
 */
-
-vector<int> vis;  // 记录当前排列
-int allCnt = 0;
-ll ans = 0;
-void UpdateAns() {  //
-  vector<ll> a = A;
-  a.reserve(allCnt);
-  ll sum = 0;
-  for (int b : vis) {
-    for (int j = 0; j < B[b].size(); j++) {
-      a.push_back(B[b][j]);
-    }
-    sort(a.begin(), a.end());
-    for (int i = 1; i <= a.size(); i++) {
-      if (mp.count(a[i - 1])) {
-        sum += i;
-      }
-    }
-  }
-  ans = min(ans, sum);
-}
-
-void Dfs(const int leftNum) {
-  if (leftNum == 0) {
-    // 计算当前排列的代价
-    UpdateAns();
-    return;
-  }
-  for (int i = 0; i < leftNum; i++) {
-    swap(vis[leftNum - 1], vis[i]);
-    Dfs(leftNum - 1);
-    swap(vis[leftNum - 1], vis[i]);
-  }
-}
-
 void Solver() {  //
   scanf("%lld%lld", &n, &m);
   A.resize(n);
+  B.resize(m);
   for (int i = 0; i < n; i++) {
     scanf("%lld", &A[i]);
-    mp[A[i]]++;
   }
-
   sort(A.begin(), A.end());
 
-  allCnt = n;
-  B.resize(m);
-  vis.resize(m);
+
   for (int i = 0; i < m; i++) {
-    vis[i] = i;
     ll L;
     scanf("%lld", &L);
-    allCnt += L;
-    B[i].resize(L);
+    ll sum = 0;
     for (int j = 0; j < L; j++) {
       ll x;
       scanf("%lld", &x);
-      B[i][j] = x;
+      ll cnt = A.end() - lower_bound(A.begin(), A.end(), x);
+      sum += cnt; // x 让 A 中的 cnt 个数字都后移一位，编号都加1
     }
-    sort(B[i].begin(), B[i].end());
+    B[i] = sum; 
   }
-
-  // 暴力求 m 的排列
-  ans = INT64_MAX;
-  Dfs(m);
-
+  sort(B.begin(), B.end());
+  ll ans = 0;
+  ll base = (1 + n) * n / 2;
+  for (ll b : B) {
+    base += b;
+    ans += base;
+  }
   printf("%lld\n", ans);
 }
 
