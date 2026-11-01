@@ -1,13 +1,13 @@
 /*
 ID: tiankonguse
-TASK: CuttingTrees
+TASK: subway
 LANG: C++
 MAC EOF: ctrl+D
-link: https://www.luogu.com.cn/problem/P1873?contestId=367096
-PATH: P1873 [COCI 2011/2012 #5] EKO / 砍树
+link: https://www.luogu.com.cn/problem/P17832
+PATH: P17832 [CSP-S 2026] 地铁 / subway
 submission:
 */
-#define TASK "CuttingTrees"
+#define TASK "subway"
 #define TASKEX ""
 
 #include <bits/stdc++.h>
@@ -29,7 +29,7 @@ void CheckUsacoTask() {
 }
 
 #ifdef USACO_LOCAL_JUDGE
-int debug_log = 0;
+int debug_log = 1;
 int debug_assert = 0;
 #define MyPrintf(...)                   \
   do {                                  \
@@ -50,7 +50,7 @@ constexpr ll INFL = 1LL << 60;
 constexpr ll MOD = 1000000007;
 
 const double pi = acos(-1.0), eps = 1e-7;
-const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
+// const int inf = 0x3f3f3f3f, ninf = 0xc0c0c0c0, mod = 1000000007;
 const int max3 = 2010, max4 = 20010, max5 = 200010, max6 = 2000010;
 
 template <class T>
@@ -76,42 +76,99 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-ll n, m;
-vector<ll> nums;
-ll maxH = 0;
-ll Check(const ll h) {
-  ll sum = 0;
-  for (const ll v : nums) {
-    if (v > h) {
-      sum += v - h;
-    }
-  }
-  return sum;
-}
-ll Search() {
-  ll l = 0, r = maxH;  //
-  MyPrintf("n = %lld, m = %lld, maxH = %lld\n", n, m, maxH);
-  while (l < r) {
-    const ll mid = (l + r) / 2;
-    const ll sum = Check(mid);
-    MyPrintf("mid = %lld, sum = %lld\n", mid, sum);
-    if (sum >= m) {
-      l = mid + 1;
-    } else {
-      r = mid;
-    }
-  }
-  return r - 1;
-}
-void Solver() {  //
-  scanf("%lld%lld", &n, &m);
-  nums.resize(n);
-  maxH = 0;
+void Floyd(vector<vector<ll>>& mp) {  // mp[][] = inf; mp[i][i] = 0;
+  int n = mp.size();
   for (int i = 0; i < n; i++) {
-    scanf("%lld", &nums[i]);
-    maxH = max(maxH, nums[i]);
+    mp[i][i] = 0;
   }
-  printf("%lld\n", Search());
+  for (int k = 0; k < n; k++) {
+    for (int i = 0; i < n; i++) {
+      if (i == k) continue;
+      for (int j = 0; j < n; j++) {
+        if (mp[i][k] + mp[k][j] < mp[i][j]) {
+          mp[i][j] = mp[i][k] + mp[k][j];
+        }
+      }
+    }
+  }
+}
+
+ll c, n, m, d, q;
+vector<ll> W;                         // 每个地铁站的地铁口走到站厅需要的时间
+vector<vector<pair<ll, ll>>> subway;  // 每个线路经过的地铁站与站点到站厅的时间
+vector<pair<ll, ll>> querys;
+vector<vector<pair<ll, ll>>> stations;  // 经过每个地铁站的线路，以及位于线路的第几个站
+vector<vector<ll>> AdjacencyMatrix;     // 邻接矩阵，表示每个线路之间的最小换乘时间
+
+void Intput() {
+  scanf("%lld %lld %lld %lld %lld", &c, &n, &m, &d, &q);
+  W.resize(m);
+  for (int i = 0; i < m; i++) {
+    scanf("%lld", &W[i]);
+  }
+  stations.resize(m);
+  subway.resize(n);
+  for (int i = 0; i < n; i++) {
+    ll k;
+    scanf("%lld", &k);
+    subway[i].resize(k);
+    for (int j = 0; j < k; j++) {
+      ll a, t;
+      scanf("%lld %lld", &a, &t);
+      a--;
+      subway[i][j] = {a, t};
+      stations[a].push_back({i, j});
+    }
+  }
+  querys.resize(q);
+  for (int i = 0; i < q; i++) {
+    ll x, y;
+    scanf("%lld %lld", &x, &y);
+    x--, y--;
+    querys[i] = {x, y};
+  }
+//   MyPrintf("querys: %d\n", querys.size());
+}
+
+void BuildEdge() {  //
+  AdjacencyMatrix.resize(n, vector<ll>(n, INFL));
+  for (int i = 0; i < m; i++) {
+    int D = stations[i].size();
+    for (int j = 0; j < D; j++) {
+      auto [lineId1, lineOffset1] = stations[i][j];
+      ll lineCost1 = subway[lineId1][lineOffset1].second;
+      for (int k = j + 1; k < D; k++) {
+        auto [lineId2, lineOffset2] = stations[i][k];
+        ll lineCost2 = subway[lineId2][lineOffset2].second;
+        ll oldCost = AdjacencyMatrix[lineId1][lineId2];
+        AdjacencyMatrix[lineId1][lineId2] = AdjacencyMatrix[lineId2][lineId1] = min(oldCost, lineCost1 + lineCost2);
+      }
+    }
+  }
+  Floyd(AdjacencyMatrix);  // 求所有线路之间的最小换乘时间
+}
+
+void BuildQuery() {
+  for (auto [x, y] : querys) {
+    ll ans = INFL;
+    ll baseCost = W[x] + W[y];
+    for (int stationX = 0; stationX < stations[x].size(); stationX++) {
+      auto [lineIdX, lineOffsetX] = stations[x][stationX];
+      ll lineCostX = subway[lineIdX][lineOffsetX].second;
+      for (int stationY = 0; stationY < stations[y].size(); stationY++) {
+        auto [lineIdY, lineOffsetY] = stations[y][stationY];
+        ll lineCostY = subway[lineIdY][lineOffsetY].second;
+        ans = min(ans, baseCost + lineCostX + lineCostY + AdjacencyMatrix[lineIdX][lineIdY]);
+      }
+    }
+    printf("%lld\n", ans);
+  }
+}
+
+void Solver() {  //
+  Intput();
+  BuildEdge();
+  BuildQuery();
 }
 
 #ifdef USACO_LOCAL_JUDGE

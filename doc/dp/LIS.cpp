@@ -4,6 +4,8 @@
 // 可以解决以下题型：
 // 任意修改一个值，使数组有序。 未修改的就是 LIS
 // 删除任意一个值，使数组有序。 未删除的就是 LIS
+// upper_bound 非递降
+// lower_bound 严格递增
 
 template <typename T>
 int Lis(vector<T>& a) {
