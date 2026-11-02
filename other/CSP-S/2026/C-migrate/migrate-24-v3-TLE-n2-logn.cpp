@@ -76,31 +76,6 @@ void InitIO(int fileIndex) {  //
 #endif
 }
 
-/*
-0 2
-4 2
-1 2 3 4
-5 2
-1 2 3 4 5l=0 r=1 minKFirst=0 minKLast=0 dpStep=1 dpPath=1 dpPathSum=2
-l=1 r=2 minKFirst=1 minKLast=1 dpStep=1 dpPath=1 dpPathSum=2
-l=0 r=2 minKFirst=0 minKLast=0 dpStep=1 dpPath=1 dpPathSum=3
-l=2 r=3 minKFirst=2 minKLast=2 dpStep=1 dpPath=1 dpPathSum=2
-l=1 r=3 minKFirst=1 minKLast=1 dpStep=1 dpPath=1 dpPathSum=3
-l=0 r=3 minKFirst=1 minKLast=1 dpStep=2 dpPath=1 dpPathSum=4
-0
-
-l=0 r=1 minKFirst=0 minKLast=0 dpStep=1 dpPath=1 dpPathSum=2
-l=1 r=2 minKFirst=1 minKLast=1 dpStep=1 dpPath=1 dpPathSum=2
-l=0 r=2 minKFirst=0 minKLast=0 dpStep=1 dpPath=1 dpPathSum=3
-l=2 r=3 minKFirst=2 minKLast=2 dpStep=1 dpPath=1 dpPathSum=2
-l=1 r=3 minKFirst=1 minKLast=1 dpStep=1 dpPath=1 dpPathSum=3
-l=0 r=3 minKFirst=1 minKLast=1 dpStep=2 dpPath=1 dpPathSum=4
-l=3 r=4 minKFirst=3 minKLast=3 dpStep=1 dpPath=1 dpPathSum=2
-l=2 r=4 minKFirst=2 minKLast=2 dpStep=1 dpPath=1 dpPathSum=3
-l=1 r=4 minKFirst=2 minKLast=2 dpStep=2 dpPath=1 dpPathSum=4
-l=0 r=4 minKFirst=2 minKLast=2 dpStep=2 dpPath=1 dpPathSum=5
-0
-*/
 
 ll c, t;
 ll n, d;
