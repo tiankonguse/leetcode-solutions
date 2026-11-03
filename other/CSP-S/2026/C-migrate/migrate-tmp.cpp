@@ -30,10 +30,11 @@ void CheckUsacoTask() {
 
 #ifdef USACO_LOCAL_JUDGE
 int debug_log = 1;
+int output_ans = 0;
 int debug_assert = 0;
-#define MyPrintf(...)                   \
-  do {                                  \
-    if (debug_log) printf(__VA_ARGS__); \
+#define MyPrintf(...)                                  \
+  do {                                                 \
+    if (debug_log && !output_ans) printf(__VA_ARGS__); \
   } while (0)
 
 #define MyAssert(...)                      \
@@ -59,12 +60,12 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
-// #define LOCAL_IO 1
+#define LOCAL_IO 1  // 本地跑测试样例
 #ifdef USACO_LOCAL_JUDGE
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 0
-// #define TASKNO 20
+#define USACO_TASK_FILE 6
+// #define TASKNO 6
 #ifdef TASKNO
   fileIndex = TASKNO;
 #endif
@@ -83,70 +84,96 @@ vector<ll> nums;
 ll SolverDp() {
   if (n < 4 || d == 1) return 0;
   // dpRightMost[i] 右侧作为最右的答案
-  vector<ll> dpRightMost(n, 1);
-  // vector<ll> dpRightSum(n, 0);
+  vector<ll> dpRightMost(n, 0);
+  vector<ll> dpRightSum(n, 0);
+  vector<ll> dpRightMax(n, -1);
   for (int R = n - 2; R > 0; R--) {
     // 找到  [nums[R],nums[R] + d] 内存在的最大值位置
     int RRightMax = upper_bound(nums.begin() + R, nums.end(), nums[R] + d) - nums.begin() - 1;
     if (RRightMax == R) {  // 说明 D 步内不可达
+      MyPrintf("R=%d skip 1\n", R);
       continue;
     }
-
     const int RLeft = R - 1;
+    if (nums[RLeft] + d >= nums[RRightMax]) {
+      MyPrintf("R=%d skip 2\n", R);
+      continue;  // 不存在下一跳
+    }
+
     // 找到大于 nums[RLeft] + d 的最小值位置
     int rRightMin = upper_bound(nums.begin() + RLeft, nums.end(), nums[RLeft] + d) - nums.begin();
     rRightMin = max(rRightMin, R + 1);  // 有可能左边很远，需要保证在 R 右侧
     if (rRightMin <= RRightMax) {
       dpRightMost[R] += RRightMax - rRightMin + 1;
     }
+    MyPrintf("one dpRightMost[%d] = %lld, rRightMin=%d RRightMax=%d\n", R, dpRightMost[R], rRightMin, RRightMax);
 
     // RRightMax 回跳，如果只能覆盖 R，不能覆盖 RLeft，则 R 可以作为中间的答案
-    if (rRightMin < RRightMax) {
-      dpRightMost[R] = dpRightMost[R] + dpRightMost[RRightMax];
+    if (rRightMin == RRightMax) {
+      dpRightMax[R] = RRightMax;
+      dpRightSum[R] = dpRightMost[R] + dpRightSum[RRightMax];
     }
+    MyPrintf("sum dpRightSum[%d] = %lld dpRightMax[%d] = %d\n", R, dpRightSum[R], R, dpRightMax[R], R);
   }
 
-  vector<ll> dpLeftMost(n, 1);
-  // vector<ll> dpLeftSum(n, 0);
+  vector<ll> dpLeftMost(n, 0);
+  vector<ll> dpLeftMin(n, -1);
+  vector<ll> dpLeftSum(n, 0);
   for (int L = 1; L < n - 1; L++) {
     // 找到  [nums[L]-d ,nums[L]] 内存在的最小值位置
     int LLeftMin = lower_bound(nums.begin(), nums.end(), nums[L] - d) - nums.begin();
     if (LLeftMin == L) {  // 说明 D 步内不可达
+      MyPrintf("L=%d skip `\n", L);
       continue;
     }
 
     const int LRight = L + 1;
-    // 找到大于 nums[LRight] - d 的最小值位置
+    if (nums[LRight] - d <= nums[LLeftMin]) {
+      MyPrintf("L=%d skip 2\n", L);
+      continue;  // 不存在上一跳
+    }
+    // 找到大于 [nums[LRight] - d , nums[LRight]] 的最小值位置
     int LLeftMax = lower_bound(nums.begin(), nums.end(), nums[LRight] - d) - nums.begin();
+    LLeftMax--;                       // 不能覆盖 nums[LRight] - d
     LLeftMax = min(LLeftMax, L - 1);  // 有可能右边很远，需要保证在 L 左侧
     if (LLeftMin <= LLeftMax) {
       dpLeftMost[L] += LLeftMax - LLeftMin + 1;
     }
+    MyPrintf("one dpLeftMost[%d] = %lld, LLeftMin=%d LLeftMax=%d\n", L, dpLeftMost[L], LLeftMin, LLeftMax);
 
     // LLeftMin 回跳，如果只能覆盖 L，不能覆盖 LRight，则 L 可以作为中间的答案
-    if (LLeftMin < LLeftMax) {
-      dpLeftMost[L] = dpLeftMost[L] + dpLeftMost[LLeftMin];
+    if (LLeftMin == LLeftMax) {
+      dpLeftSum[L] = dpLeftMost[L] + dpLeftSum[LLeftMin];
+      dpLeftMin[L] = LLeftMin;
     }
+    MyPrintf("sum dpLeftSum[%d] = %lld dpLeftMin[%d] = %d\n", L, dpLeftSum[L], L, dpLeftMin[L], L);
   }
 
   ll ans = 0;
-  for (int L = 0; L + 3 < n; L++) {
-    // 找到  [nums[R],nums[R] + d] 内存在的最大值位置
+  for (int L = 1, R = 2; R + 1 < n; L++, R++) {
     int LRightMax = upper_bound(nums.begin() + L, nums.end(), nums[L] + d) - nums.begin() - 1;
-    if (LRightMax - L + 1 < 3) {
-      continue;  // 需要至少有 3 个点
+    int RLeftMax = upper_bound(nums.begin() + R, nums.end(), nums[R] + d) - nums.begin() - 1;
+    if (LRightMax <= R || nums[LRightMax] - d <= nums[L - 1]) {  // L 右侧至少覆盖两个点，才能形成2条路径
+      MyPrintf("LRightMax=%d <= R=%d skip\n", LRightMax, R, L);
+      continue;
     }
+    int RLeftMin = lower_bound(nums.begin(), nums.end(), nums[R] - d) - nums.begin();
+    int LLeftMin = lower_bound(nums.begin(), nums.end(), nums[L] - d) - nums.begin();
+    if (RLeftMin >= L || nums[RLeftMin] + d >= nums[R + 1]) {  // R 左侧至少覆盖两个点，才能形成2条路径
+      MyPrintf("RLeftMin=%d >= L=%d skip\n", RLeftMin, L, R);
+      continue;
+    }
+    MyPrintf("LRightMax=%d RLeftMin=%d\n", LRightMax, RLeftMin);
 
-    int R = upper_bound(nums.begin() + LRightMax, nums.end(), nums[LRightMax] + d) - nums.begin() - 1;
-    if (R == LRightMax) {
-      continue;  // 右侧不可达
+    ll leftSum = dpLeftMost[R];
+    if (LLeftMin == RLeftMin) {
+      leftSum += dpLeftSum[RLeftMin];
     }
-
-    if (nums[R] - nums[LRightMax - 1] > d || nums[R] - nums[LRightMax - 2] <= d) {
-      continue;  // 只有一条路径，或者有多条路径
+    ll rightSum = dpRightMost[L];
+    if (RLeftMax == LRightMax) {
+      rightSum += dpRightSum[LRightMax];
     }
-    ll leftSum = dpLeftMost[L];
-    ll rightSum = dpRightMost[R];
+    MyPrintf("L = %d, R = %d, leftSum = %lld, rightSum = %lld\n", L, R, leftSum, rightSum);
     ans += leftSum * rightSum;
   }
   return ans;
@@ -224,14 +251,17 @@ int main(int argc, char** argv) {
   int stdout_fd = dup(STDOUT_FILENO);
   for (int i = 1; i <= USACO_TASK_FILE; i++) {
     fileIndex = i;
+    output_ans = 1;
 #endif
     InitIO(fileIndex);
     ExSolver();
 #ifdef USACO_TASK_FILE
     fclose(stdout);
+    output_ans = 0;
     DiffAns(stdout_fd, i);
     stdout_fd = dup(STDOUT_FILENO);
   }
+  output_ans = 0;
   DiffSummary(stdout_fd);
 #endif
   return 0;
