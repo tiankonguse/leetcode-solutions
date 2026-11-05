@@ -8,7 +8,7 @@ PATH: P17833 [CSP-S 2026] 迁徙 / migrate
 submission:
 */
 #define TASK "migrate"
-#define TASKEX ""
+#define TASKEX "-56-v7-TLE"
 
 #include <bits/stdc++.h>
 
