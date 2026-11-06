@@ -8,7 +8,7 @@ PATH: P17833 [CSP-S 2026] 迁徙 / migrate
 submission:
 */
 #define TASK "migrate"
-#define TASKEX "-tmp"
+#define TASKEX "-100-v9"
 
 #include <bits/stdc++.h>
 
@@ -147,13 +147,13 @@ ll SolverDp() {
     int LRightMax = upper_bound(nums.begin() + L, nums.end(), nums[L] + d) - nums.begin() - 1;
     int RRightMax = upper_bound(nums.begin() + R, nums.end(), nums[R] + d) - nums.begin() - 1;
     if (LRightMax <= R || nums[LRightMax] - d <= nums[L - 1]) {  // L 右侧至少覆盖两个点，才能形成2条路径
-      MyPrintf("LRightMax=%d <= R=%d skip\n", LRightMax, R, L);
+      MyPrintf("LRightMax=%d <= R=%d skip\n", LRightMax, R);
       continue;
     }
     int RLeftMin = lower_bound(nums.begin(), nums.end(), nums[R] - d) - nums.begin();
     int LLeftMin = lower_bound(nums.begin(), nums.end(), nums[L] - d) - nums.begin();
     if (RLeftMin >= L || nums[RLeftMin] + d >= nums[R + 1]) {  // R 左侧至少覆盖两个点，才能形成2条路径
-      MyPrintf("RLeftMin=%d >= L=%d skip\n", RLeftMin, L, R);
+      MyPrintf("RLeftMin=%d >= L=%d skip\n", RLeftMin, L);
       continue;
     }
 

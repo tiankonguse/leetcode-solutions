@@ -8,7 +8,7 @@ PATH: P17833 [CSP-S 2026] 迁徙 / migrate
 submission:
 */
 #define TASK "migrate"
-#define TASKEX ""
+#define TASKEX "-tmp"
 
 #include <bits/stdc++.h>
 
@@ -29,11 +29,12 @@ void CheckUsacoTask() {
 }
 
 #ifdef USACO_LOCAL_JUDGE
-int debug_log = 0;
+int debug_log = 1;
+int output_ans = 0;
 int debug_assert = 0;
-#define MyPrintf(...)                   \
-  do {                                  \
-    if (debug_log) printf(__VA_ARGS__); \
+#define MyPrintf(...)                                  \
+  do {                                                 \
+    if (debug_log && !output_ans) printf(__VA_ARGS__); \
   } while (0)
 
 #define MyAssert(...)                      \
@@ -59,12 +60,12 @@ template <class T>
 using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
-// #define LOCAL_IO 1
+#define LOCAL_IO 1            // 本地跑测试样例
 #ifdef USACO_LOCAL_JUDGE
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
-#define USACO_TASK_FILE 0
-// #define TASKNO 20
+#define USACO_TASK_FILE 6
+// #define TASKNO 6
 #ifdef TASKNO
   fileIndex = TASKNO;
 #endif
@@ -81,118 +82,102 @@ ll n, d;
 vector<ll> nums;
 
 ll SolverDp() {
+  if (n < 4 || d == 1) return 0;
+  vector<ll> LD(n, -1);
+  vector<ll> RD(n, -1);
+  for (int i = 0, L = 0, R = 0; i < n; i++) {
+    while (L >= 0 && nums[i] - nums[L] > d) L++;
+    while (R < n && nums[R] - nums[i] <= d) R++;
+    LD[i] = L;
+    RD[i] = R - 1;
+  }
+
+  // dpRightMost[i] 右侧作为最右的答案
+  vector<ll> dpRightMost(n, 0);  // dpRightMost[i] i 作为倒数第二条，下一跳的方案数
+  vector<ll> dpRightSum(n, 0);   // dpRightSum[i] i 下一跳作为倒数第二条 或者 作为中间的答案的方案数
+  for (int R = n - 2; R > 0; R--) {
+    // 找到  [nums[R],nums[R] + d] 内存在的最大值位置
+    int RRightMax = RD[R];
+    if (RRightMax == R) {  // 说明 D 步内不可达
+      MyPrintf("R=%d skip 1\n", R);
+      continue;
+    }
+    const int L = R - 1;
+    if (nums[L] + d >= nums[RRightMax]) {
+      MyPrintf("R=%d skip 2\n", R);
+      continue;  // 不存在下一跳
+    }
+
+    // 找到大于 nums[L] + d 的最小值位置
+    int LRightMin = RD[L] + 1;
+    LRightMin = max(LRightMin, R + 1);  // 有可能左边很远，需要保证在 R 右侧
+    if (LRightMin <= RRightMax) {
+      dpRightMost[R] += RRightMax - LRightMin + 1;
+    }
+    MyPrintf("one dpRightMost[%d] = %lld, LRightMin=%d RRightMax=%d\n", R, dpRightMost[R], LRightMin, RRightMax);
+
+    // RRightMax 回跳，如果只能覆盖 R，不能覆盖 RLeft，则 R 可以作为中间的答案
+    dpRightSum[R] = dpRightMost[R] + dpRightSum[RRightMax];
+    MyPrintf("sum dpRightSum[%d] = %lld\n", R, dpRightSum[R]);
+  }
+
+  vector<ll> dpLeftMost(n, 0);  // dpLeftMost[i] i 作为倒数第二条，上一跳的方案数
+  vector<ll> dpLeftSum(n, 0);   // dpLeftSum[i] i 上一跳作为倒数第二条 或者 作为中间的答案的方案数
+  for (int L = 1; L < n - 1; L++) {
+    // 找到  [nums[L]-d ,nums[L]] 内存在的最小值位置
+    int LLeftMin = LD[L];
+    if (LLeftMin == L) {  // 说明 D 步内不可达
+      MyPrintf("L=%d skip `\n", L);
+      continue;
+    }
+
+    const int R = L + 1;
+    if (nums[R] - d <= nums[LLeftMin]) {
+      MyPrintf("L=%d skip 2\n", L);
+      continue;  // 不存在上一跳
+    }
+    // 找到小于 nums[R] - d 的最大值位置
+    int RLeftMin = LD[R] - 1;
+    RLeftMin = min(RLeftMin, L - 1);  // 有可能右边很远，需要保证在 L 左侧
+    if (LLeftMin <= RLeftMin) {
+      dpLeftMost[L] += RLeftMin - LLeftMin + 1;
+    }
+    MyPrintf("one dpLeftMost[%d] = %lld, LLeftMin=%d RLeftMin=%d\n", L, dpLeftMost[L], LLeftMin, RLeftMin);
+
+    // LLeftMin 回跳，如果只能覆盖 L，不能覆盖 LRight，则 L 可以作为中间的答案
+    dpLeftSum[L] = dpLeftMost[L] + dpLeftSum[LLeftMin];
+    MyPrintf("sum dpLeftSum[%d] = %lld\n", L, dpLeftSum[L]);
+  }
+
+  // ll ans = 0;
   ll ans = 0;
-  vector<ll> dpStep, dpPath;  // dp[j] 区间 [i,j] 的最少飞行次数，以及路径数
-  dpStep.resize(n);
-  dpPath.resize(n);
-  for (int i = 0; i < n; i++) {
-    dpStep[i] = 0;
-    dpPath[i] = 1;         // 自己到自己，需要0次飞行，1条路径
-    int l = i, r = i + 1;  // 位置 i 为终点，距离 d 内，最小 step 的左右边界 [l, r)
-    for (int j = i + 1; j < n; j++) {
-      while (nums[j] - nums[l] > d) {
-        l++;
-      }
-      if (l == j) {  // 后面的都不可到达，没答案
-        break;
-      }
-      r = max(r, l + 1);
-      while (r < j && dpStep[l] == dpStep[r]) {
-        r++;
-      }
-      dpStep[j] = dpStep[l] + 1;
-      if (r - l == 1) {
-        dpPath[j] = dpPath[l];
-      } else if (r - l == 2) {
-        dpPath[j] = min(dpPath[l] + dpPath[l + 1], 3LL);
-      } else {
-        dpPath[j] = 3;  // 至少3 条路径
-      }
-      if (dpPath[j] == 2) {
-        ans++;
-      }
+  for (int L = 1, R = 2; R + 1 < n; L++, R++) {
+    int LRightMax = RD[L];
+    int RRightMax = RD[R];
+    if (LRightMax <= R || nums[LRightMax] - d <= nums[L - 1]) {  // L 右侧至少覆盖两个点，才能形成2条路径
+      MyPrintf("LRightMax=%d <= R=%d skip\n", LRightMax, R);
+      continue;
     }
-  }
-  MyPrintf("SolverDp ans = %lld\n", ans);
-  return ans;
-}
-bool PropertyA() {
-  ll dis = nums[1] - nums[0];
-  for (int i = 1; i < n; i++) {
-    if (dis != nums[i] - nums[i - 1]) {
-      return false;
+    int RLeftMin = LD[R];
+    int LLeftMin = LD[L];
+    if (RLeftMin >= L || nums[RLeftMin] + d >= nums[R + 1]) {  // R 左侧至少覆盖两个点，才能形成2条路径
+      MyPrintf("RLeftMin=%d >= L=%d skip\n", RLeftMin, L);
+      continue;
     }
-  }
-  return true;
-}
 
-ll SolverA() {  //
-  ll dis = nums[1] - nums[0];
-  if (dis * 2 > d) return 0;
-  ll cnt = d / dis;
-  ll minCnt = 2 * cnt;
-  if (n < minCnt) return 0;
-  ll ans = n - minCnt + 1;
-  MyPrintf("SolverA ans = %lld\n", ans);
-  return ans;
-}
-
-bool NoAns() {
-  if (n <= 2) return true;
-  if (nums.back() - nums.front() <= d) return true;
-  return false;
-}
-
-bool PropertyB() {
-  for (int i = 0; i < n; i++) {
-    if (nums[i] - nums.front() <= d && nums.back() - nums[i] <= d) {
-      return true;
+    ll leftSum = dpLeftMost[R];
+    MyPrintf("LLeftMin=%d RLeftMin=%d leftSum=%lld\n", LLeftMin, RLeftMin, leftSum);
+    if (LLeftMin == RLeftMin) {
+      leftSum += dpLeftSum[LLeftMin];
     }
-  }
-  return false;
-}
-ll SolverB() {  //
-  if (n <= 3) return 0;
-  int L = n, R = 0;
-  for (int i = 0; i < n; i++) {
-    if (nums[i] - nums.front() <= d && nums.back() - nums[i] <= d) {
-      L = min(L, i);
-      R = max(R, i);
+    ll rightSum = dpRightMost[L];
+    MyPrintf("LRightMax=%d RRightMax=%d rightSum=%lld\n", LRightMax, RRightMax, rightSum);
+    if (RRightMax == LRightMax) {
+      rightSum += dpRightSum[LRightMax];
     }
+    MyPrintf("L = %d, R = %d, leftSum = %lld, rightSum = %lld\n", L, R, leftSum, rightSum);
+    ans += leftSum * rightSum;
   }
-  if (R - L + 1 > 2) return 0;
-
-  ll ans = 0;
-  for (int i = 0; i < n; i++) {
-    // 第一步，找到最大的 Ri，满足 nums[Ri -1] - nums[i] <= d
-    int Ri = upper_bound(nums.begin() + i, nums.end(), nums[i] + d) - nums.begin();
-    if (Ri - L > 2) break;  // 后续都没有答案
-    if (Ri - i < 3) continue;
-    int j = Ri - 2;
-    // 第二步，找到最大的 Rj, 满足 nums[Rj] - nums[j] <= d
-    int Rj = upper_bound(nums.begin() + j, nums.end(), nums[j] + d) - nums.begin();
-    int k = Ri - 3;
-    int Rk = upper_bound(nums.begin() + k, nums.end(), nums[k] + d) - nums.begin();
-    ans += Rj - Rk;
-  }
-  MyPrintf("SolverB ans = %lld\n", ans);
-  return ans;
-}
-
-ll SolverLast() {
-  ll ans = 0;
-  for (int i = 0; i < n; i++) {
-    // 第一步，找到最大的 Ri，满足 nums[Ri -1] - nums[i] <= d
-    int Ri = upper_bound(nums.begin() + i, nums.end(), nums[i] + d) - nums.begin();
-    if (Ri - i < 3) continue;
-    int j = Ri - 2;
-    // 第二步，找到最大的 Rj, 满足 nums[Rj] - nums[j] <= d
-    int Rj = upper_bound(nums.begin() + j, nums.end(), nums[j] + d) - nums.begin();
-    int k = Ri - 3;
-    int Rk = upper_bound(nums.begin() + k, nums.end(), nums[k] + d) - nums.begin();
-    ans += Rj - Rk;
-  }
-  MyPrintf("SolverLast ans = %lld\n", ans);
   return ans;
 }
 
@@ -204,20 +189,7 @@ void Solver() {  //
     for (int i = 0; i < n; i++) {
       scanf("%lld", &nums[i]);
     }
-    ll ans = 0;
-    if (NoAns()) {
-      ans = 0;
-    } else if (n <= 5000) {
-      ans = SolverDp();
-    } else if (PropertyA()) {
-      ans = SolverA();
-    } else if (PropertyB()) {
-      ans = SolverB();
-    } else {
-      ans = SolverLast();
-    }
-
-    printf("%lld\n", ans);
+    printf("%lld\n", SolverDp());
   }
 }
 
@@ -281,14 +253,17 @@ int main(int argc, char** argv) {
   int stdout_fd = dup(STDOUT_FILENO);
   for (int i = 1; i <= USACO_TASK_FILE; i++) {
     fileIndex = i;
+    output_ans = 1;
 #endif
     InitIO(fileIndex);
     ExSolver();
 #ifdef USACO_TASK_FILE
     fclose(stdout);
+    output_ans = 0;
     DiffAns(stdout_fd, i);
     stdout_fd = dup(STDOUT_FILENO);
   }
+  output_ans = 0;
   DiffSummary(stdout_fd);
 #endif
   return 0;

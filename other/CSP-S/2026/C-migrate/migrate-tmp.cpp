@@ -83,12 +83,21 @@ vector<ll> nums;
 
 ll SolverDp() {
   if (n < 4 || d == 1) return 0;
+  vector<ll> LD(n, -1);
+  vector<ll> RD(n, -1);
+  for (int i = 0, L = 0, R = 0; i < n; i++) {
+    while (L >= 0 && nums[i] - nums[L] > d) L++;
+    while (R < n && nums[R] - nums[i] <= d) R++;
+    LD[i] = L;
+    RD[i] = R - 1;
+  }
+
   // dpRightMost[i] 右侧作为最右的答案
   vector<ll> dpRightMost(n, 0);  // dpRightMost[i] i 作为倒数第二条，下一跳的方案数
   vector<ll> dpRightSum(n, 0);   // dpRightSum[i] i 下一跳作为倒数第二条 或者 作为中间的答案的方案数
   for (int R = n - 2; R > 0; R--) {
     // 找到  [nums[R],nums[R] + d] 内存在的最大值位置
-    int RRightMax = upper_bound(nums.begin() + R, nums.end(), nums[R] + d) - nums.begin() - 1;
+    int RRightMax = RD[R];
     if (RRightMax == R) {  // 说明 D 步内不可达
       MyPrintf("R=%d skip 1\n", R);
       continue;
@@ -100,7 +109,7 @@ ll SolverDp() {
     }
 
     // 找到大于 nums[L] + d 的最小值位置
-    int LRightMin = upper_bound(nums.begin() + L, nums.end(), nums[L] + d) - nums.begin();
+    int LRightMin = RD[L] + 1;
     LRightMin = max(LRightMin, R + 1);  // 有可能左边很远，需要保证在 R 右侧
     if (LRightMin <= RRightMax) {
       dpRightMost[R] += RRightMax - LRightMin + 1;
@@ -116,7 +125,7 @@ ll SolverDp() {
   vector<ll> dpLeftSum(n, 0);   // dpLeftSum[i] i 上一跳作为倒数第二条 或者 作为中间的答案的方案数
   for (int L = 1; L < n - 1; L++) {
     // 找到  [nums[L]-d ,nums[L]] 内存在的最小值位置
-    int LLeftMin = lower_bound(nums.begin(), nums.end(), nums[L] - d) - nums.begin();
+    int LLeftMin = LD[L];
     if (LLeftMin == L) {  // 说明 D 步内不可达
       MyPrintf("L=%d skip `\n", L);
       continue;
@@ -127,9 +136,8 @@ ll SolverDp() {
       MyPrintf("L=%d skip 2\n", L);
       continue;  // 不存在上一跳
     }
-    // 找到大于 [nums[R] - d , nums[R]] 的最小值位置
-    int RLeftMin = lower_bound(nums.begin(), nums.end(), nums[R] - d) - nums.begin();
-    RLeftMin--;                       // 不能覆盖 nums[LRight] - d
+    // 找到小于 nums[R] - d 的最大值位置
+    int RLeftMin = LD[R] - 1;
     RLeftMin = min(RLeftMin, L - 1);  // 有可能右边很远，需要保证在 L 左侧
     if (LLeftMin <= RLeftMin) {
       dpLeftMost[L] += RLeftMin - LLeftMin + 1;
@@ -144,16 +152,16 @@ ll SolverDp() {
   // ll ans = 0;
   ll ans = 0;
   for (int L = 1, R = 2; R + 1 < n; L++, R++) {
-    int LRightMax = upper_bound(nums.begin() + L, nums.end(), nums[L] + d) - nums.begin() - 1;
-    int RRightMax = upper_bound(nums.begin() + R, nums.end(), nums[R] + d) - nums.begin() - 1;
+    int LRightMax = RD[L];
+    int RRightMax = RD[R];
     if (LRightMax <= R || nums[LRightMax] - d <= nums[L - 1]) {  // L 右侧至少覆盖两个点，才能形成2条路径
-      MyPrintf("LRightMax=%d <= R=%d skip\n", LRightMax, R, L);
+      MyPrintf("LRightMax=%d <= R=%d skip\n", LRightMax, R);
       continue;
     }
-    int RLeftMin = lower_bound(nums.begin(), nums.end(), nums[R] - d) - nums.begin();
-    int LLeftMin = lower_bound(nums.begin(), nums.end(), nums[L] - d) - nums.begin();
+    int RLeftMin = LD[R];
+    int LLeftMin = LD[L];
     if (RLeftMin >= L || nums[RLeftMin] + d >= nums[R + 1]) {  // R 左侧至少覆盖两个点，才能形成2条路径
-      MyPrintf("RLeftMin=%d >= L=%d skip\n", RLeftMin, L, R);
+      MyPrintf("RLeftMin=%d >= L=%d skip\n", RLeftMin, L);
       continue;
     }
 
