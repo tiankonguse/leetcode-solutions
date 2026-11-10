@@ -61,7 +61,7 @@ using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
 #ifdef USACO_LOCAL_JUDGE
-#define LOCAL_IO 5            // 本地跑测试样例
+#define LOCAL_IO 5  // 本地跑测试样例
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
 // #define TASKNO 6    // 只跑指定组的测试用例
@@ -122,10 +122,48 @@ bool IsSplit(int u) {
 }
 
 vector<int> splitNode;
+vector<int> maxLeftToRight, maxRightToLeft;
+bool CheckRange(int midCanSelectNode) {
+  int midNum = splitNode.size() - 2;
+
+  // 滑动窗口：枚举左端点，看可以覆盖的最远距离
+  maxLeftToRight.clear();
+  maxLeftToRight.resize(midNum + 2, 0);
+  // [0, l] 都选择，最远可以覆盖的点
+  int maxRight = 0;
+  for (int l = 0; l <= midNum; l++) {
+    while (maxRight <= midNum && maxDis[splitNode[maxRight]] >= maxRight - l) {
+      maxRight++;
+    }
+    maxLeftToRight[l] = maxRight - 1;
+    MyPrintf("maxLeftToRight[%d] = %d\n", l, maxRight);
+  }
+
+  maxRightToLeft.clear();
+  maxRightToLeft.resize(midNum + 2, midNum + 1);
+  int minLeft = midNum + 1;
+  for (int r = midNum + 1; r > 0; r--) {
+    while (minLeft > 0 && maxDis[splitNode[minLeft]] >= r - minLeft) {
+      minLeft--;
+    }
+    maxRightToLeft[r] = minLeft + 1;
+    MyPrintf("maxRightToLeft[%d] = %d\n", r, minLeft);
+  }
+
+  for (int l = 0, r = midNum + 1 - midCanSelectNode; l <= midCanSelectNode; l++, r++) {
+    if (maxLeftToRight[l] + 1 >= maxRightToLeft[r]) {
+      MyPrintf("maxLeftToRight[%d] = %d >= maxRightToLeft[%d] = %d\n", l, maxLeftToRight[l], r, maxRightToLeft[r]);
+      return true;
+    }
+  }
+  return false;
+}
+
 // 判断以 u 为一个端点的链，删除中间一段，是否可以满足要求
 bool CheckSplit(const int L, const int pre) {
   splitNode.clear();
   int u = L, uPre = pre;
+  splitNode.push_back(pre);  // 左侧加一个桩
   splitNode.push_back(u);
   while (!IsSplit(u)) {
     // 可以确保， u 的度数一定是 2，从而确保，u 是链上的一个节点
@@ -137,38 +175,17 @@ bool CheckSplit(const int L, const int pre) {
       break;
     }
   }
-  // 最后一个节点不满足度数为2，需要删除
-  splitNode.pop_back();
+  // 最后一个节点不满足度数为2，刚好作为右侧的桩
+  // splitNode.pop_back();
+  
+  const int midNum = splitNode.size() - 2;
   const int R = u;
 
-  const int midNum = splitNode.size();
   // 删除中间的链，左右必选节点超过 k，不能满足要求
   const int midCanSelectNode = k - (leftNode - midNum);
   MyPrintf("CheckSplit L=%d pre=%d R=%d midNum=%d midCanSelectNode=%d\n", L, pre, R, midNum, midCanSelectNode);
   if (midCanSelectNode < 0) return false;
-
-  // 枚举左边选择的个数
-  for (int leftSelect = 0; leftSelect <= midCanSelectNode; leftSelect++) {
-    const int rightSelect = midCanSelectNode - leftSelect;
-    const int leftPos = leftSelect;
-    const int rightPos = midNum - 1 - rightSelect;
-    // [leftPos, rightPos] 区间都没被选择
-    bool ok = true;
-    for (int i = leftPos; i <= rightPos; i++) {
-      const int v = splitNode[i];
-      const int leftDis = i - leftPos + 1;
-      const int rightDis = rightPos - i + 1;
-      const int minDis = min(leftDis, rightDis);
-      if (minDis > maxDis[v]) {
-        ok = false;
-        break;
-      }
-    }
-    if (ok) {
-      return true;
-    }
-  }
-  return false;
+  return CheckRange(midCanSelectNode);
 }
 
 bool DfsRemoveLink(int u, int pre) {

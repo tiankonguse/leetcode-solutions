@@ -8,7 +8,7 @@ PATH: P17834 [CSP-S 2026] 研发基地 / hub
 submission:
 */
 #define TASK "hub"
-#define TASKEX "-tmp"
+#define TASKEX ""
 
 #include <bits/stdc++.h>
 
@@ -61,7 +61,7 @@ using max_queue = priority_queue<T>;
 
 void InitIO(int fileIndex) {  //
 #ifdef USACO_LOCAL_JUDGE
-#define LOCAL_IO 5            // 本地跑测试样例
+#define LOCAL_IO 5  // 本地跑测试样例
 #define MAX_TIME 2000
 #ifdef LOCAL_IO
 // #define TASKNO 6    // 只跑指定组的测试用例
@@ -77,33 +77,74 @@ void InitIO(int fileIndex) {  //
 }
 
 int c, t, n, k;
-vector<vector<int>> G;
-vector<int> deg;
+
+const int N = max6;
+const int M = max6;
+
+struct Graph {
+  int fir[N], toV[M], nextV[M], cnt, deg[N];
+  void AddEdge(const int u, const int v) {
+    toV[cnt] = v;
+    nextV[cnt] = fir[u];
+    fir[u] = cnt++;
+    deg[u]++;
+  }
+  void Init() {
+    memset(fir, 0, sizeof(int) * (n + 2));
+    memset(deg, 0, sizeof(int) * (n + 2));
+    cnt = 1;
+  }
+  int Len(int u) {
+    return deg[u];  //
+  }
+};
+
+void CloneGraph(const Graph& g, Graph& GG) {
+  GG.Init();
+  for (int u = 1; u <= n; u++) {
+    for (int p = g.fir[u]; p != 0; p = g.nextV[p]) {
+      const int v = g.toV[p];
+      // MyPrintf("Add u=%d v=%d\n", u, v);
+      GG.AddEdge(u, v);
+    }
+  }
+}
+
+Graph G;
+int deg[max6];
 int leftNode = 0;  // 删除 R 层的叶子后，剩余节点数
 // int R;
-vector<int> maxDis;  // 距离叶子的最大距离
+int maxDis[max6];  // 距离叶子的最大距离
 
 int maxleafDepth = -1;
 int maxLeafNode = -1;
 bool DfsRemoveLeaf(const int u, const int pre, const int depth) {
-  for (int l = 0; l < G[u].size(); l++) {
-    const int childNum = G[u].size();
-    const int v = G[u][l];
-    if (v == pre) continue;
+  int preP = -1;
+  for (int p = G.fir[u]; p != 0; p = G.nextV[p]) {
+    const int v = G.toV[p];
+    if (v == pre) {
+      preP = p;
+      continue;
+    }
     if (DfsRemoveLeaf(v, u, depth + 1)) {  // 儿子被删除了
-      swap(G[u][l], G[u][childNum - 1]);
-      G[u].pop_back();
-      l--;
+      MyPrintf("remove Child: u=%d v=%d\n", u, v);
+      if (preP != -1) {
+        G.nextV[preP] = G.nextV[p];
+      } else {
+        G.fir[u] = G.nextV[p];
+      }
       deg[u]--;
 
       // 儿子删除，更新父节点的最大距离
       maxDis[u] = min(maxDis[u], maxDis[v] - 1);
+    } else {
+      preP = p;
     }
   }
   if (pre != -1 && deg[u] == 1 && maxDis[u] > 0) {
     MyPrintf("remove leaf: u=%d deg=%d maxDis=%d depth=%d\n", u, deg[u], maxDis[u], depth);
-    G[u].pop_back();  // 断开与父节点的连接
-    deg[u]--;         // 更新自己的度数， 父节点的信息由父节点自己更新
+    G.fir[u] = 0;
+    deg[u]--;  // 更新自己的度数， 父节点的信息由父节点自己更新
     leftNode--;
     return true;
   }
@@ -117,22 +158,63 @@ bool DfsRemoveLeaf(const int u, const int pre, const int depth) {
   return false;
 }
 
-bool IsSplit(int u) {
+inline bool IsSplit(int u) {
   return deg[u] == 1 || deg[u] > 2;  //
 }
 
-vector<int> splitNode;
+int splitNode[max6];
+int splitNodeNum = 0;
+
+int maxLeftToRight[max6];
+int maxRightToLeft[max6];
+
+bool CheckRange(int midCanSelectNode) {
+  int midNum = splitNodeNum - 2;
+
+  // 滑动窗口：枚举左端点，看可以覆盖的最远距离
+  // [0, l] 都选择，最远可以覆盖的点
+  int maxRight = 0;
+  for (int l = 0; l <= midNum; l++) {
+    while (maxRight <= midNum && maxDis[splitNode[maxRight]] >= maxRight - l) {
+      maxRight++;
+    }
+    maxLeftToRight[l] = maxRight - 1;
+    MyPrintf("maxLeftToRight[%d] = %d\n", l, maxRight);
+  }
+
+  int minLeft = midNum + 1;
+  for (int r = midNum + 1; r > 0; r--) {
+    while (minLeft > 0 && maxDis[splitNode[minLeft]] >= r - minLeft) {
+      minLeft--;
+    }
+    maxRightToLeft[r] = minLeft + 1;
+    MyPrintf("maxRightToLeft[%d] = %d\n", r, minLeft);
+  }
+
+  MyPrintf("CheckRange cal\n");
+  for (int l = 0, r = midNum + 1 - midCanSelectNode; l <= midCanSelectNode; l++, r++) {
+    if (maxLeftToRight[l] + 1 >= maxRightToLeft[r]) {
+      MyPrintf("maxLeftToRight[%d] = %d >= maxRightToLeft[%d] = %d\n", l, maxLeftToRight[l], r, maxRightToLeft[r]);
+      return true;
+    }
+  }
+  MyPrintf("CheckRange not ok\n");
+  return false;
+}
+
 // 判断以 u 为一个端点的链，删除中间一段，是否可以满足要求
 bool CheckSplit(const int L, const int pre) {
-  splitNode.clear();
+  MyPrintf("CheckSplit L=%d pre=%d\n", L, pre);
   int u = L, uPre = pre;
-  splitNode.push_back(pre);  // 左侧加一个桩
-  splitNode.push_back(u);
+  splitNodeNum = 0;
+  splitNode[splitNodeNum++] = pre;  // 左侧加一个桩
+  splitNode[splitNodeNum++] = u;
   while (!IsSplit(u)) {
     // 可以确保， u 的度数一定是 2，从而确保，u 是链上的一个节点
-    for (auto v : G[u]) {
+    for (int p = G.fir[u]; p != 0; p = G.nextV[p]) {
+      const int v = G.toV[p];
       if (v == uPre) continue;
-      splitNode.push_back(v);
+      splitNode[splitNodeNum++] = v;
       uPre = u;
       u = v;
       break;
@@ -141,62 +223,42 @@ bool CheckSplit(const int L, const int pre) {
   // 最后一个节点不满足度数为2，刚好作为右侧的桩
   // splitNode.pop_back();
 
-
-  const int midNum = splitNode.size() - 2;
+  const int midNum = splitNodeNum - 2;
   const int R = u;
-  
+
   // 删除中间的链，左右必选节点超过 k，不能满足要求
   const int midCanSelectNode = k - (leftNode - midNum);
   MyPrintf("CheckSplit L=%d pre=%d R=%d midNum=%d midCanSelectNode=%d\n", L, pre, R, midNum, midCanSelectNode);
   if (midCanSelectNode < 0) return false;
-
-  // 枚举左边选择的个数
-  for (int leftSelect = 0; leftSelect <= midCanSelectNode; leftSelect++) {
-    const int rightSelect = midCanSelectNode - leftSelect;
-    const int leftPos = leftSelect + 1;
-    const int rightPos = midNum - rightSelect;
-    // [leftPos, rightPos] 区间都没被选择
-    bool ok = true;
-    for (int i = leftPos; i <= rightPos; i++) {
-      const int v = splitNode[i];
-      const int leftDis = i - leftPos + 1;
-      const int rightDis = rightPos - i + 1;
-      const int minDis = min(leftDis, rightDis);
-      if (minDis > maxDis[v]) {
-        ok = false;
-        break;
-      }
-    }
-    if (ok) {
-      return true;
-    }
-  }
-  return false;
+  return CheckRange(midCanSelectNode);
 }
 
-bool DfsRemoveLink(int u, int pre) {
-  for (auto v : G[u]) {
+bool DfsRemoveLink(const int u, const int pre) {
+  MyPrintf("DfsRemoveLink u=%d pre=%d\n", u, pre);
+  for (int p = G.fir[u]; p != 0; p = G.nextV[p]) {
+    const int v = G.toV[p];
     if (v == pre) continue;
     if (IsSplit(u) && !IsSplit(v) && CheckSplit(v, u)) {
+      MyPrintf("OK: remove link: u=%d v=%d\n", u, v);
       return true;
     }
     if (DfsRemoveLink(v, u)) {
       return true;
     }
   }
+  MyPrintf("DfsRemoveLink not ok\n");
   return false;
 }
 
-vector<vector<int>> g;
+Graph g;
 bool Check(const int R) {
-  deg.clear();
-  deg.resize(n + 1, 0);
-  G = g;
+  MyPrintf("Check R=%d\n", R);
+  CloneGraph(g, G);
+  MyPrintf("CloneGraph End\n");
   for (int i = 1; i <= n; i++) {
-    deg[i] = G[i].size();
+    deg[i] = G.Len(i);
+    maxDis[i] = R;
   }
-  maxDis.clear();
-  maxDis.resize(n + 1, R);
   leftNode = n;
   MyPrintf("root=%d\n", 1);
   maxleafDepth = -1;
@@ -242,18 +304,30 @@ int SearchAns() {
   return r;
 }
 
+char readWritebuf[20];
+inline ll FastRead() {
+  scanf("%s", readWritebuf);
+  ll v = 0;
+  const char* p = readWritebuf;
+  while (*p) {
+    v = v * 10 + (*p - '0');
+    p++;
+  }
+  return v;
+}
 void Solver() {  //
-  scanf("%d%d", &c, &t);
+  c = FastRead();
+  t = FastRead();
   while (t--) {
-    g.clear();
-    scanf("%d%d", &n, &k);
-    g.resize(n + 1);
+    g.Init();
+    n = FastRead();
+    k = FastRead();
     for (int i = 1; i < n; i++) {
       int u, v;
-      scanf("%d%d", &u, &v);
-      // u--, v--;  // 1-based -> 0-based
-      g[u].push_back(v);
-      g[v].push_back(u);
+      u = FastRead();
+      v = FastRead();
+      g.AddEdge(u, v);
+      g.AddEdge(v, u);
     }
     printf("%d\n", SearchAns());
   }
