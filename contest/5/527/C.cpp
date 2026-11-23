@@ -36,9 +36,9 @@ class Solution {
     }
   }
 
-  // preCost 子树外都是蓝色的代价
+  // 子树外都是蓝色的代价
   void DfsBlueRed(int u, int pre) {
-    rootRedCost[u] = 0;
+    rootRedCost[u] = allBlueCost[0] - allBlueCost[u];
     if (colors[u] == 'B') {
       rootRedCost[u] += childCnt[u];
     }
@@ -50,7 +50,7 @@ class Solution {
       // 子树可以选择全部蓝色，也可以选择子树根是红色，取最小代价
       rootRedCost[u] += min(allBlueCost[v], rootRedCost[v]);
     }
-    ans = min(ans, rootRedCost[u] + allBlueCost[0] - allBlueCost[u]);
+    ans = min(ans, rootRedCost[u]);
   }
 
  public:
